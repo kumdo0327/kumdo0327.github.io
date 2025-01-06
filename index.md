@@ -18,6 +18,5 @@ Integrated M.S. & Ph.D. Student,
   [OOPSLA 2025: ACM Conference on Object-oriented Programming, Systems, Languages, and Applications](https://2025.splashcon.org/track/OOPSLA)
 
 ## Teaching experiences
-- Teaching Assistant at Korea University
-  - COSE419: Software Verification (Spring 2024)
-  - COSE213: Data Structure (Fall 2024)
+- Teaching Assistant, Data Structure (COSE213), Korea University, Fall 2024
+- Teaching Assistant, Software Verification (COSE419), Korea University, Spring 2024
