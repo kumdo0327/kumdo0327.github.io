@@ -9,11 +9,13 @@ Integrated M.S. & Ph.D. Student,
 
 ## Education
 - 2024.03 ~ present,
-  **Integrated M.S. & Ph.D. in [Dept. of Computer Science and Engineering](https://cs.korea.edu),
+  **Integrated M.S. & Ph.D. in
+  [Dept. of Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)**
   - Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
 - 2020.03 ~ 2024.02,
-  **B.S. in [Dept. of Computer Science and Engineering](https://cs.korea.edu),
+  **B.S. in
+  [Dept. of Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)**
   - GPA: 4.31/4.50
 
