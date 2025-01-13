@@ -1,15 +1,21 @@
 ## Donguk Kim
 Integrated M.S. & Ph.D. Student,
 [Software Analysis Lab](https://prl.korea.ac.kr),
-[Korea University](https://korea.ac.kr)
+[Korea University](https://www.korea.edu)
 
 ## Research Interests
 - Fault Localization
 - Program Transformation
 
 ## Education
-- **Integrated M.S. & Ph.D.** in Dept. of Computer Science and Engineering, Korea University (2024.03. - )
-- **B.S.** in Dept. of Computer Science and Engineering, Korea University (2020.03. - 2024.02.), GPA: 4.31/4.50
+- 2024.03 ~ present,
+  **Integrated M.S. & Ph.D. in [Dept. of Computer Science and Engineering](https://cs.korea.edu),
+  [Korea University](https://www.korea.edu)**
+  - Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
+- 2020.03 ~ 2024.02,
+  **B.S. in [Dept. of Computer Science and Engineering](https://cs.korea.edu),
+  [Korea University](https://www.korea.edu)**
+  - GPA: 4.31/4.50
 
 ## Publications
 - **PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns**  
