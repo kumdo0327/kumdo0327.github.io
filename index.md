@@ -3,9 +3,11 @@ title: Donguk Kim's homepage
 ---
 
 ## Donguk Kim
-Integrated M.S. & Ph.D. Student,
-[Software Analysis Lab](https://prl.korea.ac.kr),
-[Korea University](https://www.korea.edu)
+- Integrated M.S. & Ph.D. Student,
+  [Software Analysis Lab](https://prl.korea.ac.kr),
+  [Korea University](https://www.korea.edu)
+- Email: donguk_kim@korea.ac.kr
+- GitHub: https://github.com/kumdo0327
 
 ## Research Interests
 - Fault Localization
@@ -13,11 +15,11 @@ Integrated M.S. & Ph.D. Student,
 
 ## Education
 - 2024.03 ~ present, Integrated M.S. & Ph.D. in
-  [Dept. of Computer Science and Engineering](https://cs.korea.edu),
+  [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
   - Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
 - 2020.03 ~ 2024.02, B.S. in
-  [Dept. of Computer Science and Engineering](https://cs.korea.edu),
+  [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
   - GPA: 4.31/4.50
 
