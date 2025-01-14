@@ -14,11 +14,11 @@ Integrated M.S. & Ph.D. Student,
 - Program Transformation
 
 ## Education
-- **2024.03 ~ present, Ph.D.** in
+- Mar 2024 - present, **Ph.D.** in
   [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
   - Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
-- **2020.03 ~ 2024.02, B.S.** in
+- Mar 2020 - Feb 2024, **B.S.** in
   [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
   - GPA: 4.31/4.50
