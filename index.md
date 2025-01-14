@@ -7,18 +7,18 @@ Integrated M.S. & Ph.D. Student,
   [Software Analysis Lab](https://prl.korea.ac.kr),
   [Korea University](https://www.korea.edu)
 - Email: donguk_kim@korea.ac.kr
-- GitHub: https://github.com/kumdo0327
+- GitHub: [https://github.com/kumdo0327](https://github.com/kumdo0327)
 
 ## Research Interests
 - Fault Localization
 - Program Transformation
 
 ## Education
-- 2024.03 ~ present, **Ph.D.** in
+- **2024.03 ~ present, Ph.D.** in
   [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
   - Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
-- 2020.03 ~ 2024.02, **B.S.** in
+- **2020.03 ~ 2024.02, B.S.** in
   [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
   - GPA: 4.31/4.50
