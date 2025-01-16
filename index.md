@@ -7,7 +7,7 @@ Integrated M.S. & Ph.D. Student,
   [Software Analysis Lab](https://prl.korea.ac.kr),
   [Korea University](https://www.korea.edu)
 - Email: donguk_kim@korea.ac.kr
-- GitHub: [https://github.com/kumdo0327](https://github.com/kumdo0327)
+- GitHub: [github.com/kumdo0327](https://github.com/kumdo0327)
 
 ## Research Interests
 - Fault Localization
