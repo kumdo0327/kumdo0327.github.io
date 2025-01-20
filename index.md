@@ -6,14 +6,14 @@ title: Donguk Kim's homepage
 Integrated M.S. & Ph.D. Student,
   [Software Analysis Lab](https://prl.korea.ac.kr),
   [Korea University](https://www.korea.edu)
-- Email: donguk_kim@korea.ac.kr
-- GitHub: [github.com/kumdo0327](https://github.com/kumdo0327)
+- :envelope: Email: donguk_kim@korea.ac.kr
+- :octocat: [GitHub](https://github.com/kumdo0327)
 
-## Research Interests
+## Research Interests :mag:
 - Fault Localization
 - Program Transformation
 
-## Education
+## Education :mortar_board:
 - Mar 2024 - present, **Ph.D.** in
   [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
@@ -23,9 +23,11 @@ Integrated M.S. & Ph.D. Student,
   [Korea University](https://www.korea.edu)
   - GPA: 4.31/4.50
 
-## Publications
+<!-- :pushpin: -->
+
+## Publications :bookmark_tabs:
 - **PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns**  
-  (Conditional Acceptance)  
+  (Conditional Accept)  
   **Donguk Kim**, Doha Hwang, Minseok Jeon<sup>\*</sup>, Hakjoo Oh<sup>\*</sup>  
   [OOPSLA 2025: ACM Conference on Object-oriented Programming, Systems, Languages, and Applications](https://2025.splashcon.org/track/OOPSLA)
 
