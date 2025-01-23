@@ -14,7 +14,11 @@ Integrated M.S. & Ph.D. Student,
 - Program Transformation
 
 ## Education
-- Mar 2024 - present, **Ph.D.** in
+- Mar 2025 - present, **Ph.D.** in
+  [Computer Science and Engineering](https://cs.korea.edu),
+  [Korea University](https://www.korea.edu)
+  - Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
+- Mar 2024 - Feb 2025, **M.S.** in
   [Computer Science and Engineering](https://cs.korea.edu),
   [Korea University](https://www.korea.edu)
   - Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
