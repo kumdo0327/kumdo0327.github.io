@@ -28,8 +28,7 @@ Integrated M.S. & Ph.D. Student,
   - GPA: 4.31/4.50
 
 ## Publications
-- **PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns**  
-  (Conditional Accept)  
+- **PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns**    
   **Donguk Kim**, Doha Hwang, Minseok Jeon<sup>\*</sup>, Hakjoo Oh<sup>\*</sup>  
   [OOPSLA 2025: ACM Conference on Object-oriented Programming, Systems, Languages, and Applications](https://2025.splashcon.org/track/OOPSLA)
 
