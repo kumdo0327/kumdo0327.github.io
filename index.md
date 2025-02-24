@@ -11,7 +11,7 @@ Integrated M.S. & Ph.D. Student,
 
 ## Research Interests
 - Fault Localization
-- Program Transformation
+- Static Analysis
 
 ## Education
 - Mar 2025 - present, **Ph.D.** in
