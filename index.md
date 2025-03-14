@@ -33,7 +33,7 @@ Integrated M.S. & Ph.D. Student,
   [OOPSLA 2025: ACM Conference on Object-oriented Programming, Systems, Languages, and Applications](https://2025.splashcon.org/track/OOPSLA)  
   [ paper:
     [pdf](papers/OOPSLA'25_PAFL.pdf),
-    [doi]() (to appear)
+    [link]() (to appear)
   ]  
   [ artifact:
     [github](https://github.com/kupl/PAFL),
