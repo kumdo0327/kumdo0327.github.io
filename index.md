@@ -1,8 +1,8 @@
 ---
-title: Donguk Kim's homepage
+title: Dong-Uk Kim's homepage
 ---
 
-## Donguk Kim
+## Dong-Uk Kim
 Integrated M.S. & Ph.D. Student,
   [Software Analysis Lab](https://prl.korea.ac.kr),
   [Korea University](https://www.korea.edu)
