@@ -30,7 +30,8 @@ Integrated M.S. & Ph.D. Student,
   (* corresponding authors)  
   **OOPSLA 2025**: ACM Conference on Object-oriented Programming, Systems, Languages, and Applications  
   [paper: [pdf](papers/OOPSLA'25_PAFL.pdf), [link]()(to appear)]
-  [artifact: [github](https://github.com/kupl/PAFL), [zenodo](https://doi.org/10.5281/zenodo.14920999)]
+  [[artifact](https://doi.org/10.5281/zenodo.14920999)]
+  [[repo](https://github.com/kupl/PAFL)]
 
 ## Teaching experiences
 - Teaching Assistant, Data Structure (COSE213), Korea University, Fall 2024
