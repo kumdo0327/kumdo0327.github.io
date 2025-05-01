@@ -10,8 +10,9 @@ Integrated M.S. & Ph.D. Student,
 - [GitHub](https://github.com/kumdo0327)
 
 ## Research Interests
+- Code Differencing
+- Program Comprehension
 - Fault Localization
-- Static Analysis
 
 ## Education
 - Mar 2025 - present, **Ph.D.** in
