@@ -10,8 +10,7 @@ Integrated M.S. & Ph.D. Student,
 - [GitHub](https://github.com/kumdo0327)
 
 ## Research Interests
-- Code Differencing
-- Program Comprehension
+- Code Change
 - Fault Localization
 
 ## Education
