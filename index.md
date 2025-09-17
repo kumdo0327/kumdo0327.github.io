@@ -1,8 +1,8 @@
 ---
-title: Dong-Uk Kim's homepage
+title: Homepage of Kim Dong-Uk
 ---
 
-## Dong-Uk Kim
+## Profile
 Integrated M.S. & Ph.D. Student,
   [Software Analysis Lab](https://prl.korea.ac.kr),
   [Korea University](https://www.korea.edu)
@@ -10,7 +10,7 @@ Integrated M.S. & Ph.D. Student,
 - [GitHub](https://github.com/kumdo0327)
 
 ## Research Interests
-- Code Change
+- Source Code Differencing
 - Fault Localization
 
 ## Education
