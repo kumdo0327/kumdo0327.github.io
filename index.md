@@ -33,6 +33,10 @@ Integrated M.S. & Ph.D. Student,
   [[artifact](https://doi.org/10.5281/zenodo.14920999)]
   [[repo](https://github.com/kupl/PAFL)]
 
+## Talks
+- PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns
+  Paper presentation at OOPSLA 2025. Singapore. October 16 2025
+
 ## Teaching experiences
 - Teaching Assistant, Data Structure (COSE213), Korea University, Fall 2024
 - Teaching Assistant, Software Verification (COSE419), Korea University, Spring 2024
