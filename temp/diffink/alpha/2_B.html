@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .page:has(#p14:target) .i14, .page:has(#n14:target) .i14 {
+    display: block;
+  }
+  .page:has(#p14:target) .clear, .page:has(#n14:target) .clear {
+    display: none;
+  }
+  .page:has(#p2:target) .ep2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n17:target) .en17 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p17:target) .ep17 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n12:target) .en12 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#m12:target) .en12 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#m12:target) .em12 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n12:target) .em12 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n7:target) .en7 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p7:target) .ep7 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p16:target) .i16, .page:has(#n16:target) .i16 {
+    display: block;
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#p17:target) .i17, .page:has(#n17:target) .i17 {
+    display: block;
+  }
+  .page:has(#p17:target) .clear, .page:has(#n17:target) .clear {
+    display: none;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+  .ins, .del, .mov, .upd {
+    box-shadow: inset -0.05em 0 0 black;
+    padding-bottom: 0.05em;
+    border-top:  0.05em solid black;
+    border-bottom:  0.05em solid black;
+    padding-top: 0.05em;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .page:has(#n3:target) .en3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p13:target) .ep13 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
+    display: block;
+  }
+  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
+    display: none;
+  }
+  .page:has(#n8:target) .en8 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p8:target) .ep8 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
+    display: block;
+  }
+  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
+    display: none;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 0 12px 8px 12px;
+  }
+  .page:has(#n4:target) .en4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p4:target) .ep4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .page:has(#n9:target) .en9 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p9:target) .ep9 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .token {
+    color: #017100;
+  }
+  .no {
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+  }
+  .editbox {
+    flex: 1;
+    padding: 4px 8px;
+    font-weight: 500;
+    min-height: 0;
+    background: #f7f7f7;
+    overflow: auto;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .edit {
+    font-size: 14px;
+    height: 60px;
+  }
+  .toolbar {
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+  .page:has(#n5:target) .en5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .grid {
+    gap: 12px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    min-height: 252px;
+  }
+  .panel-header {
+    font-weight: bold;
+    display: flex;
+    background: #ebebeb;
+    padding: 8px 10px;
+    line-height: 1;
+    justify-content: space-between;
+    font-size: 14px;
+    align-items: center;
+    border-bottom: 1px solid #afafaf;
+  }
+  .panel, .edit {
+    flex-direction: column;
+    display: flex;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .sec {
+    font-weight: bold;
+    padding: 0;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:has(#n14:target) .en14 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p14:target) .ep14 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11, .i12, .i13, .i14, .i15, .i16, .i17 {
+    display: none;
+  }
+  .page:has(#p16:target) .clear, .page:has(#n16:target) .clear {
+    display: none;
+  }
+  .page:has(#p15:target) .clear, .page:has(#n15:target) .clear {
+    display: none;
+  }
+  .page:has(#n10:target) .en10 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p10:target) .ep10 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p15:target) .i15, .page:has(#n15:target) .i15 {
+    display: block;
+  }
+  .page:has(#p3:target) .ep3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n13:target) .en13 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .page:has(#p11:target) .clear, .page:has(#n11:target) .clear {
+    display: none;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .page:has(#p5:target) .ep5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p16:target) .ep16 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n15:target) .en15 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p15:target) .ep15 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n16:target) .en16 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#m12:target) .i12, .page:has(#n12:target) .i12 {
+    display: block;
+  }
+  .page:has(#m12:target) .clear, .page:has(#n12:target) .clear {
+    display: none;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .codebox {
+    flex: 1;
+    letter-spacing: 0.05em;
+    background: #f7f7f7;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    scroll-padding-top: 54px;
+    font-size: 12px;
+    overflow: auto;
+    line-height: 1.5;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .page:has(#n11:target) .en11 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p11:target) .ep11 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#p13:target) .i13, .page:has(#n13:target) .i13 {
+    display: block;
+  }
+  .page:has(#p13:target) .clear, .page:has(#n13:target) .clear {
+    display: none;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p6:target) .ep6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p11:target) .i11, .page:has(#n11:target) .i11 {
+    display: block;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+      <span class="i3">Edit #3</span>
+      <span class="i4">Edit #4</span>
+      <span class="i5">Edit #5</span>
+      <span class="i6">Edit #6</span>
+      <span class="i7">Edit #7</span>
+      <span class="i8">Edit #8</span>
+      <span class="i9">Edit #9</span>
+      <span class="i10">Edit #10</span>
+      <span class="i11">Edit #11</span>
+      <span class="i12">Edit #12</span>
+      <span class="i13">Edit #13</span>
+      <span class="i14">Edit #14</span>
+      <span class="i15">Edit #15</span>
+      <span class="i16">Edit #16</span>
+      <span class="i17">Edit #17</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n17">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n17">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i8"><a href="#n7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i10"><a href="#n9">Prev</a> | <a href="#n11">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i11"><a href="#n10">Prev</a> | <a href="#n12" data-partner="#m12">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i12"><a href="#n11">Prev</a> | <a href="#n13">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i13"><a href="#n12" data-partner="#m12">Prev</a> | <a href="#n14">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i14"><a href="#n13">Prev</a> | <a href="#n15">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i15"><a href="#n14">Prev</a> | <a href="#n16">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i16"><a href="#n15">Prev</a> | <a href="#n17">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i17"><a href="#n16">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> block</a> [174, 69] - [187, 18]
+<span style="font-weight:600">  into   </span><a href="#p1"> if_statement</a> [173, 17] - [187, 18]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> {</a>: <span class=token>&quot;{&quot;</span> [174, 69] - [174, 70]
+<span style="font-weight:600">  into   </span><a href="#p2"> block</a> [174, 69] - [187, 18]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> block_comment</a>: <span class=token>&quot;/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense;
+                     *   but it appears to check that JavaType impl class is the same which is
+                     *   important for some reason?
+                     *   Disabling the check will break 2 Enum-related tests.
+                     */&quot;</span> [175, 21] - [179, 24]
+<span style="font-weight:600">  into   </span><a href="#p3"> block</a> [174, 69] - [187, 18]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> line_comment</a>: <span class=token>&quot;// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full&quot;</span> [180, 21] - [180, 90]
+<span style="font-weight:600">  into   </span><a href="#p4"> block</a> [174, 69] - [187, 18]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> line_comment</a>: <span class=token>&quot;//   generic type with custom type resolvers. If so, should try to retain them.&quot;</span> [181, 21] - [181, 100]
+<span style="font-weight:600">  into   </span><a href="#p5"> block</a> [174, 69] - [187, 18]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n6"> line_comment</a>: <span class=token>&quot;//  Whether this is sufficient to avoid problems remains to be seen, but for&quot;</span> [182, 21] - [182, 97]
+<span style="font-weight:600">  into   </span><a href="#p6"> block</a> [174, 69] - [187, 18]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n7"> line_comment</a>: <span class=token>&quot;//  now it should improve things.&quot;</span> [183, 21] - [183, 54]
+<span style="font-weight:600">  into   </span><a href="#p7"> block</a> [174, 69] - [187, 18]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n8"> if_statement</a> [184, 21] - [186, 22]
+<span style="font-weight:600">  into   </span><a href="#p8"> block</a> [174, 69] - [187, 18]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n9"> }</a>: <span class=token>&quot;}&quot;</span> [187, 17] - [187, 18]
+<span style="font-weight:600">  into   </span><a href="#p9"> block</a> [174, 69] - [187, 18]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n10"> if</a>: <span class=token>&quot;if&quot;</span> [184, 21] - [184, 23]
+<span style="font-weight:600">  into   </span><a href="#p10"> if_statement</a> [184, 21] - [186, 22]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n11"> parenthesized_expression</a> [184, 24] - [184, 49]
+<span style="font-weight:600">  into           </span><a href="#p11"> if_statement</a> [184, 21] - [186, 22]</span><span class="i12"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n12" data-partner="m12"> block</a> [174, 69] - [185, 18]
+<span style="font-weight:600">  to   </span><a href="#m12" data-partner="n12"> block</a> [184, 50] - [186, 22]</span><span class="i13"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n13"> block_comment</a>: <span class=token>&quot;/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense;
+                     *   but it appears to check that JavaType impl class is the same which is
+                     *   important for some reason?
+                     *   Disabling the check will break 2 Enum-related tests.
+                     */&quot;</span> [175, 21] - [179, 24]
+<span style="font-weight:600">  from   </span><a href="#p13"> block</a> [174, 69] - [185, 18]</span><span class="i14"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n14"> line_comment</a>: <span class=token>&quot;// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full&quot;</span> [180, 21] - [180, 90]
+<span style="font-weight:600">  from   </span><a href="#p14"> block</a> [174, 69] - [185, 18]</span><span class="i15"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n15"> line_comment</a>: <span class=token>&quot;//   generic type with custom type resolvers. If so, should try to retain them.&quot;</span> [181, 21] - [181, 100]
+<span style="font-weight:600">  from   </span><a href="#p15"> block</a> [174, 69] - [185, 18]</span><span class="i16"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n16"> line_comment</a>: <span class=token>&quot;//  Whether this is sufficient to avoid problems remains to be seen, but for&quot;</span> [182, 21] - [182, 97]
+<span style="font-weight:600">  from   </span><a href="#p16"> block</a> [174, 69] - [185, 18]</span><span class="i17"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n17"> line_comment</a>: <span class=token>&quot;//  now it should improve things.&quot;</span> [183, 21] - [183, 54]
+<span style="font-weight:600">  from   </span><a href="#p17"> block</a> [174, 69] - [185, 18]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">2_B (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>package com.fasterxml.jackson.databind.jsontype.impl; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import java.io.IOException; 
+<span class="no">  4 </span>import java.util.Map; 
+<span class="no">  5 </span>import java.util.concurrent.ConcurrentHashMap; 
+<span class="no">  6 </span> 
+<span class="no">  7 </span>import com.fasterxml.jackson.annotation.JsonTypeInfo; 
+<span class="no">  8 </span>import com.fasterxml.jackson.core.*; 
+<span class="no">  9 </span>import com.fasterxml.jackson.databind.BeanProperty; 
+<span class="no"> 10 </span>import com.fasterxml.jackson.databind.DeserializationContext; 
+<span class="no"> 11 </span>import com.fasterxml.jackson.databind.DeserializationFeature; 
+<span class="no"> 12 </span>import com.fasterxml.jackson.databind.JavaType; 
+<span class="no"> 13 </span>import com.fasterxml.jackson.databind.JsonDeserializer; 
+<span class="no"> 14 </span>import com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer; 
+<span class="no"> 15 </span>import com.fasterxml.jackson.databind.jsontype.TypeDeserializer; 
+<span class="no"> 16 </span>import com.fasterxml.jackson.databind.jsontype.TypeIdResolver; 
+<span class="no"> 17 </span>import com.fasterxml.jackson.databind.util.ClassUtil; 
+<span class="no"> 18 </span> 
+<span class="no"> 19 </span>/** 
+<span class="no"> 20 </span> * Base class for all standard Jackson {@link TypeDeserializer}s. 
+<span class="no"> 21 </span> */ 
+<span class="no"> 22 </span>public abstract class TypeDeserializerBase 
+<span class="no"> 23 </span>    extends TypeDeserializer 
+<span class="no"> 24 </span>    implements java.io.Serializable 
+<span class="no"> 25 </span>{ 
+<span class="no"> 26 </span>    private static final long serialVersionUID = 1; 
+<span class="no"> 27 </span>     
+<span class="no"> 28 </span>    protected final TypeIdResolver _idResolver; 
+<span class="no"> 29 </span>     
+<span class="no"> 30 </span>    protected final JavaType _baseType; 
+<span class="no"> 31 </span> 
+<span class="no"> 32 </span>    /** 
+<span class="no"> 33 </span>     * Property that contains value for which type information 
+<span class="no"> 34 </span>     * is included; null if value is a root value. 
+<span class="no"> 35 </span>     * Note that this value is not assigned during construction 
+<span class="no"> 36 </span>     * but only when {@link #forProperty} is called to create 
+<span class="no"> 37 </span>     * a copy. 
+<span class="no"> 38 </span>     */ 
+<span class="no"> 39 </span>    protected final BeanProperty _property; 
+<span class="no"> 40 </span> 
+<span class="no"> 41 </span>    /** 
+<span class="no"> 42 </span>     * Type to use as the default implementation, if type id is 
+<span class="no"> 43 </span>     * missing or can not be resolved. 
+<span class="no"> 44 </span>     */ 
+<span class="no"> 45 </span>    protected final JavaType _defaultImpl; 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>    /** 
+<span class="no"> 48 </span>     * Name of type property used; needed for non-property versions too, 
+<span class="no"> 49 </span>     * in cases where type id is to be exposed as part of JSON. 
+<span class="no"> 50 </span>     */ 
+<span class="no"> 51 </span>    protected final String _typePropertyName; 
+<span class="no"> 52 </span>     
+<span class="no"> 53 </span>    protected final boolean _typeIdVisible; 
+<span class="no"> 54 </span>     
+<span class="no"> 55 </span>    /** 
+<span class="no"> 56 </span>     * For efficient operation we will lazily build mappings from type ids 
+<span class="no"> 57 </span>     * to actual deserializers, once needed. 
+<span class="no"> 58 </span>     */ 
+<span class="no"> 59 </span>    protected final Map&lt;String,JsonDeserializer&lt;Object&gt;&gt; _deserializers; 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>    protected JsonDeserializer&lt;Object&gt; _defaultImplDeserializer; 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /* 
+<span class="no"> 64 </span>    /********************************************************** 
+<span class="no"> 65 </span>    /* Life-cycle 
+<span class="no"> 66 </span>    /********************************************************** 
+<span class="no"> 67 </span>     */ 
+<span class="no"> 68 </span> 
+<span class="no"> 69 </span>    /** 
+<span class="no"> 70 </span>     * @since 2.8 
+<span class="no"> 71 </span>     */ 
+<span class="no"> 72 </span>    protected TypeDeserializerBase(JavaType baseType, TypeIdResolver idRes, 
+<span class="no"> 73 </span>            String typePropertyName, boolean typeIdVisible, JavaType defaultImpl) 
+<span class="no"> 74 </span>    { 
+<span class="no"> 75 </span>        _baseType = baseType; 
+<span class="no"> 76 </span>        _idResolver = idRes; 
+<span class="no"> 77 </span>        // 22-Dec-2015, tatu: as per [databind#1055], avoid NPE 
+<span class="no"> 78 </span>        _typePropertyName = (typePropertyName == null) ? &quot;&quot; : typePropertyName; 
+<span class="no"> 79 </span>        _typeIdVisible = typeIdVisible; 
+<span class="no"> 80 </span>        // defaults are fine, although shouldn&apos;t need much concurrency 
+<span class="no"> 81 </span>        _deserializers = new ConcurrentHashMap&lt;String, JsonDeserializer&lt;Object&gt;&gt;(16, 0.75f, 2); 
+<span class="no"> 82 </span>        _defaultImpl = defaultImpl; 
+<span class="no"> 83 </span>        _property = null; 
+<span class="no"> 84 </span>    } 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span>    protected TypeDeserializerBase(TypeDeserializerBase src, BeanProperty property) 
+<span class="no"> 87 </span>    { 
+<span class="no"> 88 </span>        _baseType = src._baseType; 
+<span class="no"> 89 </span>        _idResolver = src._idResolver; 
+<span class="no"> 90 </span>        _typePropertyName = src._typePropertyName; 
+<span class="no"> 91 </span>        _typeIdVisible = src._typeIdVisible; 
+<span class="no"> 92 </span>        _deserializers = src._deserializers; 
+<span class="no"> 93 </span>        _defaultImpl = src._defaultImpl; 
+<span class="no"> 94 </span>        _defaultImplDeserializer = src._defaultImplDeserializer; 
+<span class="no"> 95 </span>        _property = property; 
+<span class="no"> 96 </span>    } 
+<span class="no"> 97 </span> 
+<span class="no"> 98 </span>    @Override 
+<span class="no"> 99 </span>    public abstract TypeDeserializer forProperty(BeanProperty prop); 
+<span class="no">100 </span> 
+<span class="no">101 </span>    /* 
+<span class="no">102 </span>    /********************************************************** 
+<span class="no">103 </span>    /* Accessors 
+<span class="no">104 </span>    /********************************************************** 
+<span class="no">105 </span>     */ 
+<span class="no">106 </span>     
+<span class="no">107 </span>    @Override 
+<span class="no">108 </span>    public abstract JsonTypeInfo.As getTypeInclusion(); 
+<span class="no">109 </span> 
+<span class="no">110 </span>    public String baseTypeName() { return _baseType.getRawClass().getName(); } 
+<span class="no">111 </span> 
+<span class="no">112 </span>    @Override 
+<span class="no">113 </span>    public final String getPropertyName() { return _typePropertyName; } 
+<span class="no">114 </span>     
+<span class="no">115 </span>    @Override     
+<span class="no">116 </span>    public TypeIdResolver getTypeIdResolver() { return _idResolver; } 
+<span class="no">117 </span> 
+<span class="no">118 </span>    @Override     
+<span class="no">119 </span>    public Class&lt;?&gt; getDefaultImpl() { 
+<span class="no">120 </span>        return (_defaultImpl == null) ? null : _defaultImpl.getRawClass(); 
+<span class="no">121 </span>    } 
+<span class="no">122 </span>     
+<span class="no">123 </span>    @Override 
+<span class="no">124 </span>    public String toString() 
+<span class="no">125 </span>    { 
+<span class="no">126 </span>        StringBuilder sb = new StringBuilder(); 
+<span class="no">127 </span>        sb.append(&apos;[&apos;).append(getClass().getName()); 
+<span class="no">128 </span>        sb.append(&quot;; base-type:&quot;).append(_baseType); 
+<span class="no">129 </span>        sb.append(&quot;; id-resolver: &quot;).append(_idResolver); 
+<span class="no">130 </span>    	    sb.append(&apos;]&apos;); 
+<span class="no">131 </span>    	    return sb.toString(); 
+<span class="no">132 </span>    } 
+<span class="no">133 </span>     
+<span class="no">134 </span>    /* 
+<span class="no">135 </span>    /********************************************************** 
+<span class="no">136 </span>    /* Helper methods for sub-classes 
+<span class="no">137 </span>    /********************************************************** 
+<span class="no">138 </span>     */ 
+<span class="no">139 </span> 
+<span class="no">140 </span>    protected final JsonDeserializer&lt;Object&gt; _findDeserializer(DeserializationContext ctxt, 
+<span class="no">141 </span>            String typeId) throws IOException 
+<span class="no">142 </span>    { 
+<span class="no">143 </span>        JsonDeserializer&lt;Object&gt; deser = _deserializers.get(typeId); 
+<span class="no">144 </span>        if (deser == null) { 
+<span class="no">145 </span>            /* As per [Databind#305], need to provide contextual info. But for 
+<span class="no">146 </span>             * backwards compatibility, let&apos;s start by only supporting this 
+<span class="no">147 </span>             * for base class, not via interface. Later on we can add this 
+<span class="no">148 </span>             * to the interface, assuming deprecation at base class helps. 
+<span class="no">149 </span>             */ 
+<span class="no">150 </span>            JavaType type = _idResolver.typeFromId(ctxt, typeId); 
+<span class="no">151 </span>            if (type == null) { 
+<span class="no">152 </span>                // As per [JACKSON-614], use the default impl if no type id available: 
+<span class="no">153 </span>                deser = _findDefaultImplDeserializer(ctxt); 
+<span class="no">154 </span>                if (deser == null) { 
+<span class="no">155 </span>                    // 10-May-2016, tatu: We may get some help... 
+<span class="no">156 </span>                    JavaType actual = _handleUnknownTypeId(ctxt, typeId, _idResolver, _baseType); 
+<span class="no">157 </span>                    if (actual == null) { // what should this be taken to mean? 
+<span class="no">158 </span>                        // TODO: try to figure out something better 
+<span class="no">159 </span>                        return null; 
+<span class="no">160 </span>                    } 
+<span class="no">161 </span>                    // ... would this actually work? 
+<span class="no">162 </span>                    deser = ctxt.findContextualValueDeserializer(actual, _property); 
+<span class="no">163 </span>                } 
+<span class="no">164 </span>            } else { 
+<span class="no">165 </span>                /* 16-Dec-2010, tatu: Since nominal type we get here has no (generic) type parameters, 
+<span class="no">166 </span>                 *   we actually now need to explicitly narrow from base type (which may have parameterization) 
+<span class="no">167 </span>                 *   using raw type. 
+<span class="no">168 </span>                 * 
+<span class="no">169 </span>                 *   One complication, though; can not change &apos;type class&apos; (simple type to container); otherwise 
+<span class="no">170 </span>                 *   we may try to narrow a SimpleType (Object.class) into MapType (Map.class), losing actual 
+<span class="no">171 </span>                 *   type in process (getting SimpleType of Map.class which will not work as expected) 
+<span class="no">172 </span>                 */ 
+<span class="no">173 </span>                if ((_baseType != null) 
+<span class="no">174 </span>                        &amp;&amp; _baseType.getClass() == type.getClass()) <span id="p17" class="ep17"><span id="p16" class="ep16"><span id="p15" class="ep15"><span id="p14" class="ep14"><span id="p13" class="ep13"><span id="n12" class="en12"><a data-partner="#m12" class="mov" href="#n12">{ 
+<span class="no">175 </span>                    </a><span id="n13" class="en13"><a class="del" href="#n13">/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense; 
+<span class="no">176 </span>                     *   but it appears to check that JavaType impl class is the same which is 
+<span class="no">177 </span>                     *   important for some reason? 
+<span class="no">178 </span>                     *   Disabling the check will break 2 Enum-related tests. 
+<span class="no">179 </span>                     */</a></span><a data-partner="#m12" class="mov" href="#n12"> 
+<span class="no">180 </span>                    </a><span id="n14" class="en14"><a class="del" href="#n14">// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full</a></span><a data-partner="#m12" class="mov" href="#n12"> 
+<span class="no">181 </span>                    </a><span id="n15" class="en15"><a class="del" href="#n15">//   generic type with custom type resolvers. If so, should try to retain them.</a></span><a data-partner="#m12" class="mov" href="#n12"> 
+<span class="no">182 </span>                    </a><span id="n16" class="en16"><a class="del" href="#n16">//  Whether this is sufficient to avoid problems remains to be seen, but for</a></span><a data-partner="#m12" class="mov" href="#n12"> 
+<span class="no">183 </span>                    </a><span id="n17" class="en17"><a class="del" href="#n17">//  now it should improve things.</a></span><a data-partner="#m12" class="mov" href="#n12"> 
+<span class="no">184 </span>                        type = ctxt.getTypeFactory().constructSpecializedType(_baseType, type.getRawClass()); 
+<span class="no">185 </span>                }</a></span></span></span></span></span></span> 
+<span class="no">186 </span>                deser = ctxt.findContextualValueDeserializer(type, _property); 
+<span class="no">187 </span>            } 
+<span class="no">188 </span>            _deserializers.put(typeId, deser); 
+<span class="no">189 </span>        } 
+<span class="no">190 </span>        return deser; 
+<span class="no">191 </span>    } 
+<span class="no">192 </span> 
+<span class="no">193 </span>    protected final JsonDeserializer&lt;Object&gt; _findDefaultImplDeserializer(DeserializationContext ctxt) throws IOException 
+<span class="no">194 </span>    { 
+<span class="no">195 </span>        /* 06-Feb-2013, tatu: As per [databind#148], consider default implementation value of 
+<span class="no">196 </span>         *   {@link java.lang.Void} to mean &quot;serialize as null&quot;; as well as DeserializationFeature 
+<span class="no">197 </span>         *   to do swift mapping to null 
+<span class="no">198 </span>         */ 
+<span class="no">199 </span>        if (_defaultImpl == null) { 
+<span class="no">200 </span>            if (!ctxt.isEnabled(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)) { 
+<span class="no">201 </span>                return NullifyingDeserializer.instance; 
+<span class="no">202 </span>            } 
+<span class="no">203 </span>            return null; 
+<span class="no">204 </span>        } 
+<span class="no">205 </span>        Class&lt;?&gt; raw = _defaultImpl.getRawClass(); 
+<span class="no">206 </span>        if (ClassUtil.isBogusClass(raw)) { 
+<span class="no">207 </span>            return NullifyingDeserializer.instance; 
+<span class="no">208 </span>        } 
+<span class="no">209 </span>         
+<span class="no">210 </span>        synchronized (_defaultImpl) { 
+<span class="no">211 </span>            if (_defaultImplDeserializer == null) { 
+<span class="no">212 </span>                _defaultImplDeserializer = ctxt.findContextualValueDeserializer( 
+<span class="no">213 </span>                        _defaultImpl, _property); 
+<span class="no">214 </span>            } 
+<span class="no">215 </span>            return _defaultImplDeserializer; 
+<span class="no">216 </span>        } 
+<span class="no">217 </span>    } 
+<span class="no">218 </span> 
+<span class="no">219 </span>    /** 
+<span class="no">220 </span>     * Helper method called when {@link JsonParser} indicates that it can use 
+<span class="no">221 </span>     * so-called native type ids. Assumption from there is that only native 
+<span class="no">222 </span>     * type ids are to be used. 
+<span class="no">223 </span>     *  
+<span class="no">224 </span>     * @since 2.3 
+<span class="no">225 </span>     */ 
+<span class="no">226 </span>    @Deprecated 
+<span class="no">227 </span>    protected Object _deserializeWithNativeTypeId(JsonParser jp, DeserializationContext ctxt) throws IOException { 
+<span class="no">228 </span>        return _deserializeWithNativeTypeId(jp, ctxt, jp.getTypeId()); 
+<span class="no">229 </span>    } 
+<span class="no">230 </span> 
+<span class="no">231 </span>    /** 
+<span class="no">232 </span>     * Helper method called when {@link JsonParser} indicates that it can use 
+<span class="no">233 </span>     * so-called native type ids, and such type id has been found. 
+<span class="no">234 </span>     *  
+<span class="no">235 </span>     * @since 2.4 
+<span class="no">236 </span>     */ 
+<span class="no">237 </span>    protected Object _deserializeWithNativeTypeId(JsonParser jp, DeserializationContext ctxt, Object typeId) 
+<span class="no">238 </span>        throws IOException 
+<span class="no">239 </span>    { 
+<span class="no">240 </span>        JsonDeserializer&lt;Object&gt; deser; 
+<span class="no">241 </span>        if (typeId == null) { 
+<span class="no">242 </span>            /* 04-May-2014, tatu: Should error be obligatory, or should there be another method 
+<span class="no">243 </span>             *   for &quot;try to deserialize with native tpye id&quot;? 
+<span class="no">244 </span>             */ 
+<span class="no">245 </span>            deser = _findDefaultImplDeserializer(ctxt); 
+<span class="no">246 </span>            if (deser == null) { 
+<span class="no">247 </span>                ctxt.reportMappingException(&quot;No (native) type id found when one was expected for polymorphic type handling&quot;); 
+<span class="no">248 </span>                return null; 
+<span class="no">249 </span>            } 
+<span class="no">250 </span>        } else { 
+<span class="no">251 </span>            String typeIdStr = (typeId instanceof String) ? (String) typeId : String.valueOf(typeId); 
+<span class="no">252 </span>            deser = _findDeserializer(ctxt, typeIdStr); 
+<span class="no">253 </span>        } 
+<span class="no">254 </span>        return deser.deserialize(jp, ctxt); 
+<span class="no">255 </span>    } 
+<span class="no">256 </span> 
+<span class="no">257 </span>    /** 
+<span class="no">258 </span>     * Helper method called when given type id can not be resolved into  
+<span class="no">259 </span>     * concrete deserializer either directly (using given {@link  TypeIdResolver}), 
+<span class="no">260 </span>     * or using default type. 
+<span class="no">261 </span>     * Default implementation simply throws a {@link com.fasterxml.jackson.databind.JsonMappingException} to 
+<span class="no">262 </span>     * indicate the problem; sub-classes may choose 
+<span class="no">263 </span>     * 
+<span class="no">264 </span>     * @return If it is possible to resolve type id into a {@link JsonDeserializer} 
+<span class="no">265 </span>     *   should return that deserializer; otherwise throw an exception to indicate 
+<span class="no">266 </span>     *   the problem. 
+<span class="no">267 </span>     * 
+<span class="no">268 </span>     * @since 2.8 
+<span class="no">269 </span>     */ 
+<span class="no">270 </span>    protected JavaType _handleUnknownTypeId(DeserializationContext ctxt, String typeId, 
+<span class="no">271 </span>            TypeIdResolver idResolver, JavaType baseType) 
+<span class="no">272 </span>        throws IOException 
+<span class="no">273 </span>    { 
+<span class="no">274 </span>        String extraDesc; 
+<span class="no">275 </span>        if (idResolver instanceof TypeIdResolverBase) { 
+<span class="no">276 </span>            extraDesc = ((TypeIdResolverBase) idResolver).getDescForKnownTypeIds(); 
+<span class="no">277 </span>            if (extraDesc == null) { 
+<span class="no">278 </span>                extraDesc = &quot;known type ids are not statically known&quot;; 
+<span class="no">279 </span>            } else { 
+<span class="no">280 </span>                extraDesc = &quot;known type ids = &quot; + extraDesc; 
+<span class="no">281 </span>            } 
+<span class="no">282 </span>        } else { 
+<span class="no">283 </span>            extraDesc = null; 
+<span class="no">284 </span>        } 
+<span class="no">285 </span>        return ctxt.handleUnknownTypeId(_baseType, typeId, idResolver, extraDesc); 
+<span class="no">286 </span>    } 
+<span class="no">287 </span>} 
+<span class="no">288 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">2_B (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>package com.fasterxml.jackson.databind.jsontype.impl; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import java.io.IOException; 
+<span class="no">  4 </span>import java.util.Map; 
+<span class="no">  5 </span>import java.util.concurrent.ConcurrentHashMap; 
+<span class="no">  6 </span> 
+<span class="no">  7 </span>import com.fasterxml.jackson.annotation.JsonTypeInfo; 
+<span class="no">  8 </span>import com.fasterxml.jackson.core.*; 
+<span class="no">  9 </span>import com.fasterxml.jackson.databind.BeanProperty; 
+<span class="no"> 10 </span>import com.fasterxml.jackson.databind.DeserializationContext; 
+<span class="no"> 11 </span>import com.fasterxml.jackson.databind.DeserializationFeature; 
+<span class="no"> 12 </span>import com.fasterxml.jackson.databind.JavaType; 
+<span class="no"> 13 </span>import com.fasterxml.jackson.databind.JsonDeserializer; 
+<span class="no"> 14 </span>import com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer; 
+<span class="no"> 15 </span>import com.fasterxml.jackson.databind.jsontype.TypeDeserializer; 
+<span class="no"> 16 </span>import com.fasterxml.jackson.databind.jsontype.TypeIdResolver; 
+<span class="no"> 17 </span>import com.fasterxml.jackson.databind.util.ClassUtil; 
+<span class="no"> 18 </span> 
+<span class="no"> 19 </span>/** 
+<span class="no"> 20 </span> * Base class for all standard Jackson {@link TypeDeserializer}s. 
+<span class="no"> 21 </span> */ 
+<span class="no"> 22 </span>public abstract class TypeDeserializerBase 
+<span class="no"> 23 </span>    extends TypeDeserializer 
+<span class="no"> 24 </span>    implements java.io.Serializable 
+<span class="no"> 25 </span>{ 
+<span class="no"> 26 </span>    private static final long serialVersionUID = 1; 
+<span class="no"> 27 </span>     
+<span class="no"> 28 </span>    protected final TypeIdResolver _idResolver; 
+<span class="no"> 29 </span>     
+<span class="no"> 30 </span>    protected final JavaType _baseType; 
+<span class="no"> 31 </span> 
+<span class="no"> 32 </span>    /** 
+<span class="no"> 33 </span>     * Property that contains value for which type information 
+<span class="no"> 34 </span>     * is included; null if value is a root value. 
+<span class="no"> 35 </span>     * Note that this value is not assigned during construction 
+<span class="no"> 36 </span>     * but only when {@link #forProperty} is called to create 
+<span class="no"> 37 </span>     * a copy. 
+<span class="no"> 38 </span>     */ 
+<span class="no"> 39 </span>    protected final BeanProperty _property; 
+<span class="no"> 40 </span> 
+<span class="no"> 41 </span>    /** 
+<span class="no"> 42 </span>     * Type to use as the default implementation, if type id is 
+<span class="no"> 43 </span>     * missing or can not be resolved. 
+<span class="no"> 44 </span>     */ 
+<span class="no"> 45 </span>    protected final JavaType _defaultImpl; 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>    /** 
+<span class="no"> 48 </span>     * Name of type property used; needed for non-property versions too, 
+<span class="no"> 49 </span>     * in cases where type id is to be exposed as part of JSON. 
+<span class="no"> 50 </span>     */ 
+<span class="no"> 51 </span>    protected final String _typePropertyName; 
+<span class="no"> 52 </span>     
+<span class="no"> 53 </span>    protected final boolean _typeIdVisible; 
+<span class="no"> 54 </span>     
+<span class="no"> 55 </span>    /** 
+<span class="no"> 56 </span>     * For efficient operation we will lazily build mappings from type ids 
+<span class="no"> 57 </span>     * to actual deserializers, once needed. 
+<span class="no"> 58 </span>     */ 
+<span class="no"> 59 </span>    protected final Map&lt;String,JsonDeserializer&lt;Object&gt;&gt; _deserializers; 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>    protected JsonDeserializer&lt;Object&gt; _defaultImplDeserializer; 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /* 
+<span class="no"> 64 </span>    /********************************************************** 
+<span class="no"> 65 </span>    /* Life-cycle 
+<span class="no"> 66 </span>    /********************************************************** 
+<span class="no"> 67 </span>     */ 
+<span class="no"> 68 </span> 
+<span class="no"> 69 </span>    /** 
+<span class="no"> 70 </span>     * @since 2.8 
+<span class="no"> 71 </span>     */ 
+<span class="no"> 72 </span>    protected TypeDeserializerBase(JavaType baseType, TypeIdResolver idRes, 
+<span class="no"> 73 </span>            String typePropertyName, boolean typeIdVisible, JavaType defaultImpl) 
+<span class="no"> 74 </span>    { 
+<span class="no"> 75 </span>        _baseType = baseType; 
+<span class="no"> 76 </span>        _idResolver = idRes; 
+<span class="no"> 77 </span>        // 22-Dec-2015, tatu: as per [databind#1055], avoid NPE 
+<span class="no"> 78 </span>        _typePropertyName = (typePropertyName == null) ? &quot;&quot; : typePropertyName; 
+<span class="no"> 79 </span>        _typeIdVisible = typeIdVisible; 
+<span class="no"> 80 </span>        // defaults are fine, although shouldn&apos;t need much concurrency 
+<span class="no"> 81 </span>        _deserializers = new ConcurrentHashMap&lt;String, JsonDeserializer&lt;Object&gt;&gt;(16, 0.75f, 2); 
+<span class="no"> 82 </span>        _defaultImpl = defaultImpl; 
+<span class="no"> 83 </span>        _property = null; 
+<span class="no"> 84 </span>    } 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span>    protected TypeDeserializerBase(TypeDeserializerBase src, BeanProperty property) 
+<span class="no"> 87 </span>    { 
+<span class="no"> 88 </span>        _baseType = src._baseType; 
+<span class="no"> 89 </span>        _idResolver = src._idResolver; 
+<span class="no"> 90 </span>        _typePropertyName = src._typePropertyName; 
+<span class="no"> 91 </span>        _typeIdVisible = src._typeIdVisible; 
+<span class="no"> 92 </span>        _deserializers = src._deserializers; 
+<span class="no"> 93 </span>        _defaultImpl = src._defaultImpl; 
+<span class="no"> 94 </span>        _defaultImplDeserializer = src._defaultImplDeserializer; 
+<span class="no"> 95 </span>        _property = property; 
+<span class="no"> 96 </span>    } 
+<span class="no"> 97 </span> 
+<span class="no"> 98 </span>    @Override 
+<span class="no"> 99 </span>    public abstract TypeDeserializer forProperty(BeanProperty prop); 
+<span class="no">100 </span> 
+<span class="no">101 </span>    /* 
+<span class="no">102 </span>    /********************************************************** 
+<span class="no">103 </span>    /* Accessors 
+<span class="no">104 </span>    /********************************************************** 
+<span class="no">105 </span>     */ 
+<span class="no">106 </span>     
+<span class="no">107 </span>    @Override 
+<span class="no">108 </span>    public abstract JsonTypeInfo.As getTypeInclusion(); 
+<span class="no">109 </span> 
+<span class="no">110 </span>    public String baseTypeName() { return _baseType.getRawClass().getName(); } 
+<span class="no">111 </span> 
+<span class="no">112 </span>    @Override 
+<span class="no">113 </span>    public final String getPropertyName() { return _typePropertyName; } 
+<span class="no">114 </span>     
+<span class="no">115 </span>    @Override     
+<span class="no">116 </span>    public TypeIdResolver getTypeIdResolver() { return _idResolver; } 
+<span class="no">117 </span> 
+<span class="no">118 </span>    @Override     
+<span class="no">119 </span>    public Class&lt;?&gt; getDefaultImpl() { 
+<span class="no">120 </span>        return (_defaultImpl == null) ? null : _defaultImpl.getRawClass(); 
+<span class="no">121 </span>    } 
+<span class="no">122 </span>     
+<span class="no">123 </span>    @Override 
+<span class="no">124 </span>    public String toString() 
+<span class="no">125 </span>    { 
+<span class="no">126 </span>        StringBuilder sb = new StringBuilder(); 
+<span class="no">127 </span>        sb.append(&apos;[&apos;).append(getClass().getName()); 
+<span class="no">128 </span>        sb.append(&quot;; base-type:&quot;).append(_baseType); 
+<span class="no">129 </span>        sb.append(&quot;; id-resolver: &quot;).append(_idResolver); 
+<span class="no">130 </span>    	    sb.append(&apos;]&apos;); 
+<span class="no">131 </span>    	    return sb.toString(); 
+<span class="no">132 </span>    } 
+<span class="no">133 </span>     
+<span class="no">134 </span>    /* 
+<span class="no">135 </span>    /********************************************************** 
+<span class="no">136 </span>    /* Helper methods for sub-classes 
+<span class="no">137 </span>    /********************************************************** 
+<span class="no">138 </span>     */ 
+<span class="no">139 </span> 
+<span class="no">140 </span>    protected final JsonDeserializer&lt;Object&gt; _findDeserializer(DeserializationContext ctxt, 
+<span class="no">141 </span>            String typeId) throws IOException 
+<span class="no">142 </span>    { 
+<span class="no">143 </span>        JsonDeserializer&lt;Object&gt; deser = _deserializers.get(typeId); 
+<span class="no">144 </span>        if (deser == null) { 
+<span class="no">145 </span>            /* As per [Databind#305], need to provide contextual info. But for 
+<span class="no">146 </span>             * backwards compatibility, let&apos;s start by only supporting this 
+<span class="no">147 </span>             * for base class, not via interface. Later on we can add this 
+<span class="no">148 </span>             * to the interface, assuming deprecation at base class helps. 
+<span class="no">149 </span>             */ 
+<span class="no">150 </span>            JavaType type = _idResolver.typeFromId(ctxt, typeId); 
+<span class="no">151 </span>            if (type == null) { 
+<span class="no">152 </span>                // As per [JACKSON-614], use the default impl if no type id available: 
+<span class="no">153 </span>                deser = _findDefaultImplDeserializer(ctxt); 
+<span class="no">154 </span>                if (deser == null) { 
+<span class="no">155 </span>                    // 10-May-2016, tatu: We may get some help... 
+<span class="no">156 </span>                    JavaType actual = _handleUnknownTypeId(ctxt, typeId, _idResolver, _baseType); 
+<span class="no">157 </span>                    if (actual == null) { // what should this be taken to mean? 
+<span class="no">158 </span>                        // TODO: try to figure out something better 
+<span class="no">159 </span>                        return null; 
+<span class="no">160 </span>                    } 
+<span class="no">161 </span>                    // ... would this actually work? 
+<span class="no">162 </span>                    deser = ctxt.findContextualValueDeserializer(actual, _property); 
+<span class="no">163 </span>                } 
+<span class="no">164 </span>            } else { 
+<span class="no">165 </span>                /* 16-Dec-2010, tatu: Since nominal type we get here has no (generic) type parameters, 
+<span class="no">166 </span>                 *   we actually now need to explicitly narrow from base type (which may have parameterization) 
+<span class="no">167 </span>                 *   using raw type. 
+<span class="no">168 </span>                 * 
+<span class="no">169 </span>                 *   One complication, though; can not change &apos;type class&apos; (simple type to container); otherwise 
+<span class="no">170 </span>                 *   we may try to narrow a SimpleType (Object.class) into MapType (Map.class), losing actual 
+<span class="no">171 </span>                 *   type in process (getting SimpleType of Map.class which will not work as expected) 
+<span class="no">172 </span>                 */ 
+<span class="no">173 </span>                <span id="p1" class="ep1">if ((_baseType != null) 
+<span class="no">174 </span>                        &amp;&amp; _baseType.getClass() == type.getClass()) <span id="p9" class="ep9"><span id="p8" class="ep8"><span id="p7" class="ep7"><span id="p6" class="ep6"><span id="p5" class="ep5"><span id="p4" class="ep4"><span id="p3" class="ep3"><span id="p2" class="ep2"><span id="n1" class="en1"><span id="n2" class="en2"><a class="ins" href="#n2">{</a></span><a class="ins" href="#n1"> 
+<span class="no">175 </span>                    </a><span id="n3" class="en3"><a class="ins" href="#n3">/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense; 
+<span class="no">176 </span>                     *   but it appears to check that JavaType impl class is the same which is 
+<span class="no">177 </span>                     *   important for some reason? 
+<span class="no">178 </span>                     *   Disabling the check will break 2 Enum-related tests. 
+<span class="no">179 </span>                     */</a></span><a class="ins" href="#n1"> 
+<span class="no">180 </span>                    </a><span id="n4" class="en4"><a class="ins" href="#n4">// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full</a></span><a class="ins" href="#n1"> 
+<span class="no">181 </span>                    </a><span id="n5" class="en5"><a class="ins" href="#n5">//   generic type with custom type resolvers. If so, should try to retain them.</a></span><a class="ins" href="#n1"> 
+<span class="no">182 </span>                    </a><span id="n6" class="en6"><a class="ins" href="#n6">//  Whether this is sufficient to avoid problems remains to be seen, but for</a></span><a class="ins" href="#n1"> 
+<span class="no">183 </span>                    </a><span id="n7" class="en7"><a class="ins" href="#n7">//  now it should improve things.</a></span><a class="ins" href="#n1"> 
+<span class="no">184 </span>                    </a><span id="p11" class="ep11"><span id="p10" class="ep10"><span id="n8" class="en8"><span id="n10" class="en10"><a class="ins" href="#n10">if</a></span><a class="ins" href="#n8"> </a><span id="n11" class="en11"><a class="ins" href="#n11">(!type.hasGenericTypes())</a></span><a class="ins" href="#n8"> </a><span id="m12" class="em12"><a data-partner="#n12" class="mov" href="#m12">{ 
+<span class="no">185 </span>                        type = ctxt.getTypeFactory().constructSpecializedType(_baseType, type.getRawClass()); 
+<span class="no">186 </span>                    }</a></span></span></span></span><a class="ins" href="#n1"> 
+<span class="no">187 </span>                </a><span id="n9" class="en9"><a class="ins" href="#n9">}</a></span></span></span></span></span></span></span></span></span></span></span> 
+<span class="no">188 </span>                deser = ctxt.findContextualValueDeserializer(type, _property); 
+<span class="no">189 </span>            } 
+<span class="no">190 </span>            _deserializers.put(typeId, deser); 
+<span class="no">191 </span>        } 
+<span class="no">192 </span>        return deser; 
+<span class="no">193 </span>    } 
+<span class="no">194 </span> 
+<span class="no">195 </span>    protected final JsonDeserializer&lt;Object&gt; _findDefaultImplDeserializer(DeserializationContext ctxt) throws IOException 
+<span class="no">196 </span>    { 
+<span class="no">197 </span>        /* 06-Feb-2013, tatu: As per [databind#148], consider default implementation value of 
+<span class="no">198 </span>         *   {@link java.lang.Void} to mean &quot;serialize as null&quot;; as well as DeserializationFeature 
+<span class="no">199 </span>         *   to do swift mapping to null 
+<span class="no">200 </span>         */ 
+<span class="no">201 </span>        if (_defaultImpl == null) { 
+<span class="no">202 </span>            if (!ctxt.isEnabled(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)) { 
+<span class="no">203 </span>                return NullifyingDeserializer.instance; 
+<span class="no">204 </span>            } 
+<span class="no">205 </span>            return null; 
+<span class="no">206 </span>        } 
+<span class="no">207 </span>        Class&lt;?&gt; raw = _defaultImpl.getRawClass(); 
+<span class="no">208 </span>        if (ClassUtil.isBogusClass(raw)) { 
+<span class="no">209 </span>            return NullifyingDeserializer.instance; 
+<span class="no">210 </span>        } 
+<span class="no">211 </span>         
+<span class="no">212 </span>        synchronized (_defaultImpl) { 
+<span class="no">213 </span>            if (_defaultImplDeserializer == null) { 
+<span class="no">214 </span>                _defaultImplDeserializer = ctxt.findContextualValueDeserializer( 
+<span class="no">215 </span>                        _defaultImpl, _property); 
+<span class="no">216 </span>            } 
+<span class="no">217 </span>            return _defaultImplDeserializer; 
+<span class="no">218 </span>        } 
+<span class="no">219 </span>    } 
+<span class="no">220 </span> 
+<span class="no">221 </span>    /** 
+<span class="no">222 </span>     * Helper method called when {@link JsonParser} indicates that it can use 
+<span class="no">223 </span>     * so-called native type ids. Assumption from there is that only native 
+<span class="no">224 </span>     * type ids are to be used. 
+<span class="no">225 </span>     *  
+<span class="no">226 </span>     * @since 2.3 
+<span class="no">227 </span>     */ 
+<span class="no">228 </span>    @Deprecated 
+<span class="no">229 </span>    protected Object _deserializeWithNativeTypeId(JsonParser jp, DeserializationContext ctxt) throws IOException { 
+<span class="no">230 </span>        return _deserializeWithNativeTypeId(jp, ctxt, jp.getTypeId()); 
+<span class="no">231 </span>    } 
+<span class="no">232 </span> 
+<span class="no">233 </span>    /** 
+<span class="no">234 </span>     * Helper method called when {@link JsonParser} indicates that it can use 
+<span class="no">235 </span>     * so-called native type ids, and such type id has been found. 
+<span class="no">236 </span>     *  
+<span class="no">237 </span>     * @since 2.4 
+<span class="no">238 </span>     */ 
+<span class="no">239 </span>    protected Object _deserializeWithNativeTypeId(JsonParser jp, DeserializationContext ctxt, Object typeId) 
+<span class="no">240 </span>        throws IOException 
+<span class="no">241 </span>    { 
+<span class="no">242 </span>        JsonDeserializer&lt;Object&gt; deser; 
+<span class="no">243 </span>        if (typeId == null) { 
+<span class="no">244 </span>            /* 04-May-2014, tatu: Should error be obligatory, or should there be another method 
+<span class="no">245 </span>             *   for &quot;try to deserialize with native tpye id&quot;? 
+<span class="no">246 </span>             */ 
+<span class="no">247 </span>            deser = _findDefaultImplDeserializer(ctxt); 
+<span class="no">248 </span>            if (deser == null) { 
+<span class="no">249 </span>                ctxt.reportMappingException(&quot;No (native) type id found when one was expected for polymorphic type handling&quot;); 
+<span class="no">250 </span>                return null; 
+<span class="no">251 </span>            } 
+<span class="no">252 </span>        } else { 
+<span class="no">253 </span>            String typeIdStr = (typeId instanceof String) ? (String) typeId : String.valueOf(typeId); 
+<span class="no">254 </span>            deser = _findDeserializer(ctxt, typeIdStr); 
+<span class="no">255 </span>        } 
+<span class="no">256 </span>        return deser.deserialize(jp, ctxt); 
+<span class="no">257 </span>    } 
+<span class="no">258 </span> 
+<span class="no">259 </span>    /** 
+<span class="no">260 </span>     * Helper method called when given type id can not be resolved into  
+<span class="no">261 </span>     * concrete deserializer either directly (using given {@link  TypeIdResolver}), 
+<span class="no">262 </span>     * or using default type. 
+<span class="no">263 </span>     * Default implementation simply throws a {@link com.fasterxml.jackson.databind.JsonMappingException} to 
+<span class="no">264 </span>     * indicate the problem; sub-classes may choose 
+<span class="no">265 </span>     * 
+<span class="no">266 </span>     * @return If it is possible to resolve type id into a {@link JsonDeserializer} 
+<span class="no">267 </span>     *   should return that deserializer; otherwise throw an exception to indicate 
+<span class="no">268 </span>     *   the problem. 
+<span class="no">269 </span>     * 
+<span class="no">270 </span>     * @since 2.8 
+<span class="no">271 </span>     */ 
+<span class="no">272 </span>    protected JavaType _handleUnknownTypeId(DeserializationContext ctxt, String typeId, 
+<span class="no">273 </span>            TypeIdResolver idResolver, JavaType baseType) 
+<span class="no">274 </span>        throws IOException 
+<span class="no">275 </span>    { 
+<span class="no">276 </span>        String extraDesc; 
+<span class="no">277 </span>        if (idResolver instanceof TypeIdResolverBase) { 
+<span class="no">278 </span>            extraDesc = ((TypeIdResolverBase) idResolver).getDescForKnownTypeIds(); 
+<span class="no">279 </span>            if (extraDesc == null) { 
+<span class="no">280 </span>                extraDesc = &quot;known type ids are not statically known&quot;; 
+<span class="no">281 </span>            } else { 
+<span class="no">282 </span>                extraDesc = &quot;known type ids = &quot; + extraDesc; 
+<span class="no">283 </span>            } 
+<span class="no">284 </span>        } else { 
+<span class="no">285 </span>            extraDesc = null; 
+<span class="no">286 </span>        } 
+<span class="no">287 </span>        return ctxt.handleUnknownTypeId(_baseType, typeId, idResolver, extraDesc); 
+<span class="no">288 </span>    } 
+<span class="no">289 </span>} 
+<span class="no">290 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

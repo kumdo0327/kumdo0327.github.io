@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .page:has(#n7:target) .en7 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p7:target) .ep7 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .page:has(#m2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .sec {
+    line-height: 1;
+    font-weight: bold;
+    padding: 0;
+    font-size: 24px;
+    margin: 12px 0;
+  }
+  .page:has(#m2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n5:target) .en5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p5:target) .ep5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .toolbar {
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+  }
+  .ins, .del, .mov, .upd {
+    padding-bottom: 0.05em;
+    border-top:  0.05em solid black;
+    border-bottom:  0.05em solid black;
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+  }
+  .grid {
+    gap: 12px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-height: 252px;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .error {
+    color: #b51700;
+  }
+  .codebox {
+    line-height: 1.5;
+    flex: 1;
+    background: #f7f7f7;
+    overflow: auto;
+    letter-spacing: 0.05em;
+    padding: 4px;
+    min-height: 0;
+    scroll-behavior: smooth;
+    font-size: 12px;
+    scroll-padding-top: 54px;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .token {
+    color: #017100;
+  }
+  .page:has(#n8:target) .en8 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p8:target) .ep8 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .edit {
+    height: 60px;
+    font-size: 14px;
+  }
+  .editbox {
+    line-height: 1.8;
+    flex: 1;
+    font-weight: 500;
+    padding: 4px 8px;
+    min-height: 0;
+    font-size: 14px;
+    overflow: auto;
+    background: #f7f7f7;
+  }
+  .page:has(#n3:target) .en3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p3:target) .ep3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page {
+    max-width: 100vw;
+    padding: 0 12px 8px 12px;
+    margin: 0 auto;
+  }
+  pre {
+    margin: 0;
+  }
+  .panel-header {
+    line-height: 1;
+    font-weight: bold;
+    background: #ebebeb;
+    border-bottom: 1px solid #afafaf;
+    padding: 8px 10px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    display: flex;
+  }
+  .panel, .edit {
+    box-sizing: border-box;
+    flex-direction: column;
+    min-width: 0;
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #afafaf;
+  }
+  .no {
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    letter-spacing: normal;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .page:has(#m1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#m1:target) .em1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .page:has(#p6:target) .ep6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8 {
+    display: none;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .page:has(#n4:target) .en4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p4:target) .ep4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n1:target) .em1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+      <span class="i3">Edit #3</span>
+      <span class="i4">Edit #4</span>
+      <span class="i5">Edit #5</span>
+      <span class="i6">Edit #6</span>
+      <span class="i7">Edit #7</span>
+      <span class="i8">Edit #8</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n8">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n8">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i8"><a href="#n7">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> block</a> [189, 29] - [191, 6]
+<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> block</a> [188, 61] - [191, 4]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> return_statement</a> [192, 5] - [192, 51]
+<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> return_statement</a> [190, 5] - [190, 51]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n3"> {</a>: <span class=token>&quot;{&quot;</span> [188, 61] - [188, 62]
+<span style="font-weight:600">  from   </span><a href="#p3"> block</a> [188, 61] - [193, 4]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n4"> if</a>: <span class=token>&quot;if&quot;</span> [189, 5] - [189, 7]
+<span style="font-weight:600">  from   </span><a href="#p4"> if_statement</a> [189, 5] - [191, 6]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete subtree </span><a href="#n5"> parenthesized_expression</a> [189, 8] - [189, 28]
+<span style="font-weight:600">  from           </span><a href="#p5"> if_statement</a> [189, 5] - [191, 6]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> if_statement</a> [189, 5] - [191, 6]
+<span style="font-weight:600">  from   </span><a href="#p6"> block</a> [188, 61] - [193, 4]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n7"> }</a>: <span class=token>&quot;}&quot;</span> [193, 3] - [193, 4]
+<span style="font-weight:600">  from   </span><a href="#p7"> block</a> [188, 61] - [193, 4]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> block</a> [188, 61] - [193, 4]
+<span style="font-weight:600">  from   </span><a href="#p8"> method_declaration</a> [188, 3] - [193, 4]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">1_B (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>/* 
+<span class="no">  2 </span> * 
+<span class="no">  3 </span> * ***** BEGIN LICENSE BLOCK ***** 
+<span class="no">  4 </span> * Version: MPL 1.1/GPL 2.0 
+<span class="no">  5 </span> * 
+<span class="no">  6 </span> * The contents of this file are subject to the Mozilla Public License Version 
+<span class="no">  7 </span> * 1.1 (the &quot;License&quot;); you may not use this file except in compliance with 
+<span class="no">  8 </span> * the License. You may obtain a copy of the License at 
+<span class="no">  9 </span> * http://www.mozilla.org/MPL/ 
+<span class="no"> 10 </span> * 
+<span class="no"> 11 </span> * Software distributed under the License is distributed on an &quot;AS IS&quot; basis, 
+<span class="no"> 12 </span> * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+<span class="no"> 13 </span> * for the specific language governing rights and limitations under the 
+<span class="no"> 14 </span> * License. 
+<span class="no"> 15 </span> * 
+<span class="no"> 16 </span> * The Original Code is Rhino code, released 
+<span class="no"> 17 </span> * May 6, 1999. 
+<span class="no"> 18 </span> * 
+<span class="no"> 19 </span> * The Initial Developer of the Original Code is 
+<span class="no"> 20 </span> * Netscape Communications Corporation. 
+<span class="no"> 21 </span> * Portions created by the Initial Developer are Copyright (C) 1997-1999 
+<span class="no"> 22 </span> * the Initial Developer. All Rights Reserved. 
+<span class="no"> 23 </span> * 
+<span class="no"> 24 </span> * Contributor(s): 
+<span class="no"> 25 </span> *   Bob Jervis 
+<span class="no"> 26 </span> *   Google Inc. 
+<span class="no"> 27 </span> * 
+<span class="no"> 28 </span> * Alternatively, the contents of this file may be used under the terms of 
+<span class="no"> 29 </span> * the GNU General Public License Version 2 or later (the &quot;GPL&quot;), in which 
+<span class="no"> 30 </span> * case the provisions of the GPL are applicable instead of those above. If 
+<span class="no"> 31 </span> * you wish to allow use of your version of this file only under the terms of 
+<span class="no"> 32 </span> * the GPL and not to allow others to use your version of this file under the 
+<span class="no"> 33 </span> * MPL, indicate your decision by deleting the provisions above and replacing 
+<span class="no"> 34 </span> * them with the notice and other provisions required by the GPL. If you do 
+<span class="no"> 35 </span> * not delete the provisions above, a recipient may use your version of this 
+<span class="no"> 36 </span> * file under either the MPL or the GPL. 
+<span class="no"> 37 </span> * 
+<span class="no"> 38 </span> * ***** END LICENSE BLOCK ***** */ 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>package com.google.javascript.rhino; 
+<span class="no"> 41 </span> 
+<span class="no"> 42 </span>import com.google.javascript.rhino.JSDocInfo.Visibility; 
+<span class="no"> 43 </span> 
+<span class="no"> 44 </span>import java.util.Set; 
+<span class="no"> 45 </span> 
+<span class="no"> 46 </span>/** 
+<span class="no"> 47 </span> * A builder for {@link JSDocInfo} objects. This builder abstracts the 
+<span class="no"> 48 </span> * construction process of {@link JSDocInfo} objects whilst minimizing the 
+<span class="no"> 49 </span> * number of instances of {@link JSDocInfo} objects. It provides early 
+<span class="no"> 50 </span> * incompatibility detection among properties stored on the {@code JSDocInfo} 
+<span class="no"> 51 </span> * object being created. 
+<span class="no"> 52 </span> * 
+<span class="no"> 53 </span>* 
+<span class="no"> 54 </span> */ 
+<span class="no"> 55 </span>final public class JSDocInfoBuilder { 
+<span class="no"> 56 </span>  // the current JSDoc which is being populated 
+<span class="no"> 57 </span>  private JSDocInfo currentInfo; 
+<span class="no"> 58 </span> 
+<span class="no"> 59 </span>  // whether the current JSDocInfo has valuable information 
+<span class="no"> 60 </span>  private boolean populated = false; 
+<span class="no"> 61 </span> 
+<span class="no"> 62 </span>  // whether to include the documentation itself when parsing the JsDoc 
+<span class="no"> 63 </span>  private boolean parseDocumentation = false; 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>  // the current marker, if any. 
+<span class="no"> 66 </span>  private JSDocInfo.Marker currentMarker = null; 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>  public JSDocInfoBuilder(boolean parseDocumentation) { 
+<span class="no"> 69 </span>    this.currentInfo = new JSDocInfo(parseDocumentation); 
+<span class="no"> 70 </span>    this.parseDocumentation = parseDocumentation; 
+<span class="no"> 71 </span>  } 
+<span class="no"> 72 </span> 
+<span class="no"> 73 </span>  /** 
+<span class="no"> 74 </span>   * Returns whether this builder is populated with information that can be 
+<span class="no"> 75 </span>   * used to {@link #build} a {@link JSDocInfo} object. 
+<span class="no"> 76 </span>   */ 
+<span class="no"> 77 </span>  public boolean isPopulated() { 
+<span class="no"> 78 </span>    return populated; 
+<span class="no"> 79 </span>  } 
+<span class="no"> 80 </span> 
+<span class="no"> 81 </span>  /** 
+<span class="no"> 82 </span>   * Returns whether this builder is populated with information that can be 
+<span class="no"> 83 </span>   * used to {@link #build} a {@link JSDocInfo} object that has a 
+<span class="no"> 84 </span>   * fileoverview tag. 
+<span class="no"> 85 </span>   */ 
+<span class="no"> 86 </span>  public boolean isPopulatedWithFileOverview() { 
+<span class="no"> 87 </span>    return isPopulated() &amp;&amp; currentInfo.hasFileOverview(); 
+<span class="no"> 88 </span>  } 
+<span class="no"> 89 </span> 
+<span class="no"> 90 </span>  /** 
+<span class="no"> 91 </span>   * Returns whether this builder recorded a description. 
+<span class="no"> 92 </span>   */ 
+<span class="no"> 93 </span>  public boolean isDescriptionRecorded() { 
+<span class="no"> 94 </span>    return currentInfo.getDescription() != null; 
+<span class="no"> 95 </span>  } 
+<span class="no"> 96 </span> 
+<span class="no"> 97 </span>  /** 
+<span class="no"> 98 </span>   * Builds a {@link JSDocInfo} object based on the populated information and 
+<span class="no"> 99 </span>   * returns it. Once this method is called, the builder can be reused to build 
+<span class="no">100 </span>   * another {@link JSDocInfo} object. 
+<span class="no">101 </span>   * 
+<span class="no">102 </span>   * @param sourceName The source file containing the JSDoc. 
+<span class="no">103 </span>   * @return a {@link JSDocInfo} object populated with the values given to this 
+<span class="no">104 </span>   *     builder. If no value was populated, this method simply returns 
+<span class="no">105 </span>   *     {@code null} 
+<span class="no">106 </span>   */ 
+<span class="no">107 </span>  public JSDocInfo build(String sourceName) { 
+<span class="no">108 </span>    if (populated) { 
+<span class="no">109 </span>      JSDocInfo built = currentInfo; 
+<span class="no">110 </span>      built.setSourceName(sourceName); 
+<span class="no">111 </span>      populateDefaults(built); 
+<span class="no">112 </span>      populated = false; 
+<span class="no">113 </span>      currentInfo = new JSDocInfo(this.parseDocumentation); 
+<span class="no">114 </span>      return built; 
+<span class="no">115 </span>    } else { 
+<span class="no">116 </span>      return null; 
+<span class="no">117 </span>    } 
+<span class="no">118 </span>  } 
+<span class="no">119 </span> 
+<span class="no">120 </span>  /** Generate defaults when certain parameters are not specified. */ 
+<span class="no">121 </span>  private static void populateDefaults(JSDocInfo info) { 
+<span class="no">122 </span>    if (info.getVisibility() == null) { 
+<span class="no">123 </span>      info.setVisibility(Visibility.INHERITED); 
+<span class="no">124 </span>    } 
+<span class="no">125 </span>  } 
+<span class="no">126 </span> 
+<span class="no">127 </span>  /** 
+<span class="no">128 </span>   * Adds a marker to the current JSDocInfo and populates the marker with the 
+<span class="no">129 </span>   * annotation information. 
+<span class="no">130 </span>   */ 
+<span class="no">131 </span>  public void markAnnotation(String annotation, int lineno, int charno) { 
+<span class="no">132 </span>    JSDocInfo.Marker marker = currentInfo.addMarker(); 
+<span class="no">133 </span> 
+<span class="no">134 </span>    if (marker != null) { 
+<span class="no">135 </span>      marker.annotation = new JSDocInfo.StringPosition(); 
+<span class="no">136 </span>      marker.annotation.setItem(annotation); 
+<span class="no">137 </span>      marker.annotation.setPositionInformation(lineno, charno, lineno, 
+<span class="no">138 </span>                                               charno + annotation.length()); 
+<span class="no">139 </span>    } 
+<span class="no">140 </span> 
+<span class="no">141 </span>    currentMarker = marker; 
+<span class="no">142 </span>  } 
+<span class="no">143 </span> 
+<span class="no">144 </span>  /** 
+<span class="no">145 </span>   * Adds a textual block to the current marker. 
+<span class="no">146 </span>   */ 
+<span class="no">147 </span>  public void markText(String text, int startLineno, int startCharno, int endLineno, 
+<span class="no">148 </span>                int endCharno) { 
+<span class="no">149 </span>    if (currentMarker != null) { 
+<span class="no">150 </span>      currentMarker.description = new JSDocInfo.StringPosition(); 
+<span class="no">151 </span>      currentMarker.description.setItem(text); 
+<span class="no">152 </span>      currentMarker.description.setPositionInformation(startLineno, startCharno, 
+<span class="no">153 </span>                                                       endLineno, endCharno); 
+<span class="no">154 </span>    } 
+<span class="no">155 </span>  } 
+<span class="no">156 </span> 
+<span class="no">157 </span>  /** 
+<span class="no">158 </span>   * Adds a type declaration to the current marker. 
+<span class="no">159 </span>   */ 
+<span class="no">160 </span>  public void markTypeNode(Node typeNode, int lineno, int startCharno, int endCharno, 
+<span class="no">161 </span>                    boolean hasLC) { 
+<span class="no">162 </span>    if (currentMarker != null) { 
+<span class="no">163 </span>      currentMarker.type = new JSDocInfo.TypePosition(); 
+<span class="no">164 </span>      currentMarker.type.setItem(typeNode); 
+<span class="no">165 </span>      currentMarker.type.hasBrackets = hasLC; 
+<span class="no">166 </span>      currentMarker.type.setPositionInformation(lineno, startCharno, 
+<span class="no">167 </span>                                                lineno, endCharno); 
+<span class="no">168 </span>    } 
+<span class="no">169 </span>  } 
+<span class="no">170 </span> 
+<span class="no">171 </span>  /** 
+<span class="no">172 </span>   * Adds a name declaration to the current marker. 
+<span class="no">173 </span>   */ 
+<span class="no">174 </span>  public void markName(String name, int lineno, int charno) { 
+<span class="no">175 </span>    if (currentMarker != null) { 
+<span class="no">176 </span>      currentMarker.name = new JSDocInfo.StringPosition(); 
+<span class="no">177 </span>      currentMarker.name.setItem(name); 
+<span class="no">178 </span>      currentMarker.name.setPositionInformation(lineno, charno, 
+<span class="no">179 </span>                                                lineno, charno + name.length()); 
+<span class="no">180 </span>    } 
+<span class="no">181 </span>  } 
+<span class="no">182 </span> 
+<span class="no">183 </span>  /** 
+<span class="no">184 </span>   * Records a block-level description. 
+<span class="no">185 </span>   * 
+<span class="no">186 </span>   * @return {@code true} if the description was recorded. 
+<span class="no">187 </span>   */ 
+<span class="no">188 </span>  <span class="ep8" id="p8">public boolean recordBlockDescription(String description) <span class="en8" id="n8"><span class="ep7" id="p7"><span class="ep6" id="p6"><span class="ep3" id="p3"><span class="en3" id="n3"><a class="del" href="#n3">{</a></span><a class="del" href="#n8"> 
+<span class="no">189 </span>    </a><span class="en6" id="n6"><span class="ep5" id="p5"><span class="ep4" id="p4"><span class="en4" id="n4"><a class="del" href="#n4">if</a></span><a class="del" href="#n6"> </a><span class="en5" id="n5"><a class="del" href="#n5">(parseDocumentation)</a></span><a class="del" href="#n6"> </a><span class="en1" id="n1"><a class="mov" data-partner="#m1" href="#n1">{ 
+<span class="no">190 </span>    populated = true; 
+<span class="no">191 </span>    }</a></span></span></span></span><a class="del" href="#n8"> 
+<span class="no">192 </span>    </a><span class="en2" id="n2"><a class="mov" data-partner="#m2" href="#n2">return currentInfo.documentBlock(description);</a></span><a class="del" href="#n8"> 
+<span class="no">193 </span>  </a><span class="en7" id="n7"><a class="del" href="#n7">}</a></span></span></span></span></span></span> 
+<span class="no">194 </span> 
+<span class="no">195 </span>  /** 
+<span class="no">196 </span>   * Records a visibility. 
+<span class="no">197 </span>   * 
+<span class="no">198 </span>   * @return {@code true} if the visibility was recorded and {@code false} 
+<span class="no">199 </span>   *     if it was already defined 
+<span class="no">200 </span>   */ 
+<span class="no">201 </span>  public boolean recordVisibility(Visibility visibility) { 
+<span class="no">202 </span>    if (currentInfo.getVisibility() == null) { 
+<span class="no">203 </span>      populated = true; 
+<span class="no">204 </span>      currentInfo.setVisibility(visibility); 
+<span class="no">205 </span>      return true; 
+<span class="no">206 </span>    } else { 
+<span class="no">207 </span>      return false; 
+<span class="no">208 </span>    } 
+<span class="no">209 </span>  } 
+<span class="no">210 </span> 
+<span class="no">211 </span>  /** 
+<span class="no">212 </span>   * Records a typed parameter. 
+<span class="no">213 </span>   * 
+<span class="no">214 </span>   * @return {@code true} if the typed parameter was recorded and 
+<span class="no">215 </span>   *     {@code false} if a parameter with the same name was already defined 
+<span class="no">216 </span>   */ 
+<span class="no">217 </span>  public boolean recordParameter(String parameterName, JSTypeExpression type) { 
+<span class="no">218 </span>    if (!hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">219 </span>        currentInfo.declareParam(type, parameterName)) { 
+<span class="no">220 </span>      populated = true; 
+<span class="no">221 </span>      return true; 
+<span class="no">222 </span>    } else { 
+<span class="no">223 </span>      return false; 
+<span class="no">224 </span>    } 
+<span class="no">225 </span>  } 
+<span class="no">226 </span> 
+<span class="no">227 </span>  /** 
+<span class="no">228 </span>   * Records a parameter&apos;s description. 
+<span class="no">229 </span>   * 
+<span class="no">230 </span>   * @return {@code true} if the parameter&apos;s description was recorded and 
+<span class="no">231 </span>   *     {@code false} if a parameter with the same name was already defined 
+<span class="no">232 </span>   */ 
+<span class="no">233 </span>  public boolean recordParameterDescription(String parameterName, String description) { 
+<span class="no">234 </span>    if (currentInfo.documentParam(parameterName, description)) { 
+<span class="no">235 </span>      populated = true; 
+<span class="no">236 </span>      return true; 
+<span class="no">237 </span>    } else { 
+<span class="no">238 </span>      return false; 
+<span class="no">239 </span>    } 
+<span class="no">240 </span>  } 
+<span class="no">241 </span> 
+<span class="no">242 </span>  /** 
+<span class="no">243 </span>   * Records a template type name. 
+<span class="no">244 </span>   * 
+<span class="no">245 </span>   * @return {@code true} if the template type name was recorded and 
+<span class="no">246 </span>   *     {@code false} if a template type name was already defined. 
+<span class="no">247 </span>   */ 
+<span class="no">248 </span>  public boolean recordTemplateTypeName(String name) { 
+<span class="no">249 </span>    if (currentInfo.declareTemplateTypeName(name)) { 
+<span class="no">250 </span>      populated = true; 
+<span class="no">251 </span>      return true; 
+<span class="no">252 </span>    } else { 
+<span class="no">253 </span>      return false; 
+<span class="no">254 </span>    } 
+<span class="no">255 </span>  } 
+<span class="no">256 </span> 
+<span class="no">257 </span>  /** 
+<span class="no">258 </span>   * Records a thrown type. 
+<span class="no">259 </span>   */ 
+<span class="no">260 </span>  public boolean recordThrowType(JSTypeExpression type) { 
+<span class="no">261 </span>    if (!hasAnySingletonTypeTags()) { 
+<span class="no">262 </span>      currentInfo.declareThrows(type); 
+<span class="no">263 </span>      populated = true; 
+<span class="no">264 </span>      return true; 
+<span class="no">265 </span>    } 
+<span class="no">266 </span>    return false; 
+<span class="no">267 </span>  } 
+<span class="no">268 </span> 
+<span class="no">269 </span>  /** 
+<span class="no">270 </span>   * Records a throw type&apos;s description. 
+<span class="no">271 </span>   * 
+<span class="no">272 </span>   * @return {@code true} if the type&apos;s description was recorded and 
+<span class="no">273 </span>   *     {@code false} if a description with the same type was already defined 
+<span class="no">274 </span>   */ 
+<span class="no">275 </span>  public boolean recordThrowDescription(JSTypeExpression type, String description) { 
+<span class="no">276 </span>    if (currentInfo.documentThrows(type, description)) { 
+<span class="no">277 </span>      populated = true; 
+<span class="no">278 </span>      return true; 
+<span class="no">279 </span>    } else { 
+<span class="no">280 </span>      return false; 
+<span class="no">281 </span>    } 
+<span class="no">282 </span>  } 
+<span class="no">283 </span> 
+<span class="no">284 </span> 
+<span class="no">285 </span>  /** 
+<span class="no">286 </span>   * Adds an author to the current information. 
+<span class="no">287 </span>   */ 
+<span class="no">288 </span>  public boolean addAuthor(String author) { 
+<span class="no">289 </span>    if (currentInfo.documentAuthor(author)) { 
+<span class="no">290 </span>      populated = true; 
+<span class="no">291 </span>      return true; 
+<span class="no">292 </span>    } else { 
+<span class="no">293 </span>      return false; 
+<span class="no">294 </span>    } 
+<span class="no">295 </span>  } 
+<span class="no">296 </span> 
+<span class="no">297 </span> 
+<span class="no">298 </span>  /** 
+<span class="no">299 </span>   * Adds a reference (&quot;@see&quot;) to the current information. 
+<span class="no">300 </span>   */ 
+<span class="no">301 </span>  public boolean addReference(String reference) { 
+<span class="no">302 </span>    if (currentInfo.documentReference(reference)) { 
+<span class="no">303 </span>      populated = true; 
+<span class="no">304 </span>      return true; 
+<span class="no">305 </span>    } else { 
+<span class="no">306 </span>      return false; 
+<span class="no">307 </span>    } 
+<span class="no">308 </span>  } 
+<span class="no">309 </span> 
+<span class="no">310 </span>  /** 
+<span class="no">311 </span>   * Records the version. 
+<span class="no">312 </span>   */ 
+<span class="no">313 </span>  public boolean recordVersion(String version) { 
+<span class="no">314 </span>    if (currentInfo.documentVersion(version)) { 
+<span class="no">315 </span>      populated = true; 
+<span class="no">316 </span>      return true; 
+<span class="no">317 </span>    } else { 
+<span class="no">318 </span>      return false; 
+<span class="no">319 </span>    } 
+<span class="no">320 </span>  } 
+<span class="no">321 </span> 
+<span class="no">322 </span>  /** 
+<span class="no">323 </span>   * Records the deprecation reason. 
+<span class="no">324 </span>   */ 
+<span class="no">325 </span>  public boolean recordDeprecationReason(String reason) { 
+<span class="no">326 </span>    if (currentInfo.setDeprecationReason(reason)) { 
+<span class="no">327 </span>      populated = true; 
+<span class="no">328 </span>      return true; 
+<span class="no">329 </span>    } else { 
+<span class="no">330 </span>      return false; 
+<span class="no">331 </span>    } 
+<span class="no">332 </span>  } 
+<span class="no">333 </span> 
+<span class="no">334 </span>  /** 
+<span class="no">335 </span>   * Records the list of suppressed warnings. 
+<span class="no">336 </span>   */ 
+<span class="no">337 </span>  public boolean recordSuppressions(Set&lt;String&gt; suppressions) { 
+<span class="no">338 </span>    if (currentInfo.setSuppressions(suppressions)) { 
+<span class="no">339 </span>      populated = true; 
+<span class="no">340 </span>      return true; 
+<span class="no">341 </span>    } else { 
+<span class="no">342 </span>      return false; 
+<span class="no">343 </span>    } 
+<span class="no">344 </span>  } 
+<span class="no">345 </span> 
+<span class="no">346 </span>  /** 
+<span class="no">347 </span>   * Records a type. 
+<span class="no">348 </span>   * 
+<span class="no">349 </span>   * @return {@code true} if the type was recorded and {@code false} if 
+<span class="no">350 </span>   *     it is invalid or was already defined 
+<span class="no">351 </span>   */ 
+<span class="no">352 </span>  public boolean recordType(JSTypeExpression type) { 
+<span class="no">353 </span>    if (type != null &amp;&amp; !hasAnyTypeRelatedTags()) { 
+<span class="no">354 </span>      currentInfo.setType(type); 
+<span class="no">355 </span>      populated = true; 
+<span class="no">356 </span>      return true; 
+<span class="no">357 </span>    } else { 
+<span class="no">358 </span>      return false; 
+<span class="no">359 </span>    } 
+<span class="no">360 </span>  } 
+<span class="no">361 </span> 
+<span class="no">362 </span>  /** 
+<span class="no">363 </span>   * Records that the {@link JSDocInfo} being built should be populated 
+<span class="no">364 </span>   * with a {@code typedef}&apos;d type. 
+<span class="no">365 </span>   */ 
+<span class="no">366 </span>  public boolean recordTypedef(JSTypeExpression type) { 
+<span class="no">367 </span>    if (type != null &amp;&amp; !hasAnyTypeRelatedTags()) { 
+<span class="no">368 </span>      currentInfo.setTypedefType(type); 
+<span class="no">369 </span>      populated = true; 
+<span class="no">370 </span>      return true; 
+<span class="no">371 </span>    } 
+<span class="no">372 </span>    return false; 
+<span class="no">373 </span>  } 
+<span class="no">374 </span> 
+<span class="no">375 </span>  /** 
+<span class="no">376 </span>   * Records a return type. 
+<span class="no">377 </span>   * 
+<span class="no">378 </span>   * @return {@code true} if the return type was recorded and {@code false} if 
+<span class="no">379 </span>   *     it is invalid or was already defined 
+<span class="no">380 </span>   */ 
+<span class="no">381 </span>  public boolean recordReturnType(JSTypeExpression jsType) { 
+<span class="no">382 </span>    if (jsType != null &amp;&amp; currentInfo.getReturnType() == null &amp;&amp; 
+<span class="no">383 </span>        !hasAnySingletonTypeTags()) { 
+<span class="no">384 </span>      currentInfo.setReturnType(jsType); 
+<span class="no">385 </span>      populated = true; 
+<span class="no">386 </span>      return true; 
+<span class="no">387 </span>    } else { 
+<span class="no">388 </span>      return false; 
+<span class="no">389 </span>    } 
+<span class="no">390 </span>  } 
+<span class="no">391 </span> 
+<span class="no">392 </span>  /** 
+<span class="no">393 </span>   * Records a return description 
+<span class="no">394 </span>   * 
+<span class="no">395 </span>   * @return {@code true} if the return description was recorded and 
+<span class="no">396 </span>   *     {@code false} if it is invalid or was already defined 
+<span class="no">397 </span>   */ 
+<span class="no">398 </span>  public boolean recordReturnDescription(String description) { 
+<span class="no">399 </span>    if (currentInfo.documentReturn(description)) { 
+<span class="no">400 </span>      populated = true; 
+<span class="no">401 </span>      return true; 
+<span class="no">402 </span>    } else { 
+<span class="no">403 </span>      return false; 
+<span class="no">404 </span>    } 
+<span class="no">405 </span>  } 
+<span class="no">406 </span> 
+<span class="no">407 </span>  /** 
+<span class="no">408 </span>   * Records the type of a define. 
+<span class="no">409 </span>   * 
+<span class="no">410 </span>   * &apos;Define&apos; values are special constants that may be manipulated by 
+<span class="no">411 </span>   * the compiler. They are designed to mimic the #define command in 
+<span class="no">412 </span>   * the C preprocessor. 
+<span class="no">413 </span>   */ 
+<span class="no">414 </span>  public boolean recordDefineType(JSTypeExpression type) { 
+<span class="no">415 </span>    if (type != null &amp;&amp; 
+<span class="no">416 </span>        !currentInfo.isConstant() &amp;&amp; 
+<span class="no">417 </span>        !currentInfo.isDefine() &amp;&amp; 
+<span class="no">418 </span>        recordType(type)) { 
+<span class="no">419 </span>      currentInfo.setDefine(true); 
+<span class="no">420 </span>      populated = true; 
+<span class="no">421 </span>      return true; 
+<span class="no">422 </span>    } else { 
+<span class="no">423 </span>      return false; 
+<span class="no">424 </span>    } 
+<span class="no">425 </span>  } 
+<span class="no">426 </span> 
+<span class="no">427 </span>  /** 
+<span class="no">428 </span>   * Records a parameter type to an enum. 
+<span class="no">429 </span>   * 
+<span class="no">430 </span>   * @return {@code true} if the enum&apos;s parameter type was recorded and 
+<span class="no">431 </span>   *     {@code false} if it was invalid or already defined 
+<span class="no">432 </span>   */ 
+<span class="no">433 </span>  public boolean recordEnumParameterType(JSTypeExpression type) { 
+<span class="no">434 </span>    if (type != null &amp;&amp; !hasAnyTypeRelatedTags()) { 
+<span class="no">435 </span>      currentInfo.setEnumParameterType(type); 
+<span class="no">436 </span>      populated = true; 
+<span class="no">437 </span>      return true; 
+<span class="no">438 </span>    } else { 
+<span class="no">439 </span>      return false; 
+<span class="no">440 </span>    } 
+<span class="no">441 </span>  } 
+<span class="no">442 </span> 
+<span class="no">443 </span>  /** 
+<span class="no">444 </span>   * Records a type for {@code @this} annotation. 
+<span class="no">445 </span>   * 
+<span class="no">446 </span>   * @return {@code true} if the type was recorded and 
+<span class="no">447 </span>   *     {@code false} if it is invalid or if it collided with {@code @enum} or 
+<span class="no">448 </span>   *     {@code @type} annotations 
+<span class="no">449 </span>   */ 
+<span class="no">450 </span>  public boolean recordThisType(JSTypeExpression type) { 
+<span class="no">451 </span>    if (type != null &amp;&amp; !hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">452 </span>        !currentInfo.hasThisType()) { 
+<span class="no">453 </span>      currentInfo.setThisType(type); 
+<span class="no">454 </span>      populated = true; 
+<span class="no">455 </span>      return true; 
+<span class="no">456 </span>    } else { 
+<span class="no">457 </span>      return false; 
+<span class="no">458 </span>    } 
+<span class="no">459 </span>  } 
+<span class="no">460 </span> 
+<span class="no">461 </span>  /** 
+<span class="no">462 </span>   * Records a base type. 
+<span class="no">463 </span>   * 
+<span class="no">464 </span>   * @return {@code true} if the base type was recorded and {@code false} 
+<span class="no">465 </span>   *     if it was already defined 
+<span class="no">466 </span>   */ 
+<span class="no">467 </span>  public boolean recordBaseType(JSTypeExpression jsType) { 
+<span class="no">468 </span>    if (jsType != null &amp;&amp; !hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">469 </span>        !currentInfo.hasBaseType()) { 
+<span class="no">470 </span>      currentInfo.setBaseType(jsType); 
+<span class="no">471 </span>      populated = true; 
+<span class="no">472 </span>      return true; 
+<span class="no">473 </span>    } else { 
+<span class="no">474 </span>      return false; 
+<span class="no">475 </span>    } 
+<span class="no">476 </span>  } 
+<span class="no">477 </span> 
+<span class="no">478 </span>  /** 
+<span class="no">479 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">480 </span>   * {@link JSDocInfo#isConstant()} flag set to {@code true}. 
+<span class="no">481 </span>   * 
+<span class="no">482 </span>   * @return {@code true} if the constancy was recorded and {@code false} 
+<span class="no">483 </span>   *     if it was already defined 
+<span class="no">484 </span>   */ 
+<span class="no">485 </span>  public boolean recordConstancy() { 
+<span class="no">486 </span>    if (!currentInfo.isConstant()) { 
+<span class="no">487 </span>      currentInfo.setConstant(true); 
+<span class="no">488 </span>      populated = true; 
+<span class="no">489 </span>      return true; 
+<span class="no">490 </span>    } else { 
+<span class="no">491 </span>      return false; 
+<span class="no">492 </span>    } 
+<span class="no">493 </span>  } 
+<span class="no">494 </span> 
+<span class="no">495 </span>  /** 
+<span class="no">496 </span>   * Records a description giving context for translation (i18n). 
+<span class="no">497 </span>   * 
+<span class="no">498 </span>   * @return {@code true} if the description was recorded and {@code false} 
+<span class="no">499 </span>   *     if the description was invalid or was already defined 
+<span class="no">500 </span>   */ 
+<span class="no">501 </span>  public boolean recordDescription(String description) { 
+<span class="no">502 </span>    if (description != null &amp;&amp; currentInfo.getDescription() == null) { 
+<span class="no">503 </span>      currentInfo.setDescription(description); 
+<span class="no">504 </span>      populated = true; 
+<span class="no">505 </span>      return true; 
+<span class="no">506 </span>    } else { 
+<span class="no">507 </span>      return false; 
+<span class="no">508 </span>    } 
+<span class="no">509 </span>  } 
+<span class="no">510 </span> 
+<span class="no">511 </span>  /** 
+<span class="no">512 </span>   * Records a fileoverview description. 
+<span class="no">513 </span>   * 
+<span class="no">514 </span>   * @return {@code true} if the description was recorded and {@code false} 
+<span class="no">515 </span>   *     if the description was invalid or was already defined. 
+<span class="no">516 </span>   */ 
+<span class="no">517 </span>  public boolean recordFileOverview(String description) { 
+<span class="no">518 </span>    if (currentInfo.documentFileOverview(description)) { 
+<span class="no">519 </span>      populated = true; 
+<span class="no">520 </span>      return true; 
+<span class="no">521 </span>    } else { 
+<span class="no">522 </span>      return false; 
+<span class="no">523 </span>    } 
+<span class="no">524 </span>  } 
+<span class="no">525 </span> 
+<span class="no">526 </span>  /** 
+<span class="no">527 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">528 </span>   * {@link JSDocInfo#isHidden()} flag set to {@code true}. 
+<span class="no">529 </span>   * 
+<span class="no">530 </span>   * @return {@code true} if the hiddenness was recorded and {@code false} 
+<span class="no">531 </span>   *     if it was already defined 
+<span class="no">532 </span>   */ 
+<span class="no">533 </span>  public boolean recordHiddenness() { 
+<span class="no">534 </span>    if (!currentInfo.isHidden()) { 
+<span class="no">535 </span>      currentInfo.setHidden(true); 
+<span class="no">536 </span>      populated = true; 
+<span class="no">537 </span>      return true; 
+<span class="no">538 </span>    } else { 
+<span class="no">539 </span>      return false; 
+<span class="no">540 </span>    } 
+<span class="no">541 </span>  } 
+<span class="no">542 </span> 
+<span class="no">543 </span>  /** 
+<span class="no">544 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">545 </span>   * {@link JSDocInfo#isNoTypeCheck()} flag set to {@code true}. 
+<span class="no">546 </span>   * 
+<span class="no">547 </span>   * @return {@code true} if the no check flag was recorded and {@code false} 
+<span class="no">548 </span>   *     if it was already recorded 
+<span class="no">549 </span>   */ 
+<span class="no">550 </span>  public boolean recordNoTypeCheck() { 
+<span class="no">551 </span>    if (!currentInfo.isNoTypeCheck()) { 
+<span class="no">552 </span>      currentInfo.setNoCheck(true); 
+<span class="no">553 </span>      populated = true; 
+<span class="no">554 </span>      return true; 
+<span class="no">555 </span>    } else { 
+<span class="no">556 </span>      return false; 
+<span class="no">557 </span>    } 
+<span class="no">558 </span>  } 
+<span class="no">559 </span> 
+<span class="no">560 </span>  /** 
+<span class="no">561 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">562 </span>   * {@link JSDocInfo#isConstructor()} flag set to {@code true}. 
+<span class="no">563 </span>   * 
+<span class="no">564 </span>   * @return {@code true} if the constructor was recorded and {@code false} 
+<span class="no">565 </span>   *     if it was already defined or it was incompatible with the existing 
+<span class="no">566 </span>   *     flags 
+<span class="no">567 </span>   */ 
+<span class="no">568 </span>  public boolean recordConstructor() { 
+<span class="no">569 </span>    if (!hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">570 </span>        !currentInfo.isConstructor() &amp;&amp; !currentInfo.isInterface()) { 
+<span class="no">571 </span>      currentInfo.setConstructor(true); 
+<span class="no">572 </span>      populated = true; 
+<span class="no">573 </span>      return true; 
+<span class="no">574 </span>    } else { 
+<span class="no">575 </span>      return false; 
+<span class="no">576 </span>    } 
+<span class="no">577 </span>  } 
+<span class="no">578 </span> 
+<span class="no">579 </span>  /** 
+<span class="no">580 </span>   * Whether the {@link JSDocInfo} being built will have its 
+<span class="no">581 </span>   * {@link JSDocInfo#isConstructor()} flag set to {@code true}. 
+<span class="no">582 </span>   */ 
+<span class="no">583 </span>  public boolean isConstructorRecorded() { 
+<span class="no">584 </span>    return currentInfo.isConstructor(); 
+<span class="no">585 </span>  } 
+<span class="no">586 </span> 
+<span class="no">587 </span>  /** 
+<span class="no">588 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">589 </span>   * {@link JSDocInfo#shouldPreserveTry()} flag set to {@code true}. 
+<span class="no">590 </span>   */ 
+<span class="no">591 </span>  public boolean recordPreserveTry() { 
+<span class="no">592 </span>    if (!currentInfo.shouldPreserveTry()) { 
+<span class="no">593 </span>      currentInfo.setShouldPreserveTry(true); 
+<span class="no">594 </span>      populated = true; 
+<span class="no">595 </span>      return true; 
+<span class="no">596 </span>    } else { 
+<span class="no">597 </span>      return false; 
+<span class="no">598 </span>    } 
+<span class="no">599 </span>  } 
+<span class="no">600 </span> 
+<span class="no">601 </span>  /** 
+<span class="no">602 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">603 </span>   * {@link JSDocInfo#isOverride()} flag set to {@code true}. 
+<span class="no">604 </span>   */ 
+<span class="no">605 </span>  public boolean recordOverride() { 
+<span class="no">606 </span>    if (!currentInfo.isOverride()) { 
+<span class="no">607 </span>      currentInfo.setOverride(true); 
+<span class="no">608 </span>      populated = true; 
+<span class="no">609 </span>      return true; 
+<span class="no">610 </span>    } else { 
+<span class="no">611 </span>      return false; 
+<span class="no">612 </span>    } 
+<span class="no">613 </span>  } 
+<span class="no">614 </span> 
+<span class="no">615 </span>  /** 
+<span class="no">616 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">617 </span>   * {@link JSDocInfo#isNoAlias()} flag set to {@code true}. 
+<span class="no">618 </span>   */ 
+<span class="no">619 </span>  public boolean recordNoAlias() { 
+<span class="no">620 </span>    if (!currentInfo.isNoAlias()) { 
+<span class="no">621 </span>      currentInfo.setNoAlias(true); 
+<span class="no">622 </span>      populated = true; 
+<span class="no">623 </span>      return true; 
+<span class="no">624 </span>    } else { 
+<span class="no">625 </span>      return false; 
+<span class="no">626 </span>    } 
+<span class="no">627 </span>  } 
+<span class="no">628 </span> 
+<span class="no">629 </span>  /** 
+<span class="no">630 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">631 </span>   * {@link JSDocInfo#isDeprecated()} flag set to {@code true}. 
+<span class="no">632 </span>   */ 
+<span class="no">633 </span>  public boolean recordDeprecated() { 
+<span class="no">634 </span>    if (!currentInfo.isDeprecated()) { 
+<span class="no">635 </span>      currentInfo.setDeprecated(true); 
+<span class="no">636 </span>      populated = true; 
+<span class="no">637 </span>      return true; 
+<span class="no">638 </span>    } else { 
+<span class="no">639 </span>      return false; 
+<span class="no">640 </span>    } 
+<span class="no">641 </span>  } 
+<span class="no">642 </span> 
+<span class="no">643 </span>  /** 
+<span class="no">644 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">645 </span>   * {@link JSDocInfo#isInterface()} flag set to {@code true}. 
+<span class="no">646 </span>   * 
+<span class="no">647 </span>   * @return {@code true} if the flag was recorded and {@code false} 
+<span class="no">648 </span>   *     if it was already defined or it was incompatible with the existing 
+<span class="no">649 </span>   *     flags 
+<span class="no">650 </span>   */ 
+<span class="no">651 </span>  public boolean recordInterface() { 
+<span class="no">652 </span>    if (!hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">653 </span>        !currentInfo.isConstructor() &amp;&amp; !currentInfo.isInterface()) { 
+<span class="no">654 </span>      currentInfo.setInterface(true); 
+<span class="no">655 </span>      populated = true; 
+<span class="no">656 </span>      return true; 
+<span class="no">657 </span>    } else { 
+<span class="no">658 </span>      return false; 
+<span class="no">659 </span>    } 
+<span class="no">660 </span>  } 
+<span class="no">661 </span> 
+<span class="no">662 </span>  /** 
+<span class="no">663 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">664 </span>   * {@link JSDocInfo#isExport()} flag set to {@code true}. 
+<span class="no">665 </span>   */ 
+<span class="no">666 </span>  public boolean recordExport() { 
+<span class="no">667 </span>    if (!currentInfo.isExport()) { 
+<span class="no">668 </span>      currentInfo.setExport(true); 
+<span class="no">669 </span>      populated = true; 
+<span class="no">670 </span>      return true; 
+<span class="no">671 </span>    } else { 
+<span class="no">672 </span>      return false; 
+<span class="no">673 </span>    } 
+<span class="no">674 </span>  } 
+<span class="no">675 </span> 
+<span class="no">676 </span>  /** 
+<span class="no">677 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">678 </span>   * {@link JSDocInfo#isNoShadow()} flag set to {@code true}. 
+<span class="no">679 </span>   */ 
+<span class="no">680 </span>  public boolean recordNoShadow() { 
+<span class="no">681 </span>    if (!currentInfo.isNoShadow()) { 
+<span class="no">682 </span>      currentInfo.setNoShadow(true); 
+<span class="no">683 </span>      populated = true; 
+<span class="no">684 </span>      return true; 
+<span class="no">685 </span>    } else { 
+<span class="no">686 </span>      return false; 
+<span class="no">687 </span>    } 
+<span class="no">688 </span>  } 
+<span class="no">689 </span> 
+<span class="no">690 </span>  /** 
+<span class="no">691 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">692 </span>   * {@link JSDocInfo#isImplicitCast()} flag set to {@code true}. 
+<span class="no">693 </span>   */ 
+<span class="no">694 </span>  public boolean recordImplicitCast() { 
+<span class="no">695 </span>    if (!currentInfo.isImplicitCast()) { 
+<span class="no">696 </span>      currentInfo.setImplicitCast(true); 
+<span class="no">697 </span>      populated = true; 
+<span class="no">698 </span>      return true; 
+<span class="no">699 </span>    } else { 
+<span class="no">700 </span>      return false; 
+<span class="no">701 </span>    } 
+<span class="no">702 </span>  } 
+<span class="no">703 </span> 
+<span class="no">704 </span>  /** 
+<span class="no">705 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">706 </span>   * {@link JSDocInfo#isNoSideEffects()} flag set to {@code true}. 
+<span class="no">707 </span>   */ 
+<span class="no">708 </span>  public boolean recordNoSideEffects() { 
+<span class="no">709 </span>    if (!currentInfo.isNoSideEffects()) { 
+<span class="no">710 </span>      currentInfo.setNoSideEffects(true); 
+<span class="no">711 </span>      populated = true; 
+<span class="no">712 </span>      return true; 
+<span class="no">713 </span>    } else { 
+<span class="no">714 </span>      return false; 
+<span class="no">715 </span>    } 
+<span class="no">716 </span>  } 
+<span class="no">717 </span> 
+<span class="no">718 </span>  /** 
+<span class="no">719 </span>   * Whether the {@link JSDocInfo} being built will have its 
+<span class="no">720 </span>   * {@link JSDocInfo#isInterface()} flag set to {@code true}. 
+<span class="no">721 </span>   */ 
+<span class="no">722 </span>  public boolean isInterfaceRecorded() { 
+<span class="no">723 </span>    return currentInfo.isInterface(); 
+<span class="no">724 </span>  } 
+<span class="no">725 </span> 
+<span class="no">726 </span>  /** 
+<span class="no">727 </span>   * @return Whether a parameter of the given name has already been recorded. 
+<span class="no">728 </span>   */ 
+<span class="no">729 </span>  public boolean hasParameter(String name) { 
+<span class="no">730 </span>    return currentInfo.hasParameter(name); 
+<span class="no">731 </span>  } 
+<span class="no">732 </span> 
+<span class="no">733 </span>  /** 
+<span class="no">734 </span>   * Records an implemented interface. 
+<span class="no">735 </span>   */ 
+<span class="no">736 </span>  public boolean recordImplementedInterface(JSTypeExpression interfaceName) { 
+<span class="no">737 </span>    if (currentInfo.addImplementedInterface(interfaceName)) { 
+<span class="no">738 </span>      populated = true; 
+<span class="no">739 </span>      return true; 
+<span class="no">740 </span>    } else { 
+<span class="no">741 </span>      return false; 
+<span class="no">742 </span>    } 
+<span class="no">743 </span>  } 
+<span class="no">744 </span> 
+<span class="no">745 </span>  /** 
+<span class="no">746 </span>   * Whether the current doc info has other type tags, like 
+<span class="no">747 </span>   * {@code @param} or {@code @return} or {@code @type} or etc. 
+<span class="no">748 </span>   */ 
+<span class="no">749 </span>  private boolean hasAnyTypeRelatedTags() { 
+<span class="no">750 </span>    return currentInfo.isConstructor() || 
+<span class="no">751 </span>        currentInfo.isInterface() || 
+<span class="no">752 </span>        currentInfo.getParameterCount() &gt; 0 || 
+<span class="no">753 </span>        currentInfo.hasReturnType() || 
+<span class="no">754 </span>        currentInfo.hasBaseType() || 
+<span class="no">755 </span>        currentInfo.hasThisType() || 
+<span class="no">756 </span>        hasAnySingletonTypeTags(); 
+<span class="no">757 </span>  } 
+<span class="no">758 </span> 
+<span class="no">759 </span>  /** 
+<span class="no">760 </span>   * Whether the current doc info has any of the singleton type 
+<span class="no">761 </span>   * tags that may not appear with other type tags, like 
+<span class="no">762 </span>   * {@code @type} or {@code @typedef}. 
+<span class="no">763 </span>   */ 
+<span class="no">764 </span>  private boolean hasAnySingletonTypeTags() { 
+<span class="no">765 </span>    return currentInfo.hasType() || 
+<span class="no">766 </span>        currentInfo.hasTypedefType() || 
+<span class="no">767 </span>        currentInfo.hasEnumParameterType(); 
+<span class="no">768 </span>  } 
+<span class="no">769 </span>} 
+<span class="no">770 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">1_B (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>/* 
+<span class="no">  2 </span> * 
+<span class="no">  3 </span> * ***** BEGIN LICENSE BLOCK ***** 
+<span class="no">  4 </span> * Version: MPL 1.1/GPL 2.0 
+<span class="no">  5 </span> * 
+<span class="no">  6 </span> * The contents of this file are subject to the Mozilla Public License Version 
+<span class="no">  7 </span> * 1.1 (the &quot;License&quot;); you may not use this file except in compliance with 
+<span class="no">  8 </span> * the License. You may obtain a copy of the License at 
+<span class="no">  9 </span> * http://www.mozilla.org/MPL/ 
+<span class="no"> 10 </span> * 
+<span class="no"> 11 </span> * Software distributed under the License is distributed on an &quot;AS IS&quot; basis, 
+<span class="no"> 12 </span> * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+<span class="no"> 13 </span> * for the specific language governing rights and limitations under the 
+<span class="no"> 14 </span> * License. 
+<span class="no"> 15 </span> * 
+<span class="no"> 16 </span> * The Original Code is Rhino code, released 
+<span class="no"> 17 </span> * May 6, 1999. 
+<span class="no"> 18 </span> * 
+<span class="no"> 19 </span> * The Initial Developer of the Original Code is 
+<span class="no"> 20 </span> * Netscape Communications Corporation. 
+<span class="no"> 21 </span> * Portions created by the Initial Developer are Copyright (C) 1997-1999 
+<span class="no"> 22 </span> * the Initial Developer. All Rights Reserved. 
+<span class="no"> 23 </span> * 
+<span class="no"> 24 </span> * Contributor(s): 
+<span class="no"> 25 </span> *   Bob Jervis 
+<span class="no"> 26 </span> *   Google Inc. 
+<span class="no"> 27 </span> * 
+<span class="no"> 28 </span> * Alternatively, the contents of this file may be used under the terms of 
+<span class="no"> 29 </span> * the GNU General Public License Version 2 or later (the &quot;GPL&quot;), in which 
+<span class="no"> 30 </span> * case the provisions of the GPL are applicable instead of those above. If 
+<span class="no"> 31 </span> * you wish to allow use of your version of this file only under the terms of 
+<span class="no"> 32 </span> * the GPL and not to allow others to use your version of this file under the 
+<span class="no"> 33 </span> * MPL, indicate your decision by deleting the provisions above and replacing 
+<span class="no"> 34 </span> * them with the notice and other provisions required by the GPL. If you do 
+<span class="no"> 35 </span> * not delete the provisions above, a recipient may use your version of this 
+<span class="no"> 36 </span> * file under either the MPL or the GPL. 
+<span class="no"> 37 </span> * 
+<span class="no"> 38 </span> * ***** END LICENSE BLOCK ***** */ 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>package com.google.javascript.rhino; 
+<span class="no"> 41 </span> 
+<span class="no"> 42 </span>import com.google.javascript.rhino.JSDocInfo.Visibility; 
+<span class="no"> 43 </span> 
+<span class="no"> 44 </span>import java.util.Set; 
+<span class="no"> 45 </span> 
+<span class="no"> 46 </span>/** 
+<span class="no"> 47 </span> * A builder for {@link JSDocInfo} objects. This builder abstracts the 
+<span class="no"> 48 </span> * construction process of {@link JSDocInfo} objects whilst minimizing the 
+<span class="no"> 49 </span> * number of instances of {@link JSDocInfo} objects. It provides early 
+<span class="no"> 50 </span> * incompatibility detection among properties stored on the {@code JSDocInfo} 
+<span class="no"> 51 </span> * object being created. 
+<span class="no"> 52 </span> * 
+<span class="no"> 53 </span>* 
+<span class="no"> 54 </span> */ 
+<span class="no"> 55 </span>final public class JSDocInfoBuilder { 
+<span class="no"> 56 </span>  // the current JSDoc which is being populated 
+<span class="no"> 57 </span>  private JSDocInfo currentInfo; 
+<span class="no"> 58 </span> 
+<span class="no"> 59 </span>  // whether the current JSDocInfo has valuable information 
+<span class="no"> 60 </span>  private boolean populated = false; 
+<span class="no"> 61 </span> 
+<span class="no"> 62 </span>  // whether to include the documentation itself when parsing the JsDoc 
+<span class="no"> 63 </span>  private boolean parseDocumentation = false; 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>  // the current marker, if any. 
+<span class="no"> 66 </span>  private JSDocInfo.Marker currentMarker = null; 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>  public JSDocInfoBuilder(boolean parseDocumentation) { 
+<span class="no"> 69 </span>    this.currentInfo = new JSDocInfo(parseDocumentation); 
+<span class="no"> 70 </span>    this.parseDocumentation = parseDocumentation; 
+<span class="no"> 71 </span>  } 
+<span class="no"> 72 </span> 
+<span class="no"> 73 </span>  /** 
+<span class="no"> 74 </span>   * Returns whether this builder is populated with information that can be 
+<span class="no"> 75 </span>   * used to {@link #build} a {@link JSDocInfo} object. 
+<span class="no"> 76 </span>   */ 
+<span class="no"> 77 </span>  public boolean isPopulated() { 
+<span class="no"> 78 </span>    return populated; 
+<span class="no"> 79 </span>  } 
+<span class="no"> 80 </span> 
+<span class="no"> 81 </span>  /** 
+<span class="no"> 82 </span>   * Returns whether this builder is populated with information that can be 
+<span class="no"> 83 </span>   * used to {@link #build} a {@link JSDocInfo} object that has a 
+<span class="no"> 84 </span>   * fileoverview tag. 
+<span class="no"> 85 </span>   */ 
+<span class="no"> 86 </span>  public boolean isPopulatedWithFileOverview() { 
+<span class="no"> 87 </span>    return isPopulated() &amp;&amp; currentInfo.hasFileOverview(); 
+<span class="no"> 88 </span>  } 
+<span class="no"> 89 </span> 
+<span class="no"> 90 </span>  /** 
+<span class="no"> 91 </span>   * Returns whether this builder recorded a description. 
+<span class="no"> 92 </span>   */ 
+<span class="no"> 93 </span>  public boolean isDescriptionRecorded() { 
+<span class="no"> 94 </span>    return currentInfo.getDescription() != null; 
+<span class="no"> 95 </span>  } 
+<span class="no"> 96 </span> 
+<span class="no"> 97 </span>  /** 
+<span class="no"> 98 </span>   * Builds a {@link JSDocInfo} object based on the populated information and 
+<span class="no"> 99 </span>   * returns it. Once this method is called, the builder can be reused to build 
+<span class="no">100 </span>   * another {@link JSDocInfo} object. 
+<span class="no">101 </span>   * 
+<span class="no">102 </span>   * @param sourceName The source file containing the JSDoc. 
+<span class="no">103 </span>   * @return a {@link JSDocInfo} object populated with the values given to this 
+<span class="no">104 </span>   *     builder. If no value was populated, this method simply returns 
+<span class="no">105 </span>   *     {@code null} 
+<span class="no">106 </span>   */ 
+<span class="no">107 </span>  public JSDocInfo build(String sourceName) { 
+<span class="no">108 </span>    if (populated) { 
+<span class="no">109 </span>      JSDocInfo built = currentInfo; 
+<span class="no">110 </span>      built.setSourceName(sourceName); 
+<span class="no">111 </span>      populateDefaults(built); 
+<span class="no">112 </span>      populated = false; 
+<span class="no">113 </span>      currentInfo = new JSDocInfo(this.parseDocumentation); 
+<span class="no">114 </span>      return built; 
+<span class="no">115 </span>    } else { 
+<span class="no">116 </span>      return null; 
+<span class="no">117 </span>    } 
+<span class="no">118 </span>  } 
+<span class="no">119 </span> 
+<span class="no">120 </span>  /** Generate defaults when certain parameters are not specified. */ 
+<span class="no">121 </span>  private static void populateDefaults(JSDocInfo info) { 
+<span class="no">122 </span>    if (info.getVisibility() == null) { 
+<span class="no">123 </span>      info.setVisibility(Visibility.INHERITED); 
+<span class="no">124 </span>    } 
+<span class="no">125 </span>  } 
+<span class="no">126 </span> 
+<span class="no">127 </span>  /** 
+<span class="no">128 </span>   * Adds a marker to the current JSDocInfo and populates the marker with the 
+<span class="no">129 </span>   * annotation information. 
+<span class="no">130 </span>   */ 
+<span class="no">131 </span>  public void markAnnotation(String annotation, int lineno, int charno) { 
+<span class="no">132 </span>    JSDocInfo.Marker marker = currentInfo.addMarker(); 
+<span class="no">133 </span> 
+<span class="no">134 </span>    if (marker != null) { 
+<span class="no">135 </span>      marker.annotation = new JSDocInfo.StringPosition(); 
+<span class="no">136 </span>      marker.annotation.setItem(annotation); 
+<span class="no">137 </span>      marker.annotation.setPositionInformation(lineno, charno, lineno, 
+<span class="no">138 </span>                                               charno + annotation.length()); 
+<span class="no">139 </span>    } 
+<span class="no">140 </span> 
+<span class="no">141 </span>    currentMarker = marker; 
+<span class="no">142 </span>  } 
+<span class="no">143 </span> 
+<span class="no">144 </span>  /** 
+<span class="no">145 </span>   * Adds a textual block to the current marker. 
+<span class="no">146 </span>   */ 
+<span class="no">147 </span>  public void markText(String text, int startLineno, int startCharno, int endLineno, 
+<span class="no">148 </span>                int endCharno) { 
+<span class="no">149 </span>    if (currentMarker != null) { 
+<span class="no">150 </span>      currentMarker.description = new JSDocInfo.StringPosition(); 
+<span class="no">151 </span>      currentMarker.description.setItem(text); 
+<span class="no">152 </span>      currentMarker.description.setPositionInformation(startLineno, startCharno, 
+<span class="no">153 </span>                                                       endLineno, endCharno); 
+<span class="no">154 </span>    } 
+<span class="no">155 </span>  } 
+<span class="no">156 </span> 
+<span class="no">157 </span>  /** 
+<span class="no">158 </span>   * Adds a type declaration to the current marker. 
+<span class="no">159 </span>   */ 
+<span class="no">160 </span>  public void markTypeNode(Node typeNode, int lineno, int startCharno, int endCharno, 
+<span class="no">161 </span>                    boolean hasLC) { 
+<span class="no">162 </span>    if (currentMarker != null) { 
+<span class="no">163 </span>      currentMarker.type = new JSDocInfo.TypePosition(); 
+<span class="no">164 </span>      currentMarker.type.setItem(typeNode); 
+<span class="no">165 </span>      currentMarker.type.hasBrackets = hasLC; 
+<span class="no">166 </span>      currentMarker.type.setPositionInformation(lineno, startCharno, 
+<span class="no">167 </span>                                                lineno, endCharno); 
+<span class="no">168 </span>    } 
+<span class="no">169 </span>  } 
+<span class="no">170 </span> 
+<span class="no">171 </span>  /** 
+<span class="no">172 </span>   * Adds a name declaration to the current marker. 
+<span class="no">173 </span>   */ 
+<span class="no">174 </span>  public void markName(String name, int lineno, int charno) { 
+<span class="no">175 </span>    if (currentMarker != null) { 
+<span class="no">176 </span>      currentMarker.name = new JSDocInfo.StringPosition(); 
+<span class="no">177 </span>      currentMarker.name.setItem(name); 
+<span class="no">178 </span>      currentMarker.name.setPositionInformation(lineno, charno, 
+<span class="no">179 </span>                                                lineno, charno + name.length()); 
+<span class="no">180 </span>    } 
+<span class="no">181 </span>  } 
+<span class="no">182 </span> 
+<span class="no">183 </span>  /** 
+<span class="no">184 </span>   * Records a block-level description. 
+<span class="no">185 </span>   * 
+<span class="no">186 </span>   * @return {@code true} if the description was recorded. 
+<span class="no">187 </span>   */ 
+<span class="no">188 </span>  public boolean recordBlockDescription(String description) <span class="em1" id="m1"><a class="mov" data-partner="#n1" href="#m1">{ 
+<span class="no">189 </span>    populated = true; 
+<span class="no">190 </span>    </a><span class="em2" id="m2"><a class="mov" data-partner="#n2" href="#m2">return currentInfo.documentBlock(description);</a></span><a class="mov" data-partner="#n1" href="#m1"> 
+<span class="no">191 </span>  }</a></span> 
+<span class="no">192 </span> 
+<span class="no">193 </span>  /** 
+<span class="no">194 </span>   * Records a visibility. 
+<span class="no">195 </span>   * 
+<span class="no">196 </span>   * @return {@code true} if the visibility was recorded and {@code false} 
+<span class="no">197 </span>   *     if it was already defined 
+<span class="no">198 </span>   */ 
+<span class="no">199 </span>  public boolean recordVisibility(Visibility visibility) { 
+<span class="no">200 </span>    if (currentInfo.getVisibility() == null) { 
+<span class="no">201 </span>      populated = true; 
+<span class="no">202 </span>      currentInfo.setVisibility(visibility); 
+<span class="no">203 </span>      return true; 
+<span class="no">204 </span>    } else { 
+<span class="no">205 </span>      return false; 
+<span class="no">206 </span>    } 
+<span class="no">207 </span>  } 
+<span class="no">208 </span> 
+<span class="no">209 </span>  /** 
+<span class="no">210 </span>   * Records a typed parameter. 
+<span class="no">211 </span>   * 
+<span class="no">212 </span>   * @return {@code true} if the typed parameter was recorded and 
+<span class="no">213 </span>   *     {@code false} if a parameter with the same name was already defined 
+<span class="no">214 </span>   */ 
+<span class="no">215 </span>  public boolean recordParameter(String parameterName, JSTypeExpression type) { 
+<span class="no">216 </span>    if (!hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">217 </span>        currentInfo.declareParam(type, parameterName)) { 
+<span class="no">218 </span>      populated = true; 
+<span class="no">219 </span>      return true; 
+<span class="no">220 </span>    } else { 
+<span class="no">221 </span>      return false; 
+<span class="no">222 </span>    } 
+<span class="no">223 </span>  } 
+<span class="no">224 </span> 
+<span class="no">225 </span>  /** 
+<span class="no">226 </span>   * Records a parameter&apos;s description. 
+<span class="no">227 </span>   * 
+<span class="no">228 </span>   * @return {@code true} if the parameter&apos;s description was recorded and 
+<span class="no">229 </span>   *     {@code false} if a parameter with the same name was already defined 
+<span class="no">230 </span>   */ 
+<span class="no">231 </span>  public boolean recordParameterDescription(String parameterName, String description) { 
+<span class="no">232 </span>    if (currentInfo.documentParam(parameterName, description)) { 
+<span class="no">233 </span>      populated = true; 
+<span class="no">234 </span>      return true; 
+<span class="no">235 </span>    } else { 
+<span class="no">236 </span>      return false; 
+<span class="no">237 </span>    } 
+<span class="no">238 </span>  } 
+<span class="no">239 </span> 
+<span class="no">240 </span>  /** 
+<span class="no">241 </span>   * Records a template type name. 
+<span class="no">242 </span>   * 
+<span class="no">243 </span>   * @return {@code true} if the template type name was recorded and 
+<span class="no">244 </span>   *     {@code false} if a template type name was already defined. 
+<span class="no">245 </span>   */ 
+<span class="no">246 </span>  public boolean recordTemplateTypeName(String name) { 
+<span class="no">247 </span>    if (currentInfo.declareTemplateTypeName(name)) { 
+<span class="no">248 </span>      populated = true; 
+<span class="no">249 </span>      return true; 
+<span class="no">250 </span>    } else { 
+<span class="no">251 </span>      return false; 
+<span class="no">252 </span>    } 
+<span class="no">253 </span>  } 
+<span class="no">254 </span> 
+<span class="no">255 </span>  /** 
+<span class="no">256 </span>   * Records a thrown type. 
+<span class="no">257 </span>   */ 
+<span class="no">258 </span>  public boolean recordThrowType(JSTypeExpression type) { 
+<span class="no">259 </span>    if (!hasAnySingletonTypeTags()) { 
+<span class="no">260 </span>      currentInfo.declareThrows(type); 
+<span class="no">261 </span>      populated = true; 
+<span class="no">262 </span>      return true; 
+<span class="no">263 </span>    } 
+<span class="no">264 </span>    return false; 
+<span class="no">265 </span>  } 
+<span class="no">266 </span> 
+<span class="no">267 </span>  /** 
+<span class="no">268 </span>   * Records a throw type&apos;s description. 
+<span class="no">269 </span>   * 
+<span class="no">270 </span>   * @return {@code true} if the type&apos;s description was recorded and 
+<span class="no">271 </span>   *     {@code false} if a description with the same type was already defined 
+<span class="no">272 </span>   */ 
+<span class="no">273 </span>  public boolean recordThrowDescription(JSTypeExpression type, String description) { 
+<span class="no">274 </span>    if (currentInfo.documentThrows(type, description)) { 
+<span class="no">275 </span>      populated = true; 
+<span class="no">276 </span>      return true; 
+<span class="no">277 </span>    } else { 
+<span class="no">278 </span>      return false; 
+<span class="no">279 </span>    } 
+<span class="no">280 </span>  } 
+<span class="no">281 </span> 
+<span class="no">282 </span> 
+<span class="no">283 </span>  /** 
+<span class="no">284 </span>   * Adds an author to the current information. 
+<span class="no">285 </span>   */ 
+<span class="no">286 </span>  public boolean addAuthor(String author) { 
+<span class="no">287 </span>    if (currentInfo.documentAuthor(author)) { 
+<span class="no">288 </span>      populated = true; 
+<span class="no">289 </span>      return true; 
+<span class="no">290 </span>    } else { 
+<span class="no">291 </span>      return false; 
+<span class="no">292 </span>    } 
+<span class="no">293 </span>  } 
+<span class="no">294 </span> 
+<span class="no">295 </span> 
+<span class="no">296 </span>  /** 
+<span class="no">297 </span>   * Adds a reference (&quot;@see&quot;) to the current information. 
+<span class="no">298 </span>   */ 
+<span class="no">299 </span>  public boolean addReference(String reference) { 
+<span class="no">300 </span>    if (currentInfo.documentReference(reference)) { 
+<span class="no">301 </span>      populated = true; 
+<span class="no">302 </span>      return true; 
+<span class="no">303 </span>    } else { 
+<span class="no">304 </span>      return false; 
+<span class="no">305 </span>    } 
+<span class="no">306 </span>  } 
+<span class="no">307 </span> 
+<span class="no">308 </span>  /** 
+<span class="no">309 </span>   * Records the version. 
+<span class="no">310 </span>   */ 
+<span class="no">311 </span>  public boolean recordVersion(String version) { 
+<span class="no">312 </span>    if (currentInfo.documentVersion(version)) { 
+<span class="no">313 </span>      populated = true; 
+<span class="no">314 </span>      return true; 
+<span class="no">315 </span>    } else { 
+<span class="no">316 </span>      return false; 
+<span class="no">317 </span>    } 
+<span class="no">318 </span>  } 
+<span class="no">319 </span> 
+<span class="no">320 </span>  /** 
+<span class="no">321 </span>   * Records the deprecation reason. 
+<span class="no">322 </span>   */ 
+<span class="no">323 </span>  public boolean recordDeprecationReason(String reason) { 
+<span class="no">324 </span>    if (currentInfo.setDeprecationReason(reason)) { 
+<span class="no">325 </span>      populated = true; 
+<span class="no">326 </span>      return true; 
+<span class="no">327 </span>    } else { 
+<span class="no">328 </span>      return false; 
+<span class="no">329 </span>    } 
+<span class="no">330 </span>  } 
+<span class="no">331 </span> 
+<span class="no">332 </span>  /** 
+<span class="no">333 </span>   * Records the list of suppressed warnings. 
+<span class="no">334 </span>   */ 
+<span class="no">335 </span>  public boolean recordSuppressions(Set&lt;String&gt; suppressions) { 
+<span class="no">336 </span>    if (currentInfo.setSuppressions(suppressions)) { 
+<span class="no">337 </span>      populated = true; 
+<span class="no">338 </span>      return true; 
+<span class="no">339 </span>    } else { 
+<span class="no">340 </span>      return false; 
+<span class="no">341 </span>    } 
+<span class="no">342 </span>  } 
+<span class="no">343 </span> 
+<span class="no">344 </span>  /** 
+<span class="no">345 </span>   * Records a type. 
+<span class="no">346 </span>   * 
+<span class="no">347 </span>   * @return {@code true} if the type was recorded and {@code false} if 
+<span class="no">348 </span>   *     it is invalid or was already defined 
+<span class="no">349 </span>   */ 
+<span class="no">350 </span>  public boolean recordType(JSTypeExpression type) { 
+<span class="no">351 </span>    if (type != null &amp;&amp; !hasAnyTypeRelatedTags()) { 
+<span class="no">352 </span>      currentInfo.setType(type); 
+<span class="no">353 </span>      populated = true; 
+<span class="no">354 </span>      return true; 
+<span class="no">355 </span>    } else { 
+<span class="no">356 </span>      return false; 
+<span class="no">357 </span>    } 
+<span class="no">358 </span>  } 
+<span class="no">359 </span> 
+<span class="no">360 </span>  /** 
+<span class="no">361 </span>   * Records that the {@link JSDocInfo} being built should be populated 
+<span class="no">362 </span>   * with a {@code typedef}&apos;d type. 
+<span class="no">363 </span>   */ 
+<span class="no">364 </span>  public boolean recordTypedef(JSTypeExpression type) { 
+<span class="no">365 </span>    if (type != null &amp;&amp; !hasAnyTypeRelatedTags()) { 
+<span class="no">366 </span>      currentInfo.setTypedefType(type); 
+<span class="no">367 </span>      populated = true; 
+<span class="no">368 </span>      return true; 
+<span class="no">369 </span>    } 
+<span class="no">370 </span>    return false; 
+<span class="no">371 </span>  } 
+<span class="no">372 </span> 
+<span class="no">373 </span>  /** 
+<span class="no">374 </span>   * Records a return type. 
+<span class="no">375 </span>   * 
+<span class="no">376 </span>   * @return {@code true} if the return type was recorded and {@code false} if 
+<span class="no">377 </span>   *     it is invalid or was already defined 
+<span class="no">378 </span>   */ 
+<span class="no">379 </span>  public boolean recordReturnType(JSTypeExpression jsType) { 
+<span class="no">380 </span>    if (jsType != null &amp;&amp; currentInfo.getReturnType() == null &amp;&amp; 
+<span class="no">381 </span>        !hasAnySingletonTypeTags()) { 
+<span class="no">382 </span>      currentInfo.setReturnType(jsType); 
+<span class="no">383 </span>      populated = true; 
+<span class="no">384 </span>      return true; 
+<span class="no">385 </span>    } else { 
+<span class="no">386 </span>      return false; 
+<span class="no">387 </span>    } 
+<span class="no">388 </span>  } 
+<span class="no">389 </span> 
+<span class="no">390 </span>  /** 
+<span class="no">391 </span>   * Records a return description 
+<span class="no">392 </span>   * 
+<span class="no">393 </span>   * @return {@code true} if the return description was recorded and 
+<span class="no">394 </span>   *     {@code false} if it is invalid or was already defined 
+<span class="no">395 </span>   */ 
+<span class="no">396 </span>  public boolean recordReturnDescription(String description) { 
+<span class="no">397 </span>    if (currentInfo.documentReturn(description)) { 
+<span class="no">398 </span>      populated = true; 
+<span class="no">399 </span>      return true; 
+<span class="no">400 </span>    } else { 
+<span class="no">401 </span>      return false; 
+<span class="no">402 </span>    } 
+<span class="no">403 </span>  } 
+<span class="no">404 </span> 
+<span class="no">405 </span>  /** 
+<span class="no">406 </span>   * Records the type of a define. 
+<span class="no">407 </span>   * 
+<span class="no">408 </span>   * &apos;Define&apos; values are special constants that may be manipulated by 
+<span class="no">409 </span>   * the compiler. They are designed to mimic the #define command in 
+<span class="no">410 </span>   * the C preprocessor. 
+<span class="no">411 </span>   */ 
+<span class="no">412 </span>  public boolean recordDefineType(JSTypeExpression type) { 
+<span class="no">413 </span>    if (type != null &amp;&amp; 
+<span class="no">414 </span>        !currentInfo.isConstant() &amp;&amp; 
+<span class="no">415 </span>        !currentInfo.isDefine() &amp;&amp; 
+<span class="no">416 </span>        recordType(type)) { 
+<span class="no">417 </span>      currentInfo.setDefine(true); 
+<span class="no">418 </span>      populated = true; 
+<span class="no">419 </span>      return true; 
+<span class="no">420 </span>    } else { 
+<span class="no">421 </span>      return false; 
+<span class="no">422 </span>    } 
+<span class="no">423 </span>  } 
+<span class="no">424 </span> 
+<span class="no">425 </span>  /** 
+<span class="no">426 </span>   * Records a parameter type to an enum. 
+<span class="no">427 </span>   * 
+<span class="no">428 </span>   * @return {@code true} if the enum&apos;s parameter type was recorded and 
+<span class="no">429 </span>   *     {@code false} if it was invalid or already defined 
+<span class="no">430 </span>   */ 
+<span class="no">431 </span>  public boolean recordEnumParameterType(JSTypeExpression type) { 
+<span class="no">432 </span>    if (type != null &amp;&amp; !hasAnyTypeRelatedTags()) { 
+<span class="no">433 </span>      currentInfo.setEnumParameterType(type); 
+<span class="no">434 </span>      populated = true; 
+<span class="no">435 </span>      return true; 
+<span class="no">436 </span>    } else { 
+<span class="no">437 </span>      return false; 
+<span class="no">438 </span>    } 
+<span class="no">439 </span>  } 
+<span class="no">440 </span> 
+<span class="no">441 </span>  /** 
+<span class="no">442 </span>   * Records a type for {@code @this} annotation. 
+<span class="no">443 </span>   * 
+<span class="no">444 </span>   * @return {@code true} if the type was recorded and 
+<span class="no">445 </span>   *     {@code false} if it is invalid or if it collided with {@code @enum} or 
+<span class="no">446 </span>   *     {@code @type} annotations 
+<span class="no">447 </span>   */ 
+<span class="no">448 </span>  public boolean recordThisType(JSTypeExpression type) { 
+<span class="no">449 </span>    if (type != null &amp;&amp; !hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">450 </span>        !currentInfo.hasThisType()) { 
+<span class="no">451 </span>      currentInfo.setThisType(type); 
+<span class="no">452 </span>      populated = true; 
+<span class="no">453 </span>      return true; 
+<span class="no">454 </span>    } else { 
+<span class="no">455 </span>      return false; 
+<span class="no">456 </span>    } 
+<span class="no">457 </span>  } 
+<span class="no">458 </span> 
+<span class="no">459 </span>  /** 
+<span class="no">460 </span>   * Records a base type. 
+<span class="no">461 </span>   * 
+<span class="no">462 </span>   * @return {@code true} if the base type was recorded and {@code false} 
+<span class="no">463 </span>   *     if it was already defined 
+<span class="no">464 </span>   */ 
+<span class="no">465 </span>  public boolean recordBaseType(JSTypeExpression jsType) { 
+<span class="no">466 </span>    if (jsType != null &amp;&amp; !hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">467 </span>        !currentInfo.hasBaseType()) { 
+<span class="no">468 </span>      currentInfo.setBaseType(jsType); 
+<span class="no">469 </span>      populated = true; 
+<span class="no">470 </span>      return true; 
+<span class="no">471 </span>    } else { 
+<span class="no">472 </span>      return false; 
+<span class="no">473 </span>    } 
+<span class="no">474 </span>  } 
+<span class="no">475 </span> 
+<span class="no">476 </span>  /** 
+<span class="no">477 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">478 </span>   * {@link JSDocInfo#isConstant()} flag set to {@code true}. 
+<span class="no">479 </span>   * 
+<span class="no">480 </span>   * @return {@code true} if the constancy was recorded and {@code false} 
+<span class="no">481 </span>   *     if it was already defined 
+<span class="no">482 </span>   */ 
+<span class="no">483 </span>  public boolean recordConstancy() { 
+<span class="no">484 </span>    if (!currentInfo.isConstant()) { 
+<span class="no">485 </span>      currentInfo.setConstant(true); 
+<span class="no">486 </span>      populated = true; 
+<span class="no">487 </span>      return true; 
+<span class="no">488 </span>    } else { 
+<span class="no">489 </span>      return false; 
+<span class="no">490 </span>    } 
+<span class="no">491 </span>  } 
+<span class="no">492 </span> 
+<span class="no">493 </span>  /** 
+<span class="no">494 </span>   * Records a description giving context for translation (i18n). 
+<span class="no">495 </span>   * 
+<span class="no">496 </span>   * @return {@code true} if the description was recorded and {@code false} 
+<span class="no">497 </span>   *     if the description was invalid or was already defined 
+<span class="no">498 </span>   */ 
+<span class="no">499 </span>  public boolean recordDescription(String description) { 
+<span class="no">500 </span>    if (description != null &amp;&amp; currentInfo.getDescription() == null) { 
+<span class="no">501 </span>      currentInfo.setDescription(description); 
+<span class="no">502 </span>      populated = true; 
+<span class="no">503 </span>      return true; 
+<span class="no">504 </span>    } else { 
+<span class="no">505 </span>      return false; 
+<span class="no">506 </span>    } 
+<span class="no">507 </span>  } 
+<span class="no">508 </span> 
+<span class="no">509 </span>  /** 
+<span class="no">510 </span>   * Records a fileoverview description. 
+<span class="no">511 </span>   * 
+<span class="no">512 </span>   * @return {@code true} if the description was recorded and {@code false} 
+<span class="no">513 </span>   *     if the description was invalid or was already defined. 
+<span class="no">514 </span>   */ 
+<span class="no">515 </span>  public boolean recordFileOverview(String description) { 
+<span class="no">516 </span>    if (currentInfo.documentFileOverview(description)) { 
+<span class="no">517 </span>      populated = true; 
+<span class="no">518 </span>      return true; 
+<span class="no">519 </span>    } else { 
+<span class="no">520 </span>      return false; 
+<span class="no">521 </span>    } 
+<span class="no">522 </span>  } 
+<span class="no">523 </span> 
+<span class="no">524 </span>  /** 
+<span class="no">525 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">526 </span>   * {@link JSDocInfo#isHidden()} flag set to {@code true}. 
+<span class="no">527 </span>   * 
+<span class="no">528 </span>   * @return {@code true} if the hiddenness was recorded and {@code false} 
+<span class="no">529 </span>   *     if it was already defined 
+<span class="no">530 </span>   */ 
+<span class="no">531 </span>  public boolean recordHiddenness() { 
+<span class="no">532 </span>    if (!currentInfo.isHidden()) { 
+<span class="no">533 </span>      currentInfo.setHidden(true); 
+<span class="no">534 </span>      populated = true; 
+<span class="no">535 </span>      return true; 
+<span class="no">536 </span>    } else { 
+<span class="no">537 </span>      return false; 
+<span class="no">538 </span>    } 
+<span class="no">539 </span>  } 
+<span class="no">540 </span> 
+<span class="no">541 </span>  /** 
+<span class="no">542 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">543 </span>   * {@link JSDocInfo#isNoTypeCheck()} flag set to {@code true}. 
+<span class="no">544 </span>   * 
+<span class="no">545 </span>   * @return {@code true} if the no check flag was recorded and {@code false} 
+<span class="no">546 </span>   *     if it was already recorded 
+<span class="no">547 </span>   */ 
+<span class="no">548 </span>  public boolean recordNoTypeCheck() { 
+<span class="no">549 </span>    if (!currentInfo.isNoTypeCheck()) { 
+<span class="no">550 </span>      currentInfo.setNoCheck(true); 
+<span class="no">551 </span>      populated = true; 
+<span class="no">552 </span>      return true; 
+<span class="no">553 </span>    } else { 
+<span class="no">554 </span>      return false; 
+<span class="no">555 </span>    } 
+<span class="no">556 </span>  } 
+<span class="no">557 </span> 
+<span class="no">558 </span>  /** 
+<span class="no">559 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">560 </span>   * {@link JSDocInfo#isConstructor()} flag set to {@code true}. 
+<span class="no">561 </span>   * 
+<span class="no">562 </span>   * @return {@code true} if the constructor was recorded and {@code false} 
+<span class="no">563 </span>   *     if it was already defined or it was incompatible with the existing 
+<span class="no">564 </span>   *     flags 
+<span class="no">565 </span>   */ 
+<span class="no">566 </span>  public boolean recordConstructor() { 
+<span class="no">567 </span>    if (!hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">568 </span>        !currentInfo.isConstructor() &amp;&amp; !currentInfo.isInterface()) { 
+<span class="no">569 </span>      currentInfo.setConstructor(true); 
+<span class="no">570 </span>      populated = true; 
+<span class="no">571 </span>      return true; 
+<span class="no">572 </span>    } else { 
+<span class="no">573 </span>      return false; 
+<span class="no">574 </span>    } 
+<span class="no">575 </span>  } 
+<span class="no">576 </span> 
+<span class="no">577 </span>  /** 
+<span class="no">578 </span>   * Whether the {@link JSDocInfo} being built will have its 
+<span class="no">579 </span>   * {@link JSDocInfo#isConstructor()} flag set to {@code true}. 
+<span class="no">580 </span>   */ 
+<span class="no">581 </span>  public boolean isConstructorRecorded() { 
+<span class="no">582 </span>    return currentInfo.isConstructor(); 
+<span class="no">583 </span>  } 
+<span class="no">584 </span> 
+<span class="no">585 </span>  /** 
+<span class="no">586 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">587 </span>   * {@link JSDocInfo#shouldPreserveTry()} flag set to {@code true}. 
+<span class="no">588 </span>   */ 
+<span class="no">589 </span>  public boolean recordPreserveTry() { 
+<span class="no">590 </span>    if (!currentInfo.shouldPreserveTry()) { 
+<span class="no">591 </span>      currentInfo.setShouldPreserveTry(true); 
+<span class="no">592 </span>      populated = true; 
+<span class="no">593 </span>      return true; 
+<span class="no">594 </span>    } else { 
+<span class="no">595 </span>      return false; 
+<span class="no">596 </span>    } 
+<span class="no">597 </span>  } 
+<span class="no">598 </span> 
+<span class="no">599 </span>  /** 
+<span class="no">600 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">601 </span>   * {@link JSDocInfo#isOverride()} flag set to {@code true}. 
+<span class="no">602 </span>   */ 
+<span class="no">603 </span>  public boolean recordOverride() { 
+<span class="no">604 </span>    if (!currentInfo.isOverride()) { 
+<span class="no">605 </span>      currentInfo.setOverride(true); 
+<span class="no">606 </span>      populated = true; 
+<span class="no">607 </span>      return true; 
+<span class="no">608 </span>    } else { 
+<span class="no">609 </span>      return false; 
+<span class="no">610 </span>    } 
+<span class="no">611 </span>  } 
+<span class="no">612 </span> 
+<span class="no">613 </span>  /** 
+<span class="no">614 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">615 </span>   * {@link JSDocInfo#isNoAlias()} flag set to {@code true}. 
+<span class="no">616 </span>   */ 
+<span class="no">617 </span>  public boolean recordNoAlias() { 
+<span class="no">618 </span>    if (!currentInfo.isNoAlias()) { 
+<span class="no">619 </span>      currentInfo.setNoAlias(true); 
+<span class="no">620 </span>      populated = true; 
+<span class="no">621 </span>      return true; 
+<span class="no">622 </span>    } else { 
+<span class="no">623 </span>      return false; 
+<span class="no">624 </span>    } 
+<span class="no">625 </span>  } 
+<span class="no">626 </span> 
+<span class="no">627 </span>  /** 
+<span class="no">628 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">629 </span>   * {@link JSDocInfo#isDeprecated()} flag set to {@code true}. 
+<span class="no">630 </span>   */ 
+<span class="no">631 </span>  public boolean recordDeprecated() { 
+<span class="no">632 </span>    if (!currentInfo.isDeprecated()) { 
+<span class="no">633 </span>      currentInfo.setDeprecated(true); 
+<span class="no">634 </span>      populated = true; 
+<span class="no">635 </span>      return true; 
+<span class="no">636 </span>    } else { 
+<span class="no">637 </span>      return false; 
+<span class="no">638 </span>    } 
+<span class="no">639 </span>  } 
+<span class="no">640 </span> 
+<span class="no">641 </span>  /** 
+<span class="no">642 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">643 </span>   * {@link JSDocInfo#isInterface()} flag set to {@code true}. 
+<span class="no">644 </span>   * 
+<span class="no">645 </span>   * @return {@code true} if the flag was recorded and {@code false} 
+<span class="no">646 </span>   *     if it was already defined or it was incompatible with the existing 
+<span class="no">647 </span>   *     flags 
+<span class="no">648 </span>   */ 
+<span class="no">649 </span>  public boolean recordInterface() { 
+<span class="no">650 </span>    if (!hasAnySingletonTypeTags() &amp;&amp; 
+<span class="no">651 </span>        !currentInfo.isConstructor() &amp;&amp; !currentInfo.isInterface()) { 
+<span class="no">652 </span>      currentInfo.setInterface(true); 
+<span class="no">653 </span>      populated = true; 
+<span class="no">654 </span>      return true; 
+<span class="no">655 </span>    } else { 
+<span class="no">656 </span>      return false; 
+<span class="no">657 </span>    } 
+<span class="no">658 </span>  } 
+<span class="no">659 </span> 
+<span class="no">660 </span>  /** 
+<span class="no">661 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">662 </span>   * {@link JSDocInfo#isExport()} flag set to {@code true}. 
+<span class="no">663 </span>   */ 
+<span class="no">664 </span>  public boolean recordExport() { 
+<span class="no">665 </span>    if (!currentInfo.isExport()) { 
+<span class="no">666 </span>      currentInfo.setExport(true); 
+<span class="no">667 </span>      populated = true; 
+<span class="no">668 </span>      return true; 
+<span class="no">669 </span>    } else { 
+<span class="no">670 </span>      return false; 
+<span class="no">671 </span>    } 
+<span class="no">672 </span>  } 
+<span class="no">673 </span> 
+<span class="no">674 </span>  /** 
+<span class="no">675 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">676 </span>   * {@link JSDocInfo#isNoShadow()} flag set to {@code true}. 
+<span class="no">677 </span>   */ 
+<span class="no">678 </span>  public boolean recordNoShadow() { 
+<span class="no">679 </span>    if (!currentInfo.isNoShadow()) { 
+<span class="no">680 </span>      currentInfo.setNoShadow(true); 
+<span class="no">681 </span>      populated = true; 
+<span class="no">682 </span>      return true; 
+<span class="no">683 </span>    } else { 
+<span class="no">684 </span>      return false; 
+<span class="no">685 </span>    } 
+<span class="no">686 </span>  } 
+<span class="no">687 </span> 
+<span class="no">688 </span>  /** 
+<span class="no">689 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">690 </span>   * {@link JSDocInfo#isImplicitCast()} flag set to {@code true}. 
+<span class="no">691 </span>   */ 
+<span class="no">692 </span>  public boolean recordImplicitCast() { 
+<span class="no">693 </span>    if (!currentInfo.isImplicitCast()) { 
+<span class="no">694 </span>      currentInfo.setImplicitCast(true); 
+<span class="no">695 </span>      populated = true; 
+<span class="no">696 </span>      return true; 
+<span class="no">697 </span>    } else { 
+<span class="no">698 </span>      return false; 
+<span class="no">699 </span>    } 
+<span class="no">700 </span>  } 
+<span class="no">701 </span> 
+<span class="no">702 </span>  /** 
+<span class="no">703 </span>   * Records that the {@link JSDocInfo} being built should have its 
+<span class="no">704 </span>   * {@link JSDocInfo#isNoSideEffects()} flag set to {@code true}. 
+<span class="no">705 </span>   */ 
+<span class="no">706 </span>  public boolean recordNoSideEffects() { 
+<span class="no">707 </span>    if (!currentInfo.isNoSideEffects()) { 
+<span class="no">708 </span>      currentInfo.setNoSideEffects(true); 
+<span class="no">709 </span>      populated = true; 
+<span class="no">710 </span>      return true; 
+<span class="no">711 </span>    } else { 
+<span class="no">712 </span>      return false; 
+<span class="no">713 </span>    } 
+<span class="no">714 </span>  } 
+<span class="no">715 </span> 
+<span class="no">716 </span>  /** 
+<span class="no">717 </span>   * Whether the {@link JSDocInfo} being built will have its 
+<span class="no">718 </span>   * {@link JSDocInfo#isInterface()} flag set to {@code true}. 
+<span class="no">719 </span>   */ 
+<span class="no">720 </span>  public boolean isInterfaceRecorded() { 
+<span class="no">721 </span>    return currentInfo.isInterface(); 
+<span class="no">722 </span>  } 
+<span class="no">723 </span> 
+<span class="no">724 </span>  /** 
+<span class="no">725 </span>   * @return Whether a parameter of the given name has already been recorded. 
+<span class="no">726 </span>   */ 
+<span class="no">727 </span>  public boolean hasParameter(String name) { 
+<span class="no">728 </span>    return currentInfo.hasParameter(name); 
+<span class="no">729 </span>  } 
+<span class="no">730 </span> 
+<span class="no">731 </span>  /** 
+<span class="no">732 </span>   * Records an implemented interface. 
+<span class="no">733 </span>   */ 
+<span class="no">734 </span>  public boolean recordImplementedInterface(JSTypeExpression interfaceName) { 
+<span class="no">735 </span>    if (currentInfo.addImplementedInterface(interfaceName)) { 
+<span class="no">736 </span>      populated = true; 
+<span class="no">737 </span>      return true; 
+<span class="no">738 </span>    } else { 
+<span class="no">739 </span>      return false; 
+<span class="no">740 </span>    } 
+<span class="no">741 </span>  } 
+<span class="no">742 </span> 
+<span class="no">743 </span>  /** 
+<span class="no">744 </span>   * Whether the current doc info has other type tags, like 
+<span class="no">745 </span>   * {@code @param} or {@code @return} or {@code @type} or etc. 
+<span class="no">746 </span>   */ 
+<span class="no">747 </span>  private boolean hasAnyTypeRelatedTags() { 
+<span class="no">748 </span>    return currentInfo.isConstructor() || 
+<span class="no">749 </span>        currentInfo.isInterface() || 
+<span class="no">750 </span>        currentInfo.getParameterCount() &gt; 0 || 
+<span class="no">751 </span>        currentInfo.hasReturnType() || 
+<span class="no">752 </span>        currentInfo.hasBaseType() || 
+<span class="no">753 </span>        currentInfo.hasThisType() || 
+<span class="no">754 </span>        hasAnySingletonTypeTags(); 
+<span class="no">755 </span>  } 
+<span class="no">756 </span> 
+<span class="no">757 </span>  /** 
+<span class="no">758 </span>   * Whether the current doc info has any of the singleton type 
+<span class="no">759 </span>   * tags that may not appear with other type tags, like 
+<span class="no">760 </span>   * {@code @type} or {@code @typedef}. 
+<span class="no">761 </span>   */ 
+<span class="no">762 </span>  private boolean hasAnySingletonTypeTags() { 
+<span class="no">763 </span>    return currentInfo.hasType() || 
+<span class="no">764 </span>        currentInfo.hasTypedefType() || 
+<span class="no">765 </span>        currentInfo.hasEnumParameterType(); 
+<span class="no">766 </span>  } 
+<span class="no">767 </span>} 
+<span class="no">768 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
+    display: block;
+  }
+  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
+    display: none;
+  }
+  .page:has(#n9:target) .en9 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p9:target) .ep9 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .edit {
+    font-size: 14px;
+    height: 60px;
+  }
+  .editbox {
+    padding: 4px 8px;
+    line-height: 1.8;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 0;
+    overflow: auto;
+    background: #f7f7f7;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#n3:target) .en3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p3:target) .ep3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .token {
+    color: #017100;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+  .ins, .del, .mov, .upd {
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    border-bottom:  0.05em solid black;
+  }
+  .page:has(#n10:target) .en10 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p10:target) .ep10 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .page:has(#n4:target) .en4 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p4:target) .ep4 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .page:has(#n5:target) .en5 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p5:target) .ep5 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .page {
+    margin: 0 auto;
+    max-width: 100vw;
+    padding: 0 12px 8px 12px;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p6:target) .ep6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .sec {
+    margin: 12px 0;
+    line-height: 1;
+    font-weight: bold;
+    padding: 0;
+    font-size: 24px;
+  }
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .toolbar {
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+  }
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-height: 252px;
+    min-width: 512px;
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .panel, .edit {
+    box-sizing: border-box;
+    min-width: 0;
+    flex-direction: column;
+    display: flex;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n7:target) .en7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m7:target) .en7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m7:target) .em7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .panel-header {
+    border-bottom: 1px solid #afafaf;
+    font-weight: bold;
+    display: flex;
+    background: #ebebeb;
+    line-height: 1;
+    padding: 8px 10px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .page:has(#p8:target) .ep8 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .codebox {
+    line-height: 1.5;
+    flex: 1;
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    scroll-padding-top: 54px;
+    padding: 4px;
+    min-height: 0;
+    background: #f7f7f7;
+    font-size: 12px;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .no {
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
+    display: block;
+  }
+  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
+    display: none;
+  }
+  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#n8:target) .en8 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .page:has(#n7:target) .em7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .ep2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+      <span class="i3">Edit #3</span>
+      <span class="i4">Edit #4</span>
+      <span class="i5">Edit #5</span>
+      <span class="i6">Edit #6</span>
+      <span class="i7">Edit #7</span>
+      <span class="i8">Edit #8</span>
+      <span class="i9">Edit #9</span>
+      <span class="i10">Edit #10</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n10">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n10">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7" data-partner="#m7">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i8"><a href="#n7" data-partner="#m7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i10"><a href="#n9">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> method_invocation</a> [455, 36] - [455, 79]
+<span style="font-weight:600">  into   </span><a href="#p1"> argument_list</a> [455, 30] - [455, 80]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> identifier</a>: <span class=token>&quot;Math&quot;</span> [455, 36] - [455, 40]
+<span style="font-weight:600">  into   </span><a href="#p2"> method_invocation</a> [455, 36] - [455, 79]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> .</a>: <span class=token>&quot;.&quot;</span> [455, 40] - [455, 41]
+<span style="font-weight:600">  into   </span><a href="#p3"> method_invocation</a> [455, 36] - [455, 79]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> identifier</a>: <span class=token>&quot;max&quot;</span> [455, 41] - [455, 44]
+<span style="font-weight:600">  into   </span><a href="#p4"> method_invocation</a> [455, 36] - [455, 79]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> argument_list</a> [455, 44] - [455, 79]
+<span style="font-weight:600">  into   </span><a href="#p5"> method_invocation</a> [455, 36] - [455, 79]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n6"> (</a>: <span class=token>&quot;(&quot;</span> [455, 44] - [455, 45]
+<span style="font-weight:600">  into   </span><a href="#p6"> argument_list</a> [455, 44] - [455, 79]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n7" data-partner="m7"> binary_expression</a> [455, 36] - [455, 64]
+<span style="font-weight:600">  to   </span><a href="#m7" data-partner="n7"> binary_expression</a> [455, 45] - [455, 73]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n8"> ,</a>: <span class=token>&quot;,&quot;</span> [455, 73] - [455, 74]
+<span style="font-weight:600">  into   </span><a href="#p8"> argument_list</a> [455, 44] - [455, 79]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n9"> decimal_floating_point_literal</a>: <span class=token>&quot;0.0&quot;</span> [455, 75] - [455, 78]
+<span style="font-weight:600">  into   </span><a href="#p9"> argument_list</a> [455, 44] - [455, 79]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n10"> )</a>: <span class=token>&quot;)&quot;</span> [455, 78] - [455, 79]
+<span style="font-weight:600">  into   </span><a href="#p10"> argument_list</a> [455, 44] - [455, 79]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">7_A (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>/* =========================================================== 
+<span class="no">  2 </span> * JFreeChart : a free chart library for the Java(tm) platform 
+<span class="no">  3 </span> * =========================================================== 
+<span class="no">  4 </span> * 
+<span class="no">  5 </span> * (C) Copyright 2000-2008, by Object Refinery Limited and Contributors. 
+<span class="no">  6 </span> * 
+<span class="no">  7 </span> * Project Info:  http://www.jfree.org/jfreechart/index.html 
+<span class="no">  8 </span> * 
+<span class="no">  9 </span> * This library is free software; you can redistribute it and/or modify it 
+<span class="no"> 10 </span> * under the terms of the GNU Lesser General Public License as published by 
+<span class="no"> 11 </span> * the Free Software Foundation; either version 2.1 of the License, or 
+<span class="no"> 12 </span> * (at your option) any later version. 
+<span class="no"> 13 </span> * 
+<span class="no"> 14 </span> * This library is distributed in the hope that it will be useful, but 
+<span class="no"> 15 </span> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+<span class="no"> 16 </span> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+<span class="no"> 17 </span> * License for more details. 
+<span class="no"> 18 </span> * 
+<span class="no"> 19 </span> * You should have received a copy of the GNU Lesser General Public 
+<span class="no"> 20 </span> * License along with this library; if not, write to the Free Software 
+<span class="no"> 21 </span> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, 
+<span class="no"> 22 </span> * USA. 
+<span class="no"> 23 </span> * 
+<span class="no"> 24 </span> * [Java is a trademark or registered trademark of Sun Microsystems, Inc. 
+<span class="no"> 25 </span> * in the United States and other countries.] 
+<span class="no"> 26 </span> * 
+<span class="no"> 27 </span> * ---------------------- 
+<span class="no"> 28 </span> * BorderArrangement.java 
+<span class="no"> 29 </span> * ---------------------- 
+<span class="no"> 30 </span> * (C) Copyright 2004-2008, by Object Refinery Limited. 
+<span class="no"> 31 </span> * 
+<span class="no"> 32 </span> * Original Author:  David Gilbert (for Object Refinery Limited); 
+<span class="no"> 33 </span> * Contributor(s):   -; 
+<span class="no"> 34 </span> * 
+<span class="no"> 35 </span> * Changes: 
+<span class="no"> 36 </span> * -------- 
+<span class="no"> 37 </span> * 22-Oct-2004 : Version 1 (DG); 
+<span class="no"> 38 </span> * 08-Feb-2005 : Updated for changes in RectangleConstraint (DG); 
+<span class="no"> 39 </span> * 24-Feb-2005 : Improved arrangeRR() method (DG); 
+<span class="no"> 40 </span> * 03-May-2005 : Implemented Serializable and added equals() method (DG); 
+<span class="no"> 41 </span> * 13-May-2005 : Fixed bugs in the arrange() method (DG); 
+<span class="no"> 42 </span> * 20-Jun-2007 : Removed JCommon dependencies (DG); 
+<span class="no"> 43 </span> * 08-Apr-2008 : Fixed bug in arrangeFF() method where width is too small for 
+<span class="no"> 44 </span> *               left and right blocks (DG); 
+<span class="no"> 45 </span> * 
+<span class="no"> 46 </span> */ 
+<span class="no"> 47 </span> 
+<span class="no"> 48 </span>package org.jfree.chart.block; 
+<span class="no"> 49 </span> 
+<span class="no"> 50 </span>import java.awt.Graphics2D; 
+<span class="no"> 51 </span>import java.awt.geom.Rectangle2D; 
+<span class="no"> 52 </span>import java.io.Serializable; 
+<span class="no"> 53 </span> 
+<span class="no"> 54 </span>import org.jfree.chart.util.ObjectUtilities; 
+<span class="no"> 55 </span>import org.jfree.chart.util.RectangleEdge; 
+<span class="no"> 56 </span>import org.jfree.chart.util.Size2D; 
+<span class="no"> 57 </span>import org.jfree.data.Range; 
+<span class="no"> 58 </span> 
+<span class="no"> 59 </span>/** 
+<span class="no"> 60 </span> * An arrangement manager that lays out blocks in a similar way to 
+<span class="no"> 61 </span> * Swing&apos;s BorderLayout class. 
+<span class="no"> 62 </span> */ 
+<span class="no"> 63 </span>public class BorderArrangement implements Arrangement, Serializable { 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>    /** For serialization. */ 
+<span class="no"> 66 </span>    private static final long serialVersionUID = 506071142274883745L; 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>    /** The block (if any) at the center of the layout. */ 
+<span class="no"> 69 </span>    private Block centerBlock; 
+<span class="no"> 70 </span> 
+<span class="no"> 71 </span>    /** The block (if any) at the top of the layout. */ 
+<span class="no"> 72 </span>    private Block topBlock; 
+<span class="no"> 73 </span> 
+<span class="no"> 74 </span>    /** The block (if any) at the bottom of the layout. */ 
+<span class="no"> 75 </span>    private Block bottomBlock; 
+<span class="no"> 76 </span> 
+<span class="no"> 77 </span>    /** The block (if any) at the left of the layout. */ 
+<span class="no"> 78 </span>    private Block leftBlock; 
+<span class="no"> 79 </span> 
+<span class="no"> 80 </span>    /** The block (if any) at the right of the layout. */ 
+<span class="no"> 81 </span>    private Block rightBlock; 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>    /** 
+<span class="no"> 84 </span>     * Creates a new instance. 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public BorderArrangement() { 
+<span class="no"> 87 </span>    } 
+<span class="no"> 88 </span> 
+<span class="no"> 89 </span>    /** 
+<span class="no"> 90 </span>     * Adds a block to the arrangement manager at the specified edge. 
+<span class="no"> 91 </span>     * 
+<span class="no"> 92 </span>     * @param block  the block (&lt;code&gt;null&lt;/code&gt; permitted). 
+<span class="no"> 93 </span>     * @param key  the edge (an instance of {@link RectangleEdge}) or 
+<span class="no"> 94 </span>     *             &lt;code&gt;null&lt;/code&gt; for the center block. 
+<span class="no"> 95 </span>     */ 
+<span class="no"> 96 </span>    public void add(Block block, Object key) { 
+<span class="no"> 97 </span> 
+<span class="no"> 98 </span>        if (key == null) { 
+<span class="no"> 99 </span>            this.centerBlock = block; 
+<span class="no">100 </span>        } 
+<span class="no">101 </span>        else { 
+<span class="no">102 </span>            RectangleEdge edge = (RectangleEdge) key; 
+<span class="no">103 </span>            if (edge == RectangleEdge.TOP) { 
+<span class="no">104 </span>                this.topBlock = block; 
+<span class="no">105 </span>            } 
+<span class="no">106 </span>            else if (edge == RectangleEdge.BOTTOM) { 
+<span class="no">107 </span>                this.bottomBlock = block; 
+<span class="no">108 </span>            } 
+<span class="no">109 </span>            else if (edge == RectangleEdge.LEFT) { 
+<span class="no">110 </span>                this.leftBlock = block; 
+<span class="no">111 </span>            } 
+<span class="no">112 </span>            else if (edge == RectangleEdge.RIGHT) { 
+<span class="no">113 </span>                this.rightBlock = block; 
+<span class="no">114 </span>            } 
+<span class="no">115 </span>        } 
+<span class="no">116 </span>    } 
+<span class="no">117 </span> 
+<span class="no">118 </span>    /** 
+<span class="no">119 </span>     * Arranges the items in the specified container, subject to the given 
+<span class="no">120 </span>     * constraint. 
+<span class="no">121 </span>     * 
+<span class="no">122 </span>     * @param container  the container. 
+<span class="no">123 </span>     * @param g2  the graphics device. 
+<span class="no">124 </span>     * @param constraint  the constraint. 
+<span class="no">125 </span>     * 
+<span class="no">126 </span>     * @return The block size. 
+<span class="no">127 </span>     */ 
+<span class="no">128 </span>    public Size2D arrange(BlockContainer container, 
+<span class="no">129 </span>                          Graphics2D g2, 
+<span class="no">130 </span>                          RectangleConstraint constraint) { 
+<span class="no">131 </span>        RectangleConstraint contentConstraint 
+<span class="no">132 </span>                = container.toContentConstraint(constraint); 
+<span class="no">133 </span>        Size2D contentSize = null; 
+<span class="no">134 </span>        LengthConstraintType w = contentConstraint.getWidthConstraintType(); 
+<span class="no">135 </span>        LengthConstraintType h = contentConstraint.getHeightConstraintType(); 
+<span class="no">136 </span>        if (w == LengthConstraintType.NONE) { 
+<span class="no">137 </span>            if (h == LengthConstraintType.NONE) { 
+<span class="no">138 </span>                contentSize = arrangeNN(container, g2); 
+<span class="no">139 </span>            } 
+<span class="no">140 </span>            else if (h == LengthConstraintType.FIXED) { 
+<span class="no">141 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">142 </span>            } 
+<span class="no">143 </span>            else if (h == LengthConstraintType.RANGE) { 
+<span class="no">144 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">145 </span>            } 
+<span class="no">146 </span>        } 
+<span class="no">147 </span>        else if (w == LengthConstraintType.FIXED) { 
+<span class="no">148 </span>            if (h == LengthConstraintType.NONE) { 
+<span class="no">149 </span>                contentSize = arrangeFN(container, g2, constraint.getWidth()); 
+<span class="no">150 </span>            } 
+<span class="no">151 </span>            else if (h == LengthConstraintType.FIXED) { 
+<span class="no">152 </span>                contentSize = arrangeFF(container, g2, constraint); 
+<span class="no">153 </span>            } 
+<span class="no">154 </span>            else if (h == LengthConstraintType.RANGE) { 
+<span class="no">155 </span>                contentSize = arrangeFR(container, g2, constraint); 
+<span class="no">156 </span>            } 
+<span class="no">157 </span>        } 
+<span class="no">158 </span>        else if (w == LengthConstraintType.RANGE) { 
+<span class="no">159 </span>            if (h == LengthConstraintType.NONE) { 
+<span class="no">160 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">161 </span>            } 
+<span class="no">162 </span>            else if (h == LengthConstraintType.FIXED) { 
+<span class="no">163 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">164 </span>            } 
+<span class="no">165 </span>            else if (h == LengthConstraintType.RANGE) { 
+<span class="no">166 </span>                contentSize = arrangeRR(container, constraint.getWidthRange(), 
+<span class="no">167 </span>                        constraint.getHeightRange(), g2); 
+<span class="no">168 </span>            } 
+<span class="no">169 </span>        } 
+<span class="no">170 </span>        return new Size2D(container.calculateTotalWidth(contentSize.getWidth()), 
+<span class="no">171 </span>                container.calculateTotalHeight(contentSize.getHeight())); 
+<span class="no">172 </span>    } 
+<span class="no">173 </span> 
+<span class="no">174 </span>    /** 
+<span class="no">175 </span>     * Performs an arrangement without constraints. 
+<span class="no">176 </span>     * 
+<span class="no">177 </span>     * @param container  the container. 
+<span class="no">178 </span>     * @param g2  the graphics device. 
+<span class="no">179 </span>     * 
+<span class="no">180 </span>     * @return The container size after the arrangement. 
+<span class="no">181 </span>     */ 
+<span class="no">182 </span>    protected Size2D arrangeNN(BlockContainer container, Graphics2D g2) { 
+<span class="no">183 </span>        double[] w = new double[5]; 
+<span class="no">184 </span>        double[] h = new double[5]; 
+<span class="no">185 </span>        if (this.topBlock != null) { 
+<span class="no">186 </span>            Size2D size = this.topBlock.arrange(g2, RectangleConstraint.NONE); 
+<span class="no">187 </span>            w[0] = size.width; 
+<span class="no">188 </span>            h[0] = size.height; 
+<span class="no">189 </span>        } 
+<span class="no">190 </span>        if (this.bottomBlock != null) { 
+<span class="no">191 </span>            Size2D size = this.bottomBlock.arrange(g2, 
+<span class="no">192 </span>                    RectangleConstraint.NONE); 
+<span class="no">193 </span>            w[1] = size.width; 
+<span class="no">194 </span>            h[1] = size.height; 
+<span class="no">195 </span>        } 
+<span class="no">196 </span>        if (this.leftBlock != null) { 
+<span class="no">197 </span>            Size2D size = this.leftBlock.arrange(g2, RectangleConstraint.NONE); 
+<span class="no">198 </span>            w[2] = size.width; 
+<span class="no">199 </span>            h[2] = size.height; 
+<span class="no">200 </span>       } 
+<span class="no">201 </span>        if (this.rightBlock != null) { 
+<span class="no">202 </span>            Size2D size = this.rightBlock.arrange(g2, RectangleConstraint.NONE); 
+<span class="no">203 </span>            w[3] = size.width; 
+<span class="no">204 </span>            h[3] = size.height; 
+<span class="no">205 </span>        } 
+<span class="no">206 </span> 
+<span class="no">207 </span>        h[2] = Math.max(h[2], h[3]); 
+<span class="no">208 </span>        h[3] = h[2]; 
+<span class="no">209 </span> 
+<span class="no">210 </span>        if (this.centerBlock != null) { 
+<span class="no">211 </span>            Size2D size = this.centerBlock.arrange(g2, 
+<span class="no">212 </span>                    RectangleConstraint.NONE); 
+<span class="no">213 </span>            w[4] = size.width; 
+<span class="no">214 </span>            h[4] = size.height; 
+<span class="no">215 </span>        } 
+<span class="no">216 </span>        double width = Math.max(w[0], Math.max(w[1], w[2] + w[4] + w[3])); 
+<span class="no">217 </span>        double centerHeight = Math.max(h[2], Math.max(h[3], h[4])); 
+<span class="no">218 </span>        double height = h[0] + h[1] + centerHeight; 
+<span class="no">219 </span>        if (this.topBlock != null) { 
+<span class="no">220 </span>            this.topBlock.setBounds(new Rectangle2D.Double(0.0, 0.0, width, 
+<span class="no">221 </span>                    h[0])); 
+<span class="no">222 </span>        } 
+<span class="no">223 </span>        if (this.bottomBlock != null) { 
+<span class="no">224 </span>            this.bottomBlock.setBounds(new Rectangle2D.Double(0.0, 
+<span class="no">225 </span>                    height - h[1], width, h[1])); 
+<span class="no">226 </span>        } 
+<span class="no">227 </span>        if (this.leftBlock != null) { 
+<span class="no">228 </span>            this.leftBlock.setBounds(new Rectangle2D.Double(0.0, h[0], w[2], 
+<span class="no">229 </span>                    centerHeight)); 
+<span class="no">230 </span>        } 
+<span class="no">231 </span>        if (this.rightBlock != null) { 
+<span class="no">232 </span>            this.rightBlock.setBounds(new Rectangle2D.Double(width - w[3], 
+<span class="no">233 </span>                    h[0], w[3], centerHeight)); 
+<span class="no">234 </span>        } 
+<span class="no">235 </span> 
+<span class="no">236 </span>        if (this.centerBlock != null) { 
+<span class="no">237 </span>            this.centerBlock.setBounds(new Rectangle2D.Double(w[2], h[0], 
+<span class="no">238 </span>                    width - w[2] - w[3], centerHeight)); 
+<span class="no">239 </span>        } 
+<span class="no">240 </span>        return new Size2D(width, height); 
+<span class="no">241 </span>    } 
+<span class="no">242 </span> 
+<span class="no">243 </span>    /** 
+<span class="no">244 </span>     * Performs an arrangement with a fixed width and a range for the height. 
+<span class="no">245 </span>     * 
+<span class="no">246 </span>     * @param container  the container. 
+<span class="no">247 </span>     * @param g2  the graphics device. 
+<span class="no">248 </span>     * @param constraint  the constraint. 
+<span class="no">249 </span>     * 
+<span class="no">250 </span>     * @return The container size after the arrangement. 
+<span class="no">251 </span>     */ 
+<span class="no">252 </span>    protected Size2D arrangeFR(BlockContainer container, Graphics2D g2, 
+<span class="no">253 </span>                               RectangleConstraint constraint) { 
+<span class="no">254 </span>        Size2D size1 = arrangeFN(container, g2, constraint.getWidth()); 
+<span class="no">255 </span>        if (constraint.getHeightRange().contains(size1.getHeight())) { 
+<span class="no">256 </span>            return size1; 
+<span class="no">257 </span>        } 
+<span class="no">258 </span>        else { 
+<span class="no">259 </span>            double h = constraint.getHeightRange().constrain(size1.getHeight()); 
+<span class="no">260 </span>            RectangleConstraint c2 = constraint.toFixedHeight(h); 
+<span class="no">261 </span>            return arrange(container, g2, c2); 
+<span class="no">262 </span>        } 
+<span class="no">263 </span>    } 
+<span class="no">264 </span> 
+<span class="no">265 </span>    /** 
+<span class="no">266 </span>     * Arranges the container width a fixed width and no constraint on the 
+<span class="no">267 </span>     * height. 
+<span class="no">268 </span>     * 
+<span class="no">269 </span>     * @param container  the container. 
+<span class="no">270 </span>     * @param g2  the graphics device. 
+<span class="no">271 </span>     * @param width  the fixed width. 
+<span class="no">272 </span>     * 
+<span class="no">273 </span>     * @return The container size after arranging the contents. 
+<span class="no">274 </span>     */ 
+<span class="no">275 </span>    protected Size2D arrangeFN(BlockContainer container, Graphics2D g2, 
+<span class="no">276 </span>                               double width) { 
+<span class="no">277 </span>        double[] w = new double[5]; 
+<span class="no">278 </span>        double[] h = new double[5]; 
+<span class="no">279 </span>        RectangleConstraint c1 = new RectangleConstraint(width, null, 
+<span class="no">280 </span>                LengthConstraintType.FIXED, 0.0, null, 
+<span class="no">281 </span>                LengthConstraintType.NONE); 
+<span class="no">282 </span>        if (this.topBlock != null) { 
+<span class="no">283 </span>            Size2D size = this.topBlock.arrange(g2, c1); 
+<span class="no">284 </span>            w[0] = size.width; 
+<span class="no">285 </span>            h[0] = size.height; 
+<span class="no">286 </span>        } 
+<span class="no">287 </span>        if (this.bottomBlock != null) { 
+<span class="no">288 </span>            Size2D size = this.bottomBlock.arrange(g2, c1); 
+<span class="no">289 </span>            w[1] = size.width; 
+<span class="no">290 </span>            h[1] = size.height; 
+<span class="no">291 </span>        } 
+<span class="no">292 </span>        RectangleConstraint c2 = new RectangleConstraint(0.0, 
+<span class="no">293 </span>                new Range(0.0, width), LengthConstraintType.RANGE, 
+<span class="no">294 </span>                0.0, null, LengthConstraintType.NONE); 
+<span class="no">295 </span>        if (this.leftBlock != null) { 
+<span class="no">296 </span>            Size2D size = this.leftBlock.arrange(g2, c2); 
+<span class="no">297 </span>            w[2] = size.width; 
+<span class="no">298 </span>            h[2] = size.height; 
+<span class="no">299 </span>        } 
+<span class="no">300 </span>        if (this.rightBlock != null) { 
+<span class="no">301 </span>            double maxW = Math.max(width - w[2], 0.0); 
+<span class="no">302 </span>            RectangleConstraint c3 = new RectangleConstraint(0.0, 
+<span class="no">303 </span>                    new Range(Math.min(w[2], maxW), maxW), 
+<span class="no">304 </span>                    LengthConstraintType.RANGE, 0.0, null, 
+<span class="no">305 </span>                    LengthConstraintType.NONE); 
+<span class="no">306 </span>            Size2D size = this.rightBlock.arrange(g2, c3); 
+<span class="no">307 </span>            w[3] = size.width; 
+<span class="no">308 </span>            h[3] = size.height; 
+<span class="no">309 </span>        } 
+<span class="no">310 </span> 
+<span class="no">311 </span>        h[2] = Math.max(h[2], h[3]); 
+<span class="no">312 </span>        h[3] = h[2]; 
+<span class="no">313 </span> 
+<span class="no">314 </span>        if (this.centerBlock != null) { 
+<span class="no">315 </span>            RectangleConstraint c4 = new RectangleConstraint(width - w[2] 
+<span class="no">316 </span>                    - w[3], null, LengthConstraintType.FIXED, 0.0, null, 
+<span class="no">317 </span>                    LengthConstraintType.NONE); 
+<span class="no">318 </span>            Size2D size = this.centerBlock.arrange(g2, c4); 
+<span class="no">319 </span>            w[4] = size.width; 
+<span class="no">320 </span>            h[4] = size.height; 
+<span class="no">321 </span>        } 
+<span class="no">322 </span>        double height = h[0] + h[1] + Math.max(h[2], Math.max(h[3], h[4])); 
+<span class="no">323 </span>        return arrange(container, g2, new RectangleConstraint(width, height)); 
+<span class="no">324 </span>    } 
+<span class="no">325 </span> 
+<span class="no">326 </span>    /** 
+<span class="no">327 </span>     * Performs an arrangement with range constraints on both the vertical 
+<span class="no">328 </span>     * and horizontal sides. 
+<span class="no">329 </span>     * 
+<span class="no">330 </span>     * @param container  the container. 
+<span class="no">331 </span>     * @param widthRange  the allowable range for the container width. 
+<span class="no">332 </span>     * @param heightRange  the allowable range for the container height. 
+<span class="no">333 </span>     * @param g2  the graphics device. 
+<span class="no">334 </span>     * 
+<span class="no">335 </span>     * @return The container size. 
+<span class="no">336 </span>     */ 
+<span class="no">337 </span>    protected Size2D arrangeRR(BlockContainer container, 
+<span class="no">338 </span>                               Range widthRange, Range heightRange, 
+<span class="no">339 </span>                               Graphics2D g2) { 
+<span class="no">340 </span>        double[] w = new double[5]; 
+<span class="no">341 </span>        double[] h = new double[5]; 
+<span class="no">342 </span>        if (this.topBlock != null) { 
+<span class="no">343 </span>            RectangleConstraint c1 = new RectangleConstraint(widthRange, 
+<span class="no">344 </span>                    heightRange); 
+<span class="no">345 </span>            Size2D size = this.topBlock.arrange(g2, c1); 
+<span class="no">346 </span>            w[0] = size.width; 
+<span class="no">347 </span>            h[0] = size.height; 
+<span class="no">348 </span>        } 
+<span class="no">349 </span>        if (this.bottomBlock != null) { 
+<span class="no">350 </span>            Range heightRange2 = Range.shift(heightRange, -h[0], false); 
+<span class="no">351 </span>            RectangleConstraint c2 = new RectangleConstraint(widthRange, 
+<span class="no">352 </span>                    heightRange2); 
+<span class="no">353 </span>            Size2D size = this.bottomBlock.arrange(g2, c2); 
+<span class="no">354 </span>            w[1] = size.width; 
+<span class="no">355 </span>            h[1] = size.height; 
+<span class="no">356 </span>        } 
+<span class="no">357 </span>        Range heightRange3 = Range.shift(heightRange, -(h[0] + h[1])); 
+<span class="no">358 </span>        if (this.leftBlock != null) { 
+<span class="no">359 </span>            RectangleConstraint c3 = new RectangleConstraint(widthRange, 
+<span class="no">360 </span>                    heightRange3); 
+<span class="no">361 </span>            Size2D size = this.leftBlock.arrange(g2, c3); 
+<span class="no">362 </span>            w[2] = size.width; 
+<span class="no">363 </span>            h[2] = size.height; 
+<span class="no">364 </span>        } 
+<span class="no">365 </span>        Range widthRange2 = Range.shift(widthRange, -w[2], false); 
+<span class="no">366 </span>        if (this.rightBlock != null) { 
+<span class="no">367 </span>            RectangleConstraint c4 = new RectangleConstraint(widthRange2, 
+<span class="no">368 </span>                    heightRange3); 
+<span class="no">369 </span>            Size2D size = this.rightBlock.arrange(g2, c4); 
+<span class="no">370 </span>            w[3] = size.width; 
+<span class="no">371 </span>            h[3] = size.height; 
+<span class="no">372 </span>        } 
+<span class="no">373 </span> 
+<span class="no">374 </span>        h[2] = Math.max(h[2], h[3]); 
+<span class="no">375 </span>        h[3] = h[2]; 
+<span class="no">376 </span>        Range widthRange3 = Range.shift(widthRange, -(w[2] + w[3]), false); 
+<span class="no">377 </span>        if (this.centerBlock != null) { 
+<span class="no">378 </span>            RectangleConstraint c5 = new RectangleConstraint(widthRange3, 
+<span class="no">379 </span>                    heightRange3); 
+<span class="no">380 </span>            // TODO:  the width and height ranges should be reduced by the 
+<span class="no">381 </span>            // height required for the top and bottom, and the width required 
+<span class="no">382 </span>            // by the left and right 
+<span class="no">383 </span>            Size2D size = this.centerBlock.arrange(g2, c5); 
+<span class="no">384 </span>            w[4] = size.width; 
+<span class="no">385 </span>            h[4] = size.height; 
+<span class="no">386 </span>        } 
+<span class="no">387 </span>        double width = Math.max(w[0], Math.max(w[1], w[2] + w[4] + w[3])); 
+<span class="no">388 </span>        double height = h[0] + h[1] + Math.max(h[2], Math.max(h[3], h[4])); 
+<span class="no">389 </span>        if (this.topBlock != null) { 
+<span class="no">390 </span>            this.topBlock.setBounds(new Rectangle2D.Double(0.0, 0.0, width, 
+<span class="no">391 </span>                    h[0])); 
+<span class="no">392 </span>        } 
+<span class="no">393 </span>        if (this.bottomBlock != null) { 
+<span class="no">394 </span>            this.bottomBlock.setBounds(new Rectangle2D.Double(0.0, 
+<span class="no">395 </span>                    height - h[1], width, h[1])); 
+<span class="no">396 </span>        } 
+<span class="no">397 </span>        if (this.leftBlock != null) { 
+<span class="no">398 </span>            this.leftBlock.setBounds(new Rectangle2D.Double(0.0, h[0], w[2], 
+<span class="no">399 </span>                    h[2])); 
+<span class="no">400 </span>        } 
+<span class="no">401 </span>        if (this.rightBlock != null) { 
+<span class="no">402 </span>            this.rightBlock.setBounds(new Rectangle2D.Double(width - w[3], 
+<span class="no">403 </span>                    h[0], w[3], h[3])); 
+<span class="no">404 </span>        } 
+<span class="no">405 </span> 
+<span class="no">406 </span>        if (this.centerBlock != null) { 
+<span class="no">407 </span>            this.centerBlock.setBounds(new Rectangle2D.Double(w[2], h[0], 
+<span class="no">408 </span>                    width - w[2] - w[3], height - h[0] - h[1])); 
+<span class="no">409 </span>        } 
+<span class="no">410 </span>        return new Size2D(width, height); 
+<span class="no">411 </span>    } 
+<span class="no">412 </span> 
+<span class="no">413 </span>    /** 
+<span class="no">414 </span>     * Arranges the items within a container. 
+<span class="no">415 </span>     * 
+<span class="no">416 </span>     * @param container  the container. 
+<span class="no">417 </span>     * @param constraint  the constraint. 
+<span class="no">418 </span>     * @param g2  the graphics device. 
+<span class="no">419 </span>     * 
+<span class="no">420 </span>     * @return The container size after the arrangement. 
+<span class="no">421 </span>     */ 
+<span class="no">422 </span>    protected Size2D arrangeFF(BlockContainer container, Graphics2D g2, 
+<span class="no">423 </span>                               RectangleConstraint constraint) { 
+<span class="no">424 </span>        double[] w = new double[5]; 
+<span class="no">425 </span>        double[] h = new double[5]; 
+<span class="no">426 </span>        w[0] = constraint.getWidth(); 
+<span class="no">427 </span>        if (this.topBlock != null) { 
+<span class="no">428 </span>            RectangleConstraint c1 = new RectangleConstraint(w[0], null, 
+<span class="no">429 </span>                    LengthConstraintType.FIXED, 0.0, 
+<span class="no">430 </span>                    new Range(0.0, constraint.getHeight()), 
+<span class="no">431 </span>                    LengthConstraintType.RANGE); 
+<span class="no">432 </span>            Size2D size = this.topBlock.arrange(g2, c1); 
+<span class="no">433 </span>            h[0] = size.height; 
+<span class="no">434 </span>        } 
+<span class="no">435 </span>        w[1] = w[0]; 
+<span class="no">436 </span>        if (this.bottomBlock != null) { 
+<span class="no">437 </span>            RectangleConstraint c2 = new RectangleConstraint(w[0], null, 
+<span class="no">438 </span>                    LengthConstraintType.FIXED, 0.0, new Range(0.0, 
+<span class="no">439 </span>                    constraint.getHeight() - h[0]), LengthConstraintType.RANGE); 
+<span class="no">440 </span>            Size2D size = this.bottomBlock.arrange(g2, c2); 
+<span class="no">441 </span>            h[1] = size.height; 
+<span class="no">442 </span>        } 
+<span class="no">443 </span>        h[2] = constraint.getHeight() - h[1] - h[0]; 
+<span class="no">444 </span>        if (this.leftBlock != null) { 
+<span class="no">445 </span>            RectangleConstraint c3 = new RectangleConstraint(0.0, 
+<span class="no">446 </span>                    new Range(0.0, constraint.getWidth()), 
+<span class="no">447 </span>                    LengthConstraintType.RANGE, h[2], null, 
+<span class="no">448 </span>                    LengthConstraintType.FIXED); 
+<span class="no">449 </span>            Size2D size = this.leftBlock.arrange(g2, c3); 
+<span class="no">450 </span>            w[2] = size.width; 
+<span class="no">451 </span>        } 
+<span class="no">452 </span>        h[3] = h[2]; 
+<span class="no">453 </span>        if (this.rightBlock != null) { 
+<span class="no">454 </span>            RectangleConstraint c4 = new RectangleConstraint(0.0, 
+<span class="no">455 </span>                    new Range(0.0, <span id="n7" class="en7"><a href="#n7" data-partner="#m7" class="mov">constraint.getWidth() - w[2]</a></span>), 
+<span class="no">456 </span>                    LengthConstraintType.RANGE, h[2], null, 
+<span class="no">457 </span>                    LengthConstraintType.FIXED); 
+<span class="no">458 </span>            Size2D size = this.rightBlock.arrange(g2, c4); 
+<span class="no">459 </span>            w[3] = size.width; 
+<span class="no">460 </span>        } 
+<span class="no">461 </span>        h[4] = h[2]; 
+<span class="no">462 </span>        w[4] = constraint.getWidth() - w[3] - w[2]; 
+<span class="no">463 </span>        RectangleConstraint c5 = new RectangleConstraint(w[4], h[4]); 
+<span class="no">464 </span>        if (this.centerBlock != null) { 
+<span class="no">465 </span>            this.centerBlock.arrange(g2, c5); 
+<span class="no">466 </span>        } 
+<span class="no">467 </span> 
+<span class="no">468 </span>        if (this.topBlock != null) { 
+<span class="no">469 </span>            this.topBlock.setBounds(new Rectangle2D.Double(0.0, 0.0, w[0], 
+<span class="no">470 </span>                    h[0])); 
+<span class="no">471 </span>        } 
+<span class="no">472 </span>        if (this.bottomBlock != null) { 
+<span class="no">473 </span>            this.bottomBlock.setBounds(new Rectangle2D.Double(0.0, h[0] + h[2], 
+<span class="no">474 </span>                    w[1], h[1])); 
+<span class="no">475 </span>        } 
+<span class="no">476 </span>        if (this.leftBlock != null) { 
+<span class="no">477 </span>            this.leftBlock.setBounds(new Rectangle2D.Double(0.0, h[0], w[2], 
+<span class="no">478 </span>                    h[2])); 
+<span class="no">479 </span>        } 
+<span class="no">480 </span>        if (this.rightBlock != null) { 
+<span class="no">481 </span>            this.rightBlock.setBounds(new Rectangle2D.Double(w[2] + w[4], h[0], 
+<span class="no">482 </span>                    w[3], h[3])); 
+<span class="no">483 </span>        } 
+<span class="no">484 </span>        if (this.centerBlock != null) { 
+<span class="no">485 </span>            this.centerBlock.setBounds(new Rectangle2D.Double(w[2], h[0], w[4], 
+<span class="no">486 </span>                    h[4])); 
+<span class="no">487 </span>        } 
+<span class="no">488 </span>        return new Size2D(constraint.getWidth(), constraint.getHeight()); 
+<span class="no">489 </span>    } 
+<span class="no">490 </span> 
+<span class="no">491 </span>    /** 
+<span class="no">492 </span>     * Clears the layout. 
+<span class="no">493 </span>     */ 
+<span class="no">494 </span>    public void clear() { 
+<span class="no">495 </span>        this.centerBlock = null; 
+<span class="no">496 </span>        this.topBlock = null; 
+<span class="no">497 </span>        this.bottomBlock = null; 
+<span class="no">498 </span>        this.leftBlock = null; 
+<span class="no">499 </span>        this.rightBlock = null; 
+<span class="no">500 </span>    } 
+<span class="no">501 </span> 
+<span class="no">502 </span>    /** 
+<span class="no">503 </span>     * Tests this arrangement for equality with an arbitrary object. 
+<span class="no">504 </span>     * 
+<span class="no">505 </span>     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted). 
+<span class="no">506 </span>     * 
+<span class="no">507 </span>     * @return A boolean. 
+<span class="no">508 </span>     */ 
+<span class="no">509 </span>    public boolean equals(Object obj) { 
+<span class="no">510 </span>        if (obj == this) { 
+<span class="no">511 </span>            return true; 
+<span class="no">512 </span>        } 
+<span class="no">513 </span>        if (!(obj instanceof BorderArrangement)) { 
+<span class="no">514 </span>            return false; 
+<span class="no">515 </span>        } 
+<span class="no">516 </span>        BorderArrangement that = (BorderArrangement) obj; 
+<span class="no">517 </span>        if (!ObjectUtilities.equal(this.topBlock, that.topBlock)) { 
+<span class="no">518 </span>            return false; 
+<span class="no">519 </span>        } 
+<span class="no">520 </span>        if (!ObjectUtilities.equal(this.bottomBlock, that.bottomBlock)) { 
+<span class="no">521 </span>            return false; 
+<span class="no">522 </span>        } 
+<span class="no">523 </span>        if (!ObjectUtilities.equal(this.leftBlock, that.leftBlock)) { 
+<span class="no">524 </span>            return false; 
+<span class="no">525 </span>        } 
+<span class="no">526 </span>        if (!ObjectUtilities.equal(this.rightBlock, that.rightBlock)) { 
+<span class="no">527 </span>            return false; 
+<span class="no">528 </span>        } 
+<span class="no">529 </span>        if (!ObjectUtilities.equal(this.centerBlock, that.centerBlock)) { 
+<span class="no">530 </span>            return false; 
+<span class="no">531 </span>        } 
+<span class="no">532 </span>        return true; 
+<span class="no">533 </span>    } 
+<span class="no">534 </span>} 
+<span class="no">535 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">7_A (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>/* =========================================================== 
+<span class="no">  2 </span> * JFreeChart : a free chart library for the Java(tm) platform 
+<span class="no">  3 </span> * =========================================================== 
+<span class="no">  4 </span> * 
+<span class="no">  5 </span> * (C) Copyright 2000-2008, by Object Refinery Limited and Contributors. 
+<span class="no">  6 </span> * 
+<span class="no">  7 </span> * Project Info:  http://www.jfree.org/jfreechart/index.html 
+<span class="no">  8 </span> * 
+<span class="no">  9 </span> * This library is free software; you can redistribute it and/or modify it 
+<span class="no"> 10 </span> * under the terms of the GNU Lesser General Public License as published by 
+<span class="no"> 11 </span> * the Free Software Foundation; either version 2.1 of the License, or 
+<span class="no"> 12 </span> * (at your option) any later version. 
+<span class="no"> 13 </span> * 
+<span class="no"> 14 </span> * This library is distributed in the hope that it will be useful, but 
+<span class="no"> 15 </span> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+<span class="no"> 16 </span> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+<span class="no"> 17 </span> * License for more details. 
+<span class="no"> 18 </span> * 
+<span class="no"> 19 </span> * You should have received a copy of the GNU Lesser General Public 
+<span class="no"> 20 </span> * License along with this library; if not, write to the Free Software 
+<span class="no"> 21 </span> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, 
+<span class="no"> 22 </span> * USA. 
+<span class="no"> 23 </span> * 
+<span class="no"> 24 </span> * [Java is a trademark or registered trademark of Sun Microsystems, Inc. 
+<span class="no"> 25 </span> * in the United States and other countries.] 
+<span class="no"> 26 </span> * 
+<span class="no"> 27 </span> * ---------------------- 
+<span class="no"> 28 </span> * BorderArrangement.java 
+<span class="no"> 29 </span> * ---------------------- 
+<span class="no"> 30 </span> * (C) Copyright 2004-2008, by Object Refinery Limited. 
+<span class="no"> 31 </span> * 
+<span class="no"> 32 </span> * Original Author:  David Gilbert (for Object Refinery Limited); 
+<span class="no"> 33 </span> * Contributor(s):   -; 
+<span class="no"> 34 </span> * 
+<span class="no"> 35 </span> * Changes: 
+<span class="no"> 36 </span> * -------- 
+<span class="no"> 37 </span> * 22-Oct-2004 : Version 1 (DG); 
+<span class="no"> 38 </span> * 08-Feb-2005 : Updated for changes in RectangleConstraint (DG); 
+<span class="no"> 39 </span> * 24-Feb-2005 : Improved arrangeRR() method (DG); 
+<span class="no"> 40 </span> * 03-May-2005 : Implemented Serializable and added equals() method (DG); 
+<span class="no"> 41 </span> * 13-May-2005 : Fixed bugs in the arrange() method (DG); 
+<span class="no"> 42 </span> * 20-Jun-2007 : Removed JCommon dependencies (DG); 
+<span class="no"> 43 </span> * 08-Apr-2008 : Fixed bug in arrangeFF() method where width is too small for 
+<span class="no"> 44 </span> *               left and right blocks (DG); 
+<span class="no"> 45 </span> * 
+<span class="no"> 46 </span> */ 
+<span class="no"> 47 </span> 
+<span class="no"> 48 </span>package org.jfree.chart.block; 
+<span class="no"> 49 </span> 
+<span class="no"> 50 </span>import java.awt.Graphics2D; 
+<span class="no"> 51 </span>import java.awt.geom.Rectangle2D; 
+<span class="no"> 52 </span>import java.io.Serializable; 
+<span class="no"> 53 </span> 
+<span class="no"> 54 </span>import org.jfree.chart.util.ObjectUtilities; 
+<span class="no"> 55 </span>import org.jfree.chart.util.RectangleEdge; 
+<span class="no"> 56 </span>import org.jfree.chart.util.Size2D; 
+<span class="no"> 57 </span>import org.jfree.data.Range; 
+<span class="no"> 58 </span> 
+<span class="no"> 59 </span>/** 
+<span class="no"> 60 </span> * An arrangement manager that lays out blocks in a similar way to 
+<span class="no"> 61 </span> * Swing&apos;s BorderLayout class. 
+<span class="no"> 62 </span> */ 
+<span class="no"> 63 </span>public class BorderArrangement implements Arrangement, Serializable { 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>    /** For serialization. */ 
+<span class="no"> 66 </span>    private static final long serialVersionUID = 506071142274883745L; 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>    /** The block (if any) at the center of the layout. */ 
+<span class="no"> 69 </span>    private Block centerBlock; 
+<span class="no"> 70 </span> 
+<span class="no"> 71 </span>    /** The block (if any) at the top of the layout. */ 
+<span class="no"> 72 </span>    private Block topBlock; 
+<span class="no"> 73 </span> 
+<span class="no"> 74 </span>    /** The block (if any) at the bottom of the layout. */ 
+<span class="no"> 75 </span>    private Block bottomBlock; 
+<span class="no"> 76 </span> 
+<span class="no"> 77 </span>    /** The block (if any) at the left of the layout. */ 
+<span class="no"> 78 </span>    private Block leftBlock; 
+<span class="no"> 79 </span> 
+<span class="no"> 80 </span>    /** The block (if any) at the right of the layout. */ 
+<span class="no"> 81 </span>    private Block rightBlock; 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>    /** 
+<span class="no"> 84 </span>     * Creates a new instance. 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public BorderArrangement() { 
+<span class="no"> 87 </span>    } 
+<span class="no"> 88 </span> 
+<span class="no"> 89 </span>    /** 
+<span class="no"> 90 </span>     * Adds a block to the arrangement manager at the specified edge. 
+<span class="no"> 91 </span>     * 
+<span class="no"> 92 </span>     * @param block  the block (&lt;code&gt;null&lt;/code&gt; permitted). 
+<span class="no"> 93 </span>     * @param key  the edge (an instance of {@link RectangleEdge}) or 
+<span class="no"> 94 </span>     *             &lt;code&gt;null&lt;/code&gt; for the center block. 
+<span class="no"> 95 </span>     */ 
+<span class="no"> 96 </span>    public void add(Block block, Object key) { 
+<span class="no"> 97 </span> 
+<span class="no"> 98 </span>        if (key == null) { 
+<span class="no"> 99 </span>            this.centerBlock = block; 
+<span class="no">100 </span>        } 
+<span class="no">101 </span>        else { 
+<span class="no">102 </span>            RectangleEdge edge = (RectangleEdge) key; 
+<span class="no">103 </span>            if (edge == RectangleEdge.TOP) { 
+<span class="no">104 </span>                this.topBlock = block; 
+<span class="no">105 </span>            } 
+<span class="no">106 </span>            else if (edge == RectangleEdge.BOTTOM) { 
+<span class="no">107 </span>                this.bottomBlock = block; 
+<span class="no">108 </span>            } 
+<span class="no">109 </span>            else if (edge == RectangleEdge.LEFT) { 
+<span class="no">110 </span>                this.leftBlock = block; 
+<span class="no">111 </span>            } 
+<span class="no">112 </span>            else if (edge == RectangleEdge.RIGHT) { 
+<span class="no">113 </span>                this.rightBlock = block; 
+<span class="no">114 </span>            } 
+<span class="no">115 </span>        } 
+<span class="no">116 </span>    } 
+<span class="no">117 </span> 
+<span class="no">118 </span>    /** 
+<span class="no">119 </span>     * Arranges the items in the specified container, subject to the given 
+<span class="no">120 </span>     * constraint. 
+<span class="no">121 </span>     * 
+<span class="no">122 </span>     * @param container  the container. 
+<span class="no">123 </span>     * @param g2  the graphics device. 
+<span class="no">124 </span>     * @param constraint  the constraint. 
+<span class="no">125 </span>     * 
+<span class="no">126 </span>     * @return The block size. 
+<span class="no">127 </span>     */ 
+<span class="no">128 </span>    public Size2D arrange(BlockContainer container, 
+<span class="no">129 </span>                          Graphics2D g2, 
+<span class="no">130 </span>                          RectangleConstraint constraint) { 
+<span class="no">131 </span>        RectangleConstraint contentConstraint 
+<span class="no">132 </span>                = container.toContentConstraint(constraint); 
+<span class="no">133 </span>        Size2D contentSize = null; 
+<span class="no">134 </span>        LengthConstraintType w = contentConstraint.getWidthConstraintType(); 
+<span class="no">135 </span>        LengthConstraintType h = contentConstraint.getHeightConstraintType(); 
+<span class="no">136 </span>        if (w == LengthConstraintType.NONE) { 
+<span class="no">137 </span>            if (h == LengthConstraintType.NONE) { 
+<span class="no">138 </span>                contentSize = arrangeNN(container, g2); 
+<span class="no">139 </span>            } 
+<span class="no">140 </span>            else if (h == LengthConstraintType.FIXED) { 
+<span class="no">141 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">142 </span>            } 
+<span class="no">143 </span>            else if (h == LengthConstraintType.RANGE) { 
+<span class="no">144 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">145 </span>            } 
+<span class="no">146 </span>        } 
+<span class="no">147 </span>        else if (w == LengthConstraintType.FIXED) { 
+<span class="no">148 </span>            if (h == LengthConstraintType.NONE) { 
+<span class="no">149 </span>                contentSize = arrangeFN(container, g2, constraint.getWidth()); 
+<span class="no">150 </span>            } 
+<span class="no">151 </span>            else if (h == LengthConstraintType.FIXED) { 
+<span class="no">152 </span>                contentSize = arrangeFF(container, g2, constraint); 
+<span class="no">153 </span>            } 
+<span class="no">154 </span>            else if (h == LengthConstraintType.RANGE) { 
+<span class="no">155 </span>                contentSize = arrangeFR(container, g2, constraint); 
+<span class="no">156 </span>            } 
+<span class="no">157 </span>        } 
+<span class="no">158 </span>        else if (w == LengthConstraintType.RANGE) { 
+<span class="no">159 </span>            if (h == LengthConstraintType.NONE) { 
+<span class="no">160 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">161 </span>            } 
+<span class="no">162 </span>            else if (h == LengthConstraintType.FIXED) { 
+<span class="no">163 </span>                throw new RuntimeException(&quot;Not implemented.&quot;); 
+<span class="no">164 </span>            } 
+<span class="no">165 </span>            else if (h == LengthConstraintType.RANGE) { 
+<span class="no">166 </span>                contentSize = arrangeRR(container, constraint.getWidthRange(), 
+<span class="no">167 </span>                        constraint.getHeightRange(), g2); 
+<span class="no">168 </span>            } 
+<span class="no">169 </span>        } 
+<span class="no">170 </span>        return new Size2D(container.calculateTotalWidth(contentSize.getWidth()), 
+<span class="no">171 </span>                container.calculateTotalHeight(contentSize.getHeight())); 
+<span class="no">172 </span>    } 
+<span class="no">173 </span> 
+<span class="no">174 </span>    /** 
+<span class="no">175 </span>     * Performs an arrangement without constraints. 
+<span class="no">176 </span>     * 
+<span class="no">177 </span>     * @param container  the container. 
+<span class="no">178 </span>     * @param g2  the graphics device. 
+<span class="no">179 </span>     * 
+<span class="no">180 </span>     * @return The container size after the arrangement. 
+<span class="no">181 </span>     */ 
+<span class="no">182 </span>    protected Size2D arrangeNN(BlockContainer container, Graphics2D g2) { 
+<span class="no">183 </span>        double[] w = new double[5]; 
+<span class="no">184 </span>        double[] h = new double[5]; 
+<span class="no">185 </span>        if (this.topBlock != null) { 
+<span class="no">186 </span>            Size2D size = this.topBlock.arrange(g2, RectangleConstraint.NONE); 
+<span class="no">187 </span>            w[0] = size.width; 
+<span class="no">188 </span>            h[0] = size.height; 
+<span class="no">189 </span>        } 
+<span class="no">190 </span>        if (this.bottomBlock != null) { 
+<span class="no">191 </span>            Size2D size = this.bottomBlock.arrange(g2, 
+<span class="no">192 </span>                    RectangleConstraint.NONE); 
+<span class="no">193 </span>            w[1] = size.width; 
+<span class="no">194 </span>            h[1] = size.height; 
+<span class="no">195 </span>        } 
+<span class="no">196 </span>        if (this.leftBlock != null) { 
+<span class="no">197 </span>            Size2D size = this.leftBlock.arrange(g2, RectangleConstraint.NONE); 
+<span class="no">198 </span>            w[2] = size.width; 
+<span class="no">199 </span>            h[2] = size.height; 
+<span class="no">200 </span>       } 
+<span class="no">201 </span>        if (this.rightBlock != null) { 
+<span class="no">202 </span>            Size2D size = this.rightBlock.arrange(g2, RectangleConstraint.NONE); 
+<span class="no">203 </span>            w[3] = size.width; 
+<span class="no">204 </span>            h[3] = size.height; 
+<span class="no">205 </span>        } 
+<span class="no">206 </span> 
+<span class="no">207 </span>        h[2] = Math.max(h[2], h[3]); 
+<span class="no">208 </span>        h[3] = h[2]; 
+<span class="no">209 </span> 
+<span class="no">210 </span>        if (this.centerBlock != null) { 
+<span class="no">211 </span>            Size2D size = this.centerBlock.arrange(g2, 
+<span class="no">212 </span>                    RectangleConstraint.NONE); 
+<span class="no">213 </span>            w[4] = size.width; 
+<span class="no">214 </span>            h[4] = size.height; 
+<span class="no">215 </span>        } 
+<span class="no">216 </span>        double width = Math.max(w[0], Math.max(w[1], w[2] + w[4] + w[3])); 
+<span class="no">217 </span>        double centerHeight = Math.max(h[2], Math.max(h[3], h[4])); 
+<span class="no">218 </span>        double height = h[0] + h[1] + centerHeight; 
+<span class="no">219 </span>        if (this.topBlock != null) { 
+<span class="no">220 </span>            this.topBlock.setBounds(new Rectangle2D.Double(0.0, 0.0, width, 
+<span class="no">221 </span>                    h[0])); 
+<span class="no">222 </span>        } 
+<span class="no">223 </span>        if (this.bottomBlock != null) { 
+<span class="no">224 </span>            this.bottomBlock.setBounds(new Rectangle2D.Double(0.0, 
+<span class="no">225 </span>                    height - h[1], width, h[1])); 
+<span class="no">226 </span>        } 
+<span class="no">227 </span>        if (this.leftBlock != null) { 
+<span class="no">228 </span>            this.leftBlock.setBounds(new Rectangle2D.Double(0.0, h[0], w[2], 
+<span class="no">229 </span>                    centerHeight)); 
+<span class="no">230 </span>        } 
+<span class="no">231 </span>        if (this.rightBlock != null) { 
+<span class="no">232 </span>            this.rightBlock.setBounds(new Rectangle2D.Double(width - w[3], 
+<span class="no">233 </span>                    h[0], w[3], centerHeight)); 
+<span class="no">234 </span>        } 
+<span class="no">235 </span> 
+<span class="no">236 </span>        if (this.centerBlock != null) { 
+<span class="no">237 </span>            this.centerBlock.setBounds(new Rectangle2D.Double(w[2], h[0], 
+<span class="no">238 </span>                    width - w[2] - w[3], centerHeight)); 
+<span class="no">239 </span>        } 
+<span class="no">240 </span>        return new Size2D(width, height); 
+<span class="no">241 </span>    } 
+<span class="no">242 </span> 
+<span class="no">243 </span>    /** 
+<span class="no">244 </span>     * Performs an arrangement with a fixed width and a range for the height. 
+<span class="no">245 </span>     * 
+<span class="no">246 </span>     * @param container  the container. 
+<span class="no">247 </span>     * @param g2  the graphics device. 
+<span class="no">248 </span>     * @param constraint  the constraint. 
+<span class="no">249 </span>     * 
+<span class="no">250 </span>     * @return The container size after the arrangement. 
+<span class="no">251 </span>     */ 
+<span class="no">252 </span>    protected Size2D arrangeFR(BlockContainer container, Graphics2D g2, 
+<span class="no">253 </span>                               RectangleConstraint constraint) { 
+<span class="no">254 </span>        Size2D size1 = arrangeFN(container, g2, constraint.getWidth()); 
+<span class="no">255 </span>        if (constraint.getHeightRange().contains(size1.getHeight())) { 
+<span class="no">256 </span>            return size1; 
+<span class="no">257 </span>        } 
+<span class="no">258 </span>        else { 
+<span class="no">259 </span>            double h = constraint.getHeightRange().constrain(size1.getHeight()); 
+<span class="no">260 </span>            RectangleConstraint c2 = constraint.toFixedHeight(h); 
+<span class="no">261 </span>            return arrange(container, g2, c2); 
+<span class="no">262 </span>        } 
+<span class="no">263 </span>    } 
+<span class="no">264 </span> 
+<span class="no">265 </span>    /** 
+<span class="no">266 </span>     * Arranges the container width a fixed width and no constraint on the 
+<span class="no">267 </span>     * height. 
+<span class="no">268 </span>     * 
+<span class="no">269 </span>     * @param container  the container. 
+<span class="no">270 </span>     * @param g2  the graphics device. 
+<span class="no">271 </span>     * @param width  the fixed width. 
+<span class="no">272 </span>     * 
+<span class="no">273 </span>     * @return The container size after arranging the contents. 
+<span class="no">274 </span>     */ 
+<span class="no">275 </span>    protected Size2D arrangeFN(BlockContainer container, Graphics2D g2, 
+<span class="no">276 </span>                               double width) { 
+<span class="no">277 </span>        double[] w = new double[5]; 
+<span class="no">278 </span>        double[] h = new double[5]; 
+<span class="no">279 </span>        RectangleConstraint c1 = new RectangleConstraint(width, null, 
+<span class="no">280 </span>                LengthConstraintType.FIXED, 0.0, null, 
+<span class="no">281 </span>                LengthConstraintType.NONE); 
+<span class="no">282 </span>        if (this.topBlock != null) { 
+<span class="no">283 </span>            Size2D size = this.topBlock.arrange(g2, c1); 
+<span class="no">284 </span>            w[0] = size.width; 
+<span class="no">285 </span>            h[0] = size.height; 
+<span class="no">286 </span>        } 
+<span class="no">287 </span>        if (this.bottomBlock != null) { 
+<span class="no">288 </span>            Size2D size = this.bottomBlock.arrange(g2, c1); 
+<span class="no">289 </span>            w[1] = size.width; 
+<span class="no">290 </span>            h[1] = size.height; 
+<span class="no">291 </span>        } 
+<span class="no">292 </span>        RectangleConstraint c2 = new RectangleConstraint(0.0, 
+<span class="no">293 </span>                new Range(0.0, width), LengthConstraintType.RANGE, 
+<span class="no">294 </span>                0.0, null, LengthConstraintType.NONE); 
+<span class="no">295 </span>        if (this.leftBlock != null) { 
+<span class="no">296 </span>            Size2D size = this.leftBlock.arrange(g2, c2); 
+<span class="no">297 </span>            w[2] = size.width; 
+<span class="no">298 </span>            h[2] = size.height; 
+<span class="no">299 </span>        } 
+<span class="no">300 </span>        if (this.rightBlock != null) { 
+<span class="no">301 </span>            double maxW = Math.max(width - w[2], 0.0); 
+<span class="no">302 </span>            RectangleConstraint c3 = new RectangleConstraint(0.0, 
+<span class="no">303 </span>                    new Range(Math.min(w[2], maxW), maxW), 
+<span class="no">304 </span>                    LengthConstraintType.RANGE, 0.0, null, 
+<span class="no">305 </span>                    LengthConstraintType.NONE); 
+<span class="no">306 </span>            Size2D size = this.rightBlock.arrange(g2, c3); 
+<span class="no">307 </span>            w[3] = size.width; 
+<span class="no">308 </span>            h[3] = size.height; 
+<span class="no">309 </span>        } 
+<span class="no">310 </span> 
+<span class="no">311 </span>        h[2] = Math.max(h[2], h[3]); 
+<span class="no">312 </span>        h[3] = h[2]; 
+<span class="no">313 </span> 
+<span class="no">314 </span>        if (this.centerBlock != null) { 
+<span class="no">315 </span>            RectangleConstraint c4 = new RectangleConstraint(width - w[2] 
+<span class="no">316 </span>                    - w[3], null, LengthConstraintType.FIXED, 0.0, null, 
+<span class="no">317 </span>                    LengthConstraintType.NONE); 
+<span class="no">318 </span>            Size2D size = this.centerBlock.arrange(g2, c4); 
+<span class="no">319 </span>            w[4] = size.width; 
+<span class="no">320 </span>            h[4] = size.height; 
+<span class="no">321 </span>        } 
+<span class="no">322 </span>        double height = h[0] + h[1] + Math.max(h[2], Math.max(h[3], h[4])); 
+<span class="no">323 </span>        return arrange(container, g2, new RectangleConstraint(width, height)); 
+<span class="no">324 </span>    } 
+<span class="no">325 </span> 
+<span class="no">326 </span>    /** 
+<span class="no">327 </span>     * Performs an arrangement with range constraints on both the vertical 
+<span class="no">328 </span>     * and horizontal sides. 
+<span class="no">329 </span>     * 
+<span class="no">330 </span>     * @param container  the container. 
+<span class="no">331 </span>     * @param widthRange  the allowable range for the container width. 
+<span class="no">332 </span>     * @param heightRange  the allowable range for the container height. 
+<span class="no">333 </span>     * @param g2  the graphics device. 
+<span class="no">334 </span>     * 
+<span class="no">335 </span>     * @return The container size. 
+<span class="no">336 </span>     */ 
+<span class="no">337 </span>    protected Size2D arrangeRR(BlockContainer container, 
+<span class="no">338 </span>                               Range widthRange, Range heightRange, 
+<span class="no">339 </span>                               Graphics2D g2) { 
+<span class="no">340 </span>        double[] w = new double[5]; 
+<span class="no">341 </span>        double[] h = new double[5]; 
+<span class="no">342 </span>        if (this.topBlock != null) { 
+<span class="no">343 </span>            RectangleConstraint c1 = new RectangleConstraint(widthRange, 
+<span class="no">344 </span>                    heightRange); 
+<span class="no">345 </span>            Size2D size = this.topBlock.arrange(g2, c1); 
+<span class="no">346 </span>            w[0] = size.width; 
+<span class="no">347 </span>            h[0] = size.height; 
+<span class="no">348 </span>        } 
+<span class="no">349 </span>        if (this.bottomBlock != null) { 
+<span class="no">350 </span>            Range heightRange2 = Range.shift(heightRange, -h[0], false); 
+<span class="no">351 </span>            RectangleConstraint c2 = new RectangleConstraint(widthRange, 
+<span class="no">352 </span>                    heightRange2); 
+<span class="no">353 </span>            Size2D size = this.bottomBlock.arrange(g2, c2); 
+<span class="no">354 </span>            w[1] = size.width; 
+<span class="no">355 </span>            h[1] = size.height; 
+<span class="no">356 </span>        } 
+<span class="no">357 </span>        Range heightRange3 = Range.shift(heightRange, -(h[0] + h[1])); 
+<span class="no">358 </span>        if (this.leftBlock != null) { 
+<span class="no">359 </span>            RectangleConstraint c3 = new RectangleConstraint(widthRange, 
+<span class="no">360 </span>                    heightRange3); 
+<span class="no">361 </span>            Size2D size = this.leftBlock.arrange(g2, c3); 
+<span class="no">362 </span>            w[2] = size.width; 
+<span class="no">363 </span>            h[2] = size.height; 
+<span class="no">364 </span>        } 
+<span class="no">365 </span>        Range widthRange2 = Range.shift(widthRange, -w[2], false); 
+<span class="no">366 </span>        if (this.rightBlock != null) { 
+<span class="no">367 </span>            RectangleConstraint c4 = new RectangleConstraint(widthRange2, 
+<span class="no">368 </span>                    heightRange3); 
+<span class="no">369 </span>            Size2D size = this.rightBlock.arrange(g2, c4); 
+<span class="no">370 </span>            w[3] = size.width; 
+<span class="no">371 </span>            h[3] = size.height; 
+<span class="no">372 </span>        } 
+<span class="no">373 </span> 
+<span class="no">374 </span>        h[2] = Math.max(h[2], h[3]); 
+<span class="no">375 </span>        h[3] = h[2]; 
+<span class="no">376 </span>        Range widthRange3 = Range.shift(widthRange, -(w[2] + w[3]), false); 
+<span class="no">377 </span>        if (this.centerBlock != null) { 
+<span class="no">378 </span>            RectangleConstraint c5 = new RectangleConstraint(widthRange3, 
+<span class="no">379 </span>                    heightRange3); 
+<span class="no">380 </span>            // TODO:  the width and height ranges should be reduced by the 
+<span class="no">381 </span>            // height required for the top and bottom, and the width required 
+<span class="no">382 </span>            // by the left and right 
+<span class="no">383 </span>            Size2D size = this.centerBlock.arrange(g2, c5); 
+<span class="no">384 </span>            w[4] = size.width; 
+<span class="no">385 </span>            h[4] = size.height; 
+<span class="no">386 </span>        } 
+<span class="no">387 </span>        double width = Math.max(w[0], Math.max(w[1], w[2] + w[4] + w[3])); 
+<span class="no">388 </span>        double height = h[0] + h[1] + Math.max(h[2], Math.max(h[3], h[4])); 
+<span class="no">389 </span>        if (this.topBlock != null) { 
+<span class="no">390 </span>            this.topBlock.setBounds(new Rectangle2D.Double(0.0, 0.0, width, 
+<span class="no">391 </span>                    h[0])); 
+<span class="no">392 </span>        } 
+<span class="no">393 </span>        if (this.bottomBlock != null) { 
+<span class="no">394 </span>            this.bottomBlock.setBounds(new Rectangle2D.Double(0.0, 
+<span class="no">395 </span>                    height - h[1], width, h[1])); 
+<span class="no">396 </span>        } 
+<span class="no">397 </span>        if (this.leftBlock != null) { 
+<span class="no">398 </span>            this.leftBlock.setBounds(new Rectangle2D.Double(0.0, h[0], w[2], 
+<span class="no">399 </span>                    h[2])); 
+<span class="no">400 </span>        } 
+<span class="no">401 </span>        if (this.rightBlock != null) { 
+<span class="no">402 </span>            this.rightBlock.setBounds(new Rectangle2D.Double(width - w[3], 
+<span class="no">403 </span>                    h[0], w[3], h[3])); 
+<span class="no">404 </span>        } 
+<span class="no">405 </span> 
+<span class="no">406 </span>        if (this.centerBlock != null) { 
+<span class="no">407 </span>            this.centerBlock.setBounds(new Rectangle2D.Double(w[2], h[0], 
+<span class="no">408 </span>                    width - w[2] - w[3], height - h[0] - h[1])); 
+<span class="no">409 </span>        } 
+<span class="no">410 </span>        return new Size2D(width, height); 
+<span class="no">411 </span>    } 
+<span class="no">412 </span> 
+<span class="no">413 </span>    /** 
+<span class="no">414 </span>     * Arranges the items within a container. 
+<span class="no">415 </span>     * 
+<span class="no">416 </span>     * @param container  the container. 
+<span class="no">417 </span>     * @param constraint  the constraint. 
+<span class="no">418 </span>     * @param g2  the graphics device. 
+<span class="no">419 </span>     * 
+<span class="no">420 </span>     * @return The container size after the arrangement. 
+<span class="no">421 </span>     */ 
+<span class="no">422 </span>    protected Size2D arrangeFF(BlockContainer container, Graphics2D g2, 
+<span class="no">423 </span>                               RectangleConstraint constraint) { 
+<span class="no">424 </span>        double[] w = new double[5]; 
+<span class="no">425 </span>        double[] h = new double[5]; 
+<span class="no">426 </span>        w[0] = constraint.getWidth(); 
+<span class="no">427 </span>        if (this.topBlock != null) { 
+<span class="no">428 </span>            RectangleConstraint c1 = new RectangleConstraint(w[0], null, 
+<span class="no">429 </span>                    LengthConstraintType.FIXED, 0.0, 
+<span class="no">430 </span>                    new Range(0.0, constraint.getHeight()), 
+<span class="no">431 </span>                    LengthConstraintType.RANGE); 
+<span class="no">432 </span>            Size2D size = this.topBlock.arrange(g2, c1); 
+<span class="no">433 </span>            h[0] = size.height; 
+<span class="no">434 </span>        } 
+<span class="no">435 </span>        w[1] = w[0]; 
+<span class="no">436 </span>        if (this.bottomBlock != null) { 
+<span class="no">437 </span>            RectangleConstraint c2 = new RectangleConstraint(w[0], null, 
+<span class="no">438 </span>                    LengthConstraintType.FIXED, 0.0, new Range(0.0, 
+<span class="no">439 </span>                    constraint.getHeight() - h[0]), LengthConstraintType.RANGE); 
+<span class="no">440 </span>            Size2D size = this.bottomBlock.arrange(g2, c2); 
+<span class="no">441 </span>            h[1] = size.height; 
+<span class="no">442 </span>        } 
+<span class="no">443 </span>        h[2] = constraint.getHeight() - h[1] - h[0]; 
+<span class="no">444 </span>        if (this.leftBlock != null) { 
+<span class="no">445 </span>            RectangleConstraint c3 = new RectangleConstraint(0.0, 
+<span class="no">446 </span>                    new Range(0.0, constraint.getWidth()), 
+<span class="no">447 </span>                    LengthConstraintType.RANGE, h[2], null, 
+<span class="no">448 </span>                    LengthConstraintType.FIXED); 
+<span class="no">449 </span>            Size2D size = this.leftBlock.arrange(g2, c3); 
+<span class="no">450 </span>            w[2] = size.width; 
+<span class="no">451 </span>        } 
+<span class="no">452 </span>        h[3] = h[2]; 
+<span class="no">453 </span>        if (this.rightBlock != null) { 
+<span class="no">454 </span>            RectangleConstraint c4 = new RectangleConstraint(0.0, 
+<span class="no">455 </span>                    new Range<span id="p1" class="ep1">(0.0, <span id="p5" class="ep5"><span id="p4" class="ep4"><span id="p3" class="ep3"><span id="p2" class="ep2"><span id="n1" class="en1"><span id="n2" class="en2"><a href="#n2" class="ins">Math</a></span><span id="n3" class="en3"><a href="#n3" class="ins">.</a></span><span id="n4" class="en4"><a href="#n4" class="ins">max</a></span><span id="p10" class="ep10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="p6" class="ep6"><span id="n5" class="en5"><span id="n6" class="en6"><a href="#n6" class="ins">(</a></span><span id="m7" class="em7"><a href="#m7" data-partner="#n7" class="mov">constraint.getWidth() - w[2]</a></span><span id="n8" class="en8"><a href="#n8" class="ins">,</a></span><a href="#n5" class="ins"> </a><span id="n9" class="en9"><a href="#n9" class="ins">0.0</a></span><span id="n10" class="en10"><a href="#n10" class="ins">)</a></span></span></span></span></span></span></span></span></span></span></span>)</span>, 
+<span class="no">456 </span>                    LengthConstraintType.RANGE, h[2], null, 
+<span class="no">457 </span>                    LengthConstraintType.FIXED); 
+<span class="no">458 </span>            Size2D size = this.rightBlock.arrange(g2, c4); 
+<span class="no">459 </span>            w[3] = size.width; 
+<span class="no">460 </span>        } 
+<span class="no">461 </span>        h[4] = h[2]; 
+<span class="no">462 </span>        w[4] = constraint.getWidth() - w[3] - w[2]; 
+<span class="no">463 </span>        RectangleConstraint c5 = new RectangleConstraint(w[4], h[4]); 
+<span class="no">464 </span>        if (this.centerBlock != null) { 
+<span class="no">465 </span>            this.centerBlock.arrange(g2, c5); 
+<span class="no">466 </span>        } 
+<span class="no">467 </span> 
+<span class="no">468 </span>        if (this.topBlock != null) { 
+<span class="no">469 </span>            this.topBlock.setBounds(new Rectangle2D.Double(0.0, 0.0, w[0], 
+<span class="no">470 </span>                    h[0])); 
+<span class="no">471 </span>        } 
+<span class="no">472 </span>        if (this.bottomBlock != null) { 
+<span class="no">473 </span>            this.bottomBlock.setBounds(new Rectangle2D.Double(0.0, h[0] + h[2], 
+<span class="no">474 </span>                    w[1], h[1])); 
+<span class="no">475 </span>        } 
+<span class="no">476 </span>        if (this.leftBlock != null) { 
+<span class="no">477 </span>            this.leftBlock.setBounds(new Rectangle2D.Double(0.0, h[0], w[2], 
+<span class="no">478 </span>                    h[2])); 
+<span class="no">479 </span>        } 
+<span class="no">480 </span>        if (this.rightBlock != null) { 
+<span class="no">481 </span>            this.rightBlock.setBounds(new Rectangle2D.Double(w[2] + w[4], h[0], 
+<span class="no">482 </span>                    w[3], h[3])); 
+<span class="no">483 </span>        } 
+<span class="no">484 </span>        if (this.centerBlock != null) { 
+<span class="no">485 </span>            this.centerBlock.setBounds(new Rectangle2D.Double(w[2], h[0], w[4], 
+<span class="no">486 </span>                    h[4])); 
+<span class="no">487 </span>        } 
+<span class="no">488 </span>        return new Size2D(constraint.getWidth(), constraint.getHeight()); 
+<span class="no">489 </span>    } 
+<span class="no">490 </span> 
+<span class="no">491 </span>    /** 
+<span class="no">492 </span>     * Clears the layout. 
+<span class="no">493 </span>     */ 
+<span class="no">494 </span>    public void clear() { 
+<span class="no">495 </span>        this.centerBlock = null; 
+<span class="no">496 </span>        this.topBlock = null; 
+<span class="no">497 </span>        this.bottomBlock = null; 
+<span class="no">498 </span>        this.leftBlock = null; 
+<span class="no">499 </span>        this.rightBlock = null; 
+<span class="no">500 </span>    } 
+<span class="no">501 </span> 
+<span class="no">502 </span>    /** 
+<span class="no">503 </span>     * Tests this arrangement for equality with an arbitrary object. 
+<span class="no">504 </span>     * 
+<span class="no">505 </span>     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted). 
+<span class="no">506 </span>     * 
+<span class="no">507 </span>     * @return A boolean. 
+<span class="no">508 </span>     */ 
+<span class="no">509 </span>    public boolean equals(Object obj) { 
+<span class="no">510 </span>        if (obj == this) { 
+<span class="no">511 </span>            return true; 
+<span class="no">512 </span>        } 
+<span class="no">513 </span>        if (!(obj instanceof BorderArrangement)) { 
+<span class="no">514 </span>            return false; 
+<span class="no">515 </span>        } 
+<span class="no">516 </span>        BorderArrangement that = (BorderArrangement) obj; 
+<span class="no">517 </span>        if (!ObjectUtilities.equal(this.topBlock, that.topBlock)) { 
+<span class="no">518 </span>            return false; 
+<span class="no">519 </span>        } 
+<span class="no">520 </span>        if (!ObjectUtilities.equal(this.bottomBlock, that.bottomBlock)) { 
+<span class="no">521 </span>            return false; 
+<span class="no">522 </span>        } 
+<span class="no">523 </span>        if (!ObjectUtilities.equal(this.leftBlock, that.leftBlock)) { 
+<span class="no">524 </span>            return false; 
+<span class="no">525 </span>        } 
+<span class="no">526 </span>        if (!ObjectUtilities.equal(this.rightBlock, that.rightBlock)) { 
+<span class="no">527 </span>            return false; 
+<span class="no">528 </span>        } 
+<span class="no">529 </span>        if (!ObjectUtilities.equal(this.centerBlock, that.centerBlock)) { 
+<span class="no">530 </span>            return false; 
+<span class="no">531 </span>        } 
+<span class="no">532 </span>        return true; 
+<span class="no">533 </span>    } 
+<span class="no">534 </span>} 
+<span class="no">535 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+  .ins, .del, .mov, .upd {
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    border-bottom:  0.05em solid black;
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3 {
+    display: none;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .ep2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page {
+    margin: 0 auto;
+    padding: 0 12px 8px 12px;
+    max-width: 100vw;
+  }
+  .codebox {
+    overflow: auto;
+    background: #f7f7f7;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    scroll-padding-top: 54px;
+    letter-spacing: 0.05em;
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+  }
+  .sec {
+    padding: 0;
+    font-weight: bold;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .edit {
+    height: 60px;
+    font-size: 14px;
+  }
+  .editbox {
+    line-height: 1.8;
+    padding: 4px 8px;
+    min-height: 0;
+    font-weight: 500;
+    overflow: auto;
+    font-size: 14px;
+    background: #f7f7f7;
+    flex: 1;
+  }
+  .grid {
+    height: calc(100vh - 186px);
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    min-height: 252px;
+    gap: 12px;
+  }
+  .panel, .edit {
+    flex-direction: column;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-width: 0;
+    display: flex;
+  }
+  .page:has(#n3:target) .en3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#p3:target) .ep3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .no {
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ebebeb;
+    border-bottom: 1px solid #afafaf;
+    padding: 8px 10px;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: bold;
+  }
+  .toolbar {
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .token {
+    color: #017100;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+      <span class="i3">Edit #3</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n3">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n3">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> ,</a>: <span class=token>&quot;,&quot;</span> [523, 27] - [523, 28]
+<span style="font-weight:600">  into   </span><a href="#p1"> argument_list</a> [519, 38] - [525, 10]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n2"> keyword_argument</a> [524, 13] - [524, 27]
+<span style="font-weight:600">  into           </span><a href="#p2"> argument_list</a> [519, 38] - [525, 10]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> ,</a>: <span class=token>&quot;,&quot;</span> [524, 27] - [524, 28]
+<span style="font-weight:600">  into   </span><a href="#p3"> argument_list</a> [519, 38] - [525, 10]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">22_B (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>&quot;&quot;&quot; 
+<span class="no">  2 </span>concat routines 
+<span class="no">  3 </span>&quot;&quot;&quot; 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>from typing import Hashable, Iterable, List, Mapping, Optional, Union, overload 
+<span class="no">  6 </span> 
+<span class="no">  7 </span>import numpy as np 
+<span class="no">  8 </span> 
+<span class="no">  9 </span>from pandas._typing import FrameOrSeriesUnion 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>from pandas import DataFrame, Index, MultiIndex, Series 
+<span class="no"> 12 </span>from pandas.core.arrays.categorical import ( 
+<span class="no"> 13 </span>    factorize_from_iterable, 
+<span class="no"> 14 </span>    factorize_from_iterables, 
+<span class="no"> 15 </span>) 
+<span class="no"> 16 </span>import pandas.core.common as com 
+<span class="no"> 17 </span>from pandas.core.generic import NDFrame 
+<span class="no"> 18 </span>from pandas.core.indexes.api import ( 
+<span class="no"> 19 </span>    all_indexes_same, 
+<span class="no"> 20 </span>    ensure_index, 
+<span class="no"> 21 </span>    get_consensus_names, 
+<span class="no"> 22 </span>    get_objs_combined_axis, 
+<span class="no"> 23 </span>) 
+<span class="no"> 24 </span>import pandas.core.indexes.base as ibase 
+<span class="no"> 25 </span>from pandas.core.internals import concatenate_block_managers 
+<span class="no"> 26 </span> 
+<span class="no"> 27 </span># --------------------------------------------------------------------- 
+<span class="no"> 28 </span># Concatenate DataFrame objects 
+<span class="no"> 29 </span> 
+<span class="no"> 30 </span> 
+<span class="no"> 31 </span>@overload 
+<span class="no"> 32 </span>def concat( 
+<span class="no"> 33 </span>    objs: Union[Iterable[&quot;DataFrame&quot;], Mapping[Optional[Hashable], &quot;DataFrame&quot;]], 
+<span class="no"> 34 </span>    axis=0, 
+<span class="no"> 35 </span>    join: str = &quot;outer&quot;, 
+<span class="no"> 36 </span>    ignore_index: bool = False, 
+<span class="no"> 37 </span>    keys=None, 
+<span class="no"> 38 </span>    levels=None, 
+<span class="no"> 39 </span>    names=None, 
+<span class="no"> 40 </span>    verify_integrity: bool = False, 
+<span class="no"> 41 </span>    sort: bool = False, 
+<span class="no"> 42 </span>    copy: bool = True, 
+<span class="no"> 43 </span>) -&gt; &quot;DataFrame&quot;: 
+<span class="no"> 44 </span>    ... 
+<span class="no"> 45 </span> 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>@overload 
+<span class="no"> 48 </span>def concat( 
+<span class="no"> 49 </span>    objs: Union[ 
+<span class="no"> 50 </span>        Iterable[FrameOrSeriesUnion], Mapping[Optional[Hashable], FrameOrSeriesUnion] 
+<span class="no"> 51 </span>    ], 
+<span class="no"> 52 </span>    axis=0, 
+<span class="no"> 53 </span>    join: str = &quot;outer&quot;, 
+<span class="no"> 54 </span>    ignore_index: bool = False, 
+<span class="no"> 55 </span>    keys=None, 
+<span class="no"> 56 </span>    levels=None, 
+<span class="no"> 57 </span>    names=None, 
+<span class="no"> 58 </span>    verify_integrity: bool = False, 
+<span class="no"> 59 </span>    sort: bool = False, 
+<span class="no"> 60 </span>    copy: bool = True, 
+<span class="no"> 61 </span>) -&gt; FrameOrSeriesUnion: 
+<span class="no"> 62 </span>    ... 
+<span class="no"> 63 </span> 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>def concat( 
+<span class="no"> 66 </span>    objs: Union[ 
+<span class="no"> 67 </span>        Iterable[FrameOrSeriesUnion], Mapping[Optional[Hashable], FrameOrSeriesUnion] 
+<span class="no"> 68 </span>    ], 
+<span class="no"> 69 </span>    axis=0, 
+<span class="no"> 70 </span>    join=&quot;outer&quot;, 
+<span class="no"> 71 </span>    ignore_index: bool = False, 
+<span class="no"> 72 </span>    keys=None, 
+<span class="no"> 73 </span>    levels=None, 
+<span class="no"> 74 </span>    names=None, 
+<span class="no"> 75 </span>    verify_integrity: bool = False, 
+<span class="no"> 76 </span>    sort: bool = False, 
+<span class="no"> 77 </span>    copy: bool = True, 
+<span class="no"> 78 </span>) -&gt; FrameOrSeriesUnion: 
+<span class="no"> 79 </span>    &quot;&quot;&quot; 
+<span class="no"> 80 </span>    Concatenate pandas objects along a particular axis with optional set logic 
+<span class="no"> 81 </span>    along the other axes. 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>    Can also add a layer of hierarchical indexing on the concatenation axis, 
+<span class="no"> 84 </span>    which may be useful if the labels are the same (or overlapping) on 
+<span class="no"> 85 </span>    the passed axis number. 
+<span class="no"> 86 </span> 
+<span class="no"> 87 </span>    Parameters 
+<span class="no"> 88 </span>    ---------- 
+<span class="no"> 89 </span>    objs : a sequence or mapping of Series or DataFrame objects 
+<span class="no"> 90 </span>        If a dict is passed, the sorted keys will be used as the `keys` 
+<span class="no"> 91 </span>        argument, unless it is passed, in which case the values will be 
+<span class="no"> 92 </span>        selected (see below). Any None objects will be dropped silently unless 
+<span class="no"> 93 </span>        they are all None in which case a ValueError will be raised. 
+<span class="no"> 94 </span>    axis : {0/&apos;index&apos;, 1/&apos;columns&apos;}, default 0 
+<span class="no"> 95 </span>        The axis to concatenate along. 
+<span class="no"> 96 </span>    join : {&apos;inner&apos;, &apos;outer&apos;}, default &apos;outer&apos; 
+<span class="no"> 97 </span>        How to handle indexes on other axis (or axes). 
+<span class="no"> 98 </span>    ignore_index : bool, default False 
+<span class="no"> 99 </span>        If True, do not use the index values along the concatenation axis. The 
+<span class="no">100 </span>        resulting axis will be labeled 0, ..., n - 1. This is useful if you are 
+<span class="no">101 </span>        concatenating objects where the concatenation axis does not have 
+<span class="no">102 </span>        meaningful indexing information. Note the index values on the other 
+<span class="no">103 </span>        axes are still respected in the join. 
+<span class="no">104 </span>    keys : sequence, default None 
+<span class="no">105 </span>        If multiple levels passed, should contain tuples. Construct 
+<span class="no">106 </span>        hierarchical index using the passed keys as the outermost level. 
+<span class="no">107 </span>    levels : list of sequences, default None 
+<span class="no">108 </span>        Specific levels (unique values) to use for constructing a 
+<span class="no">109 </span>        MultiIndex. Otherwise they will be inferred from the keys. 
+<span class="no">110 </span>    names : list, default None 
+<span class="no">111 </span>        Names for the levels in the resulting hierarchical index. 
+<span class="no">112 </span>    verify_integrity : bool, default False 
+<span class="no">113 </span>        Check whether the new concatenated axis contains duplicates. This can 
+<span class="no">114 </span>        be very expensive relative to the actual data concatenation. 
+<span class="no">115 </span>    sort : bool, default False 
+<span class="no">116 </span>        Sort non-concatenation axis if it is not already aligned when `join` 
+<span class="no">117 </span>        is &apos;outer&apos;. 
+<span class="no">118 </span>        This has no effect when ``join=&apos;inner&apos;``, which already preserves 
+<span class="no">119 </span>        the order of the non-concatenation axis. 
+<span class="no">120 </span> 
+<span class="no">121 </span>        .. versionadded:: 0.23.0 
+<span class="no">122 </span>        .. versionchanged:: 1.0.0 
+<span class="no">123 </span> 
+<span class="no">124 </span>           Changed to not sort by default. 
+<span class="no">125 </span> 
+<span class="no">126 </span>    copy : bool, default True 
+<span class="no">127 </span>        If False, do not copy data unnecessarily. 
+<span class="no">128 </span> 
+<span class="no">129 </span>    Returns 
+<span class="no">130 </span>    ------- 
+<span class="no">131 </span>    object, type of objs 
+<span class="no">132 </span>        When concatenating all ``Series`` along the index (axis=0), a 
+<span class="no">133 </span>        ``Series`` is returned. When ``objs`` contains at least one 
+<span class="no">134 </span>        ``DataFrame``, a ``DataFrame`` is returned. When concatenating along 
+<span class="no">135 </span>        the columns (axis=1), a ``DataFrame`` is returned. 
+<span class="no">136 </span> 
+<span class="no">137 </span>    See Also 
+<span class="no">138 </span>    -------- 
+<span class="no">139 </span>    Series.append : Concatenate Series. 
+<span class="no">140 </span>    DataFrame.append : Concatenate DataFrames. 
+<span class="no">141 </span>    DataFrame.join : Join DataFrames using indexes. 
+<span class="no">142 </span>    DataFrame.merge : Merge DataFrames by indexes or columns. 
+<span class="no">143 </span> 
+<span class="no">144 </span>    Notes 
+<span class="no">145 </span>    ----- 
+<span class="no">146 </span>    The keys, levels, and names arguments are all optional. 
+<span class="no">147 </span> 
+<span class="no">148 </span>    A walkthrough of how this method fits in with other tools for combining 
+<span class="no">149 </span>    pandas objects can be found `here 
+<span class="no">150 </span>    &lt;https://pandas.pydata.org/pandas-docs/stable/user_guide/merging.html&gt;`__. 
+<span class="no">151 </span> 
+<span class="no">152 </span>    Examples 
+<span class="no">153 </span>    -------- 
+<span class="no">154 </span>    Combine two ``Series``. 
+<span class="no">155 </span> 
+<span class="no">156 </span>    &gt;&gt;&gt; s1 = pd.Series([&apos;a&apos;, &apos;b&apos;]) 
+<span class="no">157 </span>    &gt;&gt;&gt; s2 = pd.Series([&apos;c&apos;, &apos;d&apos;]) 
+<span class="no">158 </span>    &gt;&gt;&gt; pd.concat([s1, s2]) 
+<span class="no">159 </span>    0    a 
+<span class="no">160 </span>    1    b 
+<span class="no">161 </span>    0    c 
+<span class="no">162 </span>    1    d 
+<span class="no">163 </span>    dtype: object 
+<span class="no">164 </span> 
+<span class="no">165 </span>    Clear the existing index and reset it in the result 
+<span class="no">166 </span>    by setting the ``ignore_index`` option to ``True``. 
+<span class="no">167 </span> 
+<span class="no">168 </span>    &gt;&gt;&gt; pd.concat([s1, s2], ignore_index=True) 
+<span class="no">169 </span>    0    a 
+<span class="no">170 </span>    1    b 
+<span class="no">171 </span>    2    c 
+<span class="no">172 </span>    3    d 
+<span class="no">173 </span>    dtype: object 
+<span class="no">174 </span> 
+<span class="no">175 </span>    Add a hierarchical index at the outermost level of 
+<span class="no">176 </span>    the data with the ``keys`` option. 
+<span class="no">177 </span> 
+<span class="no">178 </span>    &gt;&gt;&gt; pd.concat([s1, s2], keys=[&apos;s1&apos;, &apos;s2&apos;]) 
+<span class="no">179 </span>    s1  0    a 
+<span class="no">180 </span>        1    b 
+<span class="no">181 </span>    s2  0    c 
+<span class="no">182 </span>        1    d 
+<span class="no">183 </span>    dtype: object 
+<span class="no">184 </span> 
+<span class="no">185 </span>    Label the index keys you create with the ``names`` option. 
+<span class="no">186 </span> 
+<span class="no">187 </span>    &gt;&gt;&gt; pd.concat([s1, s2], keys=[&apos;s1&apos;, &apos;s2&apos;], 
+<span class="no">188 </span>    ...           names=[&apos;Series name&apos;, &apos;Row ID&apos;]) 
+<span class="no">189 </span>    Series name  Row ID 
+<span class="no">190 </span>    s1           0         a 
+<span class="no">191 </span>                 1         b 
+<span class="no">192 </span>    s2           0         c 
+<span class="no">193 </span>                 1         d 
+<span class="no">194 </span>    dtype: object 
+<span class="no">195 </span> 
+<span class="no">196 </span>    Combine two ``DataFrame`` objects with identical columns. 
+<span class="no">197 </span> 
+<span class="no">198 </span>    &gt;&gt;&gt; df1 = pd.DataFrame([[&apos;a&apos;, 1], [&apos;b&apos;, 2]], 
+<span class="no">199 </span>    ...                    columns=[&apos;letter&apos;, &apos;number&apos;]) 
+<span class="no">200 </span>    &gt;&gt;&gt; df1 
+<span class="no">201 </span>      letter  number 
+<span class="no">202 </span>    0      a       1 
+<span class="no">203 </span>    1      b       2 
+<span class="no">204 </span>    &gt;&gt;&gt; df2 = pd.DataFrame([[&apos;c&apos;, 3], [&apos;d&apos;, 4]], 
+<span class="no">205 </span>    ...                    columns=[&apos;letter&apos;, &apos;number&apos;]) 
+<span class="no">206 </span>    &gt;&gt;&gt; df2 
+<span class="no">207 </span>      letter  number 
+<span class="no">208 </span>    0      c       3 
+<span class="no">209 </span>    1      d       4 
+<span class="no">210 </span>    &gt;&gt;&gt; pd.concat([df1, df2]) 
+<span class="no">211 </span>      letter  number 
+<span class="no">212 </span>    0      a       1 
+<span class="no">213 </span>    1      b       2 
+<span class="no">214 </span>    0      c       3 
+<span class="no">215 </span>    1      d       4 
+<span class="no">216 </span> 
+<span class="no">217 </span>    Combine ``DataFrame`` objects with overlapping columns 
+<span class="no">218 </span>    and return everything. Columns outside the intersection will 
+<span class="no">219 </span>    be filled with ``NaN`` values. 
+<span class="no">220 </span> 
+<span class="no">221 </span>    &gt;&gt;&gt; df3 = pd.DataFrame([[&apos;c&apos;, 3, &apos;cat&apos;], [&apos;d&apos;, 4, &apos;dog&apos;]], 
+<span class="no">222 </span>    ...                    columns=[&apos;letter&apos;, &apos;number&apos;, &apos;animal&apos;]) 
+<span class="no">223 </span>    &gt;&gt;&gt; df3 
+<span class="no">224 </span>      letter  number animal 
+<span class="no">225 </span>    0      c       3    cat 
+<span class="no">226 </span>    1      d       4    dog 
+<span class="no">227 </span>    &gt;&gt;&gt; pd.concat([df1, df3], sort=False) 
+<span class="no">228 </span>      letter  number animal 
+<span class="no">229 </span>    0      a       1    NaN 
+<span class="no">230 </span>    1      b       2    NaN 
+<span class="no">231 </span>    0      c       3    cat 
+<span class="no">232 </span>    1      d       4    dog 
+<span class="no">233 </span> 
+<span class="no">234 </span>    Combine ``DataFrame`` objects with overlapping columns 
+<span class="no">235 </span>    and return only those that are shared by passing ``inner`` to 
+<span class="no">236 </span>    the ``join`` keyword argument. 
+<span class="no">237 </span> 
+<span class="no">238 </span>    &gt;&gt;&gt; pd.concat([df1, df3], join=&quot;inner&quot;) 
+<span class="no">239 </span>      letter  number 
+<span class="no">240 </span>    0      a       1 
+<span class="no">241 </span>    1      b       2 
+<span class="no">242 </span>    0      c       3 
+<span class="no">243 </span>    1      d       4 
+<span class="no">244 </span> 
+<span class="no">245 </span>    Combine ``DataFrame`` objects horizontally along the x axis by 
+<span class="no">246 </span>    passing in ``axis=1``. 
+<span class="no">247 </span> 
+<span class="no">248 </span>    &gt;&gt;&gt; df4 = pd.DataFrame([[&apos;bird&apos;, &apos;polly&apos;], [&apos;monkey&apos;, &apos;george&apos;]], 
+<span class="no">249 </span>    ...                    columns=[&apos;animal&apos;, &apos;name&apos;]) 
+<span class="no">250 </span>    &gt;&gt;&gt; pd.concat([df1, df4], axis=1) 
+<span class="no">251 </span>      letter  number  animal    name 
+<span class="no">252 </span>    0      a       1    bird   polly 
+<span class="no">253 </span>    1      b       2  monkey  george 
+<span class="no">254 </span> 
+<span class="no">255 </span>    Prevent the result from including duplicate index values with the 
+<span class="no">256 </span>    ``verify_integrity`` option. 
+<span class="no">257 </span> 
+<span class="no">258 </span>    &gt;&gt;&gt; df5 = pd.DataFrame([1], index=[&apos;a&apos;]) 
+<span class="no">259 </span>    &gt;&gt;&gt; df5 
+<span class="no">260 </span>       0 
+<span class="no">261 </span>    a  1 
+<span class="no">262 </span>    &gt;&gt;&gt; df6 = pd.DataFrame([2], index=[&apos;a&apos;]) 
+<span class="no">263 </span>    &gt;&gt;&gt; df6 
+<span class="no">264 </span>       0 
+<span class="no">265 </span>    a  2 
+<span class="no">266 </span>    &gt;&gt;&gt; pd.concat([df5, df6], verify_integrity=True) 
+<span class="no">267 </span>    Traceback (most recent call last): 
+<span class="no">268 </span>        ... 
+<span class="no">269 </span>    ValueError: Indexes have overlapping values: [&apos;a&apos;] 
+<span class="no">270 </span>    &quot;&quot;&quot; 
+<span class="no">271 </span>    op = _Concatenator( 
+<span class="no">272 </span>        objs, 
+<span class="no">273 </span>        axis=axis, 
+<span class="no">274 </span>        ignore_index=ignore_index, 
+<span class="no">275 </span>        join=join, 
+<span class="no">276 </span>        keys=keys, 
+<span class="no">277 </span>        levels=levels, 
+<span class="no">278 </span>        names=names, 
+<span class="no">279 </span>        verify_integrity=verify_integrity, 
+<span class="no">280 </span>        copy=copy, 
+<span class="no">281 </span>        sort=sort, 
+<span class="no">282 </span>    ) 
+<span class="no">283 </span> 
+<span class="no">284 </span>    return op.get_result() 
+<span class="no">285 </span> 
+<span class="no">286 </span> 
+<span class="no">287 </span>class _Concatenator: 
+<span class="no">288 </span>    &quot;&quot;&quot; 
+<span class="no">289 </span>    Orchestrates a concatenation operation for BlockManagers 
+<span class="no">290 </span>    &quot;&quot;&quot; 
+<span class="no">291 </span> 
+<span class="no">292 </span>    def __init__( 
+<span class="no">293 </span>        self, 
+<span class="no">294 </span>        objs, 
+<span class="no">295 </span>        axis=0, 
+<span class="no">296 </span>        join: str = &quot;outer&quot;, 
+<span class="no">297 </span>        keys=None, 
+<span class="no">298 </span>        levels=None, 
+<span class="no">299 </span>        names=None, 
+<span class="no">300 </span>        ignore_index: bool = False, 
+<span class="no">301 </span>        verify_integrity: bool = False, 
+<span class="no">302 </span>        copy: bool = True, 
+<span class="no">303 </span>        sort=False, 
+<span class="no">304 </span>    ): 
+<span class="no">305 </span>        if isinstance(objs, (NDFrame, str)): 
+<span class="no">306 </span>            raise TypeError( 
+<span class="no">307 </span>                &quot;first argument must be an iterable of pandas &quot; 
+<span class="no">308 </span>                f&apos;objects, you passed an object of type &quot;{type(objs).__name__}&quot;&apos; 
+<span class="no">309 </span>            ) 
+<span class="no">310 </span> 
+<span class="no">311 </span>        if join == &quot;outer&quot;: 
+<span class="no">312 </span>            self.intersect = False 
+<span class="no">313 </span>        elif join == &quot;inner&quot;: 
+<span class="no">314 </span>            self.intersect = True 
+<span class="no">315 </span>        else:  # pragma: no cover 
+<span class="no">316 </span>            raise ValueError( 
+<span class="no">317 </span>                &quot;Only can inner (intersect) or outer (union) join the other axis&quot; 
+<span class="no">318 </span>            ) 
+<span class="no">319 </span> 
+<span class="no">320 </span>        if isinstance(objs, dict): 
+<span class="no">321 </span>            if keys is None: 
+<span class="no">322 </span>                keys = list(objs.keys()) 
+<span class="no">323 </span>            objs = [objs[k] for k in keys] 
+<span class="no">324 </span>        else: 
+<span class="no">325 </span>            objs = list(objs) 
+<span class="no">326 </span> 
+<span class="no">327 </span>        if len(objs) == 0: 
+<span class="no">328 </span>            raise ValueError(&quot;No objects to concatenate&quot;) 
+<span class="no">329 </span> 
+<span class="no">330 </span>        if keys is None: 
+<span class="no">331 </span>            objs = list(com.not_none(*objs)) 
+<span class="no">332 </span>        else: 
+<span class="no">333 </span>            # #1649 
+<span class="no">334 </span>            clean_keys = [] 
+<span class="no">335 </span>            clean_objs = [] 
+<span class="no">336 </span>            for k, v in zip(keys, objs): 
+<span class="no">337 </span>                if v is None: 
+<span class="no">338 </span>                    continue 
+<span class="no">339 </span>                clean_keys.append(k) 
+<span class="no">340 </span>                clean_objs.append(v) 
+<span class="no">341 </span>            objs = clean_objs 
+<span class="no">342 </span>            name = getattr(keys, &quot;name&quot;, None) 
+<span class="no">343 </span>            keys = Index(clean_keys, name=name) 
+<span class="no">344 </span> 
+<span class="no">345 </span>        if len(objs) == 0: 
+<span class="no">346 </span>            raise ValueError(&quot;All objects passed were None&quot;) 
+<span class="no">347 </span> 
+<span class="no">348 </span>        # consolidate data &amp; figure out what our result ndim is going to be 
+<span class="no">349 </span>        ndims = set() 
+<span class="no">350 </span>        for obj in objs: 
+<span class="no">351 </span>            if not isinstance(obj, (Series, DataFrame)): 
+<span class="no">352 </span>                msg = ( 
+<span class="no">353 </span>                    &quot;cannot concatenate object of type &apos;{typ}&apos;; &quot; 
+<span class="no">354 </span>                    &quot;only Series and DataFrame objs are valid&quot;.format(typ=type(obj)) 
+<span class="no">355 </span>                ) 
+<span class="no">356 </span>                raise TypeError(msg) 
+<span class="no">357 </span> 
+<span class="no">358 </span>            # consolidate 
+<span class="no">359 </span>            obj._consolidate(inplace=True) 
+<span class="no">360 </span>            ndims.add(obj.ndim) 
+<span class="no">361 </span> 
+<span class="no">362 </span>        # get the sample 
+<span class="no">363 </span>        # want the highest ndim that we have, and must be non-empty 
+<span class="no">364 </span>        # unless all objs are empty 
+<span class="no">365 </span>        sample = None 
+<span class="no">366 </span>        if len(ndims) &gt; 1: 
+<span class="no">367 </span>            max_ndim = max(ndims) 
+<span class="no">368 </span>            for obj in objs: 
+<span class="no">369 </span>                if obj.ndim == max_ndim and np.sum(obj.shape): 
+<span class="no">370 </span>                    sample = obj 
+<span class="no">371 </span>                    break 
+<span class="no">372 </span> 
+<span class="no">373 </span>        else: 
+<span class="no">374 </span>            # filter out the empties if we have not multi-index possibilities 
+<span class="no">375 </span>            # note to keep empty Series as it affect to result columns / name 
+<span class="no">376 </span>            non_empties = [ 
+<span class="no">377 </span>                obj for obj in objs if sum(obj.shape) &gt; 0 or isinstance(obj, Series) 
+<span class="no">378 </span>            ] 
+<span class="no">379 </span> 
+<span class="no">380 </span>            if len(non_empties) and ( 
+<span class="no">381 </span>                keys is None and names is None and levels is None and not self.intersect 
+<span class="no">382 </span>            ): 
+<span class="no">383 </span>                objs = non_empties 
+<span class="no">384 </span>                sample = objs[0] 
+<span class="no">385 </span> 
+<span class="no">386 </span>        if sample is None: 
+<span class="no">387 </span>            sample = objs[0] 
+<span class="no">388 </span>        self.objs = objs 
+<span class="no">389 </span> 
+<span class="no">390 </span>        # Standardize axis parameter to int 
+<span class="no">391 </span>        if isinstance(sample, Series): 
+<span class="no">392 </span>            axis = DataFrame._get_axis_number(axis) 
+<span class="no">393 </span>        else: 
+<span class="no">394 </span>            axis = sample._get_axis_number(axis) 
+<span class="no">395 </span> 
+<span class="no">396 </span>        # Need to flip BlockManager axis in the DataFrame special case 
+<span class="no">397 </span>        self._is_frame = isinstance(sample, DataFrame) 
+<span class="no">398 </span>        if self._is_frame: 
+<span class="no">399 </span>            axis = 1 if axis == 0 else 0 
+<span class="no">400 </span> 
+<span class="no">401 </span>        self._is_series = isinstance(sample, Series) 
+<span class="no">402 </span>        if not 0 &lt;= axis &lt;= sample.ndim: 
+<span class="no">403 </span>            raise AssertionError( 
+<span class="no">404 </span>                &quot;axis must be between 0 and {ndim}, input was &quot; 
+<span class="no">405 </span>                &quot;{axis}&quot;.format(ndim=sample.ndim, axis=axis) 
+<span class="no">406 </span>            ) 
+<span class="no">407 </span> 
+<span class="no">408 </span>        # if we have mixed ndims, then convert to highest ndim 
+<span class="no">409 </span>        # creating column numbers as needed 
+<span class="no">410 </span>        if len(ndims) &gt; 1: 
+<span class="no">411 </span>            current_column = 0 
+<span class="no">412 </span>            max_ndim = sample.ndim 
+<span class="no">413 </span>            self.objs, objs = [], self.objs 
+<span class="no">414 </span>            for obj in objs: 
+<span class="no">415 </span> 
+<span class="no">416 </span>                ndim = obj.ndim 
+<span class="no">417 </span>                if ndim == max_ndim: 
+<span class="no">418 </span>                    pass 
+<span class="no">419 </span> 
+<span class="no">420 </span>                elif ndim != max_ndim - 1: 
+<span class="no">421 </span>                    raise ValueError( 
+<span class="no">422 </span>                        &quot;cannot concatenate unaligned mixed &quot; 
+<span class="no">423 </span>                        &quot;dimensional NDFrame objects&quot; 
+<span class="no">424 </span>                    ) 
+<span class="no">425 </span> 
+<span class="no">426 </span>                else: 
+<span class="no">427 </span>                    name = getattr(obj, &quot;name&quot;, None) 
+<span class="no">428 </span>                    if ignore_index or name is None: 
+<span class="no">429 </span>                        name = current_column 
+<span class="no">430 </span>                        current_column += 1 
+<span class="no">431 </span> 
+<span class="no">432 </span>                    # doing a row-wise concatenation so need everything 
+<span class="no">433 </span>                    # to line up 
+<span class="no">434 </span>                    if self._is_frame and axis == 1: 
+<span class="no">435 </span>                        name = 0 
+<span class="no">436 </span>                    obj = sample._constructor({name: obj}) 
+<span class="no">437 </span> 
+<span class="no">438 </span>                self.objs.append(obj) 
+<span class="no">439 </span> 
+<span class="no">440 </span>        # note: this is the BlockManager axis (since DataFrame is transposed) 
+<span class="no">441 </span>        self.axis = axis 
+<span class="no">442 </span>        self.keys = keys 
+<span class="no">443 </span>        self.names = names or getattr(keys, &quot;names&quot;, None) 
+<span class="no">444 </span>        self.levels = levels 
+<span class="no">445 </span>        self.sort = sort 
+<span class="no">446 </span> 
+<span class="no">447 </span>        self.ignore_index = ignore_index 
+<span class="no">448 </span>        self.verify_integrity = verify_integrity 
+<span class="no">449 </span>        self.copy = copy 
+<span class="no">450 </span> 
+<span class="no">451 </span>        self.new_axes = self._get_new_axes() 
+<span class="no">452 </span> 
+<span class="no">453 </span>    def get_result(self): 
+<span class="no">454 </span> 
+<span class="no">455 </span>        # series only 
+<span class="no">456 </span>        if self._is_series: 
+<span class="no">457 </span> 
+<span class="no">458 </span>            # stack blocks 
+<span class="no">459 </span>            if self.axis == 0: 
+<span class="no">460 </span>                name = com.consensus_name_attr(self.objs) 
+<span class="no">461 </span> 
+<span class="no">462 </span>                mgr = self.objs[0]._data.concat( 
+<span class="no">463 </span>                    [x._data for x in self.objs], self.new_axes 
+<span class="no">464 </span>                ) 
+<span class="no">465 </span>                cons = self.objs[0]._constructor 
+<span class="no">466 </span>                return cons(mgr, name=name).__finalize__(self, method=&quot;concat&quot;) 
+<span class="no">467 </span> 
+<span class="no">468 </span>            # combine as columns in a frame 
+<span class="no">469 </span>            else: 
+<span class="no">470 </span>                data = dict(zip(range(len(self.objs)), self.objs)) 
+<span class="no">471 </span>                cons = DataFrame 
+<span class="no">472 </span> 
+<span class="no">473 </span>                index, columns = self.new_axes 
+<span class="no">474 </span>                df = cons(data, index=index) 
+<span class="no">475 </span>                df.columns = columns 
+<span class="no">476 </span>                return df.__finalize__(self, method=&quot;concat&quot;) 
+<span class="no">477 </span> 
+<span class="no">478 </span>        # combine block managers 
+<span class="no">479 </span>        else: 
+<span class="no">480 </span>            mgrs_indexers = [] 
+<span class="no">481 </span>            for obj in self.objs: 
+<span class="no">482 </span>                mgr = obj._data 
+<span class="no">483 </span>                indexers = {} 
+<span class="no">484 </span>                for ax, new_labels in enumerate(self.new_axes): 
+<span class="no">485 </span>                    if ax == self.axis: 
+<span class="no">486 </span>                        # Suppress reindexing on concat axis 
+<span class="no">487 </span>                        continue 
+<span class="no">488 </span> 
+<span class="no">489 </span>                    obj_labels = mgr.axes[ax] 
+<span class="no">490 </span>                    if not new_labels.equals(obj_labels): 
+<span class="no">491 </span>                        indexers[ax] = obj_labels.reindex(new_labels)[1] 
+<span class="no">492 </span> 
+<span class="no">493 </span>                mgrs_indexers.append((obj._data, indexers)) 
+<span class="no">494 </span> 
+<span class="no">495 </span>            new_data = concatenate_block_managers( 
+<span class="no">496 </span>                mgrs_indexers, self.new_axes, concat_axis=self.axis, copy=self.copy 
+<span class="no">497 </span>            ) 
+<span class="no">498 </span>            if not self.copy: 
+<span class="no">499 </span>                new_data._consolidate_inplace() 
+<span class="no">500 </span> 
+<span class="no">501 </span>            cons = self.objs[0]._constructor 
+<span class="no">502 </span>            return cons(new_data).__finalize__(self, method=&quot;concat&quot;) 
+<span class="no">503 </span> 
+<span class="no">504 </span>    def _get_result_dim(self) -&gt; int: 
+<span class="no">505 </span>        if self._is_series and self.axis == 1: 
+<span class="no">506 </span>            return 2 
+<span class="no">507 </span>        else: 
+<span class="no">508 </span>            return self.objs[0].ndim 
+<span class="no">509 </span> 
+<span class="no">510 </span>    def _get_new_axes(self) -&gt; List[Index]: 
+<span class="no">511 </span>        ndim = self._get_result_dim() 
+<span class="no">512 </span>        return [ 
+<span class="no">513 </span>            self._get_concat_axis() if i == self.axis else self._get_comb_axis(i) 
+<span class="no">514 </span>            for i in range(ndim) 
+<span class="no">515 </span>        ] 
+<span class="no">516 </span> 
+<span class="no">517 </span>    def _get_comb_axis(self, i: int) -&gt; Index: 
+<span class="no">518 </span>        data_axis = self.objs[0]._get_block_manager_axis(i) 
+<span class="no">519 </span>        return get_objs_combined_axis( 
+<span class="no">520 </span>            self.objs, axis=data_axis, intersect=self.intersect, sort=self.sort 
+<span class="no">521 </span>        ) 
+<span class="no">522 </span> 
+<span class="no">523 </span>    def _get_concat_axis(self) -&gt; Index: 
+<span class="no">524 </span>        &quot;&quot;&quot; 
+<span class="no">525 </span>        Return index to be used along concatenation axis. 
+<span class="no">526 </span>        &quot;&quot;&quot; 
+<span class="no">527 </span>        if self._is_series: 
+<span class="no">528 </span>            if self.axis == 0: 
+<span class="no">529 </span>                indexes = [x.index for x in self.objs] 
+<span class="no">530 </span>            elif self.ignore_index: 
+<span class="no">531 </span>                idx = ibase.default_index(len(self.objs)) 
+<span class="no">532 </span>                return idx 
+<span class="no">533 </span>            elif self.keys is None: 
+<span class="no">534 </span>                names: List[Optional[Hashable]] = [None] * len(self.objs) 
+<span class="no">535 </span>                num = 0 
+<span class="no">536 </span>                has_names = False 
+<span class="no">537 </span>                for i, x in enumerate(self.objs): 
+<span class="no">538 </span>                    if not isinstance(x, Series): 
+<span class="no">539 </span>                        raise TypeError( 
+<span class="no">540 </span>                            f&quot;Cannot concatenate type &apos;Series&apos; with &quot; 
+<span class="no">541 </span>                            f&quot;object of type &apos;{type(x).__name__}&apos;&quot; 
+<span class="no">542 </span>                        ) 
+<span class="no">543 </span>                    if x.name is not None: 
+<span class="no">544 </span>                        names[i] = x.name 
+<span class="no">545 </span>                        has_names = True 
+<span class="no">546 </span>                    else: 
+<span class="no">547 </span>                        names[i] = num 
+<span class="no">548 </span>                        num += 1 
+<span class="no">549 </span>                if has_names: 
+<span class="no">550 </span>                    return Index(names) 
+<span class="no">551 </span>                else: 
+<span class="no">552 </span>                    return ibase.default_index(len(self.objs)) 
+<span class="no">553 </span>            else: 
+<span class="no">554 </span>                return ensure_index(self.keys).set_names(self.names) 
+<span class="no">555 </span>        else: 
+<span class="no">556 </span>            indexes = [x._data.axes[self.axis] for x in self.objs] 
+<span class="no">557 </span> 
+<span class="no">558 </span>        if self.ignore_index: 
+<span class="no">559 </span>            idx = ibase.default_index(sum(len(i) for i in indexes)) 
+<span class="no">560 </span>            return idx 
+<span class="no">561 </span> 
+<span class="no">562 </span>        if self.keys is None: 
+<span class="no">563 </span>            concat_axis = _concat_indexes(indexes) 
+<span class="no">564 </span>        else: 
+<span class="no">565 </span>            concat_axis = _make_concat_multiindex( 
+<span class="no">566 </span>                indexes, self.keys, self.levels, self.names 
+<span class="no">567 </span>            ) 
+<span class="no">568 </span> 
+<span class="no">569 </span>        self._maybe_check_integrity(concat_axis) 
+<span class="no">570 </span> 
+<span class="no">571 </span>        return concat_axis 
+<span class="no">572 </span> 
+<span class="no">573 </span>    def _maybe_check_integrity(self, concat_index: Index): 
+<span class="no">574 </span>        if self.verify_integrity: 
+<span class="no">575 </span>            if not concat_index.is_unique: 
+<span class="no">576 </span>                overlap = concat_index[concat_index.duplicated()].unique() 
+<span class="no">577 </span>                raise ValueError(f&quot;Indexes have overlapping values: {overlap}&quot;) 
+<span class="no">578 </span> 
+<span class="no">579 </span> 
+<span class="no">580 </span>def _concat_indexes(indexes) -&gt; Index: 
+<span class="no">581 </span>    return indexes[0].append(indexes[1:]) 
+<span class="no">582 </span> 
+<span class="no">583 </span> 
+<span class="no">584 </span>def _make_concat_multiindex(indexes, keys, levels=None, names=None) -&gt; MultiIndex: 
+<span class="no">585 </span> 
+<span class="no">586 </span>    if (levels is None and isinstance(keys[0], tuple)) or ( 
+<span class="no">587 </span>        levels is not None and len(levels) &gt; 1 
+<span class="no">588 </span>    ): 
+<span class="no">589 </span>        zipped = list(zip(*keys)) 
+<span class="no">590 </span>        if names is None: 
+<span class="no">591 </span>            names = [None] * len(zipped) 
+<span class="no">592 </span> 
+<span class="no">593 </span>        if levels is None: 
+<span class="no">594 </span>            _, levels = factorize_from_iterables(zipped) 
+<span class="no">595 </span>        else: 
+<span class="no">596 </span>            levels = [ensure_index(x) for x in levels] 
+<span class="no">597 </span>    else: 
+<span class="no">598 </span>        zipped = [keys] 
+<span class="no">599 </span>        if names is None: 
+<span class="no">600 </span>            names = [None] 
+<span class="no">601 </span> 
+<span class="no">602 </span>        if levels is None: 
+<span class="no">603 </span>            levels = [ensure_index(keys)] 
+<span class="no">604 </span>        else: 
+<span class="no">605 </span>            levels = [ensure_index(x) for x in levels] 
+<span class="no">606 </span> 
+<span class="no">607 </span>    if not all_indexes_same(indexes): 
+<span class="no">608 </span>        codes_list = [] 
+<span class="no">609 </span> 
+<span class="no">610 </span>        # things are potentially different sizes, so compute the exact codes 
+<span class="no">611 </span>        # for each level and pass those to MultiIndex.from_arrays 
+<span class="no">612 </span> 
+<span class="no">613 </span>        for hlevel, level in zip(zipped, levels): 
+<span class="no">614 </span>            to_concat = [] 
+<span class="no">615 </span>            for key, index in zip(hlevel, indexes): 
+<span class="no">616 </span>                try: 
+<span class="no">617 </span>                    i = level.get_loc(key) 
+<span class="no">618 </span>                except KeyError: 
+<span class="no">619 </span>                    raise ValueError( 
+<span class="no">620 </span>                        &quot;Key {key!s} not in level {level!s}&quot;.format( 
+<span class="no">621 </span>                            key=key, level=level 
+<span class="no">622 </span>                        ) 
+<span class="no">623 </span>                    ) 
+<span class="no">624 </span> 
+<span class="no">625 </span>                to_concat.append(np.repeat(i, len(index))) 
+<span class="no">626 </span>            codes_list.append(np.concatenate(to_concat)) 
+<span class="no">627 </span> 
+<span class="no">628 </span>        concat_index = _concat_indexes(indexes) 
+<span class="no">629 </span> 
+<span class="no">630 </span>        # these go at the end 
+<span class="no">631 </span>        if isinstance(concat_index, MultiIndex): 
+<span class="no">632 </span>            levels.extend(concat_index.levels) 
+<span class="no">633 </span>            codes_list.extend(concat_index.codes) 
+<span class="no">634 </span>        else: 
+<span class="no">635 </span>            codes, categories = factorize_from_iterable(concat_index) 
+<span class="no">636 </span>            levels.append(categories) 
+<span class="no">637 </span>            codes_list.append(codes) 
+<span class="no">638 </span> 
+<span class="no">639 </span>        if len(names) == len(levels): 
+<span class="no">640 </span>            names = list(names) 
+<span class="no">641 </span>        else: 
+<span class="no">642 </span>            # make sure that all of the passed indices have the same nlevels 
+<span class="no">643 </span>            if not len({idx.nlevels for idx in indexes}) == 1: 
+<span class="no">644 </span>                raise AssertionError( 
+<span class="no">645 </span>                    &quot;Cannot concat indices that do not have the same number of levels&quot; 
+<span class="no">646 </span>                ) 
+<span class="no">647 </span> 
+<span class="no">648 </span>            # also copies 
+<span class="no">649 </span>            names = names + get_consensus_names(indexes) 
+<span class="no">650 </span> 
+<span class="no">651 </span>        return MultiIndex( 
+<span class="no">652 </span>            levels=levels, codes=codes_list, names=names, verify_integrity=False 
+<span class="no">653 </span>        ) 
+<span class="no">654 </span> 
+<span class="no">655 </span>    new_index = indexes[0] 
+<span class="no">656 </span>    n = len(new_index) 
+<span class="no">657 </span>    kpieces = len(indexes) 
+<span class="no">658 </span> 
+<span class="no">659 </span>    # also copies 
+<span class="no">660 </span>    new_names = list(names) 
+<span class="no">661 </span>    new_levels = list(levels) 
+<span class="no">662 </span> 
+<span class="no">663 </span>    # construct codes 
+<span class="no">664 </span>    new_codes = [] 
+<span class="no">665 </span> 
+<span class="no">666 </span>    # do something a bit more speedy 
+<span class="no">667 </span> 
+<span class="no">668 </span>    for hlevel, level in zip(zipped, levels): 
+<span class="no">669 </span>        hlevel = ensure_index(hlevel) 
+<span class="no">670 </span>        mapped = level.get_indexer(hlevel) 
+<span class="no">671 </span> 
+<span class="no">672 </span>        mask = mapped == -1 
+<span class="no">673 </span>        if mask.any(): 
+<span class="no">674 </span>            raise ValueError( 
+<span class="no">675 </span>                &quot;Values not found in passed level: {hlevel!s}&quot;.format( 
+<span class="no">676 </span>                    hlevel=hlevel[mask] 
+<span class="no">677 </span>                ) 
+<span class="no">678 </span>            ) 
+<span class="no">679 </span> 
+<span class="no">680 </span>        new_codes.append(np.repeat(mapped, n)) 
+<span class="no">681 </span> 
+<span class="no">682 </span>    if isinstance(new_index, MultiIndex): 
+<span class="no">683 </span>        new_levels.extend(new_index.levels) 
+<span class="no">684 </span>        new_codes.extend([np.tile(lab, kpieces) for lab in new_index.codes]) 
+<span class="no">685 </span>    else: 
+<span class="no">686 </span>        new_levels.append(new_index) 
+<span class="no">687 </span>        new_codes.append(np.tile(np.arange(n), kpieces)) 
+<span class="no">688 </span> 
+<span class="no">689 </span>    if len(new_names) &lt; len(new_levels): 
+<span class="no">690 </span>        new_names.extend(new_index.names) 
+<span class="no">691 </span> 
+<span class="no">692 </span>    return MultiIndex( 
+<span class="no">693 </span>        levels=new_levels, codes=new_codes, names=new_names, verify_integrity=False 
+<span class="no">694 </span>    ) 
+<span class="no">695 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">22_B (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>&quot;&quot;&quot; 
+<span class="no">  2 </span>concat routines 
+<span class="no">  3 </span>&quot;&quot;&quot; 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>from typing import Hashable, Iterable, List, Mapping, Optional, Union, overload 
+<span class="no">  6 </span> 
+<span class="no">  7 </span>import numpy as np 
+<span class="no">  8 </span> 
+<span class="no">  9 </span>from pandas._typing import FrameOrSeriesUnion 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>from pandas import DataFrame, Index, MultiIndex, Series 
+<span class="no"> 12 </span>from pandas.core.arrays.categorical import ( 
+<span class="no"> 13 </span>    factorize_from_iterable, 
+<span class="no"> 14 </span>    factorize_from_iterables, 
+<span class="no"> 15 </span>) 
+<span class="no"> 16 </span>import pandas.core.common as com 
+<span class="no"> 17 </span>from pandas.core.generic import NDFrame 
+<span class="no"> 18 </span>from pandas.core.indexes.api import ( 
+<span class="no"> 19 </span>    all_indexes_same, 
+<span class="no"> 20 </span>    ensure_index, 
+<span class="no"> 21 </span>    get_consensus_names, 
+<span class="no"> 22 </span>    get_objs_combined_axis, 
+<span class="no"> 23 </span>) 
+<span class="no"> 24 </span>import pandas.core.indexes.base as ibase 
+<span class="no"> 25 </span>from pandas.core.internals import concatenate_block_managers 
+<span class="no"> 26 </span> 
+<span class="no"> 27 </span># --------------------------------------------------------------------- 
+<span class="no"> 28 </span># Concatenate DataFrame objects 
+<span class="no"> 29 </span> 
+<span class="no"> 30 </span> 
+<span class="no"> 31 </span>@overload 
+<span class="no"> 32 </span>def concat( 
+<span class="no"> 33 </span>    objs: Union[Iterable[&quot;DataFrame&quot;], Mapping[Optional[Hashable], &quot;DataFrame&quot;]], 
+<span class="no"> 34 </span>    axis=0, 
+<span class="no"> 35 </span>    join: str = &quot;outer&quot;, 
+<span class="no"> 36 </span>    ignore_index: bool = False, 
+<span class="no"> 37 </span>    keys=None, 
+<span class="no"> 38 </span>    levels=None, 
+<span class="no"> 39 </span>    names=None, 
+<span class="no"> 40 </span>    verify_integrity: bool = False, 
+<span class="no"> 41 </span>    sort: bool = False, 
+<span class="no"> 42 </span>    copy: bool = True, 
+<span class="no"> 43 </span>) -&gt; &quot;DataFrame&quot;: 
+<span class="no"> 44 </span>    ... 
+<span class="no"> 45 </span> 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>@overload 
+<span class="no"> 48 </span>def concat( 
+<span class="no"> 49 </span>    objs: Union[ 
+<span class="no"> 50 </span>        Iterable[FrameOrSeriesUnion], Mapping[Optional[Hashable], FrameOrSeriesUnion] 
+<span class="no"> 51 </span>    ], 
+<span class="no"> 52 </span>    axis=0, 
+<span class="no"> 53 </span>    join: str = &quot;outer&quot;, 
+<span class="no"> 54 </span>    ignore_index: bool = False, 
+<span class="no"> 55 </span>    keys=None, 
+<span class="no"> 56 </span>    levels=None, 
+<span class="no"> 57 </span>    names=None, 
+<span class="no"> 58 </span>    verify_integrity: bool = False, 
+<span class="no"> 59 </span>    sort: bool = False, 
+<span class="no"> 60 </span>    copy: bool = True, 
+<span class="no"> 61 </span>) -&gt; FrameOrSeriesUnion: 
+<span class="no"> 62 </span>    ... 
+<span class="no"> 63 </span> 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>def concat( 
+<span class="no"> 66 </span>    objs: Union[ 
+<span class="no"> 67 </span>        Iterable[FrameOrSeriesUnion], Mapping[Optional[Hashable], FrameOrSeriesUnion] 
+<span class="no"> 68 </span>    ], 
+<span class="no"> 69 </span>    axis=0, 
+<span class="no"> 70 </span>    join=&quot;outer&quot;, 
+<span class="no"> 71 </span>    ignore_index: bool = False, 
+<span class="no"> 72 </span>    keys=None, 
+<span class="no"> 73 </span>    levels=None, 
+<span class="no"> 74 </span>    names=None, 
+<span class="no"> 75 </span>    verify_integrity: bool = False, 
+<span class="no"> 76 </span>    sort: bool = False, 
+<span class="no"> 77 </span>    copy: bool = True, 
+<span class="no"> 78 </span>) -&gt; FrameOrSeriesUnion: 
+<span class="no"> 79 </span>    &quot;&quot;&quot; 
+<span class="no"> 80 </span>    Concatenate pandas objects along a particular axis with optional set logic 
+<span class="no"> 81 </span>    along the other axes. 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>    Can also add a layer of hierarchical indexing on the concatenation axis, 
+<span class="no"> 84 </span>    which may be useful if the labels are the same (or overlapping) on 
+<span class="no"> 85 </span>    the passed axis number. 
+<span class="no"> 86 </span> 
+<span class="no"> 87 </span>    Parameters 
+<span class="no"> 88 </span>    ---------- 
+<span class="no"> 89 </span>    objs : a sequence or mapping of Series or DataFrame objects 
+<span class="no"> 90 </span>        If a dict is passed, the sorted keys will be used as the `keys` 
+<span class="no"> 91 </span>        argument, unless it is passed, in which case the values will be 
+<span class="no"> 92 </span>        selected (see below). Any None objects will be dropped silently unless 
+<span class="no"> 93 </span>        they are all None in which case a ValueError will be raised. 
+<span class="no"> 94 </span>    axis : {0/&apos;index&apos;, 1/&apos;columns&apos;}, default 0 
+<span class="no"> 95 </span>        The axis to concatenate along. 
+<span class="no"> 96 </span>    join : {&apos;inner&apos;, &apos;outer&apos;}, default &apos;outer&apos; 
+<span class="no"> 97 </span>        How to handle indexes on other axis (or axes). 
+<span class="no"> 98 </span>    ignore_index : bool, default False 
+<span class="no"> 99 </span>        If True, do not use the index values along the concatenation axis. The 
+<span class="no">100 </span>        resulting axis will be labeled 0, ..., n - 1. This is useful if you are 
+<span class="no">101 </span>        concatenating objects where the concatenation axis does not have 
+<span class="no">102 </span>        meaningful indexing information. Note the index values on the other 
+<span class="no">103 </span>        axes are still respected in the join. 
+<span class="no">104 </span>    keys : sequence, default None 
+<span class="no">105 </span>        If multiple levels passed, should contain tuples. Construct 
+<span class="no">106 </span>        hierarchical index using the passed keys as the outermost level. 
+<span class="no">107 </span>    levels : list of sequences, default None 
+<span class="no">108 </span>        Specific levels (unique values) to use for constructing a 
+<span class="no">109 </span>        MultiIndex. Otherwise they will be inferred from the keys. 
+<span class="no">110 </span>    names : list, default None 
+<span class="no">111 </span>        Names for the levels in the resulting hierarchical index. 
+<span class="no">112 </span>    verify_integrity : bool, default False 
+<span class="no">113 </span>        Check whether the new concatenated axis contains duplicates. This can 
+<span class="no">114 </span>        be very expensive relative to the actual data concatenation. 
+<span class="no">115 </span>    sort : bool, default False 
+<span class="no">116 </span>        Sort non-concatenation axis if it is not already aligned when `join` 
+<span class="no">117 </span>        is &apos;outer&apos;. 
+<span class="no">118 </span>        This has no effect when ``join=&apos;inner&apos;``, which already preserves 
+<span class="no">119 </span>        the order of the non-concatenation axis. 
+<span class="no">120 </span> 
+<span class="no">121 </span>        .. versionadded:: 0.23.0 
+<span class="no">122 </span>        .. versionchanged:: 1.0.0 
+<span class="no">123 </span> 
+<span class="no">124 </span>           Changed to not sort by default. 
+<span class="no">125 </span> 
+<span class="no">126 </span>    copy : bool, default True 
+<span class="no">127 </span>        If False, do not copy data unnecessarily. 
+<span class="no">128 </span> 
+<span class="no">129 </span>    Returns 
+<span class="no">130 </span>    ------- 
+<span class="no">131 </span>    object, type of objs 
+<span class="no">132 </span>        When concatenating all ``Series`` along the index (axis=0), a 
+<span class="no">133 </span>        ``Series`` is returned. When ``objs`` contains at least one 
+<span class="no">134 </span>        ``DataFrame``, a ``DataFrame`` is returned. When concatenating along 
+<span class="no">135 </span>        the columns (axis=1), a ``DataFrame`` is returned. 
+<span class="no">136 </span> 
+<span class="no">137 </span>    See Also 
+<span class="no">138 </span>    -------- 
+<span class="no">139 </span>    Series.append : Concatenate Series. 
+<span class="no">140 </span>    DataFrame.append : Concatenate DataFrames. 
+<span class="no">141 </span>    DataFrame.join : Join DataFrames using indexes. 
+<span class="no">142 </span>    DataFrame.merge : Merge DataFrames by indexes or columns. 
+<span class="no">143 </span> 
+<span class="no">144 </span>    Notes 
+<span class="no">145 </span>    ----- 
+<span class="no">146 </span>    The keys, levels, and names arguments are all optional. 
+<span class="no">147 </span> 
+<span class="no">148 </span>    A walkthrough of how this method fits in with other tools for combining 
+<span class="no">149 </span>    pandas objects can be found `here 
+<span class="no">150 </span>    &lt;https://pandas.pydata.org/pandas-docs/stable/user_guide/merging.html&gt;`__. 
+<span class="no">151 </span> 
+<span class="no">152 </span>    Examples 
+<span class="no">153 </span>    -------- 
+<span class="no">154 </span>    Combine two ``Series``. 
+<span class="no">155 </span> 
+<span class="no">156 </span>    &gt;&gt;&gt; s1 = pd.Series([&apos;a&apos;, &apos;b&apos;]) 
+<span class="no">157 </span>    &gt;&gt;&gt; s2 = pd.Series([&apos;c&apos;, &apos;d&apos;]) 
+<span class="no">158 </span>    &gt;&gt;&gt; pd.concat([s1, s2]) 
+<span class="no">159 </span>    0    a 
+<span class="no">160 </span>    1    b 
+<span class="no">161 </span>    0    c 
+<span class="no">162 </span>    1    d 
+<span class="no">163 </span>    dtype: object 
+<span class="no">164 </span> 
+<span class="no">165 </span>    Clear the existing index and reset it in the result 
+<span class="no">166 </span>    by setting the ``ignore_index`` option to ``True``. 
+<span class="no">167 </span> 
+<span class="no">168 </span>    &gt;&gt;&gt; pd.concat([s1, s2], ignore_index=True) 
+<span class="no">169 </span>    0    a 
+<span class="no">170 </span>    1    b 
+<span class="no">171 </span>    2    c 
+<span class="no">172 </span>    3    d 
+<span class="no">173 </span>    dtype: object 
+<span class="no">174 </span> 
+<span class="no">175 </span>    Add a hierarchical index at the outermost level of 
+<span class="no">176 </span>    the data with the ``keys`` option. 
+<span class="no">177 </span> 
+<span class="no">178 </span>    &gt;&gt;&gt; pd.concat([s1, s2], keys=[&apos;s1&apos;, &apos;s2&apos;]) 
+<span class="no">179 </span>    s1  0    a 
+<span class="no">180 </span>        1    b 
+<span class="no">181 </span>    s2  0    c 
+<span class="no">182 </span>        1    d 
+<span class="no">183 </span>    dtype: object 
+<span class="no">184 </span> 
+<span class="no">185 </span>    Label the index keys you create with the ``names`` option. 
+<span class="no">186 </span> 
+<span class="no">187 </span>    &gt;&gt;&gt; pd.concat([s1, s2], keys=[&apos;s1&apos;, &apos;s2&apos;], 
+<span class="no">188 </span>    ...           names=[&apos;Series name&apos;, &apos;Row ID&apos;]) 
+<span class="no">189 </span>    Series name  Row ID 
+<span class="no">190 </span>    s1           0         a 
+<span class="no">191 </span>                 1         b 
+<span class="no">192 </span>    s2           0         c 
+<span class="no">193 </span>                 1         d 
+<span class="no">194 </span>    dtype: object 
+<span class="no">195 </span> 
+<span class="no">196 </span>    Combine two ``DataFrame`` objects with identical columns. 
+<span class="no">197 </span> 
+<span class="no">198 </span>    &gt;&gt;&gt; df1 = pd.DataFrame([[&apos;a&apos;, 1], [&apos;b&apos;, 2]], 
+<span class="no">199 </span>    ...                    columns=[&apos;letter&apos;, &apos;number&apos;]) 
+<span class="no">200 </span>    &gt;&gt;&gt; df1 
+<span class="no">201 </span>      letter  number 
+<span class="no">202 </span>    0      a       1 
+<span class="no">203 </span>    1      b       2 
+<span class="no">204 </span>    &gt;&gt;&gt; df2 = pd.DataFrame([[&apos;c&apos;, 3], [&apos;d&apos;, 4]], 
+<span class="no">205 </span>    ...                    columns=[&apos;letter&apos;, &apos;number&apos;]) 
+<span class="no">206 </span>    &gt;&gt;&gt; df2 
+<span class="no">207 </span>      letter  number 
+<span class="no">208 </span>    0      c       3 
+<span class="no">209 </span>    1      d       4 
+<span class="no">210 </span>    &gt;&gt;&gt; pd.concat([df1, df2]) 
+<span class="no">211 </span>      letter  number 
+<span class="no">212 </span>    0      a       1 
+<span class="no">213 </span>    1      b       2 
+<span class="no">214 </span>    0      c       3 
+<span class="no">215 </span>    1      d       4 
+<span class="no">216 </span> 
+<span class="no">217 </span>    Combine ``DataFrame`` objects with overlapping columns 
+<span class="no">218 </span>    and return everything. Columns outside the intersection will 
+<span class="no">219 </span>    be filled with ``NaN`` values. 
+<span class="no">220 </span> 
+<span class="no">221 </span>    &gt;&gt;&gt; df3 = pd.DataFrame([[&apos;c&apos;, 3, &apos;cat&apos;], [&apos;d&apos;, 4, &apos;dog&apos;]], 
+<span class="no">222 </span>    ...                    columns=[&apos;letter&apos;, &apos;number&apos;, &apos;animal&apos;]) 
+<span class="no">223 </span>    &gt;&gt;&gt; df3 
+<span class="no">224 </span>      letter  number animal 
+<span class="no">225 </span>    0      c       3    cat 
+<span class="no">226 </span>    1      d       4    dog 
+<span class="no">227 </span>    &gt;&gt;&gt; pd.concat([df1, df3], sort=False) 
+<span class="no">228 </span>      letter  number animal 
+<span class="no">229 </span>    0      a       1    NaN 
+<span class="no">230 </span>    1      b       2    NaN 
+<span class="no">231 </span>    0      c       3    cat 
+<span class="no">232 </span>    1      d       4    dog 
+<span class="no">233 </span> 
+<span class="no">234 </span>    Combine ``DataFrame`` objects with overlapping columns 
+<span class="no">235 </span>    and return only those that are shared by passing ``inner`` to 
+<span class="no">236 </span>    the ``join`` keyword argument. 
+<span class="no">237 </span> 
+<span class="no">238 </span>    &gt;&gt;&gt; pd.concat([df1, df3], join=&quot;inner&quot;) 
+<span class="no">239 </span>      letter  number 
+<span class="no">240 </span>    0      a       1 
+<span class="no">241 </span>    1      b       2 
+<span class="no">242 </span>    0      c       3 
+<span class="no">243 </span>    1      d       4 
+<span class="no">244 </span> 
+<span class="no">245 </span>    Combine ``DataFrame`` objects horizontally along the x axis by 
+<span class="no">246 </span>    passing in ``axis=1``. 
+<span class="no">247 </span> 
+<span class="no">248 </span>    &gt;&gt;&gt; df4 = pd.DataFrame([[&apos;bird&apos;, &apos;polly&apos;], [&apos;monkey&apos;, &apos;george&apos;]], 
+<span class="no">249 </span>    ...                    columns=[&apos;animal&apos;, &apos;name&apos;]) 
+<span class="no">250 </span>    &gt;&gt;&gt; pd.concat([df1, df4], axis=1) 
+<span class="no">251 </span>      letter  number  animal    name 
+<span class="no">252 </span>    0      a       1    bird   polly 
+<span class="no">253 </span>    1      b       2  monkey  george 
+<span class="no">254 </span> 
+<span class="no">255 </span>    Prevent the result from including duplicate index values with the 
+<span class="no">256 </span>    ``verify_integrity`` option. 
+<span class="no">257 </span> 
+<span class="no">258 </span>    &gt;&gt;&gt; df5 = pd.DataFrame([1], index=[&apos;a&apos;]) 
+<span class="no">259 </span>    &gt;&gt;&gt; df5 
+<span class="no">260 </span>       0 
+<span class="no">261 </span>    a  1 
+<span class="no">262 </span>    &gt;&gt;&gt; df6 = pd.DataFrame([2], index=[&apos;a&apos;]) 
+<span class="no">263 </span>    &gt;&gt;&gt; df6 
+<span class="no">264 </span>       0 
+<span class="no">265 </span>    a  2 
+<span class="no">266 </span>    &gt;&gt;&gt; pd.concat([df5, df6], verify_integrity=True) 
+<span class="no">267 </span>    Traceback (most recent call last): 
+<span class="no">268 </span>        ... 
+<span class="no">269 </span>    ValueError: Indexes have overlapping values: [&apos;a&apos;] 
+<span class="no">270 </span>    &quot;&quot;&quot; 
+<span class="no">271 </span>    op = _Concatenator( 
+<span class="no">272 </span>        objs, 
+<span class="no">273 </span>        axis=axis, 
+<span class="no">274 </span>        ignore_index=ignore_index, 
+<span class="no">275 </span>        join=join, 
+<span class="no">276 </span>        keys=keys, 
+<span class="no">277 </span>        levels=levels, 
+<span class="no">278 </span>        names=names, 
+<span class="no">279 </span>        verify_integrity=verify_integrity, 
+<span class="no">280 </span>        copy=copy, 
+<span class="no">281 </span>        sort=sort, 
+<span class="no">282 </span>    ) 
+<span class="no">283 </span> 
+<span class="no">284 </span>    return op.get_result() 
+<span class="no">285 </span> 
+<span class="no">286 </span> 
+<span class="no">287 </span>class _Concatenator: 
+<span class="no">288 </span>    &quot;&quot;&quot; 
+<span class="no">289 </span>    Orchestrates a concatenation operation for BlockManagers 
+<span class="no">290 </span>    &quot;&quot;&quot; 
+<span class="no">291 </span> 
+<span class="no">292 </span>    def __init__( 
+<span class="no">293 </span>        self, 
+<span class="no">294 </span>        objs, 
+<span class="no">295 </span>        axis=0, 
+<span class="no">296 </span>        join: str = &quot;outer&quot;, 
+<span class="no">297 </span>        keys=None, 
+<span class="no">298 </span>        levels=None, 
+<span class="no">299 </span>        names=None, 
+<span class="no">300 </span>        ignore_index: bool = False, 
+<span class="no">301 </span>        verify_integrity: bool = False, 
+<span class="no">302 </span>        copy: bool = True, 
+<span class="no">303 </span>        sort=False, 
+<span class="no">304 </span>    ): 
+<span class="no">305 </span>        if isinstance(objs, (NDFrame, str)): 
+<span class="no">306 </span>            raise TypeError( 
+<span class="no">307 </span>                &quot;first argument must be an iterable of pandas &quot; 
+<span class="no">308 </span>                f&apos;objects, you passed an object of type &quot;{type(objs).__name__}&quot;&apos; 
+<span class="no">309 </span>            ) 
+<span class="no">310 </span> 
+<span class="no">311 </span>        if join == &quot;outer&quot;: 
+<span class="no">312 </span>            self.intersect = False 
+<span class="no">313 </span>        elif join == &quot;inner&quot;: 
+<span class="no">314 </span>            self.intersect = True 
+<span class="no">315 </span>        else:  # pragma: no cover 
+<span class="no">316 </span>            raise ValueError( 
+<span class="no">317 </span>                &quot;Only can inner (intersect) or outer (union) join the other axis&quot; 
+<span class="no">318 </span>            ) 
+<span class="no">319 </span> 
+<span class="no">320 </span>        if isinstance(objs, dict): 
+<span class="no">321 </span>            if keys is None: 
+<span class="no">322 </span>                keys = list(objs.keys()) 
+<span class="no">323 </span>            objs = [objs[k] for k in keys] 
+<span class="no">324 </span>        else: 
+<span class="no">325 </span>            objs = list(objs) 
+<span class="no">326 </span> 
+<span class="no">327 </span>        if len(objs) == 0: 
+<span class="no">328 </span>            raise ValueError(&quot;No objects to concatenate&quot;) 
+<span class="no">329 </span> 
+<span class="no">330 </span>        if keys is None: 
+<span class="no">331 </span>            objs = list(com.not_none(*objs)) 
+<span class="no">332 </span>        else: 
+<span class="no">333 </span>            # #1649 
+<span class="no">334 </span>            clean_keys = [] 
+<span class="no">335 </span>            clean_objs = [] 
+<span class="no">336 </span>            for k, v in zip(keys, objs): 
+<span class="no">337 </span>                if v is None: 
+<span class="no">338 </span>                    continue 
+<span class="no">339 </span>                clean_keys.append(k) 
+<span class="no">340 </span>                clean_objs.append(v) 
+<span class="no">341 </span>            objs = clean_objs 
+<span class="no">342 </span>            name = getattr(keys, &quot;name&quot;, None) 
+<span class="no">343 </span>            keys = Index(clean_keys, name=name) 
+<span class="no">344 </span> 
+<span class="no">345 </span>        if len(objs) == 0: 
+<span class="no">346 </span>            raise ValueError(&quot;All objects passed were None&quot;) 
+<span class="no">347 </span> 
+<span class="no">348 </span>        # consolidate data &amp; figure out what our result ndim is going to be 
+<span class="no">349 </span>        ndims = set() 
+<span class="no">350 </span>        for obj in objs: 
+<span class="no">351 </span>            if not isinstance(obj, (Series, DataFrame)): 
+<span class="no">352 </span>                msg = ( 
+<span class="no">353 </span>                    &quot;cannot concatenate object of type &apos;{typ}&apos;; &quot; 
+<span class="no">354 </span>                    &quot;only Series and DataFrame objs are valid&quot;.format(typ=type(obj)) 
+<span class="no">355 </span>                ) 
+<span class="no">356 </span>                raise TypeError(msg) 
+<span class="no">357 </span> 
+<span class="no">358 </span>            # consolidate 
+<span class="no">359 </span>            obj._consolidate(inplace=True) 
+<span class="no">360 </span>            ndims.add(obj.ndim) 
+<span class="no">361 </span> 
+<span class="no">362 </span>        # get the sample 
+<span class="no">363 </span>        # want the highest ndim that we have, and must be non-empty 
+<span class="no">364 </span>        # unless all objs are empty 
+<span class="no">365 </span>        sample = None 
+<span class="no">366 </span>        if len(ndims) &gt; 1: 
+<span class="no">367 </span>            max_ndim = max(ndims) 
+<span class="no">368 </span>            for obj in objs: 
+<span class="no">369 </span>                if obj.ndim == max_ndim and np.sum(obj.shape): 
+<span class="no">370 </span>                    sample = obj 
+<span class="no">371 </span>                    break 
+<span class="no">372 </span> 
+<span class="no">373 </span>        else: 
+<span class="no">374 </span>            # filter out the empties if we have not multi-index possibilities 
+<span class="no">375 </span>            # note to keep empty Series as it affect to result columns / name 
+<span class="no">376 </span>            non_empties = [ 
+<span class="no">377 </span>                obj for obj in objs if sum(obj.shape) &gt; 0 or isinstance(obj, Series) 
+<span class="no">378 </span>            ] 
+<span class="no">379 </span> 
+<span class="no">380 </span>            if len(non_empties) and ( 
+<span class="no">381 </span>                keys is None and names is None and levels is None and not self.intersect 
+<span class="no">382 </span>            ): 
+<span class="no">383 </span>                objs = non_empties 
+<span class="no">384 </span>                sample = objs[0] 
+<span class="no">385 </span> 
+<span class="no">386 </span>        if sample is None: 
+<span class="no">387 </span>            sample = objs[0] 
+<span class="no">388 </span>        self.objs = objs 
+<span class="no">389 </span> 
+<span class="no">390 </span>        # Standardize axis parameter to int 
+<span class="no">391 </span>        if isinstance(sample, Series): 
+<span class="no">392 </span>            axis = DataFrame._get_axis_number(axis) 
+<span class="no">393 </span>        else: 
+<span class="no">394 </span>            axis = sample._get_axis_number(axis) 
+<span class="no">395 </span> 
+<span class="no">396 </span>        # Need to flip BlockManager axis in the DataFrame special case 
+<span class="no">397 </span>        self._is_frame = isinstance(sample, DataFrame) 
+<span class="no">398 </span>        if self._is_frame: 
+<span class="no">399 </span>            axis = 1 if axis == 0 else 0 
+<span class="no">400 </span> 
+<span class="no">401 </span>        self._is_series = isinstance(sample, Series) 
+<span class="no">402 </span>        if not 0 &lt;= axis &lt;= sample.ndim: 
+<span class="no">403 </span>            raise AssertionError( 
+<span class="no">404 </span>                &quot;axis must be between 0 and {ndim}, input was &quot; 
+<span class="no">405 </span>                &quot;{axis}&quot;.format(ndim=sample.ndim, axis=axis) 
+<span class="no">406 </span>            ) 
+<span class="no">407 </span> 
+<span class="no">408 </span>        # if we have mixed ndims, then convert to highest ndim 
+<span class="no">409 </span>        # creating column numbers as needed 
+<span class="no">410 </span>        if len(ndims) &gt; 1: 
+<span class="no">411 </span>            current_column = 0 
+<span class="no">412 </span>            max_ndim = sample.ndim 
+<span class="no">413 </span>            self.objs, objs = [], self.objs 
+<span class="no">414 </span>            for obj in objs: 
+<span class="no">415 </span> 
+<span class="no">416 </span>                ndim = obj.ndim 
+<span class="no">417 </span>                if ndim == max_ndim: 
+<span class="no">418 </span>                    pass 
+<span class="no">419 </span> 
+<span class="no">420 </span>                elif ndim != max_ndim - 1: 
+<span class="no">421 </span>                    raise ValueError( 
+<span class="no">422 </span>                        &quot;cannot concatenate unaligned mixed &quot; 
+<span class="no">423 </span>                        &quot;dimensional NDFrame objects&quot; 
+<span class="no">424 </span>                    ) 
+<span class="no">425 </span> 
+<span class="no">426 </span>                else: 
+<span class="no">427 </span>                    name = getattr(obj, &quot;name&quot;, None) 
+<span class="no">428 </span>                    if ignore_index or name is None: 
+<span class="no">429 </span>                        name = current_column 
+<span class="no">430 </span>                        current_column += 1 
+<span class="no">431 </span> 
+<span class="no">432 </span>                    # doing a row-wise concatenation so need everything 
+<span class="no">433 </span>                    # to line up 
+<span class="no">434 </span>                    if self._is_frame and axis == 1: 
+<span class="no">435 </span>                        name = 0 
+<span class="no">436 </span>                    obj = sample._constructor({name: obj}) 
+<span class="no">437 </span> 
+<span class="no">438 </span>                self.objs.append(obj) 
+<span class="no">439 </span> 
+<span class="no">440 </span>        # note: this is the BlockManager axis (since DataFrame is transposed) 
+<span class="no">441 </span>        self.axis = axis 
+<span class="no">442 </span>        self.keys = keys 
+<span class="no">443 </span>        self.names = names or getattr(keys, &quot;names&quot;, None) 
+<span class="no">444 </span>        self.levels = levels 
+<span class="no">445 </span>        self.sort = sort 
+<span class="no">446 </span> 
+<span class="no">447 </span>        self.ignore_index = ignore_index 
+<span class="no">448 </span>        self.verify_integrity = verify_integrity 
+<span class="no">449 </span>        self.copy = copy 
+<span class="no">450 </span> 
+<span class="no">451 </span>        self.new_axes = self._get_new_axes() 
+<span class="no">452 </span> 
+<span class="no">453 </span>    def get_result(self): 
+<span class="no">454 </span> 
+<span class="no">455 </span>        # series only 
+<span class="no">456 </span>        if self._is_series: 
+<span class="no">457 </span> 
+<span class="no">458 </span>            # stack blocks 
+<span class="no">459 </span>            if self.axis == 0: 
+<span class="no">460 </span>                name = com.consensus_name_attr(self.objs) 
+<span class="no">461 </span> 
+<span class="no">462 </span>                mgr = self.objs[0]._data.concat( 
+<span class="no">463 </span>                    [x._data for x in self.objs], self.new_axes 
+<span class="no">464 </span>                ) 
+<span class="no">465 </span>                cons = self.objs[0]._constructor 
+<span class="no">466 </span>                return cons(mgr, name=name).__finalize__(self, method=&quot;concat&quot;) 
+<span class="no">467 </span> 
+<span class="no">468 </span>            # combine as columns in a frame 
+<span class="no">469 </span>            else: 
+<span class="no">470 </span>                data = dict(zip(range(len(self.objs)), self.objs)) 
+<span class="no">471 </span>                cons = DataFrame 
+<span class="no">472 </span> 
+<span class="no">473 </span>                index, columns = self.new_axes 
+<span class="no">474 </span>                df = cons(data, index=index) 
+<span class="no">475 </span>                df.columns = columns 
+<span class="no">476 </span>                return df.__finalize__(self, method=&quot;concat&quot;) 
+<span class="no">477 </span> 
+<span class="no">478 </span>        # combine block managers 
+<span class="no">479 </span>        else: 
+<span class="no">480 </span>            mgrs_indexers = [] 
+<span class="no">481 </span>            for obj in self.objs: 
+<span class="no">482 </span>                mgr = obj._data 
+<span class="no">483 </span>                indexers = {} 
+<span class="no">484 </span>                for ax, new_labels in enumerate(self.new_axes): 
+<span class="no">485 </span>                    if ax == self.axis: 
+<span class="no">486 </span>                        # Suppress reindexing on concat axis 
+<span class="no">487 </span>                        continue 
+<span class="no">488 </span> 
+<span class="no">489 </span>                    obj_labels = mgr.axes[ax] 
+<span class="no">490 </span>                    if not new_labels.equals(obj_labels): 
+<span class="no">491 </span>                        indexers[ax] = obj_labels.reindex(new_labels)[1] 
+<span class="no">492 </span> 
+<span class="no">493 </span>                mgrs_indexers.append((obj._data, indexers)) 
+<span class="no">494 </span> 
+<span class="no">495 </span>            new_data = concatenate_block_managers( 
+<span class="no">496 </span>                mgrs_indexers, self.new_axes, concat_axis=self.axis, copy=self.copy 
+<span class="no">497 </span>            ) 
+<span class="no">498 </span>            if not self.copy: 
+<span class="no">499 </span>                new_data._consolidate_inplace() 
+<span class="no">500 </span> 
+<span class="no">501 </span>            cons = self.objs[0]._constructor 
+<span class="no">502 </span>            return cons(new_data).__finalize__(self, method=&quot;concat&quot;) 
+<span class="no">503 </span> 
+<span class="no">504 </span>    def _get_result_dim(self) -&gt; int: 
+<span class="no">505 </span>        if self._is_series and self.axis == 1: 
+<span class="no">506 </span>            return 2 
+<span class="no">507 </span>        else: 
+<span class="no">508 </span>            return self.objs[0].ndim 
+<span class="no">509 </span> 
+<span class="no">510 </span>    def _get_new_axes(self) -&gt; List[Index]: 
+<span class="no">511 </span>        ndim = self._get_result_dim() 
+<span class="no">512 </span>        return [ 
+<span class="no">513 </span>            self._get_concat_axis() if i == self.axis else self._get_comb_axis(i) 
+<span class="no">514 </span>            for i in range(ndim) 
+<span class="no">515 </span>        ] 
+<span class="no">516 </span> 
+<span class="no">517 </span>    def _get_comb_axis(self, i: int) -&gt; Index: 
+<span class="no">518 </span>        data_axis = self.objs[0]._get_block_manager_axis(i) 
+<span class="no">519 </span>        return get_objs_combined_axis<span id="p3" class="ep3"><span id="p2" class="ep2"><span id="p1" class="ep1">( 
+<span class="no">520 </span>            self.objs, 
+<span class="no">521 </span>            axis=data_axis, 
+<span class="no">522 </span>            intersect=self.intersect, 
+<span class="no">523 </span>            sort=self.sort<span id="n1" class="en1"><a href="#n1" class="ins">,</a></span> 
+<span class="no">524 </span>            <span id="n2" class="en2"><a href="#n2" class="ins">copy=self.copy</a></span><span id="n3" class="en3"><a href="#n3" class="ins">,</a></span> 
+<span class="no">525 </span>        )</span></span></span> 
+<span class="no">526 </span> 
+<span class="no">527 </span>    def _get_concat_axis(self) -&gt; Index: 
+<span class="no">528 </span>        &quot;&quot;&quot; 
+<span class="no">529 </span>        Return index to be used along concatenation axis. 
+<span class="no">530 </span>        &quot;&quot;&quot; 
+<span class="no">531 </span>        if self._is_series: 
+<span class="no">532 </span>            if self.axis == 0: 
+<span class="no">533 </span>                indexes = [x.index for x in self.objs] 
+<span class="no">534 </span>            elif self.ignore_index: 
+<span class="no">535 </span>                idx = ibase.default_index(len(self.objs)) 
+<span class="no">536 </span>                return idx 
+<span class="no">537 </span>            elif self.keys is None: 
+<span class="no">538 </span>                names: List[Optional[Hashable]] = [None] * len(self.objs) 
+<span class="no">539 </span>                num = 0 
+<span class="no">540 </span>                has_names = False 
+<span class="no">541 </span>                for i, x in enumerate(self.objs): 
+<span class="no">542 </span>                    if not isinstance(x, Series): 
+<span class="no">543 </span>                        raise TypeError( 
+<span class="no">544 </span>                            f&quot;Cannot concatenate type &apos;Series&apos; with &quot; 
+<span class="no">545 </span>                            f&quot;object of type &apos;{type(x).__name__}&apos;&quot; 
+<span class="no">546 </span>                        ) 
+<span class="no">547 </span>                    if x.name is not None: 
+<span class="no">548 </span>                        names[i] = x.name 
+<span class="no">549 </span>                        has_names = True 
+<span class="no">550 </span>                    else: 
+<span class="no">551 </span>                        names[i] = num 
+<span class="no">552 </span>                        num += 1 
+<span class="no">553 </span>                if has_names: 
+<span class="no">554 </span>                    return Index(names) 
+<span class="no">555 </span>                else: 
+<span class="no">556 </span>                    return ibase.default_index(len(self.objs)) 
+<span class="no">557 </span>            else: 
+<span class="no">558 </span>                return ensure_index(self.keys).set_names(self.names) 
+<span class="no">559 </span>        else: 
+<span class="no">560 </span>            indexes = [x._data.axes[self.axis] for x in self.objs] 
+<span class="no">561 </span> 
+<span class="no">562 </span>        if self.ignore_index: 
+<span class="no">563 </span>            idx = ibase.default_index(sum(len(i) for i in indexes)) 
+<span class="no">564 </span>            return idx 
+<span class="no">565 </span> 
+<span class="no">566 </span>        if self.keys is None: 
+<span class="no">567 </span>            concat_axis = _concat_indexes(indexes) 
+<span class="no">568 </span>        else: 
+<span class="no">569 </span>            concat_axis = _make_concat_multiindex( 
+<span class="no">570 </span>                indexes, self.keys, self.levels, self.names 
+<span class="no">571 </span>            ) 
+<span class="no">572 </span> 
+<span class="no">573 </span>        self._maybe_check_integrity(concat_axis) 
+<span class="no">574 </span> 
+<span class="no">575 </span>        return concat_axis 
+<span class="no">576 </span> 
+<span class="no">577 </span>    def _maybe_check_integrity(self, concat_index: Index): 
+<span class="no">578 </span>        if self.verify_integrity: 
+<span class="no">579 </span>            if not concat_index.is_unique: 
+<span class="no">580 </span>                overlap = concat_index[concat_index.duplicated()].unique() 
+<span class="no">581 </span>                raise ValueError(f&quot;Indexes have overlapping values: {overlap}&quot;) 
+<span class="no">582 </span> 
+<span class="no">583 </span> 
+<span class="no">584 </span>def _concat_indexes(indexes) -&gt; Index: 
+<span class="no">585 </span>    return indexes[0].append(indexes[1:]) 
+<span class="no">586 </span> 
+<span class="no">587 </span> 
+<span class="no">588 </span>def _make_concat_multiindex(indexes, keys, levels=None, names=None) -&gt; MultiIndex: 
+<span class="no">589 </span> 
+<span class="no">590 </span>    if (levels is None and isinstance(keys[0], tuple)) or ( 
+<span class="no">591 </span>        levels is not None and len(levels) &gt; 1 
+<span class="no">592 </span>    ): 
+<span class="no">593 </span>        zipped = list(zip(*keys)) 
+<span class="no">594 </span>        if names is None: 
+<span class="no">595 </span>            names = [None] * len(zipped) 
+<span class="no">596 </span> 
+<span class="no">597 </span>        if levels is None: 
+<span class="no">598 </span>            _, levels = factorize_from_iterables(zipped) 
+<span class="no">599 </span>        else: 
+<span class="no">600 </span>            levels = [ensure_index(x) for x in levels] 
+<span class="no">601 </span>    else: 
+<span class="no">602 </span>        zipped = [keys] 
+<span class="no">603 </span>        if names is None: 
+<span class="no">604 </span>            names = [None] 
+<span class="no">605 </span> 
+<span class="no">606 </span>        if levels is None: 
+<span class="no">607 </span>            levels = [ensure_index(keys)] 
+<span class="no">608 </span>        else: 
+<span class="no">609 </span>            levels = [ensure_index(x) for x in levels] 
+<span class="no">610 </span> 
+<span class="no">611 </span>    if not all_indexes_same(indexes): 
+<span class="no">612 </span>        codes_list = [] 
+<span class="no">613 </span> 
+<span class="no">614 </span>        # things are potentially different sizes, so compute the exact codes 
+<span class="no">615 </span>        # for each level and pass those to MultiIndex.from_arrays 
+<span class="no">616 </span> 
+<span class="no">617 </span>        for hlevel, level in zip(zipped, levels): 
+<span class="no">618 </span>            to_concat = [] 
+<span class="no">619 </span>            for key, index in zip(hlevel, indexes): 
+<span class="no">620 </span>                try: 
+<span class="no">621 </span>                    i = level.get_loc(key) 
+<span class="no">622 </span>                except KeyError: 
+<span class="no">623 </span>                    raise ValueError( 
+<span class="no">624 </span>                        &quot;Key {key!s} not in level {level!s}&quot;.format( 
+<span class="no">625 </span>                            key=key, level=level 
+<span class="no">626 </span>                        ) 
+<span class="no">627 </span>                    ) 
+<span class="no">628 </span> 
+<span class="no">629 </span>                to_concat.append(np.repeat(i, len(index))) 
+<span class="no">630 </span>            codes_list.append(np.concatenate(to_concat)) 
+<span class="no">631 </span> 
+<span class="no">632 </span>        concat_index = _concat_indexes(indexes) 
+<span class="no">633 </span> 
+<span class="no">634 </span>        # these go at the end 
+<span class="no">635 </span>        if isinstance(concat_index, MultiIndex): 
+<span class="no">636 </span>            levels.extend(concat_index.levels) 
+<span class="no">637 </span>            codes_list.extend(concat_index.codes) 
+<span class="no">638 </span>        else: 
+<span class="no">639 </span>            codes, categories = factorize_from_iterable(concat_index) 
+<span class="no">640 </span>            levels.append(categories) 
+<span class="no">641 </span>            codes_list.append(codes) 
+<span class="no">642 </span> 
+<span class="no">643 </span>        if len(names) == len(levels): 
+<span class="no">644 </span>            names = list(names) 
+<span class="no">645 </span>        else: 
+<span class="no">646 </span>            # make sure that all of the passed indices have the same nlevels 
+<span class="no">647 </span>            if not len({idx.nlevels for idx in indexes}) == 1: 
+<span class="no">648 </span>                raise AssertionError( 
+<span class="no">649 </span>                    &quot;Cannot concat indices that do not have the same number of levels&quot; 
+<span class="no">650 </span>                ) 
+<span class="no">651 </span> 
+<span class="no">652 </span>            # also copies 
+<span class="no">653 </span>            names = names + get_consensus_names(indexes) 
+<span class="no">654 </span> 
+<span class="no">655 </span>        return MultiIndex( 
+<span class="no">656 </span>            levels=levels, codes=codes_list, names=names, verify_integrity=False 
+<span class="no">657 </span>        ) 
+<span class="no">658 </span> 
+<span class="no">659 </span>    new_index = indexes[0] 
+<span class="no">660 </span>    n = len(new_index) 
+<span class="no">661 </span>    kpieces = len(indexes) 
+<span class="no">662 </span> 
+<span class="no">663 </span>    # also copies 
+<span class="no">664 </span>    new_names = list(names) 
+<span class="no">665 </span>    new_levels = list(levels) 
+<span class="no">666 </span> 
+<span class="no">667 </span>    # construct codes 
+<span class="no">668 </span>    new_codes = [] 
+<span class="no">669 </span> 
+<span class="no">670 </span>    # do something a bit more speedy 
+<span class="no">671 </span> 
+<span class="no">672 </span>    for hlevel, level in zip(zipped, levels): 
+<span class="no">673 </span>        hlevel = ensure_index(hlevel) 
+<span class="no">674 </span>        mapped = level.get_indexer(hlevel) 
+<span class="no">675 </span> 
+<span class="no">676 </span>        mask = mapped == -1 
+<span class="no">677 </span>        if mask.any(): 
+<span class="no">678 </span>            raise ValueError( 
+<span class="no">679 </span>                &quot;Values not found in passed level: {hlevel!s}&quot;.format( 
+<span class="no">680 </span>                    hlevel=hlevel[mask] 
+<span class="no">681 </span>                ) 
+<span class="no">682 </span>            ) 
+<span class="no">683 </span> 
+<span class="no">684 </span>        new_codes.append(np.repeat(mapped, n)) 
+<span class="no">685 </span> 
+<span class="no">686 </span>    if isinstance(new_index, MultiIndex): 
+<span class="no">687 </span>        new_levels.extend(new_index.levels) 
+<span class="no">688 </span>        new_codes.extend([np.tile(lab, kpieces) for lab in new_index.codes]) 
+<span class="no">689 </span>    else: 
+<span class="no">690 </span>        new_levels.append(new_index) 
+<span class="no">691 </span>        new_codes.append(np.tile(np.arange(n), kpieces)) 
+<span class="no">692 </span> 
+<span class="no">693 </span>    if len(new_names) &lt; len(new_levels): 
+<span class="no">694 </span>        new_names.extend(new_index.names) 
+<span class="no">695 </span> 
+<span class="no">696 </span>    return MultiIndex( 
+<span class="no">697 </span>        levels=new_levels, codes=new_codes, names=new_names, verify_integrity=False 
+<span class="no">698 </span>    ) 
+<span class="no">699 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

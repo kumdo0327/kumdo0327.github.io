@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .toolbar {
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+  .page:has(#p6:target) .ep6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8 {
+    display: none;
+  }
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .page:has(#n3:target) .en3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .error {
+    color: #b51700;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page:has(#n4:target) .en4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p4:target) .ep4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .token {
+    color: #017100;
+  }
+  .no {
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    letter-spacing: normal;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n7:target) .en7 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .codebox {
+    flex: 1;
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    scroll-padding-top: 54px;
+    font-size: 12px;
+    background: #f7f7f7;
+    line-height: 1.5;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .page:has(#m2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#m2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p7:target) .ep7 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p3:target) .ep3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .panel, .edit {
+    box-sizing: border-box;
+    flex-direction: column;
+    display: flex;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .grid {
+    gap: 12px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    min-height: 252px;
+  }
+  .sec {
+    font-weight: bold;
+    padding: 0;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+  }
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .panel-header {
+    border-bottom: 1px solid #afafaf;
+    font-weight: bold;
+    display: flex;
+    background: #ebebeb;
+    padding: 8px 10px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .page:has(#n5:target) .en5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p5:target) .ep5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .ins, .del, .mov, .upd {
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    padding-top: 0.05em;
+    border-bottom:  0.05em solid black;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .page:has(#p8:target) .ep8 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .page {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 0 12px 8px 12px;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .edit {
+    font-size: 14px;
+    height: 60px;
+  }
+  .editbox {
+    font-weight: 500;
+    flex: 1;
+    padding: 4px 8px;
+    min-height: 0;
+    background: #f7f7f7;
+    font-size: 14px;
+    overflow: auto;
+    line-height: 1.8;
+  }
+  .page:has(#m1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#m1:target) .em1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n1:target) .em1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#n8:target) .en8 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+      <span class="i3">Edit #3</span>
+      <span class="i4">Edit #4</span>
+      <span class="i5">Edit #5</span>
+      <span class="i6">Edit #6</span>
+      <span class="i7">Edit #7</span>
+      <span class="i8">Edit #8</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n8">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n8">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i8"><a href="#n7">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> method_invocation</a> [632, 33] - [632, 52]
+<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> method_invocation</a> [632, 32] - [632, 51]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n2" data-partner="m2"> identifier</a>: <span class=token>&quot;getArgName&quot;</span> [632, 40] - [632, 50]
+<span style="font-weight:600">  to     </span><a href="#m2" data-partner="n2"> identifier</a>: <span class=token>&quot;hasArgName&quot;</span> [632, 39] - [632, 49]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n3"> (</a>: <span class=token>&quot;(&quot;</span> [632, 32] - [632, 33]
+<span style="font-weight:600">  from   </span><a href="#p3"> parenthesized_expression</a> [632, 32] - [632, 61]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n4"> !=</a>: <span class=token>&quot;!=&quot;</span> [632, 53] - [632, 55]
+<span style="font-weight:600">  from   </span><a href="#p4"> binary_expression</a> [632, 33] - [632, 60]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n5"> null_literal</a>: <span class=token>&quot;null&quot;</span> [632, 56] - [632, 60]
+<span style="font-weight:600">  from   </span><a href="#p5"> binary_expression</a> [632, 33] - [632, 60]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> binary_expression</a> [632, 33] - [632, 60]
+<span style="font-weight:600">  from   </span><a href="#p6"> parenthesized_expression</a> [632, 32] - [632, 61]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n7"> )</a>: <span class=token>&quot;)&quot;</span> [632, 60] - [632, 61]
+<span style="font-weight:600">  from   </span><a href="#p7"> parenthesized_expression</a> [632, 32] - [632, 61]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> parenthesized_expression</a> [632, 32] - [632, 61]
+<span style="font-weight:600">  from   </span><a href="#p8"> binary_expression</a> [632, 13] - [632, 61]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">5_A (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>/** 
+<span class="no">  2 </span> * Licensed to the Apache Software Foundation (ASF) under one or more 
+<span class="no">  3 </span> * contributor license agreements.  See the NOTICE file distributed with 
+<span class="no">  4 </span> * this work for additional information regarding copyright ownership. 
+<span class="no">  5 </span> * The ASF licenses this file to You under the Apache License, Version 2.0 
+<span class="no">  6 </span> * (the &quot;License&quot;); you may not use this file except in compliance with 
+<span class="no">  7 </span> * the License.  You may obtain a copy of the License at 
+<span class="no">  8 </span> * 
+<span class="no">  9 </span> *     http://www.apache.org/licenses/LICENSE-2.0 
+<span class="no"> 10 </span> * 
+<span class="no"> 11 </span> * Unless required by applicable law or agreed to in writing, software 
+<span class="no"> 12 </span> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+<span class="no"> 13 </span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class="no"> 14 </span> * See the License for the specific language governing permissions and 
+<span class="no"> 15 </span> * limitations under the License. 
+<span class="no"> 16 </span> */ 
+<span class="no"> 17 </span> 
+<span class="no"> 18 </span>package org.apache.commons.cli; 
+<span class="no"> 19 </span> 
+<span class="no"> 20 </span>import java.io.PrintWriter; 
+<span class="no"> 21 </span>import java.util.ArrayList; 
+<span class="no"> 22 </span>import java.util.Collection; 
+<span class="no"> 23 </span>import java.util.Collections; 
+<span class="no"> 24 </span>import java.util.Comparator; 
+<span class="no"> 25 </span>import java.util.Iterator; 
+<span class="no"> 26 </span>import java.util.List; 
+<span class="no"> 27 </span> 
+<span class="no"> 28 </span>/**  
+<span class="no"> 29 </span> * A formatter of help messages for the current command line options 
+<span class="no"> 30 </span> * 
+<span class="no"> 31 </span> * @author Slawek Zachcial 
+<span class="no"> 32 </span> * @author John Keyes (john at integralsource.com) 
+<span class="no"> 33 </span> */ 
+<span class="no"> 34 </span>public class HelpFormatter { 
+<span class="no"> 35 </span>    // --------------------------------------------------------------- Constants 
+<span class="no"> 36 </span> 
+<span class="no"> 37 </span>    /** default number of characters per line */ 
+<span class="no"> 38 </span>    public static final int DEFAULT_WIDTH = 74; 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>    /** default padding to the left of each line */ 
+<span class="no"> 41 </span>    public static final int DEFAULT_LEFT_PAD = 1; 
+<span class="no"> 42 </span> 
+<span class="no"> 43 </span>    /** 
+<span class="no"> 44 </span>     * the number of characters of padding to be prefixed 
+<span class="no"> 45 </span>     * to each description line 
+<span class="no"> 46 </span>     */ 
+<span class="no"> 47 </span>    public static final int DEFAULT_DESC_PAD = 3; 
+<span class="no"> 48 </span> 
+<span class="no"> 49 </span>    /** the string to display at the begining of the usage statement */ 
+<span class="no"> 50 </span>    public static final String DEFAULT_SYNTAX_PREFIX = &quot;usage: &quot;; 
+<span class="no"> 51 </span> 
+<span class="no"> 52 </span>    /** default prefix for shortOpts */ 
+<span class="no"> 53 </span>    public static final String DEFAULT_OPT_PREFIX = &quot;-&quot;; 
+<span class="no"> 54 </span> 
+<span class="no"> 55 </span>    /** default prefix for long Option */ 
+<span class="no"> 56 </span>    public static final String DEFAULT_LONG_OPT_PREFIX = &quot;--&quot;; 
+<span class="no"> 57 </span> 
+<span class="no"> 58 </span>    /** default name for an argument */ 
+<span class="no"> 59 </span>    public static final String DEFAULT_ARG_NAME = &quot;arg&quot;; 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>    // -------------------------------------------------------------- Attributes 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /** 
+<span class="no"> 64 </span>     * number of characters per line 
+<span class="no"> 65 </span>     * 
+<span class="no"> 66 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 67 </span>     * - use get/setWidth methods instead. 
+<span class="no"> 68 </span>     */ 
+<span class="no"> 69 </span>    public int defaultWidth = DEFAULT_WIDTH; 
+<span class="no"> 70 </span> 
+<span class="no"> 71 </span>    /** 
+<span class="no"> 72 </span>     * amount of padding to the left of each line 
+<span class="no"> 73 </span>     * 
+<span class="no"> 74 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 75 </span>     * - use get/setLeftPadding methods instead. 
+<span class="no"> 76 </span>     */ 
+<span class="no"> 77 </span>    public int defaultLeftPad = DEFAULT_LEFT_PAD; 
+<span class="no"> 78 </span> 
+<span class="no"> 79 </span>    /** 
+<span class="no"> 80 </span>     * the number of characters of padding to be prefixed 
+<span class="no"> 81 </span>     * to each description line 
+<span class="no"> 82 </span>     * 
+<span class="no"> 83 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 84 </span>     * - use get/setDescPadding methods instead. 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public int defaultDescPad = DEFAULT_DESC_PAD; 
+<span class="no"> 87 </span> 
+<span class="no"> 88 </span>    /** 
+<span class="no"> 89 </span>     * the string to display at the begining of the usage statement 
+<span class="no"> 90 </span>     * 
+<span class="no"> 91 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 92 </span>     * - use get/setSyntaxPrefix methods instead. 
+<span class="no"> 93 </span>     */ 
+<span class="no"> 94 </span>    public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX; 
+<span class="no"> 95 </span> 
+<span class="no"> 96 </span>    /** 
+<span class="no"> 97 </span>     * the new line string 
+<span class="no"> 98 </span>     * 
+<span class="no"> 99 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">100 </span>     * - use get/setNewLine methods instead. 
+<span class="no">101 </span>     */ 
+<span class="no">102 </span>    public String defaultNewLine = System.getProperty(&quot;line.separator&quot;); 
+<span class="no">103 </span> 
+<span class="no">104 </span>    /** 
+<span class="no">105 </span>     * the shortOpt prefix 
+<span class="no">106 </span>     * 
+<span class="no">107 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">108 </span>     * - use get/setOptPrefix methods instead. 
+<span class="no">109 </span>     */ 
+<span class="no">110 </span>    public String defaultOptPrefix = DEFAULT_OPT_PREFIX; 
+<span class="no">111 </span> 
+<span class="no">112 </span>    /** 
+<span class="no">113 </span>     * the long Opt prefix 
+<span class="no">114 </span>     * 
+<span class="no">115 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">116 </span>     * - use get/setLongOptPrefix methods instead. 
+<span class="no">117 </span>     */ 
+<span class="no">118 </span>    public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX; 
+<span class="no">119 </span> 
+<span class="no">120 </span>    /** 
+<span class="no">121 </span>     * the name of the argument 
+<span class="no">122 </span>     * 
+<span class="no">123 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">124 </span>     * - use get/setArgName methods instead. 
+<span class="no">125 </span>     */ 
+<span class="no">126 </span>    public String defaultArgName = DEFAULT_ARG_NAME; 
+<span class="no">127 </span> 
+<span class="no">128 </span>    /** 
+<span class="no">129 </span>     * Comparator used to sort the options when they output in help text 
+<span class="no">130 </span>     *  
+<span class="no">131 </span>     * Defaults to case-insensitive alphabetical sorting by option key 
+<span class="no">132 </span>     */ 
+<span class="no">133 </span>    protected Comparator optionComparator = new OptionComparator(); 
+<span class="no">134 </span> 
+<span class="no">135 </span>    /** 
+<span class="no">136 </span>     * Sets the &apos;width&apos;. 
+<span class="no">137 </span>     * 
+<span class="no">138 </span>     * @param width the new value of &apos;width&apos; 
+<span class="no">139 </span>     */ 
+<span class="no">140 </span>    public void setWidth(int width) 
+<span class="no">141 </span>    { 
+<span class="no">142 </span>        this.defaultWidth = width; 
+<span class="no">143 </span>    } 
+<span class="no">144 </span> 
+<span class="no">145 </span>    /** 
+<span class="no">146 </span>     * Returns the &apos;width&apos;. 
+<span class="no">147 </span>     * 
+<span class="no">148 </span>     * @return the &apos;width&apos; 
+<span class="no">149 </span>     */ 
+<span class="no">150 </span>    public int getWidth() 
+<span class="no">151 </span>    { 
+<span class="no">152 </span>        return this.defaultWidth; 
+<span class="no">153 </span>    } 
+<span class="no">154 </span> 
+<span class="no">155 </span>    /** 
+<span class="no">156 </span>     * Sets the &apos;leftPadding&apos;. 
+<span class="no">157 </span>     * 
+<span class="no">158 </span>     * @param padding the new value of &apos;leftPadding&apos; 
+<span class="no">159 </span>     */ 
+<span class="no">160 </span>    public void setLeftPadding(int padding) 
+<span class="no">161 </span>    { 
+<span class="no">162 </span>        this.defaultLeftPad = padding; 
+<span class="no">163 </span>    } 
+<span class="no">164 </span> 
+<span class="no">165 </span>    /** 
+<span class="no">166 </span>     * Returns the &apos;leftPadding&apos;. 
+<span class="no">167 </span>     * 
+<span class="no">168 </span>     * @return the &apos;leftPadding&apos; 
+<span class="no">169 </span>     */ 
+<span class="no">170 </span>    public int getLeftPadding() 
+<span class="no">171 </span>    { 
+<span class="no">172 </span>        return this.defaultLeftPad; 
+<span class="no">173 </span>    } 
+<span class="no">174 </span> 
+<span class="no">175 </span>    /** 
+<span class="no">176 </span>     * Sets the &apos;descPadding&apos;. 
+<span class="no">177 </span>     * 
+<span class="no">178 </span>     * @param padding the new value of &apos;descPadding&apos; 
+<span class="no">179 </span>     */ 
+<span class="no">180 </span>    public void setDescPadding(int padding) 
+<span class="no">181 </span>    { 
+<span class="no">182 </span>        this.defaultDescPad = padding; 
+<span class="no">183 </span>    } 
+<span class="no">184 </span> 
+<span class="no">185 </span>    /** 
+<span class="no">186 </span>     * Returns the &apos;descPadding&apos;. 
+<span class="no">187 </span>     * 
+<span class="no">188 </span>     * @return the &apos;descPadding&apos; 
+<span class="no">189 </span>     */ 
+<span class="no">190 </span>    public int getDescPadding() 
+<span class="no">191 </span>    { 
+<span class="no">192 </span>        return this.defaultDescPad; 
+<span class="no">193 </span>    } 
+<span class="no">194 </span> 
+<span class="no">195 </span>    /** 
+<span class="no">196 </span>     * Sets the &apos;syntaxPrefix&apos;. 
+<span class="no">197 </span>     * 
+<span class="no">198 </span>     * @param prefix the new value of &apos;syntaxPrefix&apos; 
+<span class="no">199 </span>     */ 
+<span class="no">200 </span>    public void setSyntaxPrefix(String prefix) 
+<span class="no">201 </span>    { 
+<span class="no">202 </span>        this.defaultSyntaxPrefix = prefix; 
+<span class="no">203 </span>    } 
+<span class="no">204 </span> 
+<span class="no">205 </span>    /** 
+<span class="no">206 </span>     * Returns the &apos;syntaxPrefix&apos;. 
+<span class="no">207 </span>     * 
+<span class="no">208 </span>     * @return the &apos;syntaxPrefix&apos; 
+<span class="no">209 </span>     */ 
+<span class="no">210 </span>    public String getSyntaxPrefix() 
+<span class="no">211 </span>    { 
+<span class="no">212 </span>        return this.defaultSyntaxPrefix; 
+<span class="no">213 </span>    } 
+<span class="no">214 </span> 
+<span class="no">215 </span>    /** 
+<span class="no">216 </span>     * Sets the &apos;newLine&apos;. 
+<span class="no">217 </span>     * 
+<span class="no">218 </span>     * @param newline the new value of &apos;newLine&apos; 
+<span class="no">219 </span>     */ 
+<span class="no">220 </span>    public void setNewLine(String newline) 
+<span class="no">221 </span>    { 
+<span class="no">222 </span>        this.defaultNewLine = newline; 
+<span class="no">223 </span>    } 
+<span class="no">224 </span> 
+<span class="no">225 </span>    /** 
+<span class="no">226 </span>     * Returns the &apos;newLine&apos;. 
+<span class="no">227 </span>     * 
+<span class="no">228 </span>     * @return the &apos;newLine&apos; 
+<span class="no">229 </span>     */ 
+<span class="no">230 </span>    public String getNewLine() 
+<span class="no">231 </span>    { 
+<span class="no">232 </span>        return this.defaultNewLine; 
+<span class="no">233 </span>    } 
+<span class="no">234 </span> 
+<span class="no">235 </span>    /** 
+<span class="no">236 </span>     * Sets the &apos;optPrefix&apos;. 
+<span class="no">237 </span>     * 
+<span class="no">238 </span>     * @param prefix the new value of &apos;optPrefix&apos; 
+<span class="no">239 </span>     */ 
+<span class="no">240 </span>    public void setOptPrefix(String prefix) 
+<span class="no">241 </span>    { 
+<span class="no">242 </span>        this.defaultOptPrefix = prefix; 
+<span class="no">243 </span>    } 
+<span class="no">244 </span> 
+<span class="no">245 </span>    /** 
+<span class="no">246 </span>     * Returns the &apos;optPrefix&apos;. 
+<span class="no">247 </span>     * 
+<span class="no">248 </span>     * @return the &apos;optPrefix&apos; 
+<span class="no">249 </span>     */ 
+<span class="no">250 </span>    public String getOptPrefix() 
+<span class="no">251 </span>    { 
+<span class="no">252 </span>        return this.defaultOptPrefix; 
+<span class="no">253 </span>    } 
+<span class="no">254 </span> 
+<span class="no">255 </span>    /** 
+<span class="no">256 </span>     * Sets the &apos;longOptPrefix&apos;. 
+<span class="no">257 </span>     * 
+<span class="no">258 </span>     * @param prefix the new value of &apos;longOptPrefix&apos; 
+<span class="no">259 </span>     */ 
+<span class="no">260 </span>    public void setLongOptPrefix(String prefix) 
+<span class="no">261 </span>    { 
+<span class="no">262 </span>        this.defaultLongOptPrefix = prefix; 
+<span class="no">263 </span>    } 
+<span class="no">264 </span> 
+<span class="no">265 </span>    /** 
+<span class="no">266 </span>     * Returns the &apos;longOptPrefix&apos;. 
+<span class="no">267 </span>     * 
+<span class="no">268 </span>     * @return the &apos;longOptPrefix&apos; 
+<span class="no">269 </span>     */ 
+<span class="no">270 </span>    public String getLongOptPrefix() 
+<span class="no">271 </span>    { 
+<span class="no">272 </span>        return this.defaultLongOptPrefix; 
+<span class="no">273 </span>    } 
+<span class="no">274 </span> 
+<span class="no">275 </span>    /** 
+<span class="no">276 </span>     * Sets the &apos;argName&apos;. 
+<span class="no">277 </span>     * 
+<span class="no">278 </span>     * @param name the new value of &apos;argName&apos; 
+<span class="no">279 </span>     */ 
+<span class="no">280 </span>    public void setArgName(String name) 
+<span class="no">281 </span>    { 
+<span class="no">282 </span>        this.defaultArgName = name; 
+<span class="no">283 </span>    } 
+<span class="no">284 </span> 
+<span class="no">285 </span>    /** 
+<span class="no">286 </span>     * Returns the &apos;argName&apos;. 
+<span class="no">287 </span>     * 
+<span class="no">288 </span>     * @return the &apos;argName&apos; 
+<span class="no">289 </span>     */ 
+<span class="no">290 </span>    public String getArgName() 
+<span class="no">291 </span>    { 
+<span class="no">292 </span>        return this.defaultArgName; 
+<span class="no">293 </span>    } 
+<span class="no">294 </span> 
+<span class="no">295 </span>    /** 
+<span class="no">296 </span>     * Comparator used to sort the options when they output in help text 
+<span class="no">297 </span>     *  
+<span class="no">298 </span>     * Defaults to case-insensitive alphabetical sorting by option key 
+<span class="no">299 </span>     */ 
+<span class="no">300 </span>    public Comparator getOptionComparator()  
+<span class="no">301 </span>    { 
+<span class="no">302 </span>        return this.optionComparator; 
+<span class="no">303 </span>    } 
+<span class="no">304 </span> 
+<span class="no">305 </span>    /** 
+<span class="no">306 </span>     * Set the comparator used to sort the options when they output in help text 
+<span class="no">307 </span>     *  
+<span class="no">308 </span>     * Passing in a null parameter will set the ordering to the default mode 
+<span class="no">309 </span>     */ 
+<span class="no">310 </span>    public void setOptionComparator(Comparator comparator)  
+<span class="no">311 </span>    { 
+<span class="no">312 </span>        if ( comparator == null )  
+<span class="no">313 </span>        { 
+<span class="no">314 </span>            this.optionComparator = new OptionComparator(); 
+<span class="no">315 </span>        }  
+<span class="no">316 </span>        else  
+<span class="no">317 </span>        { 
+<span class="no">318 </span>            this.optionComparator = comparator; 
+<span class="no">319 </span>        } 
+<span class="no">320 </span>    } 
+<span class="no">321 </span> 
+<span class="no">322 </span> 
+<span class="no">323 </span>    // ------------------------------------------------------------------ Public 
+<span class="no">324 </span> 
+<span class="no">325 </span>    /** 
+<span class="no">326 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">327 </span>     * command line syntax.  This method prints help information to 
+<span class="no">328 </span>     * System.out.&lt;/p&gt; 
+<span class="no">329 </span>     * 
+<span class="no">330 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">331 </span>     * @param options the Options instance 
+<span class="no">332 </span>     */ 
+<span class="no">333 </span>    public void printHelp(String cmdLineSyntax, Options options) 
+<span class="no">334 </span>    { 
+<span class="no">335 </span>        printHelp(defaultWidth, cmdLineSyntax, null, options, null, false); 
+<span class="no">336 </span>    } 
+<span class="no">337 </span> 
+<span class="no">338 </span>    /** 
+<span class="no">339 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">340 </span>     * command line syntax.  This method prints help information to  
+<span class="no">341 </span>     * System.out.&lt;/p&gt; 
+<span class="no">342 </span>     * 
+<span class="no">343 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">344 </span>     * @param options the Options instance 
+<span class="no">345 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">346 </span>     * usage statement 
+<span class="no">347 </span>     */ 
+<span class="no">348 </span>    public void printHelp(String cmdLineSyntax, Options options,  
+<span class="no">349 </span>                          boolean autoUsage) 
+<span class="no">350 </span>    { 
+<span class="no">351 </span>        printHelp(defaultWidth, cmdLineSyntax, null, options, null, autoUsage); 
+<span class="no">352 </span>    } 
+<span class="no">353 </span> 
+<span class="no">354 </span>    /** 
+<span class="no">355 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">356 </span>     * command line syntax.  This method prints help information to 
+<span class="no">357 </span>     * System.out.&lt;/p&gt; 
+<span class="no">358 </span>     * 
+<span class="no">359 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">360 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">361 </span>     * @param options the Options instance 
+<span class="no">362 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">363 </span>     */ 
+<span class="no">364 </span>    public void printHelp(String cmdLineSyntax, String header, Options options,  
+<span class="no">365 </span>                          String footer) 
+<span class="no">366 </span>    { 
+<span class="no">367 </span>        printHelp(cmdLineSyntax, header, options, footer, false); 
+<span class="no">368 </span>    } 
+<span class="no">369 </span> 
+<span class="no">370 </span>    /** 
+<span class="no">371 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">372 </span>     * command line syntax.  This method prints help information to  
+<span class="no">373 </span>     * System.out.&lt;/p&gt; 
+<span class="no">374 </span>     * 
+<span class="no">375 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">376 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">377 </span>     * @param options the Options instance 
+<span class="no">378 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">379 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">380 </span>     * usage statement 
+<span class="no">381 </span>     */ 
+<span class="no">382 </span>    public void printHelp(String cmdLineSyntax, String header, Options options,  
+<span class="no">383 </span>                          String footer, boolean autoUsage) 
+<span class="no">384 </span>    { 
+<span class="no">385 </span>        printHelp(defaultWidth, cmdLineSyntax, header, options, footer,  
+<span class="no">386 </span>                  autoUsage); 
+<span class="no">387 </span>    } 
+<span class="no">388 </span> 
+<span class="no">389 </span>    /** 
+<span class="no">390 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">391 </span>     * command line syntax.  This method prints help information to 
+<span class="no">392 </span>     * System.out.&lt;/p&gt; 
+<span class="no">393 </span>     * 
+<span class="no">394 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">395 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">396 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">397 </span>     * @param options the Options instance 
+<span class="no">398 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">399 </span>     */ 
+<span class="no">400 </span>    public void printHelp(int width, String cmdLineSyntax, String header,  
+<span class="no">401 </span>                          Options options, String footer) 
+<span class="no">402 </span>    { 
+<span class="no">403 </span>        printHelp(width, cmdLineSyntax, header, options, footer, false); 
+<span class="no">404 </span>    } 
+<span class="no">405 </span> 
+<span class="no">406 </span>    /** 
+<span class="no">407 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">408 </span>     * command line syntax.  This method prints help information to 
+<span class="no">409 </span>     * System.out.&lt;/p&gt; 
+<span class="no">410 </span>     * 
+<span class="no">411 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">412 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">413 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">414 </span>     * @param options the Options instance 
+<span class="no">415 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">416 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">417 </span>     * usage statement 
+<span class="no">418 </span>     */ 
+<span class="no">419 </span>    public void printHelp(int width, String cmdLineSyntax, String header,  
+<span class="no">420 </span>                          Options options, String footer, boolean autoUsage) 
+<span class="no">421 </span>    { 
+<span class="no">422 </span>        PrintWriter pw = new PrintWriter(System.out); 
+<span class="no">423 </span> 
+<span class="no">424 </span>        printHelp(pw, width, cmdLineSyntax, header, options, defaultLeftPad,  
+<span class="no">425 </span>                  defaultDescPad, footer, autoUsage); 
+<span class="no">426 </span>        pw.flush(); 
+<span class="no">427 </span>    } 
+<span class="no">428 </span> 
+<span class="no">429 </span>    /** 
+<span class="no">430 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">431 </span>     * command line syntax.&lt;/p&gt; 
+<span class="no">432 </span>     * 
+<span class="no">433 </span>     * @param pw the writer to which the help will be written 
+<span class="no">434 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">435 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">436 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">437 </span>     * @param options the Options instance 
+<span class="no">438 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">439 </span>     * to each line 
+<span class="no">440 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">441 </span>     * to each description line 
+<span class="no">442 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">443 </span>     */ 
+<span class="no">444 </span>    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax,  
+<span class="no">445 </span>                          String header, Options options, int leftPad,  
+<span class="no">446 </span>                          int descPad, String footer) 
+<span class="no">447 </span>    { 
+<span class="no">448 </span>        printHelp(pw, width, cmdLineSyntax, header, options, leftPad, descPad,  
+<span class="no">449 </span>                  footer, false); 
+<span class="no">450 </span>    } 
+<span class="no">451 </span> 
+<span class="no">452 </span> 
+<span class="no">453 </span>    /** 
+<span class="no">454 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">455 </span>     * command line syntax.&lt;/p&gt; 
+<span class="no">456 </span>     * 
+<span class="no">457 </span>     * @param pw the writer to which the help will be written 
+<span class="no">458 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">459 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">460 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">461 </span>     * @param options the Options instance 
+<span class="no">462 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">463 </span>     * to each line 
+<span class="no">464 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">465 </span>     * to each description line 
+<span class="no">466 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">467 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">468 </span>     * usage statement 
+<span class="no">469 </span>     */ 
+<span class="no">470 </span>    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax,  
+<span class="no">471 </span>                          String header, Options options, int leftPad,  
+<span class="no">472 </span>                          int descPad, String footer, boolean autoUsage) 
+<span class="no">473 </span>    { 
+<span class="no">474 </span>        if ((cmdLineSyntax == null) || (cmdLineSyntax.length() == 0)) 
+<span class="no">475 </span>        { 
+<span class="no">476 </span>            throw new IllegalArgumentException(&quot;cmdLineSyntax not provided&quot;); 
+<span class="no">477 </span>        } 
+<span class="no">478 </span> 
+<span class="no">479 </span>        if (autoUsage) 
+<span class="no">480 </span>        { 
+<span class="no">481 </span>            printUsage(pw, width, cmdLineSyntax, options); 
+<span class="no">482 </span>        } 
+<span class="no">483 </span>        else 
+<span class="no">484 </span>        { 
+<span class="no">485 </span>            printUsage(pw, width, cmdLineSyntax); 
+<span class="no">486 </span>        } 
+<span class="no">487 </span> 
+<span class="no">488 </span>        if ((header != null) &amp;&amp; (header.trim().length() &gt; 0)) 
+<span class="no">489 </span>        { 
+<span class="no">490 </span>            printWrapped(pw, width, header); 
+<span class="no">491 </span>        } 
+<span class="no">492 </span> 
+<span class="no">493 </span>        printOptions(pw, width, options, leftPad, descPad); 
+<span class="no">494 </span> 
+<span class="no">495 </span>        if ((footer != null) &amp;&amp; (footer.trim().length() &gt; 0)) 
+<span class="no">496 </span>        { 
+<span class="no">497 </span>            printWrapped(pw, width, footer); 
+<span class="no">498 </span>        } 
+<span class="no">499 </span>    } 
+<span class="no">500 </span> 
+<span class="no">501 </span>    /** 
+<span class="no">502 </span>     * &lt;p&gt;Prints the usage statement for the specified application.&lt;/p&gt; 
+<span class="no">503 </span>     * 
+<span class="no">504 </span>     * @param pw The PrintWriter to print the usage statement  
+<span class="no">505 </span>     * @param width The number of characters to display per line 
+<span class="no">506 </span>     * @param app The application name 
+<span class="no">507 </span>     * @param options The command line Options 
+<span class="no">508 </span>     * 
+<span class="no">509 </span>     */ 
+<span class="no">510 </span>    public void printUsage(PrintWriter pw, int width, String app,  
+<span class="no">511 </span>                           Options options) 
+<span class="no">512 </span>    { 
+<span class="no">513 </span>        // initialise the string buffer 
+<span class="no">514 </span>        StringBuffer buff = new StringBuffer(defaultSyntaxPrefix).append(app) 
+<span class="no">515 </span>                                                                 .append(&quot; &quot;); 
+<span class="no">516 </span> 
+<span class="no">517 </span>        // create a list for processed option groups 
+<span class="no">518 </span>        final Collection processedGroups = new ArrayList(); 
+<span class="no">519 </span> 
+<span class="no">520 </span>        // temp variable 
+<span class="no">521 </span>        Option option; 
+<span class="no">522 </span> 
+<span class="no">523 </span>        List optList = new ArrayList(options.getOptions()); 
+<span class="no">524 </span>        Collections.sort(optList, getOptionComparator() ); 
+<span class="no">525 </span>        // iterate over the options 
+<span class="no">526 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">527 </span>        { 
+<span class="no">528 </span>            // get the next Option 
+<span class="no">529 </span>            option = (Option) i.next(); 
+<span class="no">530 </span> 
+<span class="no">531 </span>            // check if the option is part of an OptionGroup 
+<span class="no">532 </span>            OptionGroup group = options.getOptionGroup(option); 
+<span class="no">533 </span> 
+<span class="no">534 </span>            // if the option is part of a group  
+<span class="no">535 </span>            if (group != null) 
+<span class="no">536 </span>            { 
+<span class="no">537 </span>                // and if the group has not already been processed 
+<span class="no">538 </span>                if (!processedGroups.contains(group)) 
+<span class="no">539 </span>                { 
+<span class="no">540 </span>                    // add the group to the processed list 
+<span class="no">541 </span>                    processedGroups.add(group); 
+<span class="no">542 </span> 
+<span class="no">543 </span> 
+<span class="no">544 </span>                    // add the usage clause 
+<span class="no">545 </span>                    appendOptionGroup(buff, group); 
+<span class="no">546 </span>                } 
+<span class="no">547 </span> 
+<span class="no">548 </span>                // otherwise the option was displayed in the group 
+<span class="no">549 </span>                // previously so ignore it. 
+<span class="no">550 </span>            } 
+<span class="no">551 </span> 
+<span class="no">552 </span>            // if the Option is not part of an OptionGroup 
+<span class="no">553 </span>            else 
+<span class="no">554 </span>            { 
+<span class="no">555 </span>                appendOption(buff, option, option.isRequired()); 
+<span class="no">556 </span>            } 
+<span class="no">557 </span> 
+<span class="no">558 </span>            if (i.hasNext()) 
+<span class="no">559 </span>            { 
+<span class="no">560 </span>                buff.append(&quot; &quot;); 
+<span class="no">561 </span>            } 
+<span class="no">562 </span>        } 
+<span class="no">563 </span> 
+<span class="no">564 </span> 
+<span class="no">565 </span>        // call printWrapped 
+<span class="no">566 </span>        printWrapped(pw, width, buff.toString().indexOf(&apos; &apos;) + 1,  
+<span class="no">567 </span>                     buff.toString()); 
+<span class="no">568 </span>    } 
+<span class="no">569 </span> 
+<span class="no">570 </span>    /** 
+<span class="no">571 </span>     * Appends the usage clause for an OptionGroup to a StringBuffer.   
+<span class="no">572 </span>     * The clause is wrapped in square brackets if the group is required. 
+<span class="no">573 </span>     * The display of the options is handled by appendOption 
+<span class="no">574 </span>     * @param buff the StringBuffer to append to 
+<span class="no">575 </span>     * @param group the group to append 
+<span class="no">576 </span>     * @see #appendOption(StringBuffer,Option,boolean) 
+<span class="no">577 </span>     */ 
+<span class="no">578 </span>    private void appendOptionGroup(final StringBuffer buff,  
+<span class="no">579 </span>                                          final OptionGroup group) 
+<span class="no">580 </span>    { 
+<span class="no">581 </span>        if (!group.isRequired()) 
+<span class="no">582 </span>        { 
+<span class="no">583 </span>            buff.append(&quot;[&quot;); 
+<span class="no">584 </span>        } 
+<span class="no">585 </span> 
+<span class="no">586 </span>        List optList = new ArrayList(group.getOptions()); 
+<span class="no">587 </span>        Collections.sort(optList, getOptionComparator() ); 
+<span class="no">588 </span>        // for each option in the OptionGroup 
+<span class="no">589 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">590 </span>        { 
+<span class="no">591 </span>            // whether the option is required or not is handled at group level 
+<span class="no">592 </span>            appendOption(buff, (Option) i.next(), true); 
+<span class="no">593 </span> 
+<span class="no">594 </span>            if (i.hasNext()) 
+<span class="no">595 </span>            { 
+<span class="no">596 </span>                buff.append(&quot; | &quot;); 
+<span class="no">597 </span>            } 
+<span class="no">598 </span>        } 
+<span class="no">599 </span> 
+<span class="no">600 </span>        if (!group.isRequired()) 
+<span class="no">601 </span>        { 
+<span class="no">602 </span>            buff.append(&quot;]&quot;); 
+<span class="no">603 </span>        } 
+<span class="no">604 </span>    } 
+<span class="no">605 </span> 
+<span class="no">606 </span>    /** 
+<span class="no">607 </span>     * Appends the usage clause for an Option to a StringBuffer.   
+<span class="no">608 </span>     * 
+<span class="no">609 </span>     * @param buff the StringBuffer to append to 
+<span class="no">610 </span>     * @param option the Option to append 
+<span class="no">611 </span>     * @param required whether the Option is required or not 
+<span class="no">612 </span>     */ 
+<span class="no">613 </span>    private static void appendOption(final StringBuffer buff,  
+<span class="no">614 </span>                                     final Option option,  
+<span class="no">615 </span>                                     final boolean required) 
+<span class="no">616 </span>    { 
+<span class="no">617 </span>        if (!required) 
+<span class="no">618 </span>        { 
+<span class="no">619 </span>            buff.append(&quot;[&quot;); 
+<span class="no">620 </span>        } 
+<span class="no">621 </span> 
+<span class="no">622 </span>        if (option.getOpt() != null) 
+<span class="no">623 </span>        { 
+<span class="no">624 </span>            buff.append(&quot;-&quot;).append(option.getOpt()); 
+<span class="no">625 </span>        } 
+<span class="no">626 </span>        else 
+<span class="no">627 </span>        { 
+<span class="no">628 </span>            buff.append(&quot;--&quot;).append(option.getLongOpt()); 
+<span class="no">629 </span>        } 
+<span class="no">630 </span> 
+<span class="no">631 </span>        // if the Option has a value 
+<span class="no">632 </span>        if (<span id="p8" class="ep8">option.hasArg() &amp;&amp; <span id="n8" class="en8"><span id="p7" class="ep7"><span id="p6" class="ep6"><span id="p3" class="ep3"><span id="n3" class="en3"><a class="del" href="#n3">(</a></span><span id="n6" class="en6"><span id="p5" class="ep5"><span id="p4" class="ep4"><span id="n1" class="en1"><a class="mov" href="#n1" data-partner="#m1">option.</a><span id="n2" class="en2"><a class="upd" href="#n2" data-partner="#m2">getArgName</a></span><a class="mov" href="#n1" data-partner="#m1">()</a></span><a class="del" href="#n6"> </a><span id="n4" class="en4"><a class="del" href="#n4">!=</a></span><a class="del" href="#n6"> </a><span id="n5" class="en5"><a class="del" href="#n5">null</a></span></span></span></span><span id="n7" class="en7"><a class="del" href="#n7">)</a></span></span></span></span></span></span>) 
+<span class="no">633 </span>        { 
+<span class="no">634 </span>            buff.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
+<span class="no">635 </span>        } 
+<span class="no">636 </span> 
+<span class="no">637 </span>        // if the Option is not a required option 
+<span class="no">638 </span>        if (!required) 
+<span class="no">639 </span>        { 
+<span class="no">640 </span>            buff.append(&quot;]&quot;); 
+<span class="no">641 </span>        } 
+<span class="no">642 </span>    } 
+<span class="no">643 </span> 
+<span class="no">644 </span>    /** 
+<span class="no">645 </span>     * &lt;p&gt;Print the cmdLineSyntax to the specified writer, using the 
+<span class="no">646 </span>     * specified width.&lt;/p&gt; 
+<span class="no">647 </span>     * 
+<span class="no">648 </span>     * @param pw The printWriter to write the help to 
+<span class="no">649 </span>     * @param width The number of characters per line for the usage statement. 
+<span class="no">650 </span>     * @param cmdLineSyntax The usage statement. 
+<span class="no">651 </span>     */ 
+<span class="no">652 </span>    public void printUsage(PrintWriter pw, int width, String cmdLineSyntax) 
+<span class="no">653 </span>    { 
+<span class="no">654 </span>        int argPos = cmdLineSyntax.indexOf(&apos; &apos;) + 1; 
+<span class="no">655 </span> 
+<span class="no">656 </span>        printWrapped(pw, width, defaultSyntaxPrefix.length() + argPos,  
+<span class="no">657 </span>                     defaultSyntaxPrefix + cmdLineSyntax); 
+<span class="no">658 </span>    } 
+<span class="no">659 </span> 
+<span class="no">660 </span>    /** 
+<span class="no">661 </span>     * &lt;p&gt;Print the help for the specified Options to the specified writer,  
+<span class="no">662 </span>     * using the specified width, left padding and description padding.&lt;/p&gt; 
+<span class="no">663 </span>     * 
+<span class="no">664 </span>     * @param pw The printWriter to write the help to 
+<span class="no">665 </span>     * @param width The number of characters to display per line 
+<span class="no">666 </span>     * @param options The command line Options 
+<span class="no">667 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">668 </span>     * to each line 
+<span class="no">669 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">670 </span>     * to each description line 
+<span class="no">671 </span>     */ 
+<span class="no">672 </span>    public void printOptions(PrintWriter pw, int width, Options options,  
+<span class="no">673 </span>                             int leftPad, int descPad) 
+<span class="no">674 </span>    { 
+<span class="no">675 </span>        StringBuffer sb = new StringBuffer(); 
+<span class="no">676 </span> 
+<span class="no">677 </span>        renderOptions(sb, width, options, leftPad, descPad); 
+<span class="no">678 </span>        pw.println(sb.toString()); 
+<span class="no">679 </span>    } 
+<span class="no">680 </span> 
+<span class="no">681 </span>    /** 
+<span class="no">682 </span>     * &lt;p&gt;Print the specified text to the specified PrintWriter.&lt;/p&gt; 
+<span class="no">683 </span>     * 
+<span class="no">684 </span>     * @param pw The printWriter to write the help to 
+<span class="no">685 </span>     * @param width The number of characters to display per line 
+<span class="no">686 </span>     * @param text The text to be written to the PrintWriter 
+<span class="no">687 </span>     */ 
+<span class="no">688 </span>    public void printWrapped(PrintWriter pw, int width, String text) 
+<span class="no">689 </span>    { 
+<span class="no">690 </span>        printWrapped(pw, width, 0, text); 
+<span class="no">691 </span>    } 
+<span class="no">692 </span> 
+<span class="no">693 </span>    /** 
+<span class="no">694 </span>     * &lt;p&gt;Print the specified text to the specified PrintWriter.&lt;/p&gt; 
+<span class="no">695 </span>     * 
+<span class="no">696 </span>     * @param pw The printWriter to write the help to 
+<span class="no">697 </span>     * @param width The number of characters to display per line 
+<span class="no">698 </span>     * @param nextLineTabStop The position on the next line for the first tab. 
+<span class="no">699 </span>     * @param text The text to be written to the PrintWriter 
+<span class="no">700 </span>     */ 
+<span class="no">701 </span>    public void printWrapped(PrintWriter pw, int width, int nextLineTabStop,  
+<span class="no">702 </span>                             String text) 
+<span class="no">703 </span>    { 
+<span class="no">704 </span>        StringBuffer sb = new StringBuffer(text.length()); 
+<span class="no">705 </span> 
+<span class="no">706 </span>        renderWrappedText(sb, width, nextLineTabStop, text); 
+<span class="no">707 </span>        pw.println(sb.toString()); 
+<span class="no">708 </span>    } 
+<span class="no">709 </span> 
+<span class="no">710 </span>    // --------------------------------------------------------------- Protected 
+<span class="no">711 </span> 
+<span class="no">712 </span>    /** 
+<span class="no">713 </span>     * &lt;p&gt;Render the specified Options and return the rendered Options 
+<span class="no">714 </span>     * in a StringBuffer.&lt;/p&gt; 
+<span class="no">715 </span>     * 
+<span class="no">716 </span>     * @param sb The StringBuffer to place the rendered Options into. 
+<span class="no">717 </span>     * @param width The number of characters to display per line 
+<span class="no">718 </span>     * @param options The command line Options 
+<span class="no">719 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">720 </span>     * to each line 
+<span class="no">721 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">722 </span>     * to each description line 
+<span class="no">723 </span>     * 
+<span class="no">724 </span>     * @return the StringBuffer with the rendered Options contents. 
+<span class="no">725 </span>     */ 
+<span class="no">726 </span>    protected StringBuffer renderOptions(StringBuffer sb, int width,  
+<span class="no">727 </span>                                         Options options, int leftPad,  
+<span class="no">728 </span>                                         int descPad) 
+<span class="no">729 </span>    { 
+<span class="no">730 </span>        final String lpad = createPadding(leftPad); 
+<span class="no">731 </span>        final String dpad = createPadding(descPad); 
+<span class="no">732 </span> 
+<span class="no">733 </span>        // first create list containing only &lt;lpad&gt;-a,--aaa where  
+<span class="no">734 </span>        // -a is opt and --aaa is long opt; in parallel look for  
+<span class="no">735 </span>        // the longest opt string this list will be then used to  
+<span class="no">736 </span>        // sort options ascending 
+<span class="no">737 </span>        int max = 0; 
+<span class="no">738 </span>        StringBuffer optBuf; 
+<span class="no">739 </span>        List prefixList = new ArrayList(); 
+<span class="no">740 </span>        Option option; 
+<span class="no">741 </span>        List optList = options.helpOptions(); 
+<span class="no">742 </span> 
+<span class="no">743 </span>        Collections.sort(optList, getOptionComparator() ); 
+<span class="no">744 </span> 
+<span class="no">745 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">746 </span>        { 
+<span class="no">747 </span>            option = (Option) i.next(); 
+<span class="no">748 </span>            optBuf = new StringBuffer(8); 
+<span class="no">749 </span> 
+<span class="no">750 </span>            if (option.getOpt() == null) 
+<span class="no">751 </span>            { 
+<span class="no">752 </span>                optBuf.append(lpad).append(&quot;   &quot; + defaultLongOptPrefix) 
+<span class="no">753 </span>                      .append(option.getLongOpt()); 
+<span class="no">754 </span>            } 
+<span class="no">755 </span>            else 
+<span class="no">756 </span>            { 
+<span class="no">757 </span>                optBuf.append(lpad).append(defaultOptPrefix) 
+<span class="no">758 </span>                      .append(option.getOpt()); 
+<span class="no">759 </span> 
+<span class="no">760 </span>                if (option.hasLongOpt()) 
+<span class="no">761 </span>                { 
+<span class="no">762 </span>                    optBuf.append(&apos;,&apos;).append(defaultLongOptPrefix) 
+<span class="no">763 </span>                          .append(option.getLongOpt()); 
+<span class="no">764 </span>                } 
+<span class="no">765 </span>            } 
+<span class="no">766 </span> 
+<span class="no">767 </span>            if (option.hasArg()) 
+<span class="no">768 </span>            { 
+<span class="no">769 </span>                if (option.hasArgName()) 
+<span class="no">770 </span>                { 
+<span class="no">771 </span>                    optBuf.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
+<span class="no">772 </span>                } 
+<span class="no">773 </span>                else 
+<span class="no">774 </span>                { 
+<span class="no">775 </span>                    optBuf.append(&apos; &apos;); 
+<span class="no">776 </span>                } 
+<span class="no">777 </span>            } 
+<span class="no">778 </span> 
+<span class="no">779 </span>            prefixList.add(optBuf); 
+<span class="no">780 </span>            max = (optBuf.length() &gt; max)       ? optBuf.length() : max; 
+<span class="no">781 </span>        } 
+<span class="no">782 </span> 
+<span class="no">783 </span>        int x = 0; 
+<span class="no">784 </span> 
+<span class="no">785 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">786 </span>        { 
+<span class="no">787 </span>            option = (Option) i.next(); 
+<span class="no">788 </span>            optBuf = new StringBuffer(prefixList.get(x++).toString()); 
+<span class="no">789 </span> 
+<span class="no">790 </span>            if (optBuf.length() &lt; max) 
+<span class="no">791 </span>            { 
+<span class="no">792 </span>                optBuf.append(createPadding(max - optBuf.length())); 
+<span class="no">793 </span>            } 
+<span class="no">794 </span> 
+<span class="no">795 </span>            optBuf.append(dpad); 
+<span class="no">796 </span> 
+<span class="no">797 </span>            int nextLineTabStop = max + descPad; 
+<span class="no">798 </span> 
+<span class="no">799 </span>            if (option.getDescription() != null) 
+<span class="no">800 </span>            { 
+<span class="no">801 </span>                optBuf.append(option.getDescription()); 
+<span class="no">802 </span>            } 
+<span class="no">803 </span> 
+<span class="no">804 </span>            renderWrappedText(sb, width, nextLineTabStop, optBuf.toString()); 
+<span class="no">805 </span> 
+<span class="no">806 </span>            if (i.hasNext()) 
+<span class="no">807 </span>            { 
+<span class="no">808 </span>                sb.append(defaultNewLine); 
+<span class="no">809 </span>            } 
+<span class="no">810 </span>        } 
+<span class="no">811 </span> 
+<span class="no">812 </span>        return sb; 
+<span class="no">813 </span>    } 
+<span class="no">814 </span> 
+<span class="no">815 </span>    /** 
+<span class="no">816 </span>     * &lt;p&gt;Render the specified text and return the rendered Options 
+<span class="no">817 </span>     * in a StringBuffer.&lt;/p&gt; 
+<span class="no">818 </span>     * 
+<span class="no">819 </span>     * @param sb The StringBuffer to place the rendered text into. 
+<span class="no">820 </span>     * @param width The number of characters to display per line 
+<span class="no">821 </span>     * @param nextLineTabStop The position on the next line for the first tab. 
+<span class="no">822 </span>     * @param text The text to be rendered. 
+<span class="no">823 </span>     * 
+<span class="no">824 </span>     * @return the StringBuffer with the rendered Options contents. 
+<span class="no">825 </span>     */ 
+<span class="no">826 </span>    protected StringBuffer renderWrappedText(StringBuffer sb, int width,  
+<span class="no">827 </span>                                             int nextLineTabStop, String text) 
+<span class="no">828 </span>    { 
+<span class="no">829 </span>        int pos = findWrapPos(text, width, 0); 
+<span class="no">830 </span> 
+<span class="no">831 </span>        if (pos == -1) 
+<span class="no">832 </span>        { 
+<span class="no">833 </span>            sb.append(rtrim(text)); 
+<span class="no">834 </span> 
+<span class="no">835 </span>            return sb; 
+<span class="no">836 </span>        } 
+<span class="no">837 </span>        sb.append(rtrim(text.substring(0, pos))).append(defaultNewLine); 
+<span class="no">838 </span> 
+<span class="no">839 </span>        // all following lines must be padded with nextLineTabStop space  
+<span class="no">840 </span>        // characters 
+<span class="no">841 </span>        final String padding = createPadding(nextLineTabStop); 
+<span class="no">842 </span> 
+<span class="no">843 </span>        while (true) 
+<span class="no">844 </span>        { 
+<span class="no">845 </span>            text = padding + text.substring(pos).trim(); 
+<span class="no">846 </span>            pos = findWrapPos(text, width, 0); 
+<span class="no">847 </span> 
+<span class="no">848 </span>            if (pos == -1) 
+<span class="no">849 </span>            { 
+<span class="no">850 </span>                sb.append(text); 
+<span class="no">851 </span> 
+<span class="no">852 </span>                return sb; 
+<span class="no">853 </span>            } 
+<span class="no">854 </span> 
+<span class="no">855 </span>            sb.append(rtrim(text.substring(0, pos))).append(defaultNewLine); 
+<span class="no">856 </span>        } 
+<span class="no">857 </span>    } 
+<span class="no">858 </span> 
+<span class="no">859 </span>    /** 
+<span class="no">860 </span>     * Finds the next text wrap position after &lt;code&gt;startPos&lt;/code&gt; for the  
+<span class="no">861 </span>     * text in &lt;code&gt;text&lt;/code&gt; with the column width &lt;code&gt;width&lt;/code&gt;. 
+<span class="no">862 </span>     * The wrap point is the last postion before startPos+width having a  
+<span class="no">863 </span>     * whitespace character (space, \n, \r). 
+<span class="no">864 </span>     * 
+<span class="no">865 </span>     * @param text The text being searched for the wrap position 
+<span class="no">866 </span>     * @param width width of the wrapped text 
+<span class="no">867 </span>     * @param startPos position from which to start the lookup whitespace  
+<span class="no">868 </span>     * character 
+<span class="no">869 </span>     * @return postion on which the text must be wrapped or -1 if the wrap  
+<span class="no">870 </span>     * position is at the end of the text 
+<span class="no">871 </span>     */ 
+<span class="no">872 </span>    protected int findWrapPos(String text, int width, int startPos) 
+<span class="no">873 </span>    { 
+<span class="no">874 </span>        int pos = -1; 
+<span class="no">875 </span> 
+<span class="no">876 </span>        // the line ends before the max wrap pos or a new line char found 
+<span class="no">877 </span>        if (((pos = text.indexOf(&apos;\n&apos;, startPos)) != -1 &amp;&amp; pos &lt;= width) 
+<span class="no">878 </span>            || ((pos = text.indexOf(&apos;\t&apos;, startPos)) != -1 &amp;&amp; pos &lt;= width)) 
+<span class="no">879 </span>        { 
+<span class="no">880 </span>            return pos+1; 
+<span class="no">881 </span>        } 
+<span class="no">882 </span>        else if ((startPos + width) &gt;= text.length()) 
+<span class="no">883 </span>        { 
+<span class="no">884 </span>            return -1; 
+<span class="no">885 </span>        } 
+<span class="no">886 </span> 
+<span class="no">887 </span> 
+<span class="no">888 </span>        // look for the last whitespace character before startPos+width 
+<span class="no">889 </span>        pos = startPos + width; 
+<span class="no">890 </span> 
+<span class="no">891 </span>        char c; 
+<span class="no">892 </span> 
+<span class="no">893 </span>        while ((pos &gt;= startPos) &amp;&amp; ((c = text.charAt(pos)) != &apos; &apos;) 
+<span class="no">894 </span>               &amp;&amp; (c != &apos;\n&apos;) &amp;&amp; (c != &apos;\r&apos;)) 
+<span class="no">895 </span>        { 
+<span class="no">896 </span>            --pos; 
+<span class="no">897 </span>        } 
+<span class="no">898 </span> 
+<span class="no">899 </span>        // if we found it - just return 
+<span class="no">900 </span>        if (pos &gt; startPos) 
+<span class="no">901 </span>        { 
+<span class="no">902 </span>            return pos; 
+<span class="no">903 </span>        } 
+<span class="no">904 </span>         
+<span class="no">905 </span>        // must look for the first whitespace chearacter after startPos  
+<span class="no">906 </span>        // + width 
+<span class="no">907 </span>        pos = startPos + width; 
+<span class="no">908 </span> 
+<span class="no">909 </span>        while ((pos &lt;= text.length()) &amp;&amp; ((c = text.charAt(pos)) != &apos; &apos;) 
+<span class="no">910 </span>               &amp;&amp; (c != &apos;\n&apos;) &amp;&amp; (c != &apos;\r&apos;)) 
+<span class="no">911 </span>        { 
+<span class="no">912 </span>            ++pos; 
+<span class="no">913 </span>        } 
+<span class="no">914 </span> 
+<span class="no">915 </span>        return (pos == text.length())        ? (-1) : pos; 
+<span class="no">916 </span>    } 
+<span class="no">917 </span> 
+<span class="no">918 </span>    /** 
+<span class="no">919 </span>     * &lt;p&gt;Return a String of padding of length &lt;code&gt;len&lt;/code&gt;.&lt;/p&gt; 
+<span class="no">920 </span>     * 
+<span class="no">921 </span>     * @param len The length of the String of padding to create. 
+<span class="no">922 </span>     * 
+<span class="no">923 </span>     * @return The String of padding 
+<span class="no">924 </span>     */ 
+<span class="no">925 </span>    protected String createPadding(int len) 
+<span class="no">926 </span>    { 
+<span class="no">927 </span>        StringBuffer sb = new StringBuffer(len); 
+<span class="no">928 </span> 
+<span class="no">929 </span>        for (int i = 0; i &lt; len; ++i) 
+<span class="no">930 </span>        { 
+<span class="no">931 </span>            sb.append(&apos; &apos;); 
+<span class="no">932 </span>        } 
+<span class="no">933 </span> 
+<span class="no">934 </span>        return sb.toString(); 
+<span class="no">935 </span>    } 
+<span class="no">936 </span> 
+<span class="no">937 </span>    /** 
+<span class="no">938 </span>     * &lt;p&gt;Remove the trailing whitespace from the specified String.&lt;/p&gt; 
+<span class="no">939 </span>     * 
+<span class="no">940 </span>     * @param s The String to remove the trailing padding from. 
+<span class="no">941 </span>     * 
+<span class="no">942 </span>     * @return The String of without the trailing padding 
+<span class="no">943 </span>     */ 
+<span class="no">944 </span>    protected String rtrim(String s) 
+<span class="no">945 </span>    { 
+<span class="no">946 </span>        if ((s == null) || (s.length() == 0)) 
+<span class="no">947 </span>        { 
+<span class="no">948 </span>            return s; 
+<span class="no">949 </span>        } 
+<span class="no">950 </span> 
+<span class="no">951 </span>        int pos = s.length(); 
+<span class="no">952 </span> 
+<span class="no">953 </span>        while ((pos &gt; 0) &amp;&amp; Character.isWhitespace(s.charAt(pos - 1))) 
+<span class="no">954 </span>        { 
+<span class="no">955 </span>            --pos; 
+<span class="no">956 </span>        } 
+<span class="no">957 </span> 
+<span class="no">958 </span>        return s.substring(0, pos); 
+<span class="no">959 </span>    } 
+<span class="no">960 </span> 
+<span class="no">961 </span>    // ------------------------------------------------------ Package protected 
+<span class="no">962 </span>    // ---------------------------------------------------------------- Private 
+<span class="no">963 </span>    // ---------------------------------------------------------- Inner classes 
+<span class="no">964 </span>    /** 
+<span class="no">965 </span>     * &lt;p&gt;This class implements the &lt;code&gt;Comparator&lt;/code&gt; interface 
+<span class="no">966 </span>     * for comparing Options.&lt;/p&gt; 
+<span class="no">967 </span>     */ 
+<span class="no">968 </span>    private static class OptionComparator 
+<span class="no">969 </span>        implements Comparator { 
+<span class="no">970 </span> 
+<span class="no">971 </span>        /** 
+<span class="no">972 </span>         * &lt;p&gt;Compares its two arguments for order. Returns a negative  
+<span class="no">973 </span>         * integer, zero, or a positive integer as the first argument  
+<span class="no">974 </span>         * is less than, equal to, or greater than the second.&lt;/p&gt; 
+<span class="no">975 </span>         * 
+<span class="no">976 </span>         * @param o1 The first Option to be compared. 
+<span class="no">977 </span>         * @param o2 The second Option to be compared. 
+<span class="no">978 </span>         * 
+<span class="no">979 </span>         * @return a negative integer, zero, or a positive integer as  
+<span class="no">980 </span>         * the first argument is less than, equal to, or greater than the  
+<span class="no">981 </span>         * second. 
+<span class="no">982 </span>         */ 
+<span class="no">983 </span>        public int compare(Object o1, Object o2) 
+<span class="no">984 </span>        { 
+<span class="no">985 </span>            Option opt1 = (Option)o1; 
+<span class="no">986 </span>            Option opt2 = (Option)o2; 
+<span class="no">987 </span> 
+<span class="no">988 </span>            return opt1.getKey().compareToIgnoreCase(opt2.getKey()); 
+<span class="no">989 </span>        } 
+<span class="no">990 </span>    } 
+<span class="no">991 </span>} 
+<span class="no">992 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">5_A (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>/** 
+<span class="no">  2 </span> * Licensed to the Apache Software Foundation (ASF) under one or more 
+<span class="no">  3 </span> * contributor license agreements.  See the NOTICE file distributed with 
+<span class="no">  4 </span> * this work for additional information regarding copyright ownership. 
+<span class="no">  5 </span> * The ASF licenses this file to You under the Apache License, Version 2.0 
+<span class="no">  6 </span> * (the &quot;License&quot;); you may not use this file except in compliance with 
+<span class="no">  7 </span> * the License.  You may obtain a copy of the License at 
+<span class="no">  8 </span> * 
+<span class="no">  9 </span> *     http://www.apache.org/licenses/LICENSE-2.0 
+<span class="no"> 10 </span> * 
+<span class="no"> 11 </span> * Unless required by applicable law or agreed to in writing, software 
+<span class="no"> 12 </span> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+<span class="no"> 13 </span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class="no"> 14 </span> * See the License for the specific language governing permissions and 
+<span class="no"> 15 </span> * limitations under the License. 
+<span class="no"> 16 </span> */ 
+<span class="no"> 17 </span> 
+<span class="no"> 18 </span>package org.apache.commons.cli; 
+<span class="no"> 19 </span> 
+<span class="no"> 20 </span>import java.io.PrintWriter; 
+<span class="no"> 21 </span>import java.util.ArrayList; 
+<span class="no"> 22 </span>import java.util.Collection; 
+<span class="no"> 23 </span>import java.util.Collections; 
+<span class="no"> 24 </span>import java.util.Comparator; 
+<span class="no"> 25 </span>import java.util.Iterator; 
+<span class="no"> 26 </span>import java.util.List; 
+<span class="no"> 27 </span> 
+<span class="no"> 28 </span>/**  
+<span class="no"> 29 </span> * A formatter of help messages for the current command line options 
+<span class="no"> 30 </span> * 
+<span class="no"> 31 </span> * @author Slawek Zachcial 
+<span class="no"> 32 </span> * @author John Keyes (john at integralsource.com) 
+<span class="no"> 33 </span> */ 
+<span class="no"> 34 </span>public class HelpFormatter { 
+<span class="no"> 35 </span>    // --------------------------------------------------------------- Constants 
+<span class="no"> 36 </span> 
+<span class="no"> 37 </span>    /** default number of characters per line */ 
+<span class="no"> 38 </span>    public static final int DEFAULT_WIDTH = 74; 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>    /** default padding to the left of each line */ 
+<span class="no"> 41 </span>    public static final int DEFAULT_LEFT_PAD = 1; 
+<span class="no"> 42 </span> 
+<span class="no"> 43 </span>    /** 
+<span class="no"> 44 </span>     * the number of characters of padding to be prefixed 
+<span class="no"> 45 </span>     * to each description line 
+<span class="no"> 46 </span>     */ 
+<span class="no"> 47 </span>    public static final int DEFAULT_DESC_PAD = 3; 
+<span class="no"> 48 </span> 
+<span class="no"> 49 </span>    /** the string to display at the begining of the usage statement */ 
+<span class="no"> 50 </span>    public static final String DEFAULT_SYNTAX_PREFIX = &quot;usage: &quot;; 
+<span class="no"> 51 </span> 
+<span class="no"> 52 </span>    /** default prefix for shortOpts */ 
+<span class="no"> 53 </span>    public static final String DEFAULT_OPT_PREFIX = &quot;-&quot;; 
+<span class="no"> 54 </span> 
+<span class="no"> 55 </span>    /** default prefix for long Option */ 
+<span class="no"> 56 </span>    public static final String DEFAULT_LONG_OPT_PREFIX = &quot;--&quot;; 
+<span class="no"> 57 </span> 
+<span class="no"> 58 </span>    /** default name for an argument */ 
+<span class="no"> 59 </span>    public static final String DEFAULT_ARG_NAME = &quot;arg&quot;; 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>    // -------------------------------------------------------------- Attributes 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /** 
+<span class="no"> 64 </span>     * number of characters per line 
+<span class="no"> 65 </span>     * 
+<span class="no"> 66 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 67 </span>     * - use get/setWidth methods instead. 
+<span class="no"> 68 </span>     */ 
+<span class="no"> 69 </span>    public int defaultWidth = DEFAULT_WIDTH; 
+<span class="no"> 70 </span> 
+<span class="no"> 71 </span>    /** 
+<span class="no"> 72 </span>     * amount of padding to the left of each line 
+<span class="no"> 73 </span>     * 
+<span class="no"> 74 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 75 </span>     * - use get/setLeftPadding methods instead. 
+<span class="no"> 76 </span>     */ 
+<span class="no"> 77 </span>    public int defaultLeftPad = DEFAULT_LEFT_PAD; 
+<span class="no"> 78 </span> 
+<span class="no"> 79 </span>    /** 
+<span class="no"> 80 </span>     * the number of characters of padding to be prefixed 
+<span class="no"> 81 </span>     * to each description line 
+<span class="no"> 82 </span>     * 
+<span class="no"> 83 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 84 </span>     * - use get/setDescPadding methods instead. 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public int defaultDescPad = DEFAULT_DESC_PAD; 
+<span class="no"> 87 </span> 
+<span class="no"> 88 </span>    /** 
+<span class="no"> 89 </span>     * the string to display at the begining of the usage statement 
+<span class="no"> 90 </span>     * 
+<span class="no"> 91 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no"> 92 </span>     * - use get/setSyntaxPrefix methods instead. 
+<span class="no"> 93 </span>     */ 
+<span class="no"> 94 </span>    public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX; 
+<span class="no"> 95 </span> 
+<span class="no"> 96 </span>    /** 
+<span class="no"> 97 </span>     * the new line string 
+<span class="no"> 98 </span>     * 
+<span class="no"> 99 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">100 </span>     * - use get/setNewLine methods instead. 
+<span class="no">101 </span>     */ 
+<span class="no">102 </span>    public String defaultNewLine = System.getProperty(&quot;line.separator&quot;); 
+<span class="no">103 </span> 
+<span class="no">104 </span>    /** 
+<span class="no">105 </span>     * the shortOpt prefix 
+<span class="no">106 </span>     * 
+<span class="no">107 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">108 </span>     * - use get/setOptPrefix methods instead. 
+<span class="no">109 </span>     */ 
+<span class="no">110 </span>    public String defaultOptPrefix = DEFAULT_OPT_PREFIX; 
+<span class="no">111 </span> 
+<span class="no">112 </span>    /** 
+<span class="no">113 </span>     * the long Opt prefix 
+<span class="no">114 </span>     * 
+<span class="no">115 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">116 </span>     * - use get/setLongOptPrefix methods instead. 
+<span class="no">117 </span>     */ 
+<span class="no">118 </span>    public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX; 
+<span class="no">119 </span> 
+<span class="no">120 </span>    /** 
+<span class="no">121 </span>     * the name of the argument 
+<span class="no">122 </span>     * 
+<span class="no">123 </span>     * @deprecated Scope will be made private for next major version 
+<span class="no">124 </span>     * - use get/setArgName methods instead. 
+<span class="no">125 </span>     */ 
+<span class="no">126 </span>    public String defaultArgName = DEFAULT_ARG_NAME; 
+<span class="no">127 </span> 
+<span class="no">128 </span>    /** 
+<span class="no">129 </span>     * Comparator used to sort the options when they output in help text 
+<span class="no">130 </span>     *  
+<span class="no">131 </span>     * Defaults to case-insensitive alphabetical sorting by option key 
+<span class="no">132 </span>     */ 
+<span class="no">133 </span>    protected Comparator optionComparator = new OptionComparator(); 
+<span class="no">134 </span> 
+<span class="no">135 </span>    /** 
+<span class="no">136 </span>     * Sets the &apos;width&apos;. 
+<span class="no">137 </span>     * 
+<span class="no">138 </span>     * @param width the new value of &apos;width&apos; 
+<span class="no">139 </span>     */ 
+<span class="no">140 </span>    public void setWidth(int width) 
+<span class="no">141 </span>    { 
+<span class="no">142 </span>        this.defaultWidth = width; 
+<span class="no">143 </span>    } 
+<span class="no">144 </span> 
+<span class="no">145 </span>    /** 
+<span class="no">146 </span>     * Returns the &apos;width&apos;. 
+<span class="no">147 </span>     * 
+<span class="no">148 </span>     * @return the &apos;width&apos; 
+<span class="no">149 </span>     */ 
+<span class="no">150 </span>    public int getWidth() 
+<span class="no">151 </span>    { 
+<span class="no">152 </span>        return this.defaultWidth; 
+<span class="no">153 </span>    } 
+<span class="no">154 </span> 
+<span class="no">155 </span>    /** 
+<span class="no">156 </span>     * Sets the &apos;leftPadding&apos;. 
+<span class="no">157 </span>     * 
+<span class="no">158 </span>     * @param padding the new value of &apos;leftPadding&apos; 
+<span class="no">159 </span>     */ 
+<span class="no">160 </span>    public void setLeftPadding(int padding) 
+<span class="no">161 </span>    { 
+<span class="no">162 </span>        this.defaultLeftPad = padding; 
+<span class="no">163 </span>    } 
+<span class="no">164 </span> 
+<span class="no">165 </span>    /** 
+<span class="no">166 </span>     * Returns the &apos;leftPadding&apos;. 
+<span class="no">167 </span>     * 
+<span class="no">168 </span>     * @return the &apos;leftPadding&apos; 
+<span class="no">169 </span>     */ 
+<span class="no">170 </span>    public int getLeftPadding() 
+<span class="no">171 </span>    { 
+<span class="no">172 </span>        return this.defaultLeftPad; 
+<span class="no">173 </span>    } 
+<span class="no">174 </span> 
+<span class="no">175 </span>    /** 
+<span class="no">176 </span>     * Sets the &apos;descPadding&apos;. 
+<span class="no">177 </span>     * 
+<span class="no">178 </span>     * @param padding the new value of &apos;descPadding&apos; 
+<span class="no">179 </span>     */ 
+<span class="no">180 </span>    public void setDescPadding(int padding) 
+<span class="no">181 </span>    { 
+<span class="no">182 </span>        this.defaultDescPad = padding; 
+<span class="no">183 </span>    } 
+<span class="no">184 </span> 
+<span class="no">185 </span>    /** 
+<span class="no">186 </span>     * Returns the &apos;descPadding&apos;. 
+<span class="no">187 </span>     * 
+<span class="no">188 </span>     * @return the &apos;descPadding&apos; 
+<span class="no">189 </span>     */ 
+<span class="no">190 </span>    public int getDescPadding() 
+<span class="no">191 </span>    { 
+<span class="no">192 </span>        return this.defaultDescPad; 
+<span class="no">193 </span>    } 
+<span class="no">194 </span> 
+<span class="no">195 </span>    /** 
+<span class="no">196 </span>     * Sets the &apos;syntaxPrefix&apos;. 
+<span class="no">197 </span>     * 
+<span class="no">198 </span>     * @param prefix the new value of &apos;syntaxPrefix&apos; 
+<span class="no">199 </span>     */ 
+<span class="no">200 </span>    public void setSyntaxPrefix(String prefix) 
+<span class="no">201 </span>    { 
+<span class="no">202 </span>        this.defaultSyntaxPrefix = prefix; 
+<span class="no">203 </span>    } 
+<span class="no">204 </span> 
+<span class="no">205 </span>    /** 
+<span class="no">206 </span>     * Returns the &apos;syntaxPrefix&apos;. 
+<span class="no">207 </span>     * 
+<span class="no">208 </span>     * @return the &apos;syntaxPrefix&apos; 
+<span class="no">209 </span>     */ 
+<span class="no">210 </span>    public String getSyntaxPrefix() 
+<span class="no">211 </span>    { 
+<span class="no">212 </span>        return this.defaultSyntaxPrefix; 
+<span class="no">213 </span>    } 
+<span class="no">214 </span> 
+<span class="no">215 </span>    /** 
+<span class="no">216 </span>     * Sets the &apos;newLine&apos;. 
+<span class="no">217 </span>     * 
+<span class="no">218 </span>     * @param newline the new value of &apos;newLine&apos; 
+<span class="no">219 </span>     */ 
+<span class="no">220 </span>    public void setNewLine(String newline) 
+<span class="no">221 </span>    { 
+<span class="no">222 </span>        this.defaultNewLine = newline; 
+<span class="no">223 </span>    } 
+<span class="no">224 </span> 
+<span class="no">225 </span>    /** 
+<span class="no">226 </span>     * Returns the &apos;newLine&apos;. 
+<span class="no">227 </span>     * 
+<span class="no">228 </span>     * @return the &apos;newLine&apos; 
+<span class="no">229 </span>     */ 
+<span class="no">230 </span>    public String getNewLine() 
+<span class="no">231 </span>    { 
+<span class="no">232 </span>        return this.defaultNewLine; 
+<span class="no">233 </span>    } 
+<span class="no">234 </span> 
+<span class="no">235 </span>    /** 
+<span class="no">236 </span>     * Sets the &apos;optPrefix&apos;. 
+<span class="no">237 </span>     * 
+<span class="no">238 </span>     * @param prefix the new value of &apos;optPrefix&apos; 
+<span class="no">239 </span>     */ 
+<span class="no">240 </span>    public void setOptPrefix(String prefix) 
+<span class="no">241 </span>    { 
+<span class="no">242 </span>        this.defaultOptPrefix = prefix; 
+<span class="no">243 </span>    } 
+<span class="no">244 </span> 
+<span class="no">245 </span>    /** 
+<span class="no">246 </span>     * Returns the &apos;optPrefix&apos;. 
+<span class="no">247 </span>     * 
+<span class="no">248 </span>     * @return the &apos;optPrefix&apos; 
+<span class="no">249 </span>     */ 
+<span class="no">250 </span>    public String getOptPrefix() 
+<span class="no">251 </span>    { 
+<span class="no">252 </span>        return this.defaultOptPrefix; 
+<span class="no">253 </span>    } 
+<span class="no">254 </span> 
+<span class="no">255 </span>    /** 
+<span class="no">256 </span>     * Sets the &apos;longOptPrefix&apos;. 
+<span class="no">257 </span>     * 
+<span class="no">258 </span>     * @param prefix the new value of &apos;longOptPrefix&apos; 
+<span class="no">259 </span>     */ 
+<span class="no">260 </span>    public void setLongOptPrefix(String prefix) 
+<span class="no">261 </span>    { 
+<span class="no">262 </span>        this.defaultLongOptPrefix = prefix; 
+<span class="no">263 </span>    } 
+<span class="no">264 </span> 
+<span class="no">265 </span>    /** 
+<span class="no">266 </span>     * Returns the &apos;longOptPrefix&apos;. 
+<span class="no">267 </span>     * 
+<span class="no">268 </span>     * @return the &apos;longOptPrefix&apos; 
+<span class="no">269 </span>     */ 
+<span class="no">270 </span>    public String getLongOptPrefix() 
+<span class="no">271 </span>    { 
+<span class="no">272 </span>        return this.defaultLongOptPrefix; 
+<span class="no">273 </span>    } 
+<span class="no">274 </span> 
+<span class="no">275 </span>    /** 
+<span class="no">276 </span>     * Sets the &apos;argName&apos;. 
+<span class="no">277 </span>     * 
+<span class="no">278 </span>     * @param name the new value of &apos;argName&apos; 
+<span class="no">279 </span>     */ 
+<span class="no">280 </span>    public void setArgName(String name) 
+<span class="no">281 </span>    { 
+<span class="no">282 </span>        this.defaultArgName = name; 
+<span class="no">283 </span>    } 
+<span class="no">284 </span> 
+<span class="no">285 </span>    /** 
+<span class="no">286 </span>     * Returns the &apos;argName&apos;. 
+<span class="no">287 </span>     * 
+<span class="no">288 </span>     * @return the &apos;argName&apos; 
+<span class="no">289 </span>     */ 
+<span class="no">290 </span>    public String getArgName() 
+<span class="no">291 </span>    { 
+<span class="no">292 </span>        return this.defaultArgName; 
+<span class="no">293 </span>    } 
+<span class="no">294 </span> 
+<span class="no">295 </span>    /** 
+<span class="no">296 </span>     * Comparator used to sort the options when they output in help text 
+<span class="no">297 </span>     *  
+<span class="no">298 </span>     * Defaults to case-insensitive alphabetical sorting by option key 
+<span class="no">299 </span>     */ 
+<span class="no">300 </span>    public Comparator getOptionComparator()  
+<span class="no">301 </span>    { 
+<span class="no">302 </span>        return this.optionComparator; 
+<span class="no">303 </span>    } 
+<span class="no">304 </span> 
+<span class="no">305 </span>    /** 
+<span class="no">306 </span>     * Set the comparator used to sort the options when they output in help text 
+<span class="no">307 </span>     *  
+<span class="no">308 </span>     * Passing in a null parameter will set the ordering to the default mode 
+<span class="no">309 </span>     */ 
+<span class="no">310 </span>    public void setOptionComparator(Comparator comparator)  
+<span class="no">311 </span>    { 
+<span class="no">312 </span>        if ( comparator == null )  
+<span class="no">313 </span>        { 
+<span class="no">314 </span>            this.optionComparator = new OptionComparator(); 
+<span class="no">315 </span>        }  
+<span class="no">316 </span>        else  
+<span class="no">317 </span>        { 
+<span class="no">318 </span>            this.optionComparator = comparator; 
+<span class="no">319 </span>        } 
+<span class="no">320 </span>    } 
+<span class="no">321 </span> 
+<span class="no">322 </span> 
+<span class="no">323 </span>    // ------------------------------------------------------------------ Public 
+<span class="no">324 </span> 
+<span class="no">325 </span>    /** 
+<span class="no">326 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">327 </span>     * command line syntax.  This method prints help information to 
+<span class="no">328 </span>     * System.out.&lt;/p&gt; 
+<span class="no">329 </span>     * 
+<span class="no">330 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">331 </span>     * @param options the Options instance 
+<span class="no">332 </span>     */ 
+<span class="no">333 </span>    public void printHelp(String cmdLineSyntax, Options options) 
+<span class="no">334 </span>    { 
+<span class="no">335 </span>        printHelp(defaultWidth, cmdLineSyntax, null, options, null, false); 
+<span class="no">336 </span>    } 
+<span class="no">337 </span> 
+<span class="no">338 </span>    /** 
+<span class="no">339 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">340 </span>     * command line syntax.  This method prints help information to  
+<span class="no">341 </span>     * System.out.&lt;/p&gt; 
+<span class="no">342 </span>     * 
+<span class="no">343 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">344 </span>     * @param options the Options instance 
+<span class="no">345 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">346 </span>     * usage statement 
+<span class="no">347 </span>     */ 
+<span class="no">348 </span>    public void printHelp(String cmdLineSyntax, Options options,  
+<span class="no">349 </span>                          boolean autoUsage) 
+<span class="no">350 </span>    { 
+<span class="no">351 </span>        printHelp(defaultWidth, cmdLineSyntax, null, options, null, autoUsage); 
+<span class="no">352 </span>    } 
+<span class="no">353 </span> 
+<span class="no">354 </span>    /** 
+<span class="no">355 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">356 </span>     * command line syntax.  This method prints help information to 
+<span class="no">357 </span>     * System.out.&lt;/p&gt; 
+<span class="no">358 </span>     * 
+<span class="no">359 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">360 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">361 </span>     * @param options the Options instance 
+<span class="no">362 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">363 </span>     */ 
+<span class="no">364 </span>    public void printHelp(String cmdLineSyntax, String header, Options options,  
+<span class="no">365 </span>                          String footer) 
+<span class="no">366 </span>    { 
+<span class="no">367 </span>        printHelp(cmdLineSyntax, header, options, footer, false); 
+<span class="no">368 </span>    } 
+<span class="no">369 </span> 
+<span class="no">370 </span>    /** 
+<span class="no">371 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">372 </span>     * command line syntax.  This method prints help information to  
+<span class="no">373 </span>     * System.out.&lt;/p&gt; 
+<span class="no">374 </span>     * 
+<span class="no">375 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">376 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">377 </span>     * @param options the Options instance 
+<span class="no">378 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">379 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">380 </span>     * usage statement 
+<span class="no">381 </span>     */ 
+<span class="no">382 </span>    public void printHelp(String cmdLineSyntax, String header, Options options,  
+<span class="no">383 </span>                          String footer, boolean autoUsage) 
+<span class="no">384 </span>    { 
+<span class="no">385 </span>        printHelp(defaultWidth, cmdLineSyntax, header, options, footer,  
+<span class="no">386 </span>                  autoUsage); 
+<span class="no">387 </span>    } 
+<span class="no">388 </span> 
+<span class="no">389 </span>    /** 
+<span class="no">390 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">391 </span>     * command line syntax.  This method prints help information to 
+<span class="no">392 </span>     * System.out.&lt;/p&gt; 
+<span class="no">393 </span>     * 
+<span class="no">394 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">395 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">396 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">397 </span>     * @param options the Options instance 
+<span class="no">398 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">399 </span>     */ 
+<span class="no">400 </span>    public void printHelp(int width, String cmdLineSyntax, String header,  
+<span class="no">401 </span>                          Options options, String footer) 
+<span class="no">402 </span>    { 
+<span class="no">403 </span>        printHelp(width, cmdLineSyntax, header, options, footer, false); 
+<span class="no">404 </span>    } 
+<span class="no">405 </span> 
+<span class="no">406 </span>    /** 
+<span class="no">407 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">408 </span>     * command line syntax.  This method prints help information to 
+<span class="no">409 </span>     * System.out.&lt;/p&gt; 
+<span class="no">410 </span>     * 
+<span class="no">411 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">412 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">413 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">414 </span>     * @param options the Options instance 
+<span class="no">415 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">416 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">417 </span>     * usage statement 
+<span class="no">418 </span>     */ 
+<span class="no">419 </span>    public void printHelp(int width, String cmdLineSyntax, String header,  
+<span class="no">420 </span>                          Options options, String footer, boolean autoUsage) 
+<span class="no">421 </span>    { 
+<span class="no">422 </span>        PrintWriter pw = new PrintWriter(System.out); 
+<span class="no">423 </span> 
+<span class="no">424 </span>        printHelp(pw, width, cmdLineSyntax, header, options, defaultLeftPad,  
+<span class="no">425 </span>                  defaultDescPad, footer, autoUsage); 
+<span class="no">426 </span>        pw.flush(); 
+<span class="no">427 </span>    } 
+<span class="no">428 </span> 
+<span class="no">429 </span>    /** 
+<span class="no">430 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">431 </span>     * command line syntax.&lt;/p&gt; 
+<span class="no">432 </span>     * 
+<span class="no">433 </span>     * @param pw the writer to which the help will be written 
+<span class="no">434 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">435 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">436 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">437 </span>     * @param options the Options instance 
+<span class="no">438 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">439 </span>     * to each line 
+<span class="no">440 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">441 </span>     * to each description line 
+<span class="no">442 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">443 </span>     */ 
+<span class="no">444 </span>    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax,  
+<span class="no">445 </span>                          String header, Options options, int leftPad,  
+<span class="no">446 </span>                          int descPad, String footer) 
+<span class="no">447 </span>    { 
+<span class="no">448 </span>        printHelp(pw, width, cmdLineSyntax, header, options, leftPad, descPad,  
+<span class="no">449 </span>                  footer, false); 
+<span class="no">450 </span>    } 
+<span class="no">451 </span> 
+<span class="no">452 </span> 
+<span class="no">453 </span>    /** 
+<span class="no">454 </span>     * &lt;p&gt;Print the help for &lt;code&gt;options&lt;/code&gt; with the specified 
+<span class="no">455 </span>     * command line syntax.&lt;/p&gt; 
+<span class="no">456 </span>     * 
+<span class="no">457 </span>     * @param pw the writer to which the help will be written 
+<span class="no">458 </span>     * @param width the number of characters to be displayed on each line 
+<span class="no">459 </span>     * @param cmdLineSyntax the syntax for this application 
+<span class="no">460 </span>     * @param header the banner to display at the begining of the help 
+<span class="no">461 </span>     * @param options the Options instance 
+<span class="no">462 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">463 </span>     * to each line 
+<span class="no">464 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">465 </span>     * to each description line 
+<span class="no">466 </span>     * @param footer the banner to display at the end of the help 
+<span class="no">467 </span>     * @param autoUsage whether to print an automatically generated  
+<span class="no">468 </span>     * usage statement 
+<span class="no">469 </span>     */ 
+<span class="no">470 </span>    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax,  
+<span class="no">471 </span>                          String header, Options options, int leftPad,  
+<span class="no">472 </span>                          int descPad, String footer, boolean autoUsage) 
+<span class="no">473 </span>    { 
+<span class="no">474 </span>        if ((cmdLineSyntax == null) || (cmdLineSyntax.length() == 0)) 
+<span class="no">475 </span>        { 
+<span class="no">476 </span>            throw new IllegalArgumentException(&quot;cmdLineSyntax not provided&quot;); 
+<span class="no">477 </span>        } 
+<span class="no">478 </span> 
+<span class="no">479 </span>        if (autoUsage) 
+<span class="no">480 </span>        { 
+<span class="no">481 </span>            printUsage(pw, width, cmdLineSyntax, options); 
+<span class="no">482 </span>        } 
+<span class="no">483 </span>        else 
+<span class="no">484 </span>        { 
+<span class="no">485 </span>            printUsage(pw, width, cmdLineSyntax); 
+<span class="no">486 </span>        } 
+<span class="no">487 </span> 
+<span class="no">488 </span>        if ((header != null) &amp;&amp; (header.trim().length() &gt; 0)) 
+<span class="no">489 </span>        { 
+<span class="no">490 </span>            printWrapped(pw, width, header); 
+<span class="no">491 </span>        } 
+<span class="no">492 </span> 
+<span class="no">493 </span>        printOptions(pw, width, options, leftPad, descPad); 
+<span class="no">494 </span> 
+<span class="no">495 </span>        if ((footer != null) &amp;&amp; (footer.trim().length() &gt; 0)) 
+<span class="no">496 </span>        { 
+<span class="no">497 </span>            printWrapped(pw, width, footer); 
+<span class="no">498 </span>        } 
+<span class="no">499 </span>    } 
+<span class="no">500 </span> 
+<span class="no">501 </span>    /** 
+<span class="no">502 </span>     * &lt;p&gt;Prints the usage statement for the specified application.&lt;/p&gt; 
+<span class="no">503 </span>     * 
+<span class="no">504 </span>     * @param pw The PrintWriter to print the usage statement  
+<span class="no">505 </span>     * @param width The number of characters to display per line 
+<span class="no">506 </span>     * @param app The application name 
+<span class="no">507 </span>     * @param options The command line Options 
+<span class="no">508 </span>     * 
+<span class="no">509 </span>     */ 
+<span class="no">510 </span>    public void printUsage(PrintWriter pw, int width, String app,  
+<span class="no">511 </span>                           Options options) 
+<span class="no">512 </span>    { 
+<span class="no">513 </span>        // initialise the string buffer 
+<span class="no">514 </span>        StringBuffer buff = new StringBuffer(defaultSyntaxPrefix).append(app) 
+<span class="no">515 </span>                                                                 .append(&quot; &quot;); 
+<span class="no">516 </span> 
+<span class="no">517 </span>        // create a list for processed option groups 
+<span class="no">518 </span>        final Collection processedGroups = new ArrayList(); 
+<span class="no">519 </span> 
+<span class="no">520 </span>        // temp variable 
+<span class="no">521 </span>        Option option; 
+<span class="no">522 </span> 
+<span class="no">523 </span>        List optList = new ArrayList(options.getOptions()); 
+<span class="no">524 </span>        Collections.sort(optList, getOptionComparator() ); 
+<span class="no">525 </span>        // iterate over the options 
+<span class="no">526 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">527 </span>        { 
+<span class="no">528 </span>            // get the next Option 
+<span class="no">529 </span>            option = (Option) i.next(); 
+<span class="no">530 </span> 
+<span class="no">531 </span>            // check if the option is part of an OptionGroup 
+<span class="no">532 </span>            OptionGroup group = options.getOptionGroup(option); 
+<span class="no">533 </span> 
+<span class="no">534 </span>            // if the option is part of a group  
+<span class="no">535 </span>            if (group != null) 
+<span class="no">536 </span>            { 
+<span class="no">537 </span>                // and if the group has not already been processed 
+<span class="no">538 </span>                if (!processedGroups.contains(group)) 
+<span class="no">539 </span>                { 
+<span class="no">540 </span>                    // add the group to the processed list 
+<span class="no">541 </span>                    processedGroups.add(group); 
+<span class="no">542 </span> 
+<span class="no">543 </span> 
+<span class="no">544 </span>                    // add the usage clause 
+<span class="no">545 </span>                    appendOptionGroup(buff, group); 
+<span class="no">546 </span>                } 
+<span class="no">547 </span> 
+<span class="no">548 </span>                // otherwise the option was displayed in the group 
+<span class="no">549 </span>                // previously so ignore it. 
+<span class="no">550 </span>            } 
+<span class="no">551 </span> 
+<span class="no">552 </span>            // if the Option is not part of an OptionGroup 
+<span class="no">553 </span>            else 
+<span class="no">554 </span>            { 
+<span class="no">555 </span>                appendOption(buff, option, option.isRequired()); 
+<span class="no">556 </span>            } 
+<span class="no">557 </span> 
+<span class="no">558 </span>            if (i.hasNext()) 
+<span class="no">559 </span>            { 
+<span class="no">560 </span>                buff.append(&quot; &quot;); 
+<span class="no">561 </span>            } 
+<span class="no">562 </span>        } 
+<span class="no">563 </span> 
+<span class="no">564 </span> 
+<span class="no">565 </span>        // call printWrapped 
+<span class="no">566 </span>        printWrapped(pw, width, buff.toString().indexOf(&apos; &apos;) + 1,  
+<span class="no">567 </span>                     buff.toString()); 
+<span class="no">568 </span>    } 
+<span class="no">569 </span> 
+<span class="no">570 </span>    /** 
+<span class="no">571 </span>     * Appends the usage clause for an OptionGroup to a StringBuffer.   
+<span class="no">572 </span>     * The clause is wrapped in square brackets if the group is required. 
+<span class="no">573 </span>     * The display of the options is handled by appendOption 
+<span class="no">574 </span>     * @param buff the StringBuffer to append to 
+<span class="no">575 </span>     * @param group the group to append 
+<span class="no">576 </span>     * @see #appendOption(StringBuffer,Option,boolean) 
+<span class="no">577 </span>     */ 
+<span class="no">578 </span>    private void appendOptionGroup(final StringBuffer buff,  
+<span class="no">579 </span>                                          final OptionGroup group) 
+<span class="no">580 </span>    { 
+<span class="no">581 </span>        if (!group.isRequired()) 
+<span class="no">582 </span>        { 
+<span class="no">583 </span>            buff.append(&quot;[&quot;); 
+<span class="no">584 </span>        } 
+<span class="no">585 </span> 
+<span class="no">586 </span>        List optList = new ArrayList(group.getOptions()); 
+<span class="no">587 </span>        Collections.sort(optList, getOptionComparator() ); 
+<span class="no">588 </span>        // for each option in the OptionGroup 
+<span class="no">589 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">590 </span>        { 
+<span class="no">591 </span>            // whether the option is required or not is handled at group level 
+<span class="no">592 </span>            appendOption(buff, (Option) i.next(), true); 
+<span class="no">593 </span> 
+<span class="no">594 </span>            if (i.hasNext()) 
+<span class="no">595 </span>            { 
+<span class="no">596 </span>                buff.append(&quot; | &quot;); 
+<span class="no">597 </span>            } 
+<span class="no">598 </span>        } 
+<span class="no">599 </span> 
+<span class="no">600 </span>        if (!group.isRequired()) 
+<span class="no">601 </span>        { 
+<span class="no">602 </span>            buff.append(&quot;]&quot;); 
+<span class="no">603 </span>        } 
+<span class="no">604 </span>    } 
+<span class="no">605 </span> 
+<span class="no">606 </span>    /** 
+<span class="no">607 </span>     * Appends the usage clause for an Option to a StringBuffer.   
+<span class="no">608 </span>     * 
+<span class="no">609 </span>     * @param buff the StringBuffer to append to 
+<span class="no">610 </span>     * @param option the Option to append 
+<span class="no">611 </span>     * @param required whether the Option is required or not 
+<span class="no">612 </span>     */ 
+<span class="no">613 </span>    private static void appendOption(final StringBuffer buff,  
+<span class="no">614 </span>                                     final Option option,  
+<span class="no">615 </span>                                     final boolean required) 
+<span class="no">616 </span>    { 
+<span class="no">617 </span>        if (!required) 
+<span class="no">618 </span>        { 
+<span class="no">619 </span>            buff.append(&quot;[&quot;); 
+<span class="no">620 </span>        } 
+<span class="no">621 </span> 
+<span class="no">622 </span>        if (option.getOpt() != null) 
+<span class="no">623 </span>        { 
+<span class="no">624 </span>            buff.append(&quot;-&quot;).append(option.getOpt()); 
+<span class="no">625 </span>        } 
+<span class="no">626 </span>        else 
+<span class="no">627 </span>        { 
+<span class="no">628 </span>            buff.append(&quot;--&quot;).append(option.getLongOpt()); 
+<span class="no">629 </span>        } 
+<span class="no">630 </span> 
+<span class="no">631 </span>        // if the Option has a value 
+<span class="no">632 </span>        if (option.hasArg() &amp;&amp; <span id="m1" class="em1"><a class="mov" href="#m1" data-partner="#n1">option.</a><span id="m2" class="em2"><a class="upd" href="#m2" data-partner="#n2">hasArgName</a></span><a class="mov" href="#m1" data-partner="#n1">()</a></span>) 
+<span class="no">633 </span>        { 
+<span class="no">634 </span>            buff.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
+<span class="no">635 </span>        } 
+<span class="no">636 </span> 
+<span class="no">637 </span>        // if the Option is not a required option 
+<span class="no">638 </span>        if (!required) 
+<span class="no">639 </span>        { 
+<span class="no">640 </span>            buff.append(&quot;]&quot;); 
+<span class="no">641 </span>        } 
+<span class="no">642 </span>    } 
+<span class="no">643 </span> 
+<span class="no">644 </span>    /** 
+<span class="no">645 </span>     * &lt;p&gt;Print the cmdLineSyntax to the specified writer, using the 
+<span class="no">646 </span>     * specified width.&lt;/p&gt; 
+<span class="no">647 </span>     * 
+<span class="no">648 </span>     * @param pw The printWriter to write the help to 
+<span class="no">649 </span>     * @param width The number of characters per line for the usage statement. 
+<span class="no">650 </span>     * @param cmdLineSyntax The usage statement. 
+<span class="no">651 </span>     */ 
+<span class="no">652 </span>    public void printUsage(PrintWriter pw, int width, String cmdLineSyntax) 
+<span class="no">653 </span>    { 
+<span class="no">654 </span>        int argPos = cmdLineSyntax.indexOf(&apos; &apos;) + 1; 
+<span class="no">655 </span> 
+<span class="no">656 </span>        printWrapped(pw, width, defaultSyntaxPrefix.length() + argPos,  
+<span class="no">657 </span>                     defaultSyntaxPrefix + cmdLineSyntax); 
+<span class="no">658 </span>    } 
+<span class="no">659 </span> 
+<span class="no">660 </span>    /** 
+<span class="no">661 </span>     * &lt;p&gt;Print the help for the specified Options to the specified writer,  
+<span class="no">662 </span>     * using the specified width, left padding and description padding.&lt;/p&gt; 
+<span class="no">663 </span>     * 
+<span class="no">664 </span>     * @param pw The printWriter to write the help to 
+<span class="no">665 </span>     * @param width The number of characters to display per line 
+<span class="no">666 </span>     * @param options The command line Options 
+<span class="no">667 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">668 </span>     * to each line 
+<span class="no">669 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">670 </span>     * to each description line 
+<span class="no">671 </span>     */ 
+<span class="no">672 </span>    public void printOptions(PrintWriter pw, int width, Options options,  
+<span class="no">673 </span>                             int leftPad, int descPad) 
+<span class="no">674 </span>    { 
+<span class="no">675 </span>        StringBuffer sb = new StringBuffer(); 
+<span class="no">676 </span> 
+<span class="no">677 </span>        renderOptions(sb, width, options, leftPad, descPad); 
+<span class="no">678 </span>        pw.println(sb.toString()); 
+<span class="no">679 </span>    } 
+<span class="no">680 </span> 
+<span class="no">681 </span>    /** 
+<span class="no">682 </span>     * &lt;p&gt;Print the specified text to the specified PrintWriter.&lt;/p&gt; 
+<span class="no">683 </span>     * 
+<span class="no">684 </span>     * @param pw The printWriter to write the help to 
+<span class="no">685 </span>     * @param width The number of characters to display per line 
+<span class="no">686 </span>     * @param text The text to be written to the PrintWriter 
+<span class="no">687 </span>     */ 
+<span class="no">688 </span>    public void printWrapped(PrintWriter pw, int width, String text) 
+<span class="no">689 </span>    { 
+<span class="no">690 </span>        printWrapped(pw, width, 0, text); 
+<span class="no">691 </span>    } 
+<span class="no">692 </span> 
+<span class="no">693 </span>    /** 
+<span class="no">694 </span>     * &lt;p&gt;Print the specified text to the specified PrintWriter.&lt;/p&gt; 
+<span class="no">695 </span>     * 
+<span class="no">696 </span>     * @param pw The printWriter to write the help to 
+<span class="no">697 </span>     * @param width The number of characters to display per line 
+<span class="no">698 </span>     * @param nextLineTabStop The position on the next line for the first tab. 
+<span class="no">699 </span>     * @param text The text to be written to the PrintWriter 
+<span class="no">700 </span>     */ 
+<span class="no">701 </span>    public void printWrapped(PrintWriter pw, int width, int nextLineTabStop,  
+<span class="no">702 </span>                             String text) 
+<span class="no">703 </span>    { 
+<span class="no">704 </span>        StringBuffer sb = new StringBuffer(text.length()); 
+<span class="no">705 </span> 
+<span class="no">706 </span>        renderWrappedText(sb, width, nextLineTabStop, text); 
+<span class="no">707 </span>        pw.println(sb.toString()); 
+<span class="no">708 </span>    } 
+<span class="no">709 </span> 
+<span class="no">710 </span>    // --------------------------------------------------------------- Protected 
+<span class="no">711 </span> 
+<span class="no">712 </span>    /** 
+<span class="no">713 </span>     * &lt;p&gt;Render the specified Options and return the rendered Options 
+<span class="no">714 </span>     * in a StringBuffer.&lt;/p&gt; 
+<span class="no">715 </span>     * 
+<span class="no">716 </span>     * @param sb The StringBuffer to place the rendered Options into. 
+<span class="no">717 </span>     * @param width The number of characters to display per line 
+<span class="no">718 </span>     * @param options The command line Options 
+<span class="no">719 </span>     * @param leftPad the number of characters of padding to be prefixed 
+<span class="no">720 </span>     * to each line 
+<span class="no">721 </span>     * @param descPad the number of characters of padding to be prefixed 
+<span class="no">722 </span>     * to each description line 
+<span class="no">723 </span>     * 
+<span class="no">724 </span>     * @return the StringBuffer with the rendered Options contents. 
+<span class="no">725 </span>     */ 
+<span class="no">726 </span>    protected StringBuffer renderOptions(StringBuffer sb, int width,  
+<span class="no">727 </span>                                         Options options, int leftPad,  
+<span class="no">728 </span>                                         int descPad) 
+<span class="no">729 </span>    { 
+<span class="no">730 </span>        final String lpad = createPadding(leftPad); 
+<span class="no">731 </span>        final String dpad = createPadding(descPad); 
+<span class="no">732 </span> 
+<span class="no">733 </span>        // first create list containing only &lt;lpad&gt;-a,--aaa where  
+<span class="no">734 </span>        // -a is opt and --aaa is long opt; in parallel look for  
+<span class="no">735 </span>        // the longest opt string this list will be then used to  
+<span class="no">736 </span>        // sort options ascending 
+<span class="no">737 </span>        int max = 0; 
+<span class="no">738 </span>        StringBuffer optBuf; 
+<span class="no">739 </span>        List prefixList = new ArrayList(); 
+<span class="no">740 </span>        Option option; 
+<span class="no">741 </span>        List optList = options.helpOptions(); 
+<span class="no">742 </span> 
+<span class="no">743 </span>        Collections.sort(optList, getOptionComparator() ); 
+<span class="no">744 </span> 
+<span class="no">745 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">746 </span>        { 
+<span class="no">747 </span>            option = (Option) i.next(); 
+<span class="no">748 </span>            optBuf = new StringBuffer(8); 
+<span class="no">749 </span> 
+<span class="no">750 </span>            if (option.getOpt() == null) 
+<span class="no">751 </span>            { 
+<span class="no">752 </span>                optBuf.append(lpad).append(&quot;   &quot; + defaultLongOptPrefix) 
+<span class="no">753 </span>                      .append(option.getLongOpt()); 
+<span class="no">754 </span>            } 
+<span class="no">755 </span>            else 
+<span class="no">756 </span>            { 
+<span class="no">757 </span>                optBuf.append(lpad).append(defaultOptPrefix) 
+<span class="no">758 </span>                      .append(option.getOpt()); 
+<span class="no">759 </span> 
+<span class="no">760 </span>                if (option.hasLongOpt()) 
+<span class="no">761 </span>                { 
+<span class="no">762 </span>                    optBuf.append(&apos;,&apos;).append(defaultLongOptPrefix) 
+<span class="no">763 </span>                          .append(option.getLongOpt()); 
+<span class="no">764 </span>                } 
+<span class="no">765 </span>            } 
+<span class="no">766 </span> 
+<span class="no">767 </span>            if (option.hasArg()) 
+<span class="no">768 </span>            { 
+<span class="no">769 </span>                if (option.hasArgName()) 
+<span class="no">770 </span>                { 
+<span class="no">771 </span>                    optBuf.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
+<span class="no">772 </span>                } 
+<span class="no">773 </span>                else 
+<span class="no">774 </span>                { 
+<span class="no">775 </span>                    optBuf.append(&apos; &apos;); 
+<span class="no">776 </span>                } 
+<span class="no">777 </span>            } 
+<span class="no">778 </span> 
+<span class="no">779 </span>            prefixList.add(optBuf); 
+<span class="no">780 </span>            max = (optBuf.length() &gt; max)       ? optBuf.length() : max; 
+<span class="no">781 </span>        } 
+<span class="no">782 </span> 
+<span class="no">783 </span>        int x = 0; 
+<span class="no">784 </span> 
+<span class="no">785 </span>        for (Iterator i = optList.iterator(); i.hasNext();) 
+<span class="no">786 </span>        { 
+<span class="no">787 </span>            option = (Option) i.next(); 
+<span class="no">788 </span>            optBuf = new StringBuffer(prefixList.get(x++).toString()); 
+<span class="no">789 </span> 
+<span class="no">790 </span>            if (optBuf.length() &lt; max) 
+<span class="no">791 </span>            { 
+<span class="no">792 </span>                optBuf.append(createPadding(max - optBuf.length())); 
+<span class="no">793 </span>            } 
+<span class="no">794 </span> 
+<span class="no">795 </span>            optBuf.append(dpad); 
+<span class="no">796 </span> 
+<span class="no">797 </span>            int nextLineTabStop = max + descPad; 
+<span class="no">798 </span> 
+<span class="no">799 </span>            if (option.getDescription() != null) 
+<span class="no">800 </span>            { 
+<span class="no">801 </span>                optBuf.append(option.getDescription()); 
+<span class="no">802 </span>            } 
+<span class="no">803 </span> 
+<span class="no">804 </span>            renderWrappedText(sb, width, nextLineTabStop, optBuf.toString()); 
+<span class="no">805 </span> 
+<span class="no">806 </span>            if (i.hasNext()) 
+<span class="no">807 </span>            { 
+<span class="no">808 </span>                sb.append(defaultNewLine); 
+<span class="no">809 </span>            } 
+<span class="no">810 </span>        } 
+<span class="no">811 </span> 
+<span class="no">812 </span>        return sb; 
+<span class="no">813 </span>    } 
+<span class="no">814 </span> 
+<span class="no">815 </span>    /** 
+<span class="no">816 </span>     * &lt;p&gt;Render the specified text and return the rendered Options 
+<span class="no">817 </span>     * in a StringBuffer.&lt;/p&gt; 
+<span class="no">818 </span>     * 
+<span class="no">819 </span>     * @param sb The StringBuffer to place the rendered text into. 
+<span class="no">820 </span>     * @param width The number of characters to display per line 
+<span class="no">821 </span>     * @param nextLineTabStop The position on the next line for the first tab. 
+<span class="no">822 </span>     * @param text The text to be rendered. 
+<span class="no">823 </span>     * 
+<span class="no">824 </span>     * @return the StringBuffer with the rendered Options contents. 
+<span class="no">825 </span>     */ 
+<span class="no">826 </span>    protected StringBuffer renderWrappedText(StringBuffer sb, int width,  
+<span class="no">827 </span>                                             int nextLineTabStop, String text) 
+<span class="no">828 </span>    { 
+<span class="no">829 </span>        int pos = findWrapPos(text, width, 0); 
+<span class="no">830 </span> 
+<span class="no">831 </span>        if (pos == -1) 
+<span class="no">832 </span>        { 
+<span class="no">833 </span>            sb.append(rtrim(text)); 
+<span class="no">834 </span> 
+<span class="no">835 </span>            return sb; 
+<span class="no">836 </span>        } 
+<span class="no">837 </span>        sb.append(rtrim(text.substring(0, pos))).append(defaultNewLine); 
+<span class="no">838 </span> 
+<span class="no">839 </span>        // all following lines must be padded with nextLineTabStop space  
+<span class="no">840 </span>        // characters 
+<span class="no">841 </span>        final String padding = createPadding(nextLineTabStop); 
+<span class="no">842 </span> 
+<span class="no">843 </span>        while (true) 
+<span class="no">844 </span>        { 
+<span class="no">845 </span>            text = padding + text.substring(pos).trim(); 
+<span class="no">846 </span>            pos = findWrapPos(text, width, 0); 
+<span class="no">847 </span> 
+<span class="no">848 </span>            if (pos == -1) 
+<span class="no">849 </span>            { 
+<span class="no">850 </span>                sb.append(text); 
+<span class="no">851 </span> 
+<span class="no">852 </span>                return sb; 
+<span class="no">853 </span>            } 
+<span class="no">854 </span> 
+<span class="no">855 </span>            sb.append(rtrim(text.substring(0, pos))).append(defaultNewLine); 
+<span class="no">856 </span>        } 
+<span class="no">857 </span>    } 
+<span class="no">858 </span> 
+<span class="no">859 </span>    /** 
+<span class="no">860 </span>     * Finds the next text wrap position after &lt;code&gt;startPos&lt;/code&gt; for the  
+<span class="no">861 </span>     * text in &lt;code&gt;text&lt;/code&gt; with the column width &lt;code&gt;width&lt;/code&gt;. 
+<span class="no">862 </span>     * The wrap point is the last postion before startPos+width having a  
+<span class="no">863 </span>     * whitespace character (space, \n, \r). 
+<span class="no">864 </span>     * 
+<span class="no">865 </span>     * @param text The text being searched for the wrap position 
+<span class="no">866 </span>     * @param width width of the wrapped text 
+<span class="no">867 </span>     * @param startPos position from which to start the lookup whitespace  
+<span class="no">868 </span>     * character 
+<span class="no">869 </span>     * @return postion on which the text must be wrapped or -1 if the wrap  
+<span class="no">870 </span>     * position is at the end of the text 
+<span class="no">871 </span>     */ 
+<span class="no">872 </span>    protected int findWrapPos(String text, int width, int startPos) 
+<span class="no">873 </span>    { 
+<span class="no">874 </span>        int pos = -1; 
+<span class="no">875 </span> 
+<span class="no">876 </span>        // the line ends before the max wrap pos or a new line char found 
+<span class="no">877 </span>        if (((pos = text.indexOf(&apos;\n&apos;, startPos)) != -1 &amp;&amp; pos &lt;= width) 
+<span class="no">878 </span>            || ((pos = text.indexOf(&apos;\t&apos;, startPos)) != -1 &amp;&amp; pos &lt;= width)) 
+<span class="no">879 </span>        { 
+<span class="no">880 </span>            return pos+1; 
+<span class="no">881 </span>        } 
+<span class="no">882 </span>        else if ((startPos + width) &gt;= text.length()) 
+<span class="no">883 </span>        { 
+<span class="no">884 </span>            return -1; 
+<span class="no">885 </span>        } 
+<span class="no">886 </span> 
+<span class="no">887 </span> 
+<span class="no">888 </span>        // look for the last whitespace character before startPos+width 
+<span class="no">889 </span>        pos = startPos + width; 
+<span class="no">890 </span> 
+<span class="no">891 </span>        char c; 
+<span class="no">892 </span> 
+<span class="no">893 </span>        while ((pos &gt;= startPos) &amp;&amp; ((c = text.charAt(pos)) != &apos; &apos;) 
+<span class="no">894 </span>               &amp;&amp; (c != &apos;\n&apos;) &amp;&amp; (c != &apos;\r&apos;)) 
+<span class="no">895 </span>        { 
+<span class="no">896 </span>            --pos; 
+<span class="no">897 </span>        } 
+<span class="no">898 </span> 
+<span class="no">899 </span>        // if we found it - just return 
+<span class="no">900 </span>        if (pos &gt; startPos) 
+<span class="no">901 </span>        { 
+<span class="no">902 </span>            return pos; 
+<span class="no">903 </span>        } 
+<span class="no">904 </span>         
+<span class="no">905 </span>        // must look for the first whitespace chearacter after startPos  
+<span class="no">906 </span>        // + width 
+<span class="no">907 </span>        pos = startPos + width; 
+<span class="no">908 </span> 
+<span class="no">909 </span>        while ((pos &lt;= text.length()) &amp;&amp; ((c = text.charAt(pos)) != &apos; &apos;) 
+<span class="no">910 </span>               &amp;&amp; (c != &apos;\n&apos;) &amp;&amp; (c != &apos;\r&apos;)) 
+<span class="no">911 </span>        { 
+<span class="no">912 </span>            ++pos; 
+<span class="no">913 </span>        } 
+<span class="no">914 </span> 
+<span class="no">915 </span>        return (pos == text.length())        ? (-1) : pos; 
+<span class="no">916 </span>    } 
+<span class="no">917 </span> 
+<span class="no">918 </span>    /** 
+<span class="no">919 </span>     * &lt;p&gt;Return a String of padding of length &lt;code&gt;len&lt;/code&gt;.&lt;/p&gt; 
+<span class="no">920 </span>     * 
+<span class="no">921 </span>     * @param len The length of the String of padding to create. 
+<span class="no">922 </span>     * 
+<span class="no">923 </span>     * @return The String of padding 
+<span class="no">924 </span>     */ 
+<span class="no">925 </span>    protected String createPadding(int len) 
+<span class="no">926 </span>    { 
+<span class="no">927 </span>        StringBuffer sb = new StringBuffer(len); 
+<span class="no">928 </span> 
+<span class="no">929 </span>        for (int i = 0; i &lt; len; ++i) 
+<span class="no">930 </span>        { 
+<span class="no">931 </span>            sb.append(&apos; &apos;); 
+<span class="no">932 </span>        } 
+<span class="no">933 </span> 
+<span class="no">934 </span>        return sb.toString(); 
+<span class="no">935 </span>    } 
+<span class="no">936 </span> 
+<span class="no">937 </span>    /** 
+<span class="no">938 </span>     * &lt;p&gt;Remove the trailing whitespace from the specified String.&lt;/p&gt; 
+<span class="no">939 </span>     * 
+<span class="no">940 </span>     * @param s The String to remove the trailing padding from. 
+<span class="no">941 </span>     * 
+<span class="no">942 </span>     * @return The String of without the trailing padding 
+<span class="no">943 </span>     */ 
+<span class="no">944 </span>    protected String rtrim(String s) 
+<span class="no">945 </span>    { 
+<span class="no">946 </span>        if ((s == null) || (s.length() == 0)) 
+<span class="no">947 </span>        { 
+<span class="no">948 </span>            return s; 
+<span class="no">949 </span>        } 
+<span class="no">950 </span> 
+<span class="no">951 </span>        int pos = s.length(); 
+<span class="no">952 </span> 
+<span class="no">953 </span>        while ((pos &gt; 0) &amp;&amp; Character.isWhitespace(s.charAt(pos - 1))) 
+<span class="no">954 </span>        { 
+<span class="no">955 </span>            --pos; 
+<span class="no">956 </span>        } 
+<span class="no">957 </span> 
+<span class="no">958 </span>        return s.substring(0, pos); 
+<span class="no">959 </span>    } 
+<span class="no">960 </span> 
+<span class="no">961 </span>    // ------------------------------------------------------ Package protected 
+<span class="no">962 </span>    // ---------------------------------------------------------------- Private 
+<span class="no">963 </span>    // ---------------------------------------------------------- Inner classes 
+<span class="no">964 </span>    /** 
+<span class="no">965 </span>     * &lt;p&gt;This class implements the &lt;code&gt;Comparator&lt;/code&gt; interface 
+<span class="no">966 </span>     * for comparing Options.&lt;/p&gt; 
+<span class="no">967 </span>     */ 
+<span class="no">968 </span>    private static class OptionComparator 
+<span class="no">969 </span>        implements Comparator { 
+<span class="no">970 </span> 
+<span class="no">971 </span>        /** 
+<span class="no">972 </span>         * &lt;p&gt;Compares its two arguments for order. Returns a negative  
+<span class="no">973 </span>         * integer, zero, or a positive integer as the first argument  
+<span class="no">974 </span>         * is less than, equal to, or greater than the second.&lt;/p&gt; 
+<span class="no">975 </span>         * 
+<span class="no">976 </span>         * @param o1 The first Option to be compared. 
+<span class="no">977 </span>         * @param o2 The second Option to be compared. 
+<span class="no">978 </span>         * 
+<span class="no">979 </span>         * @return a negative integer, zero, or a positive integer as  
+<span class="no">980 </span>         * the first argument is less than, equal to, or greater than the  
+<span class="no">981 </span>         * second. 
+<span class="no">982 </span>         */ 
+<span class="no">983 </span>        public int compare(Object o1, Object o2) 
+<span class="no">984 </span>        { 
+<span class="no">985 </span>            Option opt1 = (Option)o1; 
+<span class="no">986 </span>            Option opt2 = (Option)o2; 
+<span class="no">987 </span> 
+<span class="no">988 </span>            return opt1.getKey().compareToIgnoreCase(opt2.getKey()); 
+<span class="no">989 </span>        } 
+<span class="no">990 </span>    } 
+<span class="no">991 </span>} 
+<span class="no">992 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

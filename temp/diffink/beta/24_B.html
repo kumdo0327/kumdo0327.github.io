@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .grid {
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    height: calc(100vh - 186px);
+    min-height: 252px;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .panel, .edit {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-width: 0;
+    flex-direction: column;
+    border: 1px solid #afafaf;
+  }
+  .page:has(#n2:target) .en2 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#p2:target) .ep2 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .codebox {
+    letter-spacing: 0.05em;
+    overflow: auto;
+    background: #f7f7f7;
+    padding: 4px;
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+    scroll-behavior: smooth;
+    scroll-padding-top: 54px;
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .edit {
+    height: 60px;
+    font-size: 14px;
+  }
+  .editbox {
+    min-height: 0;
+    font-size: 14px;
+    overflow: auto;
+    background: #f7f7f7;
+    line-height: 1.8;
+    flex: 1;
+    font-weight: 500;
+    padding: 4px 8px;
+  }
+  pre {
+    margin: 0;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .no {
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    letter-spacing: normal;
+    padding-bottom: 0.15em;
+  }
+  .page:has(#p1:target) .ep1 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .i1, .i2 {
+    display: none;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+  .page {
+    max-width: 100vw;
+    padding: 0 12px 8px 12px;
+    margin: 0 auto;
+  }
+  .ins, .del, .mov, .upd {
+    border-top:  0.05em solid black;
+    border-bottom:  0.05em solid black;
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    padding-bottom: 0.05em;
+  }
+  .token {
+    color: #017100;
+  }
+  .panel-header {
+    display: flex;
+    background: #ebebeb;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    padding: 8px 10px;
+    font-weight: bold;
+  }
+  .page:has(#n1:target) .en1 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .sec {
+    font-weight: bold;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+    padding: 0;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .toolbar {
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n2">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n2">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> ,</a>: <span class=token>&quot;,&quot;</span> [32, 66] - [32, 67]
+<span style="font-weight:600">  into   </span><a href="#p1"> argument_list</a> [31, 46] - [32, 76]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n2"> keyword_argument</a> [32, 68] - [32, 75]
+<span style="font-weight:600">  into           </span><a href="#p2"> argument_list</a> [31, 46] - [32, 76]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">24_B (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no"> 1 </span>&quot;&quot;&quot; 
+<span class="no"> 2 </span>================================== 
+<span class="no"> 3 </span>Colormap Normalizations Symlognorm 
+<span class="no"> 4 </span>================================== 
+<span class="no"> 5 </span> 
+<span class="no"> 6 </span>Demonstration of using norm to map colormaps onto data in non-linear ways. 
+<span class="no"> 7 </span>&quot;&quot;&quot; 
+<span class="no"> 8 </span> 
+<span class="no"> 9 </span>import numpy as np 
+<span class="no">10 </span>import matplotlib.pyplot as plt 
+<span class="no">11 </span>import matplotlib.colors as colors 
+<span class="no">12 </span> 
+<span class="no">13 </span>&quot;&quot;&quot; 
+<span class="no">14 </span>SymLogNorm: two humps, one negative and one positive, The positive 
+<span class="no">15 </span>with 5-times the amplitude. Linearly, you cannot see detail in the 
+<span class="no">16 </span>negative hump.  Here we logarithmically scale the positive and 
+<span class="no">17 </span>negative data separately. 
+<span class="no">18 </span> 
+<span class="no">19 </span>Note that colorbar labels do not come out looking very good. 
+<span class="no">20 </span>&quot;&quot;&quot; 
+<span class="no">21 </span> 
+<span class="no">22 </span>N = 100 
+<span class="no">23 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no">24 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no">25 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
+<span class="no">26 </span>Z = (Z1 - Z2) * 2 
+<span class="no">27 </span> 
+<span class="no">28 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no">29 </span> 
+<span class="no">30 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
+<span class="no">31 </span>                       norm=colors.SymLogNorm(linthresh=0.03, linscale=0.03, 
+<span class="no">32 </span>                                              vmin=-1.0, vmax=1.0), 
+<span class="no">33 </span>                       cmap=&apos;RdBu_r&apos;) 
+<span class="no">34 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
+<span class="no">35 </span> 
+<span class="no">36 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
+<span class="no">37 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
+<span class="no">38 </span> 
+<span class="no">39 </span>plt.show() 
+<span class="no">40 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">24_B (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no"> 1 </span>&quot;&quot;&quot; 
+<span class="no"> 2 </span>================================== 
+<span class="no"> 3 </span>Colormap Normalizations Symlognorm 
+<span class="no"> 4 </span>================================== 
+<span class="no"> 5 </span> 
+<span class="no"> 6 </span>Demonstration of using norm to map colormaps onto data in non-linear ways. 
+<span class="no"> 7 </span>&quot;&quot;&quot; 
+<span class="no"> 8 </span> 
+<span class="no"> 9 </span>import numpy as np 
+<span class="no">10 </span>import matplotlib.pyplot as plt 
+<span class="no">11 </span>import matplotlib.colors as colors 
+<span class="no">12 </span> 
+<span class="no">13 </span>&quot;&quot;&quot; 
+<span class="no">14 </span>SymLogNorm: two humps, one negative and one positive, The positive 
+<span class="no">15 </span>with 5-times the amplitude. Linearly, you cannot see detail in the 
+<span class="no">16 </span>negative hump.  Here we logarithmically scale the positive and 
+<span class="no">17 </span>negative data separately. 
+<span class="no">18 </span> 
+<span class="no">19 </span>Note that colorbar labels do not come out looking very good. 
+<span class="no">20 </span>&quot;&quot;&quot; 
+<span class="no">21 </span> 
+<span class="no">22 </span>N = 100 
+<span class="no">23 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no">24 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no">25 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
+<span class="no">26 </span>Z = (Z1 - Z2) * 2 
+<span class="no">27 </span> 
+<span class="no">28 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no">29 </span> 
+<span class="no">30 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
+<span class="no">31 </span>                       norm=colors.SymLogNorm<span id="p2" class="ep2"><span id="p1" class="ep1">(linthresh=0.03, linscale=0.03, 
+<span class="no">32 </span>                                              vmin=-1.0, vmax=1.0<span id="n1" class="en1"><a href="#n1" class="ins">,</a></span> <span id="n2" class="en2"><a href="#n2" class="ins">base=10</a></span>)</span></span>, 
+<span class="no">33 </span>                       cmap=&apos;RdBu_r&apos;) 
+<span class="no">34 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
+<span class="no">35 </span> 
+<span class="no">36 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
+<span class="no">37 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
+<span class="no">38 </span> 
+<span class="no">39 </span>plt.show() 
+<span class="no">40 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

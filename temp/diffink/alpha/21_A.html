@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+  .no {
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+    letter-spacing: normal;
+  }
+  .grid {
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    height: calc(100vh - 186px);
+    min-height: 252px;
+  }
+  .token {
+    color: #017100;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .panel, .edit {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-width: 0;
+    flex-direction: column;
+    border: 1px solid #afafaf;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .panel-header {
+    display: flex;
+    padding: 8px 10px;
+    line-height: 1;
+    font-size: 14px;
+    font-weight: bold;
+    justify-content: space-between;
+    align-items: center;
+    background: #ebebeb;
+    border-bottom: 1px solid #afafaf;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .ep2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .codebox {
+    overflow: auto;
+    letter-spacing: 0.05em;
+    scroll-padding-top: 54px;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+    background: #f7f7f7;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page {
+    max-width: 100vw;
+    padding: 0 12px 8px 12px;
+    margin: 0 auto;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .edit {
+    height: 60px;
+    font-size: 14px;
+  }
+  .i1, .i2 {
+    display: none;
+  }
+  .ins, .del, .mov, .upd {
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    padding-bottom: 0.05em;
+    border-top:  0.05em solid black;
+    border-bottom:  0.05em solid black;
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .editbox {
+    min-height: 0;
+    font-size: 14px;
+    overflow: auto;
+    font-weight: 500;
+    line-height: 1.8;
+    flex: 1;
+    background: #f7f7f7;
+    padding: 4px 8px;
+  }
+  pre {
+    margin: 0;
+  }
+  .sec {
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+    font-weight: bold;
+    padding: 0;
+  }
+  .toolbar {
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n2">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n2">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> ,</a>: <span class=token>&quot;,&quot;</span> [101, 66] - [101, 67]
+<span style="font-weight:600">  into   </span><a href="#p1"> argument_list</a> [100, 46] - [101, 76]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n2"> keyword_argument</a> [101, 68] - [101, 75]
+<span style="font-weight:600">  into           </span><a href="#p2"> argument_list</a> [100, 46] - [101, 76]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">21_A (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>&quot;&quot;&quot; 
+<span class="no">  2 </span>Colormap Normalization 
+<span class="no">  3 </span>====================== 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>Objects that use colormaps by default linearly map the colors in the 
+<span class="no">  6 </span>colormap from data values *vmin* to *vmax*.  For example:: 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>    pcm = ax.pcolormesh(x, y, Z, vmin=-1., vmax=1., cmap=&apos;RdBu_r&apos;) 
+<span class="no">  9 </span> 
+<span class="no"> 10 </span>will map the data in *Z* linearly from -1 to +1, so *Z=0* will 
+<span class="no"> 11 </span>give a color at the center of the colormap *RdBu_r* (white in this 
+<span class="no"> 12 </span>case). 
+<span class="no"> 13 </span> 
+<span class="no"> 14 </span>Matplotlib does this mapping in two steps, with a normalization from 
+<span class="no"> 15 </span>the input data to [0, 1] occurring first, and then mapping onto the 
+<span class="no"> 16 </span>indices in the colormap.  Normalizations are classes defined in the 
+<span class="no"> 17 </span>:func:`matplotlib.colors` module.  The default, linear normalization 
+<span class="no"> 18 </span>is :func:`matplotlib.colors.Normalize`. 
+<span class="no"> 19 </span> 
+<span class="no"> 20 </span>Artists that map data to color pass the arguments *vmin* and *vmax* to 
+<span class="no"> 21 </span>construct a :func:`matplotlib.colors.Normalize` instance, then call it: 
+<span class="no"> 22 </span> 
+<span class="no"> 23 </span>.. ipython:: 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>   In [1]: import matplotlib as mpl 
+<span class="no"> 26 </span> 
+<span class="no"> 27 </span>   In [2]: norm = mpl.colors.Normalize(vmin=-1, vmax=1) 
+<span class="no"> 28 </span> 
+<span class="no"> 29 </span>   In [3]: norm(0) 
+<span class="no"> 30 </span>   Out[3]: 0.5 
+<span class="no"> 31 </span> 
+<span class="no"> 32 </span>However, there are sometimes cases where it is useful to map data to 
+<span class="no"> 33 </span>colormaps in a non-linear fashion. 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span>Logarithmic 
+<span class="no"> 36 </span>----------- 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>One of the most common transformations is to plot data by taking its logarithm 
+<span class="no"> 39 </span>(to the base-10).  This transformation is useful to display changes across 
+<span class="no"> 40 </span>disparate scales.  Using `.colors.LogNorm` normalizes the data via 
+<span class="no"> 41 </span>:math:`log_{10}`.  In the example below, there are two bumps, one much smaller 
+<span class="no"> 42 </span>than the other. Using `.colors.LogNorm`, the shape and location of each bump 
+<span class="no"> 43 </span>can clearly be seen: 
+<span class="no"> 44 </span> 
+<span class="no"> 45 </span>&quot;&quot;&quot; 
+<span class="no"> 46 </span>import numpy as np 
+<span class="no"> 47 </span>import matplotlib.pyplot as plt 
+<span class="no"> 48 </span>import matplotlib.colors as colors 
+<span class="no"> 49 </span>import matplotlib.cbook as cbook 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>N = 100 
+<span class="no"> 52 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no"> 53 </span> 
+<span class="no"> 54 </span># A low hump with a spike coming out of the top right.  Needs to have 
+<span class="no"> 55 </span># z/colour axis on a log scale so we see both hump and spike.  linear 
+<span class="no"> 56 </span># scale only shows the spike. 
+<span class="no"> 57 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no"> 58 </span>Z2 = np.exp(-(X * 10)**2 - (Y * 10)**2) 
+<span class="no"> 59 </span>Z = Z1 + 50 * Z2 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>pcm = ax[0].pcolor(X, Y, Z, 
+<span class="no"> 64 </span>                   norm=colors.LogNorm(vmin=Z.min(), vmax=Z.max()), 
+<span class="no"> 65 </span>                   cmap=&apos;PuBu_r&apos;) 
+<span class="no"> 66 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;max&apos;) 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>pcm = ax[1].pcolor(X, Y, Z, cmap=&apos;PuBu_r&apos;) 
+<span class="no"> 69 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;max&apos;) 
+<span class="no"> 70 </span>plt.show() 
+<span class="no"> 71 </span> 
+<span class="no"> 72 </span>############################################################################### 
+<span class="no"> 73 </span># Symmetric logarithmic 
+<span class="no"> 74 </span># --------------------- 
+<span class="no"> 75 </span># 
+<span class="no"> 76 </span># Similarly, it sometimes happens that there is data that is positive 
+<span class="no"> 77 </span># and negative, but we would still like a logarithmic scaling applied to 
+<span class="no"> 78 </span># both.  In this case, the negative numbers are also scaled 
+<span class="no"> 79 </span># logarithmically, and mapped to smaller numbers; e.g., if ``vmin=-vmax``, 
+<span class="no"> 80 </span># then they the negative numbers are mapped from 0 to 0.5 and the 
+<span class="no"> 81 </span># positive from 0.5 to 1. 
+<span class="no"> 82 </span># 
+<span class="no"> 83 </span># Since the logarithm of values close to zero tends toward infinity, a 
+<span class="no"> 84 </span># small range around zero needs to be mapped linearly.  The parameter 
+<span class="no"> 85 </span># *linthresh* allows the user to specify the size of this range 
+<span class="no"> 86 </span># (-*linthresh*, *linthresh*).  The size of this range in the colormap is 
+<span class="no"> 87 </span># set by *linscale*.  When *linscale* == 1.0 (the default), the space used 
+<span class="no"> 88 </span># for the positive and negative halves of the linear range will be equal 
+<span class="no"> 89 </span># to one decade in the logarithmic range. 
+<span class="no"> 90 </span> 
+<span class="no"> 91 </span>N = 100 
+<span class="no"> 92 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no"> 93 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no"> 94 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
+<span class="no"> 95 </span>Z = (Z1 - Z2) * 2 
+<span class="no"> 96 </span> 
+<span class="no"> 97 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
+<span class="no">100 </span>                       norm=colors.SymLogNorm(linthresh=0.03, linscale=0.03, 
+<span class="no">101 </span>                                              vmin=-1.0, vmax=1.0), 
+<span class="no">102 </span>                       cmap=&apos;RdBu_r&apos;) 
+<span class="no">103 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
+<span class="no">104 </span> 
+<span class="no">105 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
+<span class="no">106 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
+<span class="no">107 </span>plt.show() 
+<span class="no">108 </span> 
+<span class="no">109 </span>############################################################################### 
+<span class="no">110 </span># Power-law 
+<span class="no">111 </span># --------- 
+<span class="no">112 </span># 
+<span class="no">113 </span># Sometimes it is useful to remap the colors onto a power-law 
+<span class="no">114 </span># relationship (i.e. :math:`y=x^{\gamma}`, where :math:`\gamma` is the 
+<span class="no">115 </span># power).  For this we use the `.colors.PowerNorm`.  It takes as an 
+<span class="no">116 </span># argument *gamma* (*gamma* == 1.0 will just yield the default linear 
+<span class="no">117 </span># normalization): 
+<span class="no">118 </span># 
+<span class="no">119 </span># .. note:: 
+<span class="no">120 </span># 
+<span class="no">121 </span>#    There should probably be a good reason for plotting the data using 
+<span class="no">122 </span>#    this type of transformation.  Technical viewers are used to linear 
+<span class="no">123 </span>#    and logarithmic axes and data transformations.  Power laws are less 
+<span class="no">124 </span>#    common, and viewers should explicitly be made aware that they have 
+<span class="no">125 </span>#    been used. 
+<span class="no">126 </span> 
+<span class="no">127 </span>N = 100 
+<span class="no">128 </span>X, Y = np.mgrid[0:3:complex(0, N), 0:2:complex(0, N)] 
+<span class="no">129 </span>Z1 = (1 + np.sin(Y * 10.)) * X**2 
+<span class="no">130 </span> 
+<span class="no">131 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no">132 </span> 
+<span class="no">133 </span>pcm = ax[0].pcolormesh(X, Y, Z1, norm=colors.PowerNorm(gamma=0.5), 
+<span class="no">134 </span>                       cmap=&apos;PuBu_r&apos;) 
+<span class="no">135 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;max&apos;) 
+<span class="no">136 </span> 
+<span class="no">137 </span>pcm = ax[1].pcolormesh(X, Y, Z1, cmap=&apos;PuBu_r&apos;) 
+<span class="no">138 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;max&apos;) 
+<span class="no">139 </span>plt.show() 
+<span class="no">140 </span> 
+<span class="no">141 </span>############################################################################### 
+<span class="no">142 </span># Discrete bounds 
+<span class="no">143 </span># --------------- 
+<span class="no">144 </span># 
+<span class="no">145 </span># Another normalization that comes with Matplotlib is `.colors.BoundaryNorm`. 
+<span class="no">146 </span># In addition to *vmin* and *vmax*, this takes as arguments boundaries between 
+<span class="no">147 </span># which data is to be mapped.  The colors are then linearly distributed between 
+<span class="no">148 </span># these &quot;bounds&quot;.  For instance: 
+<span class="no">149 </span># 
+<span class="no">150 </span># .. ipython:: 
+<span class="no">151 </span># 
+<span class="no">152 </span>#   In [2]: import matplotlib.colors as colors 
+<span class="no">153 </span># 
+<span class="no">154 </span>#   In [3]: bounds = np.array([-0.25, -0.125, 0, 0.5, 1]) 
+<span class="no">155 </span># 
+<span class="no">156 </span>#   In [4]: norm = colors.BoundaryNorm(boundaries=bounds, ncolors=4) 
+<span class="no">157 </span># 
+<span class="no">158 </span>#   In [5]: print(norm([-0.2, -0.15, -0.02, 0.3, 0.8, 0.99])) 
+<span class="no">159 </span>#   [0 0 1 2 3 3] 
+<span class="no">160 </span># 
+<span class="no">161 </span># Note: Unlike the other norms, this norm returns values from 0 to *ncolors*-1. 
+<span class="no">162 </span> 
+<span class="no">163 </span>N = 100 
+<span class="no">164 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no">165 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no">166 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
+<span class="no">167 </span>Z = (Z1 - Z2) * 2 
+<span class="no">168 </span> 
+<span class="no">169 </span>fig, ax = plt.subplots(3, 1, figsize=(8, 8)) 
+<span class="no">170 </span>ax = ax.flatten() 
+<span class="no">171 </span># even bounds gives a contour-like effect 
+<span class="no">172 </span>bounds = np.linspace(-1, 1, 10) 
+<span class="no">173 </span>norm = colors.BoundaryNorm(boundaries=bounds, ncolors=256) 
+<span class="no">174 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
+<span class="no">175 </span>                       norm=norm, 
+<span class="no">176 </span>                       cmap=&apos;RdBu_r&apos;) 
+<span class="no">177 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;, orientation=&apos;vertical&apos;) 
+<span class="no">178 </span> 
+<span class="no">179 </span># uneven bounds changes the colormapping: 
+<span class="no">180 </span>bounds = np.array([-0.25, -0.125, 0, 0.5, 1]) 
+<span class="no">181 </span>norm = colors.BoundaryNorm(boundaries=bounds, ncolors=256) 
+<span class="no">182 </span>pcm = ax[1].pcolormesh(X, Y, Z, norm=norm, cmap=&apos;RdBu_r&apos;) 
+<span class="no">183 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;, orientation=&apos;vertical&apos;) 
+<span class="no">184 </span> 
+<span class="no">185 </span>pcm = ax[2].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
+<span class="no">186 </span>fig.colorbar(pcm, ax=ax[2], extend=&apos;both&apos;, orientation=&apos;vertical&apos;) 
+<span class="no">187 </span>plt.show() 
+<span class="no">188 </span> 
+<span class="no">189 </span> 
+<span class="no">190 </span>############################################################################### 
+<span class="no">191 </span># TwoSlopeNorm: Different mapping on either side of a center 
+<span class="no">192 </span># ---------------------------------------------------------- 
+<span class="no">193 </span># 
+<span class="no">194 </span># Sometimes we want to have a different colormap on either side of a 
+<span class="no">195 </span># conceptual center point, and we want those two colormaps to have 
+<span class="no">196 </span># different linear scales.  An example is a topographic map where the land 
+<span class="no">197 </span># and ocean have a center at zero, but land typically has a greater 
+<span class="no">198 </span># elevation range than the water has depth range, and they are often 
+<span class="no">199 </span># represented by a different colormap. 
+<span class="no">200 </span> 
+<span class="no">201 </span>filename = cbook.get_sample_data(&apos;topobathy.npz&apos;, asfileobj=False) 
+<span class="no">202 </span>with np.load(filename) as dem: 
+<span class="no">203 </span>    topo = dem[&apos;topo&apos;] 
+<span class="no">204 </span>    longitude = dem[&apos;longitude&apos;] 
+<span class="no">205 </span>    latitude = dem[&apos;latitude&apos;] 
+<span class="no">206 </span> 
+<span class="no">207 </span>fig, ax = plt.subplots() 
+<span class="no">208 </span># make a colormap that has land and ocean clearly delineated and of the 
+<span class="no">209 </span># same length (256 + 256) 
+<span class="no">210 </span>colors_undersea = plt.cm.terrain(np.linspace(0, 0.17, 256)) 
+<span class="no">211 </span>colors_land = plt.cm.terrain(np.linspace(0.25, 1, 256)) 
+<span class="no">212 </span>all_colors = np.vstack((colors_undersea, colors_land)) 
+<span class="no">213 </span>terrain_map = colors.LinearSegmentedColormap.from_list(&apos;terrain_map&apos;, 
+<span class="no">214 </span>    all_colors) 
+<span class="no">215 </span> 
+<span class="no">216 </span># make the norm:  Note the center is offset so that the land has more 
+<span class="no">217 </span># dynamic range: 
+<span class="no">218 </span>divnorm = colors.TwoSlopeNorm(vmin=-500., vcenter=0, vmax=4000) 
+<span class="no">219 </span> 
+<span class="no">220 </span>pcm = ax.pcolormesh(longitude, latitude, topo, rasterized=True, norm=divnorm, 
+<span class="no">221 </span>    cmap=terrain_map,) 
+<span class="no">222 </span># Simple geographic plot, set aspect ratio beecause distance between lines of 
+<span class="no">223 </span># longitude depends on latitude. 
+<span class="no">224 </span>ax.set_aspect(1 / np.cos(np.deg2rad(49))) 
+<span class="no">225 </span>fig.colorbar(pcm, shrink=0.6) 
+<span class="no">226 </span>plt.show() 
+<span class="no">227 </span> 
+<span class="no">228 </span> 
+<span class="no">229 </span>############################################################################### 
+<span class="no">230 </span># Custom normalization: Manually implement two linear ranges 
+<span class="no">231 </span># ---------------------------------------------------------- 
+<span class="no">232 </span># 
+<span class="no">233 </span># The `.TwoSlopeNorm` described above makes a useful example for 
+<span class="no">234 </span># defining your own norm. 
+<span class="no">235 </span> 
+<span class="no">236 </span>class MidpointNormalize(colors.Normalize): 
+<span class="no">237 </span>    def __init__(self, vmin=None, vmax=None, vcenter=None, clip=False): 
+<span class="no">238 </span>        self.vcenter = vcenter 
+<span class="no">239 </span>        colors.Normalize.__init__(self, vmin, vmax, clip) 
+<span class="no">240 </span> 
+<span class="no">241 </span>    def __call__(self, value, clip=None): 
+<span class="no">242 </span>        # I&apos;m ignoring masked values and all kinds of edge cases to make a 
+<span class="no">243 </span>        # simple example... 
+<span class="no">244 </span>        x, y = [self.vmin, self.vcenter, self.vmax], [0, 0.5, 1] 
+<span class="no">245 </span>        return np.ma.masked_array(np.interp(value, x, y)) 
+<span class="no">246 </span> 
+<span class="no">247 </span> 
+<span class="no">248 </span>fig, ax = plt.subplots() 
+<span class="no">249 </span>midnorm = MidpointNormalize(vmin=-500., vcenter=0, vmax=4000) 
+<span class="no">250 </span> 
+<span class="no">251 </span>pcm = ax.pcolormesh(longitude, latitude, topo, rasterized=True, norm=midnorm, 
+<span class="no">252 </span>    cmap=terrain_map) 
+<span class="no">253 </span>ax.set_aspect(1 / np.cos(np.deg2rad(49))) 
+<span class="no">254 </span>fig.colorbar(pcm, shrink=0.6, extend=&apos;both&apos;) 
+<span class="no">255 </span>plt.show() 
+<span class="no">256 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">21_A (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>&quot;&quot;&quot; 
+<span class="no">  2 </span>Colormap Normalization 
+<span class="no">  3 </span>====================== 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>Objects that use colormaps by default linearly map the colors in the 
+<span class="no">  6 </span>colormap from data values *vmin* to *vmax*.  For example:: 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>    pcm = ax.pcolormesh(x, y, Z, vmin=-1., vmax=1., cmap=&apos;RdBu_r&apos;) 
+<span class="no">  9 </span> 
+<span class="no"> 10 </span>will map the data in *Z* linearly from -1 to +1, so *Z=0* will 
+<span class="no"> 11 </span>give a color at the center of the colormap *RdBu_r* (white in this 
+<span class="no"> 12 </span>case). 
+<span class="no"> 13 </span> 
+<span class="no"> 14 </span>Matplotlib does this mapping in two steps, with a normalization from 
+<span class="no"> 15 </span>the input data to [0, 1] occurring first, and then mapping onto the 
+<span class="no"> 16 </span>indices in the colormap.  Normalizations are classes defined in the 
+<span class="no"> 17 </span>:func:`matplotlib.colors` module.  The default, linear normalization 
+<span class="no"> 18 </span>is :func:`matplotlib.colors.Normalize`. 
+<span class="no"> 19 </span> 
+<span class="no"> 20 </span>Artists that map data to color pass the arguments *vmin* and *vmax* to 
+<span class="no"> 21 </span>construct a :func:`matplotlib.colors.Normalize` instance, then call it: 
+<span class="no"> 22 </span> 
+<span class="no"> 23 </span>.. ipython:: 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>   In [1]: import matplotlib as mpl 
+<span class="no"> 26 </span> 
+<span class="no"> 27 </span>   In [2]: norm = mpl.colors.Normalize(vmin=-1, vmax=1) 
+<span class="no"> 28 </span> 
+<span class="no"> 29 </span>   In [3]: norm(0) 
+<span class="no"> 30 </span>   Out[3]: 0.5 
+<span class="no"> 31 </span> 
+<span class="no"> 32 </span>However, there are sometimes cases where it is useful to map data to 
+<span class="no"> 33 </span>colormaps in a non-linear fashion. 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span>Logarithmic 
+<span class="no"> 36 </span>----------- 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>One of the most common transformations is to plot data by taking its logarithm 
+<span class="no"> 39 </span>(to the base-10).  This transformation is useful to display changes across 
+<span class="no"> 40 </span>disparate scales.  Using `.colors.LogNorm` normalizes the data via 
+<span class="no"> 41 </span>:math:`log_{10}`.  In the example below, there are two bumps, one much smaller 
+<span class="no"> 42 </span>than the other. Using `.colors.LogNorm`, the shape and location of each bump 
+<span class="no"> 43 </span>can clearly be seen: 
+<span class="no"> 44 </span> 
+<span class="no"> 45 </span>&quot;&quot;&quot; 
+<span class="no"> 46 </span>import numpy as np 
+<span class="no"> 47 </span>import matplotlib.pyplot as plt 
+<span class="no"> 48 </span>import matplotlib.colors as colors 
+<span class="no"> 49 </span>import matplotlib.cbook as cbook 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>N = 100 
+<span class="no"> 52 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no"> 53 </span> 
+<span class="no"> 54 </span># A low hump with a spike coming out of the top right.  Needs to have 
+<span class="no"> 55 </span># z/colour axis on a log scale so we see both hump and spike.  linear 
+<span class="no"> 56 </span># scale only shows the spike. 
+<span class="no"> 57 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no"> 58 </span>Z2 = np.exp(-(X * 10)**2 - (Y * 10)**2) 
+<span class="no"> 59 </span>Z = Z1 + 50 * Z2 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>pcm = ax[0].pcolor(X, Y, Z, 
+<span class="no"> 64 </span>                   norm=colors.LogNorm(vmin=Z.min(), vmax=Z.max()), 
+<span class="no"> 65 </span>                   cmap=&apos;PuBu_r&apos;) 
+<span class="no"> 66 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;max&apos;) 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>pcm = ax[1].pcolor(X, Y, Z, cmap=&apos;PuBu_r&apos;) 
+<span class="no"> 69 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;max&apos;) 
+<span class="no"> 70 </span>plt.show() 
+<span class="no"> 71 </span> 
+<span class="no"> 72 </span>############################################################################### 
+<span class="no"> 73 </span># Symmetric logarithmic 
+<span class="no"> 74 </span># --------------------- 
+<span class="no"> 75 </span># 
+<span class="no"> 76 </span># Similarly, it sometimes happens that there is data that is positive 
+<span class="no"> 77 </span># and negative, but we would still like a logarithmic scaling applied to 
+<span class="no"> 78 </span># both.  In this case, the negative numbers are also scaled 
+<span class="no"> 79 </span># logarithmically, and mapped to smaller numbers; e.g., if ``vmin=-vmax``, 
+<span class="no"> 80 </span># then they the negative numbers are mapped from 0 to 0.5 and the 
+<span class="no"> 81 </span># positive from 0.5 to 1. 
+<span class="no"> 82 </span># 
+<span class="no"> 83 </span># Since the logarithm of values close to zero tends toward infinity, a 
+<span class="no"> 84 </span># small range around zero needs to be mapped linearly.  The parameter 
+<span class="no"> 85 </span># *linthresh* allows the user to specify the size of this range 
+<span class="no"> 86 </span># (-*linthresh*, *linthresh*).  The size of this range in the colormap is 
+<span class="no"> 87 </span># set by *linscale*.  When *linscale* == 1.0 (the default), the space used 
+<span class="no"> 88 </span># for the positive and negative halves of the linear range will be equal 
+<span class="no"> 89 </span># to one decade in the logarithmic range. 
+<span class="no"> 90 </span> 
+<span class="no"> 91 </span>N = 100 
+<span class="no"> 92 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no"> 93 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no"> 94 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
+<span class="no"> 95 </span>Z = (Z1 - Z2) * 2 
+<span class="no"> 96 </span> 
+<span class="no"> 97 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
+<span class="no">100 </span>                       norm=colors.SymLogNorm<span id="p2" class="ep2"><span id="p1" class="ep1">(linthresh=0.03, linscale=0.03, 
+<span class="no">101 </span>                                              vmin=-1.0, vmax=1.0<span id="n1" class="en1"><a href="#n1" class="ins">,</a></span> <span id="n2" class="en2"><a href="#n2" class="ins">base=10</a></span>)</span></span>, 
+<span class="no">102 </span>                       cmap=&apos;RdBu_r&apos;) 
+<span class="no">103 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
+<span class="no">104 </span> 
+<span class="no">105 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
+<span class="no">106 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
+<span class="no">107 </span>plt.show() 
+<span class="no">108 </span> 
+<span class="no">109 </span>############################################################################### 
+<span class="no">110 </span># Power-law 
+<span class="no">111 </span># --------- 
+<span class="no">112 </span># 
+<span class="no">113 </span># Sometimes it is useful to remap the colors onto a power-law 
+<span class="no">114 </span># relationship (i.e. :math:`y=x^{\gamma}`, where :math:`\gamma` is the 
+<span class="no">115 </span># power).  For this we use the `.colors.PowerNorm`.  It takes as an 
+<span class="no">116 </span># argument *gamma* (*gamma* == 1.0 will just yield the default linear 
+<span class="no">117 </span># normalization): 
+<span class="no">118 </span># 
+<span class="no">119 </span># .. note:: 
+<span class="no">120 </span># 
+<span class="no">121 </span>#    There should probably be a good reason for plotting the data using 
+<span class="no">122 </span>#    this type of transformation.  Technical viewers are used to linear 
+<span class="no">123 </span>#    and logarithmic axes and data transformations.  Power laws are less 
+<span class="no">124 </span>#    common, and viewers should explicitly be made aware that they have 
+<span class="no">125 </span>#    been used. 
+<span class="no">126 </span> 
+<span class="no">127 </span>N = 100 
+<span class="no">128 </span>X, Y = np.mgrid[0:3:complex(0, N), 0:2:complex(0, N)] 
+<span class="no">129 </span>Z1 = (1 + np.sin(Y * 10.)) * X**2 
+<span class="no">130 </span> 
+<span class="no">131 </span>fig, ax = plt.subplots(2, 1) 
+<span class="no">132 </span> 
+<span class="no">133 </span>pcm = ax[0].pcolormesh(X, Y, Z1, norm=colors.PowerNorm(gamma=0.5), 
+<span class="no">134 </span>                       cmap=&apos;PuBu_r&apos;) 
+<span class="no">135 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;max&apos;) 
+<span class="no">136 </span> 
+<span class="no">137 </span>pcm = ax[1].pcolormesh(X, Y, Z1, cmap=&apos;PuBu_r&apos;) 
+<span class="no">138 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;max&apos;) 
+<span class="no">139 </span>plt.show() 
+<span class="no">140 </span> 
+<span class="no">141 </span>############################################################################### 
+<span class="no">142 </span># Discrete bounds 
+<span class="no">143 </span># --------------- 
+<span class="no">144 </span># 
+<span class="no">145 </span># Another normalization that comes with Matplotlib is `.colors.BoundaryNorm`. 
+<span class="no">146 </span># In addition to *vmin* and *vmax*, this takes as arguments boundaries between 
+<span class="no">147 </span># which data is to be mapped.  The colors are then linearly distributed between 
+<span class="no">148 </span># these &quot;bounds&quot;.  For instance: 
+<span class="no">149 </span># 
+<span class="no">150 </span># .. ipython:: 
+<span class="no">151 </span># 
+<span class="no">152 </span>#   In [2]: import matplotlib.colors as colors 
+<span class="no">153 </span># 
+<span class="no">154 </span>#   In [3]: bounds = np.array([-0.25, -0.125, 0, 0.5, 1]) 
+<span class="no">155 </span># 
+<span class="no">156 </span>#   In [4]: norm = colors.BoundaryNorm(boundaries=bounds, ncolors=4) 
+<span class="no">157 </span># 
+<span class="no">158 </span>#   In [5]: print(norm([-0.2, -0.15, -0.02, 0.3, 0.8, 0.99])) 
+<span class="no">159 </span>#   [0 0 1 2 3 3] 
+<span class="no">160 </span># 
+<span class="no">161 </span># Note: Unlike the other norms, this norm returns values from 0 to *ncolors*-1. 
+<span class="no">162 </span> 
+<span class="no">163 </span>N = 100 
+<span class="no">164 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
+<span class="no">165 </span>Z1 = np.exp(-X**2 - Y**2) 
+<span class="no">166 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
+<span class="no">167 </span>Z = (Z1 - Z2) * 2 
+<span class="no">168 </span> 
+<span class="no">169 </span>fig, ax = plt.subplots(3, 1, figsize=(8, 8)) 
+<span class="no">170 </span>ax = ax.flatten() 
+<span class="no">171 </span># even bounds gives a contour-like effect 
+<span class="no">172 </span>bounds = np.linspace(-1, 1, 10) 
+<span class="no">173 </span>norm = colors.BoundaryNorm(boundaries=bounds, ncolors=256) 
+<span class="no">174 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
+<span class="no">175 </span>                       norm=norm, 
+<span class="no">176 </span>                       cmap=&apos;RdBu_r&apos;) 
+<span class="no">177 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;, orientation=&apos;vertical&apos;) 
+<span class="no">178 </span> 
+<span class="no">179 </span># uneven bounds changes the colormapping: 
+<span class="no">180 </span>bounds = np.array([-0.25, -0.125, 0, 0.5, 1]) 
+<span class="no">181 </span>norm = colors.BoundaryNorm(boundaries=bounds, ncolors=256) 
+<span class="no">182 </span>pcm = ax[1].pcolormesh(X, Y, Z, norm=norm, cmap=&apos;RdBu_r&apos;) 
+<span class="no">183 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;, orientation=&apos;vertical&apos;) 
+<span class="no">184 </span> 
+<span class="no">185 </span>pcm = ax[2].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
+<span class="no">186 </span>fig.colorbar(pcm, ax=ax[2], extend=&apos;both&apos;, orientation=&apos;vertical&apos;) 
+<span class="no">187 </span>plt.show() 
+<span class="no">188 </span> 
+<span class="no">189 </span> 
+<span class="no">190 </span>############################################################################### 
+<span class="no">191 </span># TwoSlopeNorm: Different mapping on either side of a center 
+<span class="no">192 </span># ---------------------------------------------------------- 
+<span class="no">193 </span># 
+<span class="no">194 </span># Sometimes we want to have a different colormap on either side of a 
+<span class="no">195 </span># conceptual center point, and we want those two colormaps to have 
+<span class="no">196 </span># different linear scales.  An example is a topographic map where the land 
+<span class="no">197 </span># and ocean have a center at zero, but land typically has a greater 
+<span class="no">198 </span># elevation range than the water has depth range, and they are often 
+<span class="no">199 </span># represented by a different colormap. 
+<span class="no">200 </span> 
+<span class="no">201 </span>filename = cbook.get_sample_data(&apos;topobathy.npz&apos;, asfileobj=False) 
+<span class="no">202 </span>with np.load(filename) as dem: 
+<span class="no">203 </span>    topo = dem[&apos;topo&apos;] 
+<span class="no">204 </span>    longitude = dem[&apos;longitude&apos;] 
+<span class="no">205 </span>    latitude = dem[&apos;latitude&apos;] 
+<span class="no">206 </span> 
+<span class="no">207 </span>fig, ax = plt.subplots() 
+<span class="no">208 </span># make a colormap that has land and ocean clearly delineated and of the 
+<span class="no">209 </span># same length (256 + 256) 
+<span class="no">210 </span>colors_undersea = plt.cm.terrain(np.linspace(0, 0.17, 256)) 
+<span class="no">211 </span>colors_land = plt.cm.terrain(np.linspace(0.25, 1, 256)) 
+<span class="no">212 </span>all_colors = np.vstack((colors_undersea, colors_land)) 
+<span class="no">213 </span>terrain_map = colors.LinearSegmentedColormap.from_list(&apos;terrain_map&apos;, 
+<span class="no">214 </span>    all_colors) 
+<span class="no">215 </span> 
+<span class="no">216 </span># make the norm:  Note the center is offset so that the land has more 
+<span class="no">217 </span># dynamic range: 
+<span class="no">218 </span>divnorm = colors.TwoSlopeNorm(vmin=-500., vcenter=0, vmax=4000) 
+<span class="no">219 </span> 
+<span class="no">220 </span>pcm = ax.pcolormesh(longitude, latitude, topo, rasterized=True, norm=divnorm, 
+<span class="no">221 </span>    cmap=terrain_map,) 
+<span class="no">222 </span># Simple geographic plot, set aspect ratio beecause distance between lines of 
+<span class="no">223 </span># longitude depends on latitude. 
+<span class="no">224 </span>ax.set_aspect(1 / np.cos(np.deg2rad(49))) 
+<span class="no">225 </span>fig.colorbar(pcm, shrink=0.6) 
+<span class="no">226 </span>plt.show() 
+<span class="no">227 </span> 
+<span class="no">228 </span> 
+<span class="no">229 </span>############################################################################### 
+<span class="no">230 </span># Custom normalization: Manually implement two linear ranges 
+<span class="no">231 </span># ---------------------------------------------------------- 
+<span class="no">232 </span># 
+<span class="no">233 </span># The `.TwoSlopeNorm` described above makes a useful example for 
+<span class="no">234 </span># defining your own norm. 
+<span class="no">235 </span> 
+<span class="no">236 </span>class MidpointNormalize(colors.Normalize): 
+<span class="no">237 </span>    def __init__(self, vmin=None, vmax=None, vcenter=None, clip=False): 
+<span class="no">238 </span>        self.vcenter = vcenter 
+<span class="no">239 </span>        colors.Normalize.__init__(self, vmin, vmax, clip) 
+<span class="no">240 </span> 
+<span class="no">241 </span>    def __call__(self, value, clip=None): 
+<span class="no">242 </span>        # I&apos;m ignoring masked values and all kinds of edge cases to make a 
+<span class="no">243 </span>        # simple example... 
+<span class="no">244 </span>        x, y = [self.vmin, self.vcenter, self.vmax], [0, 0.5, 1] 
+<span class="no">245 </span>        return np.ma.masked_array(np.interp(value, x, y)) 
+<span class="no">246 </span> 
+<span class="no">247 </span> 
+<span class="no">248 </span>fig, ax = plt.subplots() 
+<span class="no">249 </span>midnorm = MidpointNormalize(vmin=-500., vcenter=0, vmax=4000) 
+<span class="no">250 </span> 
+<span class="no">251 </span>pcm = ax.pcolormesh(longitude, latitude, topo, rasterized=True, norm=midnorm, 
+<span class="no">252 </span>    cmap=terrain_map) 
+<span class="no">253 </span>ax.set_aspect(1 / np.cos(np.deg2rad(49))) 
+<span class="no">254 </span>fig.colorbar(pcm, shrink=0.6, extend=&apos;both&apos;) 
+<span class="no">255 </span>plt.show() 
+<span class="no">256 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .page:has(#m1:target) .en1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#m1:target) .em1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#n1:target) .em1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .edit {
+    height: 60px;
+    font-size: 14px;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  pre {
+    margin: 0;
+  }
+  .panel, .edit {
+    display: flex;
+    box-sizing: border-box;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .i1 {
+    display: none;
+  }
+  .page {
+    margin: 0 auto;
+    padding: 0 12px 8px 12px;
+    max-width: 100vw;
+  }
+  .ins, .del, .mov, .upd {
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    padding-bottom: 0.05em;
+    border-top:  0.05em solid black;
+    border-bottom:  0.05em solid black;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    font-weight: bold;
+    padding: 8px 10px;
+    background: #ebebeb;
+  }
+  .token {
+    color: #017100;
+  }
+  .no {
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+  }
+  .sec {
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+    font-weight: bold;
+    padding: 0;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .editbox {
+    overflow: auto;
+    padding: 4px 8px;
+    line-height: 1.8;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 0;
+    background: #f7f7f7;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .codebox {
+    overflow: auto;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+    scroll-padding-top: 54px;
+    letter-spacing: 0.05em;
+    background: #f7f7f7;
+  }
+  .toolbar {
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .page:has(#n1:target) .en1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    height: calc(100vh - 186px);
+    min-height: 252px;
+    min-width: 512px;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n1" data-partner="m1"> string_fragment</a>: <span class=token>&quot;td&quot;</span> [394, 47] - [394, 49]
+<span style="font-weight:600">  to     </span><a href="#m1" data-partner="n1"> string_fragment</a>: <span class=token>&quot;th&quot;</span> [394, 47] - [394, 49]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">8_A (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>package org.jsoup.parser; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import org.jsoup.helper.StringUtil; 
+<span class="no">  4 </span>import org.jsoup.helper.Validate; 
+<span class="no">  5 </span>import org.jsoup.nodes.*; 
+<span class="no">  6 </span>import org.jsoup.select.Elements; 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>import java.util.ArrayList; 
+<span class="no">  9 </span>import java.util.List; 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>/** 
+<span class="no"> 12 </span> * HTML Tree Builder; creates a DOM from Tokens. 
+<span class="no"> 13 </span> */ 
+<span class="no"> 14 </span>public class HtmlTreeBuilder extends TreeBuilder { 
+<span class="no"> 15 </span>    // tag searches 
+<span class="no"> 16 </span>    private static final String[] TagsScriptStyle = new String[]{&quot;script&quot;, &quot;style&quot;}; 
+<span class="no"> 17 </span>    public static final String[] TagsSearchInScope = new String[]{&quot;applet&quot;, &quot;caption&quot;, &quot;html&quot;, &quot;table&quot;, &quot;td&quot;, &quot;th&quot;, &quot;marquee&quot;, &quot;object&quot;}; 
+<span class="no"> 18 </span>    private static final String[] TagSearchList = new String[]{&quot;ol&quot;, &quot;ul&quot;}; 
+<span class="no"> 19 </span>    private static final String[] TagSearchButton = new String[]{&quot;button&quot;}; 
+<span class="no"> 20 </span>    private static final String[] TagSearchTableScope = new String[]{&quot;html&quot;, &quot;table&quot;}; 
+<span class="no"> 21 </span>    private static final String[] TagSearchSelectScope = new String[]{&quot;optgroup&quot;, &quot;option&quot;}; 
+<span class="no"> 22 </span>    private static final String[] TagSearchEndTags = new String[]{&quot;dd&quot;, &quot;dt&quot;, &quot;li&quot;, &quot;option&quot;, &quot;optgroup&quot;, &quot;p&quot;, &quot;rp&quot;, &quot;rt&quot;}; 
+<span class="no"> 23 </span>    private static final String[] TagSearchSpecial = new String[]{&quot;address&quot;, &quot;applet&quot;, &quot;area&quot;, &quot;article&quot;, &quot;aside&quot;, &quot;base&quot;, &quot;basefont&quot;, &quot;bgsound&quot;, 
+<span class="no"> 24 </span>            &quot;blockquote&quot;, &quot;body&quot;, &quot;br&quot;, &quot;button&quot;, &quot;caption&quot;, &quot;center&quot;, &quot;col&quot;, &quot;colgroup&quot;, &quot;command&quot;, &quot;dd&quot;, 
+<span class="no"> 25 </span>            &quot;details&quot;, &quot;dir&quot;, &quot;div&quot;, &quot;dl&quot;, &quot;dt&quot;, &quot;embed&quot;, &quot;fieldset&quot;, &quot;figcaption&quot;, &quot;figure&quot;, &quot;footer&quot;, &quot;form&quot;, 
+<span class="no"> 26 </span>            &quot;frame&quot;, &quot;frameset&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;head&quot;, &quot;header&quot;, &quot;hgroup&quot;, &quot;hr&quot;, &quot;html&quot;, 
+<span class="no"> 27 </span>            &quot;iframe&quot;, &quot;img&quot;, &quot;input&quot;, &quot;isindex&quot;, &quot;li&quot;, &quot;link&quot;, &quot;listing&quot;, &quot;marquee&quot;, &quot;menu&quot;, &quot;meta&quot;, &quot;nav&quot;, 
+<span class="no"> 28 </span>            &quot;noembed&quot;, &quot;noframes&quot;, &quot;noscript&quot;, &quot;object&quot;, &quot;ol&quot;, &quot;p&quot;, &quot;param&quot;, &quot;plaintext&quot;, &quot;pre&quot;, &quot;script&quot;, 
+<span class="no"> 29 </span>            &quot;section&quot;, &quot;select&quot;, &quot;style&quot;, &quot;summary&quot;, &quot;table&quot;, &quot;tbody&quot;, &quot;td&quot;, &quot;textarea&quot;, &quot;tfoot&quot;, &quot;th&quot;, &quot;thead&quot;, 
+<span class="no"> 30 </span>            &quot;title&quot;, &quot;tr&quot;, &quot;ul&quot;, &quot;wbr&quot;, &quot;xmp&quot;}; 
+<span class="no"> 31 </span> 
+<span class="no"> 32 </span>    private HtmlTreeBuilderState state; // the current state 
+<span class="no"> 33 </span>    private HtmlTreeBuilderState originalState; // original / marked state 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span>    private boolean baseUriSetFromDoc = false; 
+<span class="no"> 36 </span>    private Element headElement; // the current head element 
+<span class="no"> 37 </span>    private FormElement formElement; // the current form element 
+<span class="no"> 38 </span>    private Element contextElement; // fragment parse context -- could be null even if fragment parsing 
+<span class="no"> 39 </span>    private ArrayList&lt;Element&gt; formattingElements = new ArrayList&lt;Element&gt;(); // active (open) formatting elements 
+<span class="no"> 40 </span>    private List&lt;String&gt; pendingTableCharacters = new ArrayList&lt;String&gt;(); // chars in table to be shifted out 
+<span class="no"> 41 </span>    private Token.EndTag emptyEnd = new Token.EndTag(); // reused empty end tag 
+<span class="no"> 42 </span> 
+<span class="no"> 43 </span>    private boolean framesetOk = true; // if ok to go into frameset 
+<span class="no"> 44 </span>    private boolean fosterInserts = false; // if next inserts should be fostered 
+<span class="no"> 45 </span>    private boolean fragmentParsing = false; // if parsing a fragment of html 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>    HtmlTreeBuilder() {} 
+<span class="no"> 48 </span> 
+<span class="no"> 49 </span>    @Override 
+<span class="no"> 50 </span>    Document parse(String input, String baseUri, ParseErrorList errors) { 
+<span class="no"> 51 </span>        state = HtmlTreeBuilderState.Initial; 
+<span class="no"> 52 </span>        baseUriSetFromDoc = false; 
+<span class="no"> 53 </span>        return super.parse(input, baseUri, errors); 
+<span class="no"> 54 </span>    } 
+<span class="no"> 55 </span> 
+<span class="no"> 56 </span>    List&lt;Node&gt; parseFragment(String inputFragment, Element context, String baseUri, ParseErrorList errors) { 
+<span class="no"> 57 </span>        // context may be null 
+<span class="no"> 58 </span>        state = HtmlTreeBuilderState.Initial; 
+<span class="no"> 59 </span>        initialiseParse(inputFragment, baseUri, errors); 
+<span class="no"> 60 </span>        contextElement = context; 
+<span class="no"> 61 </span>        fragmentParsing = true; 
+<span class="no"> 62 </span>        Element root = null; 
+<span class="no"> 63 </span> 
+<span class="no"> 64 </span>        if (context != null) { 
+<span class="no"> 65 </span>            if (context.ownerDocument() != null) // quirks setup: 
+<span class="no"> 66 </span>                doc.quirksMode(context.ownerDocument().quirksMode()); 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>            // initialise the tokeniser state: 
+<span class="no"> 69 </span>            String contextTag = context.tagName(); 
+<span class="no"> 70 </span>            if (StringUtil.in(contextTag, &quot;title&quot;, &quot;textarea&quot;)) 
+<span class="no"> 71 </span>                tokeniser.transition(TokeniserState.Rcdata); 
+<span class="no"> 72 </span>            else if (StringUtil.in(contextTag, &quot;iframe&quot;, &quot;noembed&quot;, &quot;noframes&quot;, &quot;style&quot;, &quot;xmp&quot;)) 
+<span class="no"> 73 </span>                tokeniser.transition(TokeniserState.Rawtext); 
+<span class="no"> 74 </span>            else if (contextTag.equals(&quot;script&quot;)) 
+<span class="no"> 75 </span>                tokeniser.transition(TokeniserState.ScriptData); 
+<span class="no"> 76 </span>            else if (contextTag.equals((&quot;noscript&quot;))) 
+<span class="no"> 77 </span>                tokeniser.transition(TokeniserState.Data); // if scripting enabled, rawtext 
+<span class="no"> 78 </span>            else if (contextTag.equals(&quot;plaintext&quot;)) 
+<span class="no"> 79 </span>                tokeniser.transition(TokeniserState.Data); 
+<span class="no"> 80 </span>            else 
+<span class="no"> 81 </span>                tokeniser.transition(TokeniserState.Data); // default 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>            root = new Element(Tag.valueOf(&quot;html&quot;), baseUri); 
+<span class="no"> 84 </span>            doc.appendChild(root); 
+<span class="no"> 85 </span>            stack.add(root); 
+<span class="no"> 86 </span>            resetInsertionMode(); 
+<span class="no"> 87 </span> 
+<span class="no"> 88 </span>            // setup form element to nearest form on context (up ancestor chain). ensures form controls are associated 
+<span class="no"> 89 </span>            // with form correctly 
+<span class="no"> 90 </span>            Elements contextChain = context.parents(); 
+<span class="no"> 91 </span>            contextChain.add(0, context); 
+<span class="no"> 92 </span>            for (Element parent: contextChain) { 
+<span class="no"> 93 </span>                if (parent instanceof FormElement) { 
+<span class="no"> 94 </span>                    formElement = (FormElement) parent; 
+<span class="no"> 95 </span>                    break; 
+<span class="no"> 96 </span>                } 
+<span class="no"> 97 </span>            } 
+<span class="no"> 98 </span>        } 
+<span class="no"> 99 </span> 
+<span class="no">100 </span>        runParser(); 
+<span class="no">101 </span>        if (context != null &amp;&amp; root != null) 
+<span class="no">102 </span>            return root.childNodes(); 
+<span class="no">103 </span>        else 
+<span class="no">104 </span>            return doc.childNodes(); 
+<span class="no">105 </span>    } 
+<span class="no">106 </span> 
+<span class="no">107 </span>    @Override 
+<span class="no">108 </span>    protected boolean process(Token token) { 
+<span class="no">109 </span>        currentToken = token; 
+<span class="no">110 </span>        return this.state.process(token, this); 
+<span class="no">111 </span>    } 
+<span class="no">112 </span> 
+<span class="no">113 </span>    boolean process(Token token, HtmlTreeBuilderState state) { 
+<span class="no">114 </span>        currentToken = token; 
+<span class="no">115 </span>        return state.process(token, this); 
+<span class="no">116 </span>    } 
+<span class="no">117 </span> 
+<span class="no">118 </span>    void transition(HtmlTreeBuilderState state) { 
+<span class="no">119 </span>        this.state = state; 
+<span class="no">120 </span>    } 
+<span class="no">121 </span> 
+<span class="no">122 </span>    HtmlTreeBuilderState state() { 
+<span class="no">123 </span>        return state; 
+<span class="no">124 </span>    } 
+<span class="no">125 </span> 
+<span class="no">126 </span>    void markInsertionMode() { 
+<span class="no">127 </span>        originalState = state; 
+<span class="no">128 </span>    } 
+<span class="no">129 </span> 
+<span class="no">130 </span>    HtmlTreeBuilderState originalState() { 
+<span class="no">131 </span>        return originalState; 
+<span class="no">132 </span>    } 
+<span class="no">133 </span> 
+<span class="no">134 </span>    void framesetOk(boolean framesetOk) { 
+<span class="no">135 </span>        this.framesetOk = framesetOk; 
+<span class="no">136 </span>    } 
+<span class="no">137 </span> 
+<span class="no">138 </span>    boolean framesetOk() { 
+<span class="no">139 </span>        return framesetOk; 
+<span class="no">140 </span>    } 
+<span class="no">141 </span> 
+<span class="no">142 </span>    Document getDocument() { 
+<span class="no">143 </span>        return doc; 
+<span class="no">144 </span>    } 
+<span class="no">145 </span> 
+<span class="no">146 </span>    String getBaseUri() { 
+<span class="no">147 </span>        return baseUri; 
+<span class="no">148 </span>    } 
+<span class="no">149 </span> 
+<span class="no">150 </span>    void maybeSetBaseUri(Element base) { 
+<span class="no">151 </span>        if (baseUriSetFromDoc) // only listen to the first &lt;base href&gt; in parse 
+<span class="no">152 </span>            return; 
+<span class="no">153 </span> 
+<span class="no">154 </span>        String href = base.absUrl(&quot;href&quot;); 
+<span class="no">155 </span>        if (href.length() != 0) { // ignore &lt;base target&gt; etc 
+<span class="no">156 </span>            baseUri = href; 
+<span class="no">157 </span>            baseUriSetFromDoc = true; 
+<span class="no">158 </span>            doc.setBaseUri(href); // set on the doc so doc.createElement(Tag) will get updated base, and to update all descendants 
+<span class="no">159 </span>        } 
+<span class="no">160 </span>    } 
+<span class="no">161 </span> 
+<span class="no">162 </span>    boolean isFragmentParsing() { 
+<span class="no">163 </span>        return fragmentParsing; 
+<span class="no">164 </span>    } 
+<span class="no">165 </span> 
+<span class="no">166 </span>    void error(HtmlTreeBuilderState state) { 
+<span class="no">167 </span>        if (errors.canAddError()) 
+<span class="no">168 </span>            errors.add(new ParseError(reader.pos(), &quot;Unexpected token [%s] when in state [%s]&quot;, currentToken.tokenType(), state)); 
+<span class="no">169 </span>    } 
+<span class="no">170 </span> 
+<span class="no">171 </span>    Element insert(Token.StartTag startTag) { 
+<span class="no">172 </span>        // handle empty unknown tags 
+<span class="no">173 </span>        // when the spec expects an empty tag, will directly hit insertEmpty, so won&apos;t generate this fake end tag. 
+<span class="no">174 </span>        if (startTag.isSelfClosing()) { 
+<span class="no">175 </span>            Element el = insertEmpty(startTag); 
+<span class="no">176 </span>            stack.add(el); 
+<span class="no">177 </span>            tokeniser.transition(TokeniserState.Data); // handles &lt;script /&gt;, otherwise needs breakout steps from script data 
+<span class="no">178 </span>            tokeniser.emit(emptyEnd.reset().name(el.tagName()));  // ensure we get out of whatever state we are in. emitted for yielded processing 
+<span class="no">179 </span>            return el; 
+<span class="no">180 </span>        } 
+<span class="no">181 </span>         
+<span class="no">182 </span>        Element el = new Element(Tag.valueOf(startTag.name()), baseUri, startTag.attributes); 
+<span class="no">183 </span>        insert(el); 
+<span class="no">184 </span>        return el; 
+<span class="no">185 </span>    } 
+<span class="no">186 </span> 
+<span class="no">187 </span>    Element insertStartTag(String startTagName) { 
+<span class="no">188 </span>        Element el = new Element(Tag.valueOf(startTagName), baseUri); 
+<span class="no">189 </span>        insert(el); 
+<span class="no">190 </span>        return el; 
+<span class="no">191 </span>    } 
+<span class="no">192 </span> 
+<span class="no">193 </span>    void insert(Element el) { 
+<span class="no">194 </span>        insertNode(el); 
+<span class="no">195 </span>        stack.add(el); 
+<span class="no">196 </span>    } 
+<span class="no">197 </span> 
+<span class="no">198 </span>    Element insertEmpty(Token.StartTag startTag) { 
+<span class="no">199 </span>        Tag tag = Tag.valueOf(startTag.name()); 
+<span class="no">200 </span>        Element el = new Element(tag, baseUri, startTag.attributes); 
+<span class="no">201 </span>        insertNode(el); 
+<span class="no">202 </span>        if (startTag.isSelfClosing()) { 
+<span class="no">203 </span>            if (tag.isKnownTag()) { 
+<span class="no">204 </span>                if (tag.isSelfClosing()) tokeniser.acknowledgeSelfClosingFlag(); // if not acked, promulagates error 
+<span class="no">205 </span>            } else { 
+<span class="no">206 </span>                // unknown tag, remember this is self closing for output 
+<span class="no">207 </span>                tag.setSelfClosing(); 
+<span class="no">208 </span>                tokeniser.acknowledgeSelfClosingFlag(); // not an distinct error 
+<span class="no">209 </span>            } 
+<span class="no">210 </span>        } 
+<span class="no">211 </span>        return el; 
+<span class="no">212 </span>    } 
+<span class="no">213 </span> 
+<span class="no">214 </span>    FormElement insertForm(Token.StartTag startTag, boolean onStack) { 
+<span class="no">215 </span>        Tag tag = Tag.valueOf(startTag.name()); 
+<span class="no">216 </span>        FormElement el = new FormElement(tag, baseUri, startTag.attributes); 
+<span class="no">217 </span>        setFormElement(el); 
+<span class="no">218 </span>        insertNode(el); 
+<span class="no">219 </span>        if (onStack) 
+<span class="no">220 </span>            stack.add(el); 
+<span class="no">221 </span>        return el; 
+<span class="no">222 </span>    } 
+<span class="no">223 </span> 
+<span class="no">224 </span>    void insert(Token.Comment commentToken) { 
+<span class="no">225 </span>        Comment comment = new Comment(commentToken.getData(), baseUri); 
+<span class="no">226 </span>        insertNode(comment); 
+<span class="no">227 </span>    } 
+<span class="no">228 </span> 
+<span class="no">229 </span>    void insert(Token.Character characterToken) { 
+<span class="no">230 </span>        Node node; 
+<span class="no">231 </span>        // characters in script and style go in as datanodes, not text nodes 
+<span class="no">232 </span>        String tagName = currentElement().tagName(); 
+<span class="no">233 </span>        if (tagName.equals(&quot;script&quot;) || tagName.equals(&quot;style&quot;)) 
+<span class="no">234 </span>            node = new DataNode(characterToken.getData(), baseUri); 
+<span class="no">235 </span>        else 
+<span class="no">236 </span>            node = new TextNode(characterToken.getData(), baseUri); 
+<span class="no">237 </span>        currentElement().appendChild(node); // doesn&apos;t use insertNode, because we don&apos;t foster these; and will always have a stack. 
+<span class="no">238 </span>    } 
+<span class="no">239 </span> 
+<span class="no">240 </span>    private void insertNode(Node node) { 
+<span class="no">241 </span>        // if the stack hasn&apos;t been set up yet, elements (doctype, comments) go into the doc 
+<span class="no">242 </span>        if (stack.size() == 0) 
+<span class="no">243 </span>            doc.appendChild(node); 
+<span class="no">244 </span>        else if (isFosterInserts()) 
+<span class="no">245 </span>            insertInFosterParent(node); 
+<span class="no">246 </span>        else 
+<span class="no">247 </span>            currentElement().appendChild(node); 
+<span class="no">248 </span> 
+<span class="no">249 </span>        // connect form controls to their form element 
+<span class="no">250 </span>        if (node instanceof Element &amp;&amp; ((Element) node).tag().isFormListed()) { 
+<span class="no">251 </span>            if (formElement != null) 
+<span class="no">252 </span>                formElement.addElement((Element) node); 
+<span class="no">253 </span>        } 
+<span class="no">254 </span>    } 
+<span class="no">255 </span> 
+<span class="no">256 </span>    Element pop() { 
+<span class="no">257 </span>        int size = stack.size(); 
+<span class="no">258 </span>        return stack.remove(size-1); 
+<span class="no">259 </span>    } 
+<span class="no">260 </span> 
+<span class="no">261 </span>    void push(Element element) { 
+<span class="no">262 </span>        stack.add(element); 
+<span class="no">263 </span>    } 
+<span class="no">264 </span> 
+<span class="no">265 </span>    ArrayList&lt;Element&gt; getStack() { 
+<span class="no">266 </span>        return stack; 
+<span class="no">267 </span>    } 
+<span class="no">268 </span> 
+<span class="no">269 </span>    boolean onStack(Element el) { 
+<span class="no">270 </span>        return isElementInQueue(stack, el); 
+<span class="no">271 </span>    } 
+<span class="no">272 </span> 
+<span class="no">273 </span>    private boolean isElementInQueue(ArrayList&lt;Element&gt; queue, Element element) { 
+<span class="no">274 </span>        for (int pos = queue.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">275 </span>            Element next = queue.get(pos); 
+<span class="no">276 </span>            if (next == element) { 
+<span class="no">277 </span>                return true; 
+<span class="no">278 </span>            } 
+<span class="no">279 </span>        } 
+<span class="no">280 </span>        return false; 
+<span class="no">281 </span>    } 
+<span class="no">282 </span> 
+<span class="no">283 </span>    Element getFromStack(String elName) { 
+<span class="no">284 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">285 </span>            Element next = stack.get(pos); 
+<span class="no">286 </span>            if (next.nodeName().equals(elName)) { 
+<span class="no">287 </span>                return next; 
+<span class="no">288 </span>            } 
+<span class="no">289 </span>        } 
+<span class="no">290 </span>        return null; 
+<span class="no">291 </span>    } 
+<span class="no">292 </span> 
+<span class="no">293 </span>    boolean removeFromStack(Element el) { 
+<span class="no">294 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">295 </span>            Element next = stack.get(pos); 
+<span class="no">296 </span>            if (next == el) { 
+<span class="no">297 </span>                stack.remove(pos); 
+<span class="no">298 </span>                return true; 
+<span class="no">299 </span>            } 
+<span class="no">300 </span>        } 
+<span class="no">301 </span>        return false; 
+<span class="no">302 </span>    } 
+<span class="no">303 </span> 
+<span class="no">304 </span>    void popStackToClose(String elName) { 
+<span class="no">305 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">306 </span>            Element next = stack.get(pos); 
+<span class="no">307 </span>            stack.remove(pos); 
+<span class="no">308 </span>            if (next.nodeName().equals(elName)) 
+<span class="no">309 </span>                break; 
+<span class="no">310 </span>        } 
+<span class="no">311 </span>    } 
+<span class="no">312 </span> 
+<span class="no">313 </span>    void popStackToClose(String... elNames) { 
+<span class="no">314 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">315 </span>            Element next = stack.get(pos); 
+<span class="no">316 </span>            stack.remove(pos); 
+<span class="no">317 </span>            if (StringUtil.in(next.nodeName(), elNames)) 
+<span class="no">318 </span>                break; 
+<span class="no">319 </span>        } 
+<span class="no">320 </span>    } 
+<span class="no">321 </span> 
+<span class="no">322 </span>    void popStackToBefore(String elName) { 
+<span class="no">323 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">324 </span>            Element next = stack.get(pos); 
+<span class="no">325 </span>            if (next.nodeName().equals(elName)) { 
+<span class="no">326 </span>                break; 
+<span class="no">327 </span>            } else { 
+<span class="no">328 </span>                stack.remove(pos); 
+<span class="no">329 </span>            } 
+<span class="no">330 </span>        } 
+<span class="no">331 </span>    } 
+<span class="no">332 </span> 
+<span class="no">333 </span>    void clearStackToTableContext() { 
+<span class="no">334 </span>        clearStackToContext(&quot;table&quot;); 
+<span class="no">335 </span>    } 
+<span class="no">336 </span> 
+<span class="no">337 </span>    void clearStackToTableBodyContext() { 
+<span class="no">338 </span>        clearStackToContext(&quot;tbody&quot;, &quot;tfoot&quot;, &quot;thead&quot;); 
+<span class="no">339 </span>    } 
+<span class="no">340 </span> 
+<span class="no">341 </span>    void clearStackToTableRowContext() { 
+<span class="no">342 </span>        clearStackToContext(&quot;tr&quot;); 
+<span class="no">343 </span>    } 
+<span class="no">344 </span> 
+<span class="no">345 </span>    private void clearStackToContext(String... nodeNames) { 
+<span class="no">346 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">347 </span>            Element next = stack.get(pos); 
+<span class="no">348 </span>            if (StringUtil.in(next.nodeName(), nodeNames) || next.nodeName().equals(&quot;html&quot;)) 
+<span class="no">349 </span>                break; 
+<span class="no">350 </span>            else 
+<span class="no">351 </span>                stack.remove(pos); 
+<span class="no">352 </span>        } 
+<span class="no">353 </span>    } 
+<span class="no">354 </span> 
+<span class="no">355 </span>    Element aboveOnStack(Element el) { 
+<span class="no">356 </span>        assert onStack(el); 
+<span class="no">357 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">358 </span>            Element next = stack.get(pos); 
+<span class="no">359 </span>            if (next == el) { 
+<span class="no">360 </span>                return stack.get(pos-1); 
+<span class="no">361 </span>            } 
+<span class="no">362 </span>        } 
+<span class="no">363 </span>        return null; 
+<span class="no">364 </span>    } 
+<span class="no">365 </span> 
+<span class="no">366 </span>    void insertOnStackAfter(Element after, Element in) { 
+<span class="no">367 </span>        int i = stack.lastIndexOf(after); 
+<span class="no">368 </span>        Validate.isTrue(i != -1); 
+<span class="no">369 </span>        stack.add(i+1, in); 
+<span class="no">370 </span>    } 
+<span class="no">371 </span> 
+<span class="no">372 </span>    void replaceOnStack(Element out, Element in) { 
+<span class="no">373 </span>        replaceInQueue(stack, out, in); 
+<span class="no">374 </span>    } 
+<span class="no">375 </span> 
+<span class="no">376 </span>    private void replaceInQueue(ArrayList&lt;Element&gt; queue, Element out, Element in) { 
+<span class="no">377 </span>        int i = queue.lastIndexOf(out); 
+<span class="no">378 </span>        Validate.isTrue(i != -1); 
+<span class="no">379 </span>        queue.set(i, in); 
+<span class="no">380 </span>    } 
+<span class="no">381 </span> 
+<span class="no">382 </span>    void resetInsertionMode() { 
+<span class="no">383 </span>        boolean last = false; 
+<span class="no">384 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">385 </span>            Element node = stack.get(pos); 
+<span class="no">386 </span>            if (pos == 0) { 
+<span class="no">387 </span>                last = true; 
+<span class="no">388 </span>                node = contextElement; 
+<span class="no">389 </span>            } 
+<span class="no">390 </span>            String name = node.nodeName(); 
+<span class="no">391 </span>            if (&quot;select&quot;.equals(name)) { 
+<span class="no">392 </span>                transition(HtmlTreeBuilderState.InSelect); 
+<span class="no">393 </span>                break; // frag 
+<span class="no">394 </span>            } else if ((&quot;td&quot;.equals(name) || &quot;<span class="en1" id="n1"><a class="upd" data-partner="#m1" href="#n1">td</a></span>&quot;.equals(name) &amp;&amp; !last)) { 
+<span class="no">395 </span>                transition(HtmlTreeBuilderState.InCell); 
+<span class="no">396 </span>                break; 
+<span class="no">397 </span>            } else if (&quot;tr&quot;.equals(name)) { 
+<span class="no">398 </span>                transition(HtmlTreeBuilderState.InRow); 
+<span class="no">399 </span>                break; 
+<span class="no">400 </span>            } else if (&quot;tbody&quot;.equals(name) || &quot;thead&quot;.equals(name) || &quot;tfoot&quot;.equals(name)) { 
+<span class="no">401 </span>                transition(HtmlTreeBuilderState.InTableBody); 
+<span class="no">402 </span>                break; 
+<span class="no">403 </span>            } else if (&quot;caption&quot;.equals(name)) { 
+<span class="no">404 </span>                transition(HtmlTreeBuilderState.InCaption); 
+<span class="no">405 </span>                break; 
+<span class="no">406 </span>            } else if (&quot;colgroup&quot;.equals(name)) { 
+<span class="no">407 </span>                transition(HtmlTreeBuilderState.InColumnGroup); 
+<span class="no">408 </span>                break; // frag 
+<span class="no">409 </span>            } else if (&quot;table&quot;.equals(name)) { 
+<span class="no">410 </span>                transition(HtmlTreeBuilderState.InTable); 
+<span class="no">411 </span>                break; 
+<span class="no">412 </span>            } else if (&quot;head&quot;.equals(name)) { 
+<span class="no">413 </span>                transition(HtmlTreeBuilderState.InBody); 
+<span class="no">414 </span>                break; // frag 
+<span class="no">415 </span>            } else if (&quot;body&quot;.equals(name)) { 
+<span class="no">416 </span>                transition(HtmlTreeBuilderState.InBody); 
+<span class="no">417 </span>                break; 
+<span class="no">418 </span>            } else if (&quot;frameset&quot;.equals(name)) { 
+<span class="no">419 </span>                transition(HtmlTreeBuilderState.InFrameset); 
+<span class="no">420 </span>                break; // frag 
+<span class="no">421 </span>            } else if (&quot;html&quot;.equals(name)) { 
+<span class="no">422 </span>                transition(HtmlTreeBuilderState.BeforeHead); 
+<span class="no">423 </span>                break; // frag 
+<span class="no">424 </span>            } else if (last) { 
+<span class="no">425 </span>                transition(HtmlTreeBuilderState.InBody); 
+<span class="no">426 </span>                break; // frag 
+<span class="no">427 </span>            } 
+<span class="no">428 </span>        } 
+<span class="no">429 </span>    } 
+<span class="no">430 </span> 
+<span class="no">431 </span>    // todo: tidy up in specific scope methods 
+<span class="no">432 </span>    private String[] specificScopeTarget = {null}; 
+<span class="no">433 </span> 
+<span class="no">434 </span>    private boolean inSpecificScope(String targetName, String[] baseTypes, String[] extraTypes) { 
+<span class="no">435 </span>        specificScopeTarget[0] = targetName; 
+<span class="no">436 </span>        return inSpecificScope(specificScopeTarget, baseTypes, extraTypes); 
+<span class="no">437 </span>    } 
+<span class="no">438 </span> 
+<span class="no">439 </span>    private boolean inSpecificScope(String[] targetNames, String[] baseTypes, String[] extraTypes) { 
+<span class="no">440 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">441 </span>            Element el = stack.get(pos); 
+<span class="no">442 </span>            String elName = el.nodeName(); 
+<span class="no">443 </span>            if (StringUtil.in(elName, targetNames)) 
+<span class="no">444 </span>                return true; 
+<span class="no">445 </span>            if (StringUtil.in(elName, baseTypes)) 
+<span class="no">446 </span>                return false; 
+<span class="no">447 </span>            if (extraTypes != null &amp;&amp; StringUtil.in(elName, extraTypes)) 
+<span class="no">448 </span>                return false; 
+<span class="no">449 </span>        } 
+<span class="no">450 </span>        Validate.fail(&quot;Should not be reachable&quot;); 
+<span class="no">451 </span>        return false; 
+<span class="no">452 </span>    } 
+<span class="no">453 </span> 
+<span class="no">454 </span>    boolean inScope(String[] targetNames) { 
+<span class="no">455 </span>        return inSpecificScope(targetNames, TagsSearchInScope, null); 
+<span class="no">456 </span>    } 
+<span class="no">457 </span> 
+<span class="no">458 </span>    boolean inScope(String targetName) { 
+<span class="no">459 </span>        return inScope(targetName, null); 
+<span class="no">460 </span>    } 
+<span class="no">461 </span> 
+<span class="no">462 </span>    boolean inScope(String targetName, String[] extras) { 
+<span class="no">463 </span>        return inSpecificScope(targetName, TagsSearchInScope, extras); 
+<span class="no">464 </span>        // todo: in mathml namespace: mi, mo, mn, ms, mtext annotation-xml 
+<span class="no">465 </span>        // todo: in svg namespace: forignOjbect, desc, title 
+<span class="no">466 </span>    } 
+<span class="no">467 </span> 
+<span class="no">468 </span>    boolean inListItemScope(String targetName) { 
+<span class="no">469 </span>        return inScope(targetName, TagSearchList); 
+<span class="no">470 </span>    } 
+<span class="no">471 </span> 
+<span class="no">472 </span>    boolean inButtonScope(String targetName) { 
+<span class="no">473 </span>        return inScope(targetName, TagSearchButton); 
+<span class="no">474 </span>    } 
+<span class="no">475 </span> 
+<span class="no">476 </span>    boolean inTableScope(String targetName) { 
+<span class="no">477 </span>        return inSpecificScope(targetName, TagSearchTableScope, null); 
+<span class="no">478 </span>    } 
+<span class="no">479 </span> 
+<span class="no">480 </span>    boolean inSelectScope(String targetName) { 
+<span class="no">481 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">482 </span>            Element el = stack.get(pos); 
+<span class="no">483 </span>            String elName = el.nodeName(); 
+<span class="no">484 </span>            if (elName.equals(targetName)) 
+<span class="no">485 </span>                return true; 
+<span class="no">486 </span>            if (!StringUtil.in(elName, TagSearchSelectScope)) // all elements except 
+<span class="no">487 </span>                return false; 
+<span class="no">488 </span>        } 
+<span class="no">489 </span>        Validate.fail(&quot;Should not be reachable&quot;); 
+<span class="no">490 </span>        return false; 
+<span class="no">491 </span>    } 
+<span class="no">492 </span> 
+<span class="no">493 </span>    void setHeadElement(Element headElement) { 
+<span class="no">494 </span>        this.headElement = headElement; 
+<span class="no">495 </span>    } 
+<span class="no">496 </span> 
+<span class="no">497 </span>    Element getHeadElement() { 
+<span class="no">498 </span>        return headElement; 
+<span class="no">499 </span>    } 
+<span class="no">500 </span> 
+<span class="no">501 </span>    boolean isFosterInserts() { 
+<span class="no">502 </span>        return fosterInserts; 
+<span class="no">503 </span>    } 
+<span class="no">504 </span> 
+<span class="no">505 </span>    void setFosterInserts(boolean fosterInserts) { 
+<span class="no">506 </span>        this.fosterInserts = fosterInserts; 
+<span class="no">507 </span>    } 
+<span class="no">508 </span> 
+<span class="no">509 </span>    FormElement getFormElement() { 
+<span class="no">510 </span>        return formElement; 
+<span class="no">511 </span>    } 
+<span class="no">512 </span> 
+<span class="no">513 </span>    void setFormElement(FormElement formElement) { 
+<span class="no">514 </span>        this.formElement = formElement; 
+<span class="no">515 </span>    } 
+<span class="no">516 </span> 
+<span class="no">517 </span>    void newPendingTableCharacters() { 
+<span class="no">518 </span>        pendingTableCharacters = new ArrayList&lt;String&gt;(); 
+<span class="no">519 </span>    } 
+<span class="no">520 </span> 
+<span class="no">521 </span>    List&lt;String&gt; getPendingTableCharacters() { 
+<span class="no">522 </span>        return pendingTableCharacters; 
+<span class="no">523 </span>    } 
+<span class="no">524 </span> 
+<span class="no">525 </span>    void setPendingTableCharacters(List&lt;String&gt; pendingTableCharacters) { 
+<span class="no">526 </span>        this.pendingTableCharacters = pendingTableCharacters; 
+<span class="no">527 </span>    } 
+<span class="no">528 </span> 
+<span class="no">529 </span>    /** 
+<span class="no">530 </span>     11.2.5.2 Closing elements that have implied end tags&lt;p/&gt; 
+<span class="no">531 </span>     When the steps below require the UA to generate implied end tags, then, while the current node is a dd element, a 
+<span class="no">532 </span>     dt element, an li element, an option element, an optgroup element, a p element, an rp element, or an rt element, 
+<span class="no">533 </span>     the UA must pop the current node off the stack of open elements. 
+<span class="no">534 </span> 
+<span class="no">535 </span>     @param excludeTag If a step requires the UA to generate implied end tags but lists an element to exclude from the 
+<span class="no">536 </span>     process, then the UA must perform the above steps as if that element was not in the above list. 
+<span class="no">537 </span>     */ 
+<span class="no">538 </span>    void generateImpliedEndTags(String excludeTag) { 
+<span class="no">539 </span>        while ((excludeTag != null &amp;&amp; !currentElement().nodeName().equals(excludeTag)) &amp;&amp; 
+<span class="no">540 </span>                StringUtil.in(currentElement().nodeName(), TagSearchEndTags)) 
+<span class="no">541 </span>            pop(); 
+<span class="no">542 </span>    } 
+<span class="no">543 </span> 
+<span class="no">544 </span>    void generateImpliedEndTags() { 
+<span class="no">545 </span>        generateImpliedEndTags(null); 
+<span class="no">546 </span>    } 
+<span class="no">547 </span> 
+<span class="no">548 </span>    boolean isSpecial(Element el) { 
+<span class="no">549 </span>        // todo: mathml&apos;s mi, mo, mn 
+<span class="no">550 </span>        // todo: svg&apos;s foreigObject, desc, title 
+<span class="no">551 </span>        String name = el.nodeName(); 
+<span class="no">552 </span>        return StringUtil.in(name, TagSearchSpecial); 
+<span class="no">553 </span>    } 
+<span class="no">554 </span> 
+<span class="no">555 </span>    Element lastFormattingElement() { 
+<span class="no">556 </span>        return formattingElements.size() &gt; 0 ? formattingElements.get(formattingElements.size()-1) : null; 
+<span class="no">557 </span>    } 
+<span class="no">558 </span> 
+<span class="no">559 </span>    Element removeLastFormattingElement() { 
+<span class="no">560 </span>        int size = formattingElements.size(); 
+<span class="no">561 </span>        if (size &gt; 0) 
+<span class="no">562 </span>            return formattingElements.remove(size-1); 
+<span class="no">563 </span>        else 
+<span class="no">564 </span>            return null; 
+<span class="no">565 </span>    } 
+<span class="no">566 </span> 
+<span class="no">567 </span>    // active formatting elements 
+<span class="no">568 </span>    void pushActiveFormattingElements(Element in) { 
+<span class="no">569 </span>        int numSeen = 0; 
+<span class="no">570 </span>        for (int pos = formattingElements.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">571 </span>            Element el = formattingElements.get(pos); 
+<span class="no">572 </span>            if (el == null) // marker 
+<span class="no">573 </span>                break; 
+<span class="no">574 </span> 
+<span class="no">575 </span>            if (isSameFormattingElement(in, el)) 
+<span class="no">576 </span>                numSeen++; 
+<span class="no">577 </span> 
+<span class="no">578 </span>            if (numSeen == 3) { 
+<span class="no">579 </span>                formattingElements.remove(pos); 
+<span class="no">580 </span>                break; 
+<span class="no">581 </span>            } 
+<span class="no">582 </span>        } 
+<span class="no">583 </span>        formattingElements.add(in); 
+<span class="no">584 </span>    } 
+<span class="no">585 </span> 
+<span class="no">586 </span>    private boolean isSameFormattingElement(Element a, Element b) { 
+<span class="no">587 </span>        // same if: same namespace, tag, and attributes. Element.equals only checks tag, might in future check children 
+<span class="no">588 </span>        return a.nodeName().equals(b.nodeName()) &amp;&amp; 
+<span class="no">589 </span>                // a.namespace().equals(b.namespace()) &amp;&amp; 
+<span class="no">590 </span>                a.attributes().equals(b.attributes()); 
+<span class="no">591 </span>        // todo: namespaces 
+<span class="no">592 </span>    } 
+<span class="no">593 </span> 
+<span class="no">594 </span>    void reconstructFormattingElements() { 
+<span class="no">595 </span>        Element last = lastFormattingElement(); 
+<span class="no">596 </span>        if (last == null || onStack(last)) 
+<span class="no">597 </span>            return; 
+<span class="no">598 </span> 
+<span class="no">599 </span>        Element entry = last; 
+<span class="no">600 </span>        int size = formattingElements.size(); 
+<span class="no">601 </span>        int pos = size - 1; 
+<span class="no">602 </span>        boolean skip = false; 
+<span class="no">603 </span>        while (true) { 
+<span class="no">604 </span>            if (pos == 0) { // step 4. if none before, skip to 8 
+<span class="no">605 </span>                skip = true; 
+<span class="no">606 </span>                break; 
+<span class="no">607 </span>            } 
+<span class="no">608 </span>            entry = formattingElements.get(--pos); // step 5. one earlier than entry 
+<span class="no">609 </span>            if (entry == null || onStack(entry)) // step 6 - neither marker nor on stack 
+<span class="no">610 </span>                break; // jump to 8, else continue back to 4 
+<span class="no">611 </span>        } 
+<span class="no">612 </span>        while(true) { 
+<span class="no">613 </span>            if (!skip) // step 7: on later than entry 
+<span class="no">614 </span>                entry = formattingElements.get(++pos); 
+<span class="no">615 </span>            Validate.notNull(entry); // should not occur, as we break at last element 
+<span class="no">616 </span> 
+<span class="no">617 </span>            // 8. create new element from element, 9 insert into current node, onto stack 
+<span class="no">618 </span>            skip = false; // can only skip increment from 4. 
+<span class="no">619 </span>            Element newEl = insertStartTag(entry.nodeName()); // todo: avoid fostering here? 
+<span class="no">620 </span>            // newEl.namespace(entry.namespace()); // todo: namespaces 
+<span class="no">621 </span>            newEl.attributes().addAll(entry.attributes()); 
+<span class="no">622 </span> 
+<span class="no">623 </span>            // 10. replace entry with new entry 
+<span class="no">624 </span>            formattingElements.set(pos, newEl); 
+<span class="no">625 </span> 
+<span class="no">626 </span>            // 11 
+<span class="no">627 </span>            if (pos == size-1) // if not last entry in list, jump to 7 
+<span class="no">628 </span>                break; 
+<span class="no">629 </span>        } 
+<span class="no">630 </span>    } 
+<span class="no">631 </span> 
+<span class="no">632 </span>    void clearFormattingElementsToLastMarker() { 
+<span class="no">633 </span>        while (!formattingElements.isEmpty()) { 
+<span class="no">634 </span>            Element el = removeLastFormattingElement(); 
+<span class="no">635 </span>            if (el == null) 
+<span class="no">636 </span>                break; 
+<span class="no">637 </span>        } 
+<span class="no">638 </span>    } 
+<span class="no">639 </span> 
+<span class="no">640 </span>    void removeFromActiveFormattingElements(Element el) { 
+<span class="no">641 </span>        for (int pos = formattingElements.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">642 </span>            Element next = formattingElements.get(pos); 
+<span class="no">643 </span>            if (next == el) { 
+<span class="no">644 </span>                formattingElements.remove(pos); 
+<span class="no">645 </span>                break; 
+<span class="no">646 </span>            } 
+<span class="no">647 </span>        } 
+<span class="no">648 </span>    } 
+<span class="no">649 </span> 
+<span class="no">650 </span>    boolean isInActiveFormattingElements(Element el) { 
+<span class="no">651 </span>        return isElementInQueue(formattingElements, el); 
+<span class="no">652 </span>    } 
+<span class="no">653 </span> 
+<span class="no">654 </span>    Element getActiveFormattingElement(String nodeName) { 
+<span class="no">655 </span>        for (int pos = formattingElements.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">656 </span>            Element next = formattingElements.get(pos); 
+<span class="no">657 </span>            if (next == null) // scope marker 
+<span class="no">658 </span>                break; 
+<span class="no">659 </span>            else if (next.nodeName().equals(nodeName)) 
+<span class="no">660 </span>                return next; 
+<span class="no">661 </span>        } 
+<span class="no">662 </span>        return null; 
+<span class="no">663 </span>    } 
+<span class="no">664 </span> 
+<span class="no">665 </span>    void replaceActiveFormattingElement(Element out, Element in) { 
+<span class="no">666 </span>        replaceInQueue(formattingElements, out, in); 
+<span class="no">667 </span>    } 
+<span class="no">668 </span> 
+<span class="no">669 </span>    void insertMarkerToFormattingElements() { 
+<span class="no">670 </span>        formattingElements.add(null); 
+<span class="no">671 </span>    } 
+<span class="no">672 </span> 
+<span class="no">673 </span>    void insertInFosterParent(Node in) { 
+<span class="no">674 </span>        Element fosterParent; 
+<span class="no">675 </span>        Element lastTable = getFromStack(&quot;table&quot;); 
+<span class="no">676 </span>        boolean isLastTableParent = false; 
+<span class="no">677 </span>        if (lastTable != null) { 
+<span class="no">678 </span>            if (lastTable.parent() != null) { 
+<span class="no">679 </span>                fosterParent = lastTable.parent(); 
+<span class="no">680 </span>                isLastTableParent = true; 
+<span class="no">681 </span>            } else 
+<span class="no">682 </span>                fosterParent = aboveOnStack(lastTable); 
+<span class="no">683 </span>        } else { // no table == frag 
+<span class="no">684 </span>            fosterParent = stack.get(0); 
+<span class="no">685 </span>        } 
+<span class="no">686 </span> 
+<span class="no">687 </span>        if (isLastTableParent) { 
+<span class="no">688 </span>            Validate.notNull(lastTable); // last table cannot be null by this point. 
+<span class="no">689 </span>            lastTable.before(in); 
+<span class="no">690 </span>        } 
+<span class="no">691 </span>        else 
+<span class="no">692 </span>            fosterParent.appendChild(in); 
+<span class="no">693 </span>    } 
+<span class="no">694 </span> 
+<span class="no">695 </span>    @Override 
+<span class="no">696 </span>    public String toString() { 
+<span class="no">697 </span>        return &quot;TreeBuilder{&quot; + 
+<span class="no">698 </span>                &quot;currentToken=&quot; + currentToken + 
+<span class="no">699 </span>                &quot;, state=&quot; + state + 
+<span class="no">700 </span>                &quot;, currentElement=&quot; + currentElement() + 
+<span class="no">701 </span>                &apos;}&apos;; 
+<span class="no">702 </span>    } 
+<span class="no">703 </span>} 
+<span class="no">704 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">8_A (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>package org.jsoup.parser; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import org.jsoup.helper.StringUtil; 
+<span class="no">  4 </span>import org.jsoup.helper.Validate; 
+<span class="no">  5 </span>import org.jsoup.nodes.*; 
+<span class="no">  6 </span>import org.jsoup.select.Elements; 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>import java.util.ArrayList; 
+<span class="no">  9 </span>import java.util.List; 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>/** 
+<span class="no"> 12 </span> * HTML Tree Builder; creates a DOM from Tokens. 
+<span class="no"> 13 </span> */ 
+<span class="no"> 14 </span>public class HtmlTreeBuilder extends TreeBuilder { 
+<span class="no"> 15 </span>    // tag searches 
+<span class="no"> 16 </span>    private static final String[] TagsScriptStyle = new String[]{&quot;script&quot;, &quot;style&quot;}; 
+<span class="no"> 17 </span>    public static final String[] TagsSearchInScope = new String[]{&quot;applet&quot;, &quot;caption&quot;, &quot;html&quot;, &quot;table&quot;, &quot;td&quot;, &quot;th&quot;, &quot;marquee&quot;, &quot;object&quot;}; 
+<span class="no"> 18 </span>    private static final String[] TagSearchList = new String[]{&quot;ol&quot;, &quot;ul&quot;}; 
+<span class="no"> 19 </span>    private static final String[] TagSearchButton = new String[]{&quot;button&quot;}; 
+<span class="no"> 20 </span>    private static final String[] TagSearchTableScope = new String[]{&quot;html&quot;, &quot;table&quot;}; 
+<span class="no"> 21 </span>    private static final String[] TagSearchSelectScope = new String[]{&quot;optgroup&quot;, &quot;option&quot;}; 
+<span class="no"> 22 </span>    private static final String[] TagSearchEndTags = new String[]{&quot;dd&quot;, &quot;dt&quot;, &quot;li&quot;, &quot;option&quot;, &quot;optgroup&quot;, &quot;p&quot;, &quot;rp&quot;, &quot;rt&quot;}; 
+<span class="no"> 23 </span>    private static final String[] TagSearchSpecial = new String[]{&quot;address&quot;, &quot;applet&quot;, &quot;area&quot;, &quot;article&quot;, &quot;aside&quot;, &quot;base&quot;, &quot;basefont&quot;, &quot;bgsound&quot;, 
+<span class="no"> 24 </span>            &quot;blockquote&quot;, &quot;body&quot;, &quot;br&quot;, &quot;button&quot;, &quot;caption&quot;, &quot;center&quot;, &quot;col&quot;, &quot;colgroup&quot;, &quot;command&quot;, &quot;dd&quot;, 
+<span class="no"> 25 </span>            &quot;details&quot;, &quot;dir&quot;, &quot;div&quot;, &quot;dl&quot;, &quot;dt&quot;, &quot;embed&quot;, &quot;fieldset&quot;, &quot;figcaption&quot;, &quot;figure&quot;, &quot;footer&quot;, &quot;form&quot;, 
+<span class="no"> 26 </span>            &quot;frame&quot;, &quot;frameset&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;head&quot;, &quot;header&quot;, &quot;hgroup&quot;, &quot;hr&quot;, &quot;html&quot;, 
+<span class="no"> 27 </span>            &quot;iframe&quot;, &quot;img&quot;, &quot;input&quot;, &quot;isindex&quot;, &quot;li&quot;, &quot;link&quot;, &quot;listing&quot;, &quot;marquee&quot;, &quot;menu&quot;, &quot;meta&quot;, &quot;nav&quot;, 
+<span class="no"> 28 </span>            &quot;noembed&quot;, &quot;noframes&quot;, &quot;noscript&quot;, &quot;object&quot;, &quot;ol&quot;, &quot;p&quot;, &quot;param&quot;, &quot;plaintext&quot;, &quot;pre&quot;, &quot;script&quot;, 
+<span class="no"> 29 </span>            &quot;section&quot;, &quot;select&quot;, &quot;style&quot;, &quot;summary&quot;, &quot;table&quot;, &quot;tbody&quot;, &quot;td&quot;, &quot;textarea&quot;, &quot;tfoot&quot;, &quot;th&quot;, &quot;thead&quot;, 
+<span class="no"> 30 </span>            &quot;title&quot;, &quot;tr&quot;, &quot;ul&quot;, &quot;wbr&quot;, &quot;xmp&quot;}; 
+<span class="no"> 31 </span> 
+<span class="no"> 32 </span>    private HtmlTreeBuilderState state; // the current state 
+<span class="no"> 33 </span>    private HtmlTreeBuilderState originalState; // original / marked state 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span>    private boolean baseUriSetFromDoc = false; 
+<span class="no"> 36 </span>    private Element headElement; // the current head element 
+<span class="no"> 37 </span>    private FormElement formElement; // the current form element 
+<span class="no"> 38 </span>    private Element contextElement; // fragment parse context -- could be null even if fragment parsing 
+<span class="no"> 39 </span>    private ArrayList&lt;Element&gt; formattingElements = new ArrayList&lt;Element&gt;(); // active (open) formatting elements 
+<span class="no"> 40 </span>    private List&lt;String&gt; pendingTableCharacters = new ArrayList&lt;String&gt;(); // chars in table to be shifted out 
+<span class="no"> 41 </span>    private Token.EndTag emptyEnd = new Token.EndTag(); // reused empty end tag 
+<span class="no"> 42 </span> 
+<span class="no"> 43 </span>    private boolean framesetOk = true; // if ok to go into frameset 
+<span class="no"> 44 </span>    private boolean fosterInserts = false; // if next inserts should be fostered 
+<span class="no"> 45 </span>    private boolean fragmentParsing = false; // if parsing a fragment of html 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>    HtmlTreeBuilder() {} 
+<span class="no"> 48 </span> 
+<span class="no"> 49 </span>    @Override 
+<span class="no"> 50 </span>    Document parse(String input, String baseUri, ParseErrorList errors) { 
+<span class="no"> 51 </span>        state = HtmlTreeBuilderState.Initial; 
+<span class="no"> 52 </span>        baseUriSetFromDoc = false; 
+<span class="no"> 53 </span>        return super.parse(input, baseUri, errors); 
+<span class="no"> 54 </span>    } 
+<span class="no"> 55 </span> 
+<span class="no"> 56 </span>    List&lt;Node&gt; parseFragment(String inputFragment, Element context, String baseUri, ParseErrorList errors) { 
+<span class="no"> 57 </span>        // context may be null 
+<span class="no"> 58 </span>        state = HtmlTreeBuilderState.Initial; 
+<span class="no"> 59 </span>        initialiseParse(inputFragment, baseUri, errors); 
+<span class="no"> 60 </span>        contextElement = context; 
+<span class="no"> 61 </span>        fragmentParsing = true; 
+<span class="no"> 62 </span>        Element root = null; 
+<span class="no"> 63 </span> 
+<span class="no"> 64 </span>        if (context != null) { 
+<span class="no"> 65 </span>            if (context.ownerDocument() != null) // quirks setup: 
+<span class="no"> 66 </span>                doc.quirksMode(context.ownerDocument().quirksMode()); 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>            // initialise the tokeniser state: 
+<span class="no"> 69 </span>            String contextTag = context.tagName(); 
+<span class="no"> 70 </span>            if (StringUtil.in(contextTag, &quot;title&quot;, &quot;textarea&quot;)) 
+<span class="no"> 71 </span>                tokeniser.transition(TokeniserState.Rcdata); 
+<span class="no"> 72 </span>            else if (StringUtil.in(contextTag, &quot;iframe&quot;, &quot;noembed&quot;, &quot;noframes&quot;, &quot;style&quot;, &quot;xmp&quot;)) 
+<span class="no"> 73 </span>                tokeniser.transition(TokeniserState.Rawtext); 
+<span class="no"> 74 </span>            else if (contextTag.equals(&quot;script&quot;)) 
+<span class="no"> 75 </span>                tokeniser.transition(TokeniserState.ScriptData); 
+<span class="no"> 76 </span>            else if (contextTag.equals((&quot;noscript&quot;))) 
+<span class="no"> 77 </span>                tokeniser.transition(TokeniserState.Data); // if scripting enabled, rawtext 
+<span class="no"> 78 </span>            else if (contextTag.equals(&quot;plaintext&quot;)) 
+<span class="no"> 79 </span>                tokeniser.transition(TokeniserState.Data); 
+<span class="no"> 80 </span>            else 
+<span class="no"> 81 </span>                tokeniser.transition(TokeniserState.Data); // default 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>            root = new Element(Tag.valueOf(&quot;html&quot;), baseUri); 
+<span class="no"> 84 </span>            doc.appendChild(root); 
+<span class="no"> 85 </span>            stack.add(root); 
+<span class="no"> 86 </span>            resetInsertionMode(); 
+<span class="no"> 87 </span> 
+<span class="no"> 88 </span>            // setup form element to nearest form on context (up ancestor chain). ensures form controls are associated 
+<span class="no"> 89 </span>            // with form correctly 
+<span class="no"> 90 </span>            Elements contextChain = context.parents(); 
+<span class="no"> 91 </span>            contextChain.add(0, context); 
+<span class="no"> 92 </span>            for (Element parent: contextChain) { 
+<span class="no"> 93 </span>                if (parent instanceof FormElement) { 
+<span class="no"> 94 </span>                    formElement = (FormElement) parent; 
+<span class="no"> 95 </span>                    break; 
+<span class="no"> 96 </span>                } 
+<span class="no"> 97 </span>            } 
+<span class="no"> 98 </span>        } 
+<span class="no"> 99 </span> 
+<span class="no">100 </span>        runParser(); 
+<span class="no">101 </span>        if (context != null &amp;&amp; root != null) 
+<span class="no">102 </span>            return root.childNodes(); 
+<span class="no">103 </span>        else 
+<span class="no">104 </span>            return doc.childNodes(); 
+<span class="no">105 </span>    } 
+<span class="no">106 </span> 
+<span class="no">107 </span>    @Override 
+<span class="no">108 </span>    protected boolean process(Token token) { 
+<span class="no">109 </span>        currentToken = token; 
+<span class="no">110 </span>        return this.state.process(token, this); 
+<span class="no">111 </span>    } 
+<span class="no">112 </span> 
+<span class="no">113 </span>    boolean process(Token token, HtmlTreeBuilderState state) { 
+<span class="no">114 </span>        currentToken = token; 
+<span class="no">115 </span>        return state.process(token, this); 
+<span class="no">116 </span>    } 
+<span class="no">117 </span> 
+<span class="no">118 </span>    void transition(HtmlTreeBuilderState state) { 
+<span class="no">119 </span>        this.state = state; 
+<span class="no">120 </span>    } 
+<span class="no">121 </span> 
+<span class="no">122 </span>    HtmlTreeBuilderState state() { 
+<span class="no">123 </span>        return state; 
+<span class="no">124 </span>    } 
+<span class="no">125 </span> 
+<span class="no">126 </span>    void markInsertionMode() { 
+<span class="no">127 </span>        originalState = state; 
+<span class="no">128 </span>    } 
+<span class="no">129 </span> 
+<span class="no">130 </span>    HtmlTreeBuilderState originalState() { 
+<span class="no">131 </span>        return originalState; 
+<span class="no">132 </span>    } 
+<span class="no">133 </span> 
+<span class="no">134 </span>    void framesetOk(boolean framesetOk) { 
+<span class="no">135 </span>        this.framesetOk = framesetOk; 
+<span class="no">136 </span>    } 
+<span class="no">137 </span> 
+<span class="no">138 </span>    boolean framesetOk() { 
+<span class="no">139 </span>        return framesetOk; 
+<span class="no">140 </span>    } 
+<span class="no">141 </span> 
+<span class="no">142 </span>    Document getDocument() { 
+<span class="no">143 </span>        return doc; 
+<span class="no">144 </span>    } 
+<span class="no">145 </span> 
+<span class="no">146 </span>    String getBaseUri() { 
+<span class="no">147 </span>        return baseUri; 
+<span class="no">148 </span>    } 
+<span class="no">149 </span> 
+<span class="no">150 </span>    void maybeSetBaseUri(Element base) { 
+<span class="no">151 </span>        if (baseUriSetFromDoc) // only listen to the first &lt;base href&gt; in parse 
+<span class="no">152 </span>            return; 
+<span class="no">153 </span> 
+<span class="no">154 </span>        String href = base.absUrl(&quot;href&quot;); 
+<span class="no">155 </span>        if (href.length() != 0) { // ignore &lt;base target&gt; etc 
+<span class="no">156 </span>            baseUri = href; 
+<span class="no">157 </span>            baseUriSetFromDoc = true; 
+<span class="no">158 </span>            doc.setBaseUri(href); // set on the doc so doc.createElement(Tag) will get updated base, and to update all descendants 
+<span class="no">159 </span>        } 
+<span class="no">160 </span>    } 
+<span class="no">161 </span> 
+<span class="no">162 </span>    boolean isFragmentParsing() { 
+<span class="no">163 </span>        return fragmentParsing; 
+<span class="no">164 </span>    } 
+<span class="no">165 </span> 
+<span class="no">166 </span>    void error(HtmlTreeBuilderState state) { 
+<span class="no">167 </span>        if (errors.canAddError()) 
+<span class="no">168 </span>            errors.add(new ParseError(reader.pos(), &quot;Unexpected token [%s] when in state [%s]&quot;, currentToken.tokenType(), state)); 
+<span class="no">169 </span>    } 
+<span class="no">170 </span> 
+<span class="no">171 </span>    Element insert(Token.StartTag startTag) { 
+<span class="no">172 </span>        // handle empty unknown tags 
+<span class="no">173 </span>        // when the spec expects an empty tag, will directly hit insertEmpty, so won&apos;t generate this fake end tag. 
+<span class="no">174 </span>        if (startTag.isSelfClosing()) { 
+<span class="no">175 </span>            Element el = insertEmpty(startTag); 
+<span class="no">176 </span>            stack.add(el); 
+<span class="no">177 </span>            tokeniser.transition(TokeniserState.Data); // handles &lt;script /&gt;, otherwise needs breakout steps from script data 
+<span class="no">178 </span>            tokeniser.emit(emptyEnd.reset().name(el.tagName()));  // ensure we get out of whatever state we are in. emitted for yielded processing 
+<span class="no">179 </span>            return el; 
+<span class="no">180 </span>        } 
+<span class="no">181 </span>         
+<span class="no">182 </span>        Element el = new Element(Tag.valueOf(startTag.name()), baseUri, startTag.attributes); 
+<span class="no">183 </span>        insert(el); 
+<span class="no">184 </span>        return el; 
+<span class="no">185 </span>    } 
+<span class="no">186 </span> 
+<span class="no">187 </span>    Element insertStartTag(String startTagName) { 
+<span class="no">188 </span>        Element el = new Element(Tag.valueOf(startTagName), baseUri); 
+<span class="no">189 </span>        insert(el); 
+<span class="no">190 </span>        return el; 
+<span class="no">191 </span>    } 
+<span class="no">192 </span> 
+<span class="no">193 </span>    void insert(Element el) { 
+<span class="no">194 </span>        insertNode(el); 
+<span class="no">195 </span>        stack.add(el); 
+<span class="no">196 </span>    } 
+<span class="no">197 </span> 
+<span class="no">198 </span>    Element insertEmpty(Token.StartTag startTag) { 
+<span class="no">199 </span>        Tag tag = Tag.valueOf(startTag.name()); 
+<span class="no">200 </span>        Element el = new Element(tag, baseUri, startTag.attributes); 
+<span class="no">201 </span>        insertNode(el); 
+<span class="no">202 </span>        if (startTag.isSelfClosing()) { 
+<span class="no">203 </span>            if (tag.isKnownTag()) { 
+<span class="no">204 </span>                if (tag.isSelfClosing()) tokeniser.acknowledgeSelfClosingFlag(); // if not acked, promulagates error 
+<span class="no">205 </span>            } else { 
+<span class="no">206 </span>                // unknown tag, remember this is self closing for output 
+<span class="no">207 </span>                tag.setSelfClosing(); 
+<span class="no">208 </span>                tokeniser.acknowledgeSelfClosingFlag(); // not an distinct error 
+<span class="no">209 </span>            } 
+<span class="no">210 </span>        } 
+<span class="no">211 </span>        return el; 
+<span class="no">212 </span>    } 
+<span class="no">213 </span> 
+<span class="no">214 </span>    FormElement insertForm(Token.StartTag startTag, boolean onStack) { 
+<span class="no">215 </span>        Tag tag = Tag.valueOf(startTag.name()); 
+<span class="no">216 </span>        FormElement el = new FormElement(tag, baseUri, startTag.attributes); 
+<span class="no">217 </span>        setFormElement(el); 
+<span class="no">218 </span>        insertNode(el); 
+<span class="no">219 </span>        if (onStack) 
+<span class="no">220 </span>            stack.add(el); 
+<span class="no">221 </span>        return el; 
+<span class="no">222 </span>    } 
+<span class="no">223 </span> 
+<span class="no">224 </span>    void insert(Token.Comment commentToken) { 
+<span class="no">225 </span>        Comment comment = new Comment(commentToken.getData(), baseUri); 
+<span class="no">226 </span>        insertNode(comment); 
+<span class="no">227 </span>    } 
+<span class="no">228 </span> 
+<span class="no">229 </span>    void insert(Token.Character characterToken) { 
+<span class="no">230 </span>        Node node; 
+<span class="no">231 </span>        // characters in script and style go in as datanodes, not text nodes 
+<span class="no">232 </span>        String tagName = currentElement().tagName(); 
+<span class="no">233 </span>        if (tagName.equals(&quot;script&quot;) || tagName.equals(&quot;style&quot;)) 
+<span class="no">234 </span>            node = new DataNode(characterToken.getData(), baseUri); 
+<span class="no">235 </span>        else 
+<span class="no">236 </span>            node = new TextNode(characterToken.getData(), baseUri); 
+<span class="no">237 </span>        currentElement().appendChild(node); // doesn&apos;t use insertNode, because we don&apos;t foster these; and will always have a stack. 
+<span class="no">238 </span>    } 
+<span class="no">239 </span> 
+<span class="no">240 </span>    private void insertNode(Node node) { 
+<span class="no">241 </span>        // if the stack hasn&apos;t been set up yet, elements (doctype, comments) go into the doc 
+<span class="no">242 </span>        if (stack.size() == 0) 
+<span class="no">243 </span>            doc.appendChild(node); 
+<span class="no">244 </span>        else if (isFosterInserts()) 
+<span class="no">245 </span>            insertInFosterParent(node); 
+<span class="no">246 </span>        else 
+<span class="no">247 </span>            currentElement().appendChild(node); 
+<span class="no">248 </span> 
+<span class="no">249 </span>        // connect form controls to their form element 
+<span class="no">250 </span>        if (node instanceof Element &amp;&amp; ((Element) node).tag().isFormListed()) { 
+<span class="no">251 </span>            if (formElement != null) 
+<span class="no">252 </span>                formElement.addElement((Element) node); 
+<span class="no">253 </span>        } 
+<span class="no">254 </span>    } 
+<span class="no">255 </span> 
+<span class="no">256 </span>    Element pop() { 
+<span class="no">257 </span>        int size = stack.size(); 
+<span class="no">258 </span>        return stack.remove(size-1); 
+<span class="no">259 </span>    } 
+<span class="no">260 </span> 
+<span class="no">261 </span>    void push(Element element) { 
+<span class="no">262 </span>        stack.add(element); 
+<span class="no">263 </span>    } 
+<span class="no">264 </span> 
+<span class="no">265 </span>    ArrayList&lt;Element&gt; getStack() { 
+<span class="no">266 </span>        return stack; 
+<span class="no">267 </span>    } 
+<span class="no">268 </span> 
+<span class="no">269 </span>    boolean onStack(Element el) { 
+<span class="no">270 </span>        return isElementInQueue(stack, el); 
+<span class="no">271 </span>    } 
+<span class="no">272 </span> 
+<span class="no">273 </span>    private boolean isElementInQueue(ArrayList&lt;Element&gt; queue, Element element) { 
+<span class="no">274 </span>        for (int pos = queue.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">275 </span>            Element next = queue.get(pos); 
+<span class="no">276 </span>            if (next == element) { 
+<span class="no">277 </span>                return true; 
+<span class="no">278 </span>            } 
+<span class="no">279 </span>        } 
+<span class="no">280 </span>        return false; 
+<span class="no">281 </span>    } 
+<span class="no">282 </span> 
+<span class="no">283 </span>    Element getFromStack(String elName) { 
+<span class="no">284 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">285 </span>            Element next = stack.get(pos); 
+<span class="no">286 </span>            if (next.nodeName().equals(elName)) { 
+<span class="no">287 </span>                return next; 
+<span class="no">288 </span>            } 
+<span class="no">289 </span>        } 
+<span class="no">290 </span>        return null; 
+<span class="no">291 </span>    } 
+<span class="no">292 </span> 
+<span class="no">293 </span>    boolean removeFromStack(Element el) { 
+<span class="no">294 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">295 </span>            Element next = stack.get(pos); 
+<span class="no">296 </span>            if (next == el) { 
+<span class="no">297 </span>                stack.remove(pos); 
+<span class="no">298 </span>                return true; 
+<span class="no">299 </span>            } 
+<span class="no">300 </span>        } 
+<span class="no">301 </span>        return false; 
+<span class="no">302 </span>    } 
+<span class="no">303 </span> 
+<span class="no">304 </span>    void popStackToClose(String elName) { 
+<span class="no">305 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">306 </span>            Element next = stack.get(pos); 
+<span class="no">307 </span>            stack.remove(pos); 
+<span class="no">308 </span>            if (next.nodeName().equals(elName)) 
+<span class="no">309 </span>                break; 
+<span class="no">310 </span>        } 
+<span class="no">311 </span>    } 
+<span class="no">312 </span> 
+<span class="no">313 </span>    void popStackToClose(String... elNames) { 
+<span class="no">314 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">315 </span>            Element next = stack.get(pos); 
+<span class="no">316 </span>            stack.remove(pos); 
+<span class="no">317 </span>            if (StringUtil.in(next.nodeName(), elNames)) 
+<span class="no">318 </span>                break; 
+<span class="no">319 </span>        } 
+<span class="no">320 </span>    } 
+<span class="no">321 </span> 
+<span class="no">322 </span>    void popStackToBefore(String elName) { 
+<span class="no">323 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">324 </span>            Element next = stack.get(pos); 
+<span class="no">325 </span>            if (next.nodeName().equals(elName)) { 
+<span class="no">326 </span>                break; 
+<span class="no">327 </span>            } else { 
+<span class="no">328 </span>                stack.remove(pos); 
+<span class="no">329 </span>            } 
+<span class="no">330 </span>        } 
+<span class="no">331 </span>    } 
+<span class="no">332 </span> 
+<span class="no">333 </span>    void clearStackToTableContext() { 
+<span class="no">334 </span>        clearStackToContext(&quot;table&quot;); 
+<span class="no">335 </span>    } 
+<span class="no">336 </span> 
+<span class="no">337 </span>    void clearStackToTableBodyContext() { 
+<span class="no">338 </span>        clearStackToContext(&quot;tbody&quot;, &quot;tfoot&quot;, &quot;thead&quot;); 
+<span class="no">339 </span>    } 
+<span class="no">340 </span> 
+<span class="no">341 </span>    void clearStackToTableRowContext() { 
+<span class="no">342 </span>        clearStackToContext(&quot;tr&quot;); 
+<span class="no">343 </span>    } 
+<span class="no">344 </span> 
+<span class="no">345 </span>    private void clearStackToContext(String... nodeNames) { 
+<span class="no">346 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">347 </span>            Element next = stack.get(pos); 
+<span class="no">348 </span>            if (StringUtil.in(next.nodeName(), nodeNames) || next.nodeName().equals(&quot;html&quot;)) 
+<span class="no">349 </span>                break; 
+<span class="no">350 </span>            else 
+<span class="no">351 </span>                stack.remove(pos); 
+<span class="no">352 </span>        } 
+<span class="no">353 </span>    } 
+<span class="no">354 </span> 
+<span class="no">355 </span>    Element aboveOnStack(Element el) { 
+<span class="no">356 </span>        assert onStack(el); 
+<span class="no">357 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">358 </span>            Element next = stack.get(pos); 
+<span class="no">359 </span>            if (next == el) { 
+<span class="no">360 </span>                return stack.get(pos-1); 
+<span class="no">361 </span>            } 
+<span class="no">362 </span>        } 
+<span class="no">363 </span>        return null; 
+<span class="no">364 </span>    } 
+<span class="no">365 </span> 
+<span class="no">366 </span>    void insertOnStackAfter(Element after, Element in) { 
+<span class="no">367 </span>        int i = stack.lastIndexOf(after); 
+<span class="no">368 </span>        Validate.isTrue(i != -1); 
+<span class="no">369 </span>        stack.add(i+1, in); 
+<span class="no">370 </span>    } 
+<span class="no">371 </span> 
+<span class="no">372 </span>    void replaceOnStack(Element out, Element in) { 
+<span class="no">373 </span>        replaceInQueue(stack, out, in); 
+<span class="no">374 </span>    } 
+<span class="no">375 </span> 
+<span class="no">376 </span>    private void replaceInQueue(ArrayList&lt;Element&gt; queue, Element out, Element in) { 
+<span class="no">377 </span>        int i = queue.lastIndexOf(out); 
+<span class="no">378 </span>        Validate.isTrue(i != -1); 
+<span class="no">379 </span>        queue.set(i, in); 
+<span class="no">380 </span>    } 
+<span class="no">381 </span> 
+<span class="no">382 </span>    void resetInsertionMode() { 
+<span class="no">383 </span>        boolean last = false; 
+<span class="no">384 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">385 </span>            Element node = stack.get(pos); 
+<span class="no">386 </span>            if (pos == 0) { 
+<span class="no">387 </span>                last = true; 
+<span class="no">388 </span>                node = contextElement; 
+<span class="no">389 </span>            } 
+<span class="no">390 </span>            String name = node.nodeName(); 
+<span class="no">391 </span>            if (&quot;select&quot;.equals(name)) { 
+<span class="no">392 </span>                transition(HtmlTreeBuilderState.InSelect); 
+<span class="no">393 </span>                break; // frag 
+<span class="no">394 </span>            } else if ((&quot;td&quot;.equals(name) || &quot;<span class="em1" id="m1"><a class="upd" data-partner="#n1" href="#m1">th</a></span>&quot;.equals(name) &amp;&amp; !last)) { 
+<span class="no">395 </span>                transition(HtmlTreeBuilderState.InCell); 
+<span class="no">396 </span>                break; 
+<span class="no">397 </span>            } else if (&quot;tr&quot;.equals(name)) { 
+<span class="no">398 </span>                transition(HtmlTreeBuilderState.InRow); 
+<span class="no">399 </span>                break; 
+<span class="no">400 </span>            } else if (&quot;tbody&quot;.equals(name) || &quot;thead&quot;.equals(name) || &quot;tfoot&quot;.equals(name)) { 
+<span class="no">401 </span>                transition(HtmlTreeBuilderState.InTableBody); 
+<span class="no">402 </span>                break; 
+<span class="no">403 </span>            } else if (&quot;caption&quot;.equals(name)) { 
+<span class="no">404 </span>                transition(HtmlTreeBuilderState.InCaption); 
+<span class="no">405 </span>                break; 
+<span class="no">406 </span>            } else if (&quot;colgroup&quot;.equals(name)) { 
+<span class="no">407 </span>                transition(HtmlTreeBuilderState.InColumnGroup); 
+<span class="no">408 </span>                break; // frag 
+<span class="no">409 </span>            } else if (&quot;table&quot;.equals(name)) { 
+<span class="no">410 </span>                transition(HtmlTreeBuilderState.InTable); 
+<span class="no">411 </span>                break; 
+<span class="no">412 </span>            } else if (&quot;head&quot;.equals(name)) { 
+<span class="no">413 </span>                transition(HtmlTreeBuilderState.InBody); 
+<span class="no">414 </span>                break; // frag 
+<span class="no">415 </span>            } else if (&quot;body&quot;.equals(name)) { 
+<span class="no">416 </span>                transition(HtmlTreeBuilderState.InBody); 
+<span class="no">417 </span>                break; 
+<span class="no">418 </span>            } else if (&quot;frameset&quot;.equals(name)) { 
+<span class="no">419 </span>                transition(HtmlTreeBuilderState.InFrameset); 
+<span class="no">420 </span>                break; // frag 
+<span class="no">421 </span>            } else if (&quot;html&quot;.equals(name)) { 
+<span class="no">422 </span>                transition(HtmlTreeBuilderState.BeforeHead); 
+<span class="no">423 </span>                break; // frag 
+<span class="no">424 </span>            } else if (last) { 
+<span class="no">425 </span>                transition(HtmlTreeBuilderState.InBody); 
+<span class="no">426 </span>                break; // frag 
+<span class="no">427 </span>            } 
+<span class="no">428 </span>        } 
+<span class="no">429 </span>    } 
+<span class="no">430 </span> 
+<span class="no">431 </span>    // todo: tidy up in specific scope methods 
+<span class="no">432 </span>    private String[] specificScopeTarget = {null}; 
+<span class="no">433 </span> 
+<span class="no">434 </span>    private boolean inSpecificScope(String targetName, String[] baseTypes, String[] extraTypes) { 
+<span class="no">435 </span>        specificScopeTarget[0] = targetName; 
+<span class="no">436 </span>        return inSpecificScope(specificScopeTarget, baseTypes, extraTypes); 
+<span class="no">437 </span>    } 
+<span class="no">438 </span> 
+<span class="no">439 </span>    private boolean inSpecificScope(String[] targetNames, String[] baseTypes, String[] extraTypes) { 
+<span class="no">440 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">441 </span>            Element el = stack.get(pos); 
+<span class="no">442 </span>            String elName = el.nodeName(); 
+<span class="no">443 </span>            if (StringUtil.in(elName, targetNames)) 
+<span class="no">444 </span>                return true; 
+<span class="no">445 </span>            if (StringUtil.in(elName, baseTypes)) 
+<span class="no">446 </span>                return false; 
+<span class="no">447 </span>            if (extraTypes != null &amp;&amp; StringUtil.in(elName, extraTypes)) 
+<span class="no">448 </span>                return false; 
+<span class="no">449 </span>        } 
+<span class="no">450 </span>        Validate.fail(&quot;Should not be reachable&quot;); 
+<span class="no">451 </span>        return false; 
+<span class="no">452 </span>    } 
+<span class="no">453 </span> 
+<span class="no">454 </span>    boolean inScope(String[] targetNames) { 
+<span class="no">455 </span>        return inSpecificScope(targetNames, TagsSearchInScope, null); 
+<span class="no">456 </span>    } 
+<span class="no">457 </span> 
+<span class="no">458 </span>    boolean inScope(String targetName) { 
+<span class="no">459 </span>        return inScope(targetName, null); 
+<span class="no">460 </span>    } 
+<span class="no">461 </span> 
+<span class="no">462 </span>    boolean inScope(String targetName, String[] extras) { 
+<span class="no">463 </span>        return inSpecificScope(targetName, TagsSearchInScope, extras); 
+<span class="no">464 </span>        // todo: in mathml namespace: mi, mo, mn, ms, mtext annotation-xml 
+<span class="no">465 </span>        // todo: in svg namespace: forignOjbect, desc, title 
+<span class="no">466 </span>    } 
+<span class="no">467 </span> 
+<span class="no">468 </span>    boolean inListItemScope(String targetName) { 
+<span class="no">469 </span>        return inScope(targetName, TagSearchList); 
+<span class="no">470 </span>    } 
+<span class="no">471 </span> 
+<span class="no">472 </span>    boolean inButtonScope(String targetName) { 
+<span class="no">473 </span>        return inScope(targetName, TagSearchButton); 
+<span class="no">474 </span>    } 
+<span class="no">475 </span> 
+<span class="no">476 </span>    boolean inTableScope(String targetName) { 
+<span class="no">477 </span>        return inSpecificScope(targetName, TagSearchTableScope, null); 
+<span class="no">478 </span>    } 
+<span class="no">479 </span> 
+<span class="no">480 </span>    boolean inSelectScope(String targetName) { 
+<span class="no">481 </span>        for (int pos = stack.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">482 </span>            Element el = stack.get(pos); 
+<span class="no">483 </span>            String elName = el.nodeName(); 
+<span class="no">484 </span>            if (elName.equals(targetName)) 
+<span class="no">485 </span>                return true; 
+<span class="no">486 </span>            if (!StringUtil.in(elName, TagSearchSelectScope)) // all elements except 
+<span class="no">487 </span>                return false; 
+<span class="no">488 </span>        } 
+<span class="no">489 </span>        Validate.fail(&quot;Should not be reachable&quot;); 
+<span class="no">490 </span>        return false; 
+<span class="no">491 </span>    } 
+<span class="no">492 </span> 
+<span class="no">493 </span>    void setHeadElement(Element headElement) { 
+<span class="no">494 </span>        this.headElement = headElement; 
+<span class="no">495 </span>    } 
+<span class="no">496 </span> 
+<span class="no">497 </span>    Element getHeadElement() { 
+<span class="no">498 </span>        return headElement; 
+<span class="no">499 </span>    } 
+<span class="no">500 </span> 
+<span class="no">501 </span>    boolean isFosterInserts() { 
+<span class="no">502 </span>        return fosterInserts; 
+<span class="no">503 </span>    } 
+<span class="no">504 </span> 
+<span class="no">505 </span>    void setFosterInserts(boolean fosterInserts) { 
+<span class="no">506 </span>        this.fosterInserts = fosterInserts; 
+<span class="no">507 </span>    } 
+<span class="no">508 </span> 
+<span class="no">509 </span>    FormElement getFormElement() { 
+<span class="no">510 </span>        return formElement; 
+<span class="no">511 </span>    } 
+<span class="no">512 </span> 
+<span class="no">513 </span>    void setFormElement(FormElement formElement) { 
+<span class="no">514 </span>        this.formElement = formElement; 
+<span class="no">515 </span>    } 
+<span class="no">516 </span> 
+<span class="no">517 </span>    void newPendingTableCharacters() { 
+<span class="no">518 </span>        pendingTableCharacters = new ArrayList&lt;String&gt;(); 
+<span class="no">519 </span>    } 
+<span class="no">520 </span> 
+<span class="no">521 </span>    List&lt;String&gt; getPendingTableCharacters() { 
+<span class="no">522 </span>        return pendingTableCharacters; 
+<span class="no">523 </span>    } 
+<span class="no">524 </span> 
+<span class="no">525 </span>    void setPendingTableCharacters(List&lt;String&gt; pendingTableCharacters) { 
+<span class="no">526 </span>        this.pendingTableCharacters = pendingTableCharacters; 
+<span class="no">527 </span>    } 
+<span class="no">528 </span> 
+<span class="no">529 </span>    /** 
+<span class="no">530 </span>     11.2.5.2 Closing elements that have implied end tags&lt;p/&gt; 
+<span class="no">531 </span>     When the steps below require the UA to generate implied end tags, then, while the current node is a dd element, a 
+<span class="no">532 </span>     dt element, an li element, an option element, an optgroup element, a p element, an rp element, or an rt element, 
+<span class="no">533 </span>     the UA must pop the current node off the stack of open elements. 
+<span class="no">534 </span> 
+<span class="no">535 </span>     @param excludeTag If a step requires the UA to generate implied end tags but lists an element to exclude from the 
+<span class="no">536 </span>     process, then the UA must perform the above steps as if that element was not in the above list. 
+<span class="no">537 </span>     */ 
+<span class="no">538 </span>    void generateImpliedEndTags(String excludeTag) { 
+<span class="no">539 </span>        while ((excludeTag != null &amp;&amp; !currentElement().nodeName().equals(excludeTag)) &amp;&amp; 
+<span class="no">540 </span>                StringUtil.in(currentElement().nodeName(), TagSearchEndTags)) 
+<span class="no">541 </span>            pop(); 
+<span class="no">542 </span>    } 
+<span class="no">543 </span> 
+<span class="no">544 </span>    void generateImpliedEndTags() { 
+<span class="no">545 </span>        generateImpliedEndTags(null); 
+<span class="no">546 </span>    } 
+<span class="no">547 </span> 
+<span class="no">548 </span>    boolean isSpecial(Element el) { 
+<span class="no">549 </span>        // todo: mathml&apos;s mi, mo, mn 
+<span class="no">550 </span>        // todo: svg&apos;s foreigObject, desc, title 
+<span class="no">551 </span>        String name = el.nodeName(); 
+<span class="no">552 </span>        return StringUtil.in(name, TagSearchSpecial); 
+<span class="no">553 </span>    } 
+<span class="no">554 </span> 
+<span class="no">555 </span>    Element lastFormattingElement() { 
+<span class="no">556 </span>        return formattingElements.size() &gt; 0 ? formattingElements.get(formattingElements.size()-1) : null; 
+<span class="no">557 </span>    } 
+<span class="no">558 </span> 
+<span class="no">559 </span>    Element removeLastFormattingElement() { 
+<span class="no">560 </span>        int size = formattingElements.size(); 
+<span class="no">561 </span>        if (size &gt; 0) 
+<span class="no">562 </span>            return formattingElements.remove(size-1); 
+<span class="no">563 </span>        else 
+<span class="no">564 </span>            return null; 
+<span class="no">565 </span>    } 
+<span class="no">566 </span> 
+<span class="no">567 </span>    // active formatting elements 
+<span class="no">568 </span>    void pushActiveFormattingElements(Element in) { 
+<span class="no">569 </span>        int numSeen = 0; 
+<span class="no">570 </span>        for (int pos = formattingElements.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">571 </span>            Element el = formattingElements.get(pos); 
+<span class="no">572 </span>            if (el == null) // marker 
+<span class="no">573 </span>                break; 
+<span class="no">574 </span> 
+<span class="no">575 </span>            if (isSameFormattingElement(in, el)) 
+<span class="no">576 </span>                numSeen++; 
+<span class="no">577 </span> 
+<span class="no">578 </span>            if (numSeen == 3) { 
+<span class="no">579 </span>                formattingElements.remove(pos); 
+<span class="no">580 </span>                break; 
+<span class="no">581 </span>            } 
+<span class="no">582 </span>        } 
+<span class="no">583 </span>        formattingElements.add(in); 
+<span class="no">584 </span>    } 
+<span class="no">585 </span> 
+<span class="no">586 </span>    private boolean isSameFormattingElement(Element a, Element b) { 
+<span class="no">587 </span>        // same if: same namespace, tag, and attributes. Element.equals only checks tag, might in future check children 
+<span class="no">588 </span>        return a.nodeName().equals(b.nodeName()) &amp;&amp; 
+<span class="no">589 </span>                // a.namespace().equals(b.namespace()) &amp;&amp; 
+<span class="no">590 </span>                a.attributes().equals(b.attributes()); 
+<span class="no">591 </span>        // todo: namespaces 
+<span class="no">592 </span>    } 
+<span class="no">593 </span> 
+<span class="no">594 </span>    void reconstructFormattingElements() { 
+<span class="no">595 </span>        Element last = lastFormattingElement(); 
+<span class="no">596 </span>        if (last == null || onStack(last)) 
+<span class="no">597 </span>            return; 
+<span class="no">598 </span> 
+<span class="no">599 </span>        Element entry = last; 
+<span class="no">600 </span>        int size = formattingElements.size(); 
+<span class="no">601 </span>        int pos = size - 1; 
+<span class="no">602 </span>        boolean skip = false; 
+<span class="no">603 </span>        while (true) { 
+<span class="no">604 </span>            if (pos == 0) { // step 4. if none before, skip to 8 
+<span class="no">605 </span>                skip = true; 
+<span class="no">606 </span>                break; 
+<span class="no">607 </span>            } 
+<span class="no">608 </span>            entry = formattingElements.get(--pos); // step 5. one earlier than entry 
+<span class="no">609 </span>            if (entry == null || onStack(entry)) // step 6 - neither marker nor on stack 
+<span class="no">610 </span>                break; // jump to 8, else continue back to 4 
+<span class="no">611 </span>        } 
+<span class="no">612 </span>        while(true) { 
+<span class="no">613 </span>            if (!skip) // step 7: on later than entry 
+<span class="no">614 </span>                entry = formattingElements.get(++pos); 
+<span class="no">615 </span>            Validate.notNull(entry); // should not occur, as we break at last element 
+<span class="no">616 </span> 
+<span class="no">617 </span>            // 8. create new element from element, 9 insert into current node, onto stack 
+<span class="no">618 </span>            skip = false; // can only skip increment from 4. 
+<span class="no">619 </span>            Element newEl = insertStartTag(entry.nodeName()); // todo: avoid fostering here? 
+<span class="no">620 </span>            // newEl.namespace(entry.namespace()); // todo: namespaces 
+<span class="no">621 </span>            newEl.attributes().addAll(entry.attributes()); 
+<span class="no">622 </span> 
+<span class="no">623 </span>            // 10. replace entry with new entry 
+<span class="no">624 </span>            formattingElements.set(pos, newEl); 
+<span class="no">625 </span> 
+<span class="no">626 </span>            // 11 
+<span class="no">627 </span>            if (pos == size-1) // if not last entry in list, jump to 7 
+<span class="no">628 </span>                break; 
+<span class="no">629 </span>        } 
+<span class="no">630 </span>    } 
+<span class="no">631 </span> 
+<span class="no">632 </span>    void clearFormattingElementsToLastMarker() { 
+<span class="no">633 </span>        while (!formattingElements.isEmpty()) { 
+<span class="no">634 </span>            Element el = removeLastFormattingElement(); 
+<span class="no">635 </span>            if (el == null) 
+<span class="no">636 </span>                break; 
+<span class="no">637 </span>        } 
+<span class="no">638 </span>    } 
+<span class="no">639 </span> 
+<span class="no">640 </span>    void removeFromActiveFormattingElements(Element el) { 
+<span class="no">641 </span>        for (int pos = formattingElements.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">642 </span>            Element next = formattingElements.get(pos); 
+<span class="no">643 </span>            if (next == el) { 
+<span class="no">644 </span>                formattingElements.remove(pos); 
+<span class="no">645 </span>                break; 
+<span class="no">646 </span>            } 
+<span class="no">647 </span>        } 
+<span class="no">648 </span>    } 
+<span class="no">649 </span> 
+<span class="no">650 </span>    boolean isInActiveFormattingElements(Element el) { 
+<span class="no">651 </span>        return isElementInQueue(formattingElements, el); 
+<span class="no">652 </span>    } 
+<span class="no">653 </span> 
+<span class="no">654 </span>    Element getActiveFormattingElement(String nodeName) { 
+<span class="no">655 </span>        for (int pos = formattingElements.size() -1; pos &gt;= 0; pos--) { 
+<span class="no">656 </span>            Element next = formattingElements.get(pos); 
+<span class="no">657 </span>            if (next == null) // scope marker 
+<span class="no">658 </span>                break; 
+<span class="no">659 </span>            else if (next.nodeName().equals(nodeName)) 
+<span class="no">660 </span>                return next; 
+<span class="no">661 </span>        } 
+<span class="no">662 </span>        return null; 
+<span class="no">663 </span>    } 
+<span class="no">664 </span> 
+<span class="no">665 </span>    void replaceActiveFormattingElement(Element out, Element in) { 
+<span class="no">666 </span>        replaceInQueue(formattingElements, out, in); 
+<span class="no">667 </span>    } 
+<span class="no">668 </span> 
+<span class="no">669 </span>    void insertMarkerToFormattingElements() { 
+<span class="no">670 </span>        formattingElements.add(null); 
+<span class="no">671 </span>    } 
+<span class="no">672 </span> 
+<span class="no">673 </span>    void insertInFosterParent(Node in) { 
+<span class="no">674 </span>        Element fosterParent; 
+<span class="no">675 </span>        Element lastTable = getFromStack(&quot;table&quot;); 
+<span class="no">676 </span>        boolean isLastTableParent = false; 
+<span class="no">677 </span>        if (lastTable != null) { 
+<span class="no">678 </span>            if (lastTable.parent() != null) { 
+<span class="no">679 </span>                fosterParent = lastTable.parent(); 
+<span class="no">680 </span>                isLastTableParent = true; 
+<span class="no">681 </span>            } else 
+<span class="no">682 </span>                fosterParent = aboveOnStack(lastTable); 
+<span class="no">683 </span>        } else { // no table == frag 
+<span class="no">684 </span>            fosterParent = stack.get(0); 
+<span class="no">685 </span>        } 
+<span class="no">686 </span> 
+<span class="no">687 </span>        if (isLastTableParent) { 
+<span class="no">688 </span>            Validate.notNull(lastTable); // last table cannot be null by this point. 
+<span class="no">689 </span>            lastTable.before(in); 
+<span class="no">690 </span>        } 
+<span class="no">691 </span>        else 
+<span class="no">692 </span>            fosterParent.appendChild(in); 
+<span class="no">693 </span>    } 
+<span class="no">694 </span> 
+<span class="no">695 </span>    @Override 
+<span class="no">696 </span>    public String toString() { 
+<span class="no">697 </span>        return &quot;TreeBuilder{&quot; + 
+<span class="no">698 </span>                &quot;currentToken=&quot; + currentToken + 
+<span class="no">699 </span>                &quot;, state=&quot; + state + 
+<span class="no">700 </span>                &quot;, currentElement=&quot; + currentElement() + 
+<span class="no">701 </span>                &apos;}&apos;; 
+<span class="no">702 </span>    } 
+<span class="no">703 </span>} 
+<span class="no">704 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

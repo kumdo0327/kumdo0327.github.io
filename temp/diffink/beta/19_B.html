@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+  .page:has(#n4:target) .en4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m4:target) .en4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n3:target) .en3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m3:target) .en3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m3:target) .em3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n3:target) .em3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .no {
+    letter-spacing: normal;
+    font-weight: normal;
+    padding-top: 0.15em;
+    color: #878787;
+    padding-bottom: 0.15em;
+    background: #f7f7f7;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .error {
+    color: #b51700;
+  }
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .token {
+    color: #017100;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .page:has(#n5:target) .en5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .ins, .del, .mov, .upd {
+    border-bottom:  0.05em solid black;
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    padding-bottom: 0.05em;
+    border-top:  0.05em solid black;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .page:has(#m5:target) .en5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .grid {
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    height: calc(100vh - 186px);
+    min-height: 252px;
+    display: grid;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  pre {
+    margin: 0;
+  }
+  .editbox {
+    min-height: 0;
+    overflow: auto;
+    font-weight: 500;
+    line-height: 1.8;
+    flex: 1;
+    font-size: 14px;
+    padding: 4px 8px;
+    background: #f7f7f7;
+  }
+  .edit {
+    font-size: 14px;
+    height: 60px;
+  }
+  .codebox {
+    overflow: auto;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+    scroll-padding-top: 54px;
+    background: #f7f7f7;
+    letter-spacing: 0.05em;
+  }
+  .page:has(#m6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#m4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#m4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .sec {
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+    font-weight: bold;
+    padding: 0;
+  }
+  .toolbar {
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+  .panel, .edit {
+    border-radius: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-width: 0;
+    flex-direction: column;
+    display: flex;
+    border: 1px solid #afafaf;
+  }
+  .page {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 0 12px 8px 12px;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#m5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6 {
+    display: none;
+  }
+  .page:has(#m6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .panel-header {
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 1;
+    border-bottom: 1px solid #afafaf;
+    font-weight: bold;
+    display: flex;
+    padding: 8px 10px;
+    background: #ebebeb;
+  }
+  .page:has(#n4:target) .em4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n5:target) .em5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m5:target) .em5 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m4:target) .em4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m6:target) .en6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m6:target) .em6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n6:target) .em6 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    padding-top: 0.05em;
+    color: white;
+    background: #3f3f3f;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+      <span class="i3">Edit #3</span>
+      <span class="i4">Edit #4</span>
+      <span class="i5">Edit #5</span>
+      <span class="i6">Edit #6</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4" data-partner="#m4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5" data-partner="#m5">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4" data-partner="#m4">Prev</a> | <a href="#n6" data-partner="#m6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i6"><a href="#n5" data-partner="#m5">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n1"> declaration</a> [859, 10] - [859, 45]
+<span style="font-weight:600">  into           </span><a href="#p1"> for_statement</a> [859, 5] - [937, 6]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n2" data-partner="m2"> identifier</a>: <span class=token>&quot;arg&quot;</span> [859, 42] - [859, 45]
+<span style="font-weight:600">  to     </span><a href="#m2" data-partner="n2"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [859, 46] - [859, 53]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n3" data-partner="m3"> identifier</a>: <span class=token>&quot;arg&quot;</span> [859, 47] - [859, 50]
+<span style="font-weight:600">  to     </span><a href="#m3" data-partner="n3"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [859, 55] - [859, 62]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n4" data-partner="m4"> declaration</a> [859, 10] - [859, 41]
+<span style="font-weight:600">  to   </span><a href="#m4" data-partner="n4"> declaration</a> [860, 9] - [860, 36]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n5" data-partner="m5"> identifier</a>: <span class=token>&quot;arg&quot;</span> [859, 53] - [859, 56]
+<span style="font-weight:600">  to     </span><a href="#m5" data-partner="n5"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [859, 65] - [859, 72]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n6" data-partner="m6"> identifier</a>: <span class=token>&quot;tokFirstArg&quot;</span> [859, 29] - [859, 40]
+<span style="font-weight:600">  to     </span><a href="#m6" data-partner="n6"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [860, 28] - [860, 35]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">19_B (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">   1 </span>/* 
+<span class="no">   2 </span> * Cppcheck - A tool for static C/C++ code analysis 
+<span class="no">   3 </span> * Copyright (C) 2007-2020 Cppcheck team. 
+<span class="no">   4 </span> * 
+<span class="no">   5 </span> * This program is free software: you can redistribute it and/or modify 
+<span class="no">   6 </span> * it under the terms of the GNU General Public License as published by 
+<span class="no">   7 </span> * the Free Software Foundation, either version 3 of the License, or 
+<span class="no">   8 </span> * (at your option) any later version. 
+<span class="no">   9 </span> * 
+<span class="no">  10 </span> * This program is distributed in the hope that it will be useful, 
+<span class="no">  11 </span> * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+<span class="no">  12 </span> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+<span class="no">  13 </span> * GNU General Public License for more details. 
+<span class="no">  14 </span> * 
+<span class="no">  15 </span> * You should have received a copy of the GNU General Public License 
+<span class="no">  16 </span> * along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;. 
+<span class="no">  17 </span> */ 
+<span class="no">  18 </span> 
+<span class="no">  19 </span>//--------------------------------------------------------------------------- 
+<span class="no">  20 </span>// Leaks when using auto variables 
+<span class="no">  21 </span>//--------------------------------------------------------------------------- 
+<span class="no">  22 </span> 
+<span class="no">  23 </span>#include &quot;checkleakautovar.h&quot; 
+<span class="no">  24 </span> 
+<span class="no">  25 </span>#include &quot;astutils.h&quot; 
+<span class="no">  26 </span>#include &quot;checkmemoryleak.h&quot;  // &lt;- CheckMemoryLeak::memoryLeak 
+<span class="no">  27 </span>#include &quot;checknullpointer.h&quot; // &lt;- CheckNullPointer::isPointerDeRef 
+<span class="no">  28 </span>#include &quot;mathlib.h&quot; 
+<span class="no">  29 </span>#include &quot;settings.h&quot; 
+<span class="no">  30 </span>#include &quot;errortypes.h&quot; 
+<span class="no">  31 </span>#include &quot;symboldatabase.h&quot; 
+<span class="no">  32 </span>#include &quot;token.h&quot; 
+<span class="no">  33 </span>#include &quot;tokenize.h&quot; 
+<span class="no">  34 </span> 
+<span class="no">  35 </span>#include &lt;cstddef&gt; 
+<span class="no">  36 </span>#include &lt;iostream&gt; 
+<span class="no">  37 </span>#include &lt;list&gt; 
+<span class="no">  38 </span>#include &lt;stack&gt; 
+<span class="no">  39 </span>#include &lt;utility&gt; 
+<span class="no">  40 </span> 
+<span class="no">  41 </span>//--------------------------------------------------------------------------- 
+<span class="no">  42 </span> 
+<span class="no">  43 </span>// Register this check class (by creating a static instance of it) 
+<span class="no">  44 </span>namespace { 
+<span class="no">  45 </span>    CheckLeakAutoVar instance; 
+<span class="no">  46 </span>} 
+<span class="no">  47 </span> 
+<span class="no">  48 </span>static const CWE CWE672(672U); 
+<span class="no">  49 </span>static const CWE CWE415(415U); 
+<span class="no">  50 </span> 
+<span class="no">  51 </span>// Hardcoded allocation types (not from library) 
+<span class="no">  52 </span>static const int NEW_ARRAY = -2; 
+<span class="no">  53 </span>static const int NEW = -1; 
+<span class="no">  54 </span> 
+<span class="no">  55 </span> 
+<span class="no">  56 </span>/** 
+<span class="no">  57 </span> * @brief Is variable type some class with automatic deallocation? 
+<span class="no">  58 </span> * @param vartok variable token 
+<span class="no">  59 </span> * @return true unless it can be seen there is no automatic deallocation 
+<span class="no">  60 </span> */ 
+<span class="no">  61 </span>static bool isAutoDealloc(const Variable *var) 
+<span class="no">  62 </span>{ 
+<span class="no">  63 </span>    if (var-&gt;valueType() &amp;&amp; var-&gt;valueType()-&gt;type != ValueType::Type::RECORD &amp;&amp; var-&gt;valueType()-&gt;type != ValueType::Type::UNKNOWN_TYPE) 
+<span class="no">  64 </span>        return false; 
+<span class="no">  65 </span> 
+<span class="no">  66 </span>    // return false if the type is a simple record type without side effects 
+<span class="no">  67 </span>    // a type that has no side effects (no constructors and no members with constructors) 
+<span class="no">  68 </span>    /** @todo false negative: check base class for side effects */ 
+<span class="no">  69 </span>    /** @todo false negative: check constructors for side effects */ 
+<span class="no">  70 </span>    if (var-&gt;typeScope() &amp;&amp; var-&gt;typeScope()-&gt;numConstructors == 0 &amp;&amp; 
+<span class="no">  71 </span>        (var-&gt;typeScope()-&gt;varlist.empty() || var-&gt;type()-&gt;needInitialization == Type::NeedInitialization::True) &amp;&amp; 
+<span class="no">  72 </span>        var-&gt;type()-&gt;derivedFrom.empty()) 
+<span class="no">  73 </span>        return false; 
+<span class="no">  74 </span> 
+<span class="no">  75 </span>    return true; 
+<span class="no">  76 </span>} 
+<span class="no">  77 </span> 
+<span class="no">  78 </span>//--------------------------------------------------------------------------- 
+<span class="no">  79 </span> 
+<span class="no">  80 </span>void VarInfo::print() 
+<span class="no">  81 </span>{ 
+<span class="no">  82 </span>    std::cout &lt;&lt; &quot;size=&quot; &lt;&lt; alloctype.size() &lt;&lt; std::endl; 
+<span class="no">  83 </span>    for (std::map&lt;int, AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) { 
+<span class="no">  84 </span>        std::string strusage; 
+<span class="no">  85 </span>        const std::map&lt;int, std::string&gt;::const_iterator use = 
+<span class="no">  86 </span>            possibleUsage.find(it-&gt;first); 
+<span class="no">  87 </span>        if (use != possibleUsage.end()) 
+<span class="no">  88 </span>            strusage = use-&gt;second; 
+<span class="no">  89 </span> 
+<span class="no">  90 </span>        std::string status; 
+<span class="no">  91 </span>        switch (it-&gt;second.status) { 
+<span class="no">  92 </span>        case OWNED: 
+<span class="no">  93 </span>            status = &quot;owned&quot;; 
+<span class="no">  94 </span>            break; 
+<span class="no">  95 </span>        case DEALLOC: 
+<span class="no">  96 </span>            status = &quot;dealloc&quot;; 
+<span class="no">  97 </span>            break; 
+<span class="no">  98 </span>        case ALLOC: 
+<span class="no">  99 </span>            status = &quot;alloc&quot;; 
+<span class="no"> 100 </span>            break; 
+<span class="no"> 101 </span>        case NOALLOC: 
+<span class="no"> 102 </span>            status = &quot;noalloc&quot;; 
+<span class="no"> 103 </span>            break; 
+<span class="no"> 104 </span>        default: 
+<span class="no"> 105 </span>            status = &quot;?&quot;; 
+<span class="no"> 106 </span>            break; 
+<span class="no"> 107 </span>        } 
+<span class="no"> 108 </span> 
+<span class="no"> 109 </span>        std::cout &lt;&lt; &quot;status=&quot; &lt;&lt; status &lt;&lt; &quot; &quot; 
+<span class="no"> 110 </span>                  &lt;&lt; &quot;alloctype=&apos;&quot; &lt;&lt; it-&gt;second.type &lt;&lt; &quot;&apos; &quot; 
+<span class="no"> 111 </span>                  &lt;&lt; &quot;possibleUsage=&apos;&quot; &lt;&lt; strusage &lt;&lt; &quot;&apos; &quot; 
+<span class="no"> 112 </span>                  &lt;&lt; &quot;conditionalAlloc=&quot; &lt;&lt; (conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end() ? &quot;yes&quot; : &quot;no&quot;) &lt;&lt; &quot; &quot; 
+<span class="no"> 113 </span>                  &lt;&lt; &quot;referenced=&quot; &lt;&lt; (referenced.find(it-&gt;first) != referenced.end() ? &quot;yes&quot; : &quot;no&quot;) &lt;&lt; &quot; &quot; 
+<span class="no"> 114 </span>                  &lt;&lt; std::endl; 
+<span class="no"> 115 </span>    } 
+<span class="no"> 116 </span>} 
+<span class="no"> 117 </span> 
+<span class="no"> 118 </span>void VarInfo::possibleUsageAll(const std::string &amp;functionName) 
+<span class="no"> 119 </span>{ 
+<span class="no"> 120 </span>    possibleUsage.clear(); 
+<span class="no"> 121 </span>    for (std::map&lt;int, AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) 
+<span class="no"> 122 </span>        possibleUsage[it-&gt;first] = functionName; 
+<span class="no"> 123 </span>} 
+<span class="no"> 124 </span> 
+<span class="no"> 125 </span> 
+<span class="no"> 126 </span>void CheckLeakAutoVar::leakError(const Token *tok, const std::string &amp;varname, int type) 
+<span class="no"> 127 </span>{ 
+<span class="no"> 128 </span>    const CheckMemoryLeak checkmemleak(mTokenizer, mErrorLogger, mSettings); 
+<span class="no"> 129 </span>    if (Library::isresource(type)) 
+<span class="no"> 130 </span>        checkmemleak.resourceLeakError(tok, varname); 
+<span class="no"> 131 </span>    else 
+<span class="no"> 132 </span>        checkmemleak.memleakError(tok, varname); 
+<span class="no"> 133 </span>} 
+<span class="no"> 134 </span> 
+<span class="no"> 135 </span>void CheckLeakAutoVar::mismatchError(const Token *deallocTok, const Token *allocTok, const std::string &amp;varname) 
+<span class="no"> 136 </span>{ 
+<span class="no"> 137 </span>    const CheckMemoryLeak c(mTokenizer, mErrorLogger, mSettings); 
+<span class="no"> 138 </span>    const std::list&lt;const Token *&gt; callstack = { allocTok, deallocTok }; 
+<span class="no"> 139 </span>    c.mismatchAllocDealloc(callstack, varname); 
+<span class="no"> 140 </span>} 
+<span class="no"> 141 </span> 
+<span class="no"> 142 </span>void CheckLeakAutoVar::deallocUseError(const Token *tok, const std::string &amp;varname) 
+<span class="no"> 143 </span>{ 
+<span class="no"> 144 </span>    const CheckMemoryLeak c(mTokenizer, mErrorLogger, mSettings); 
+<span class="no"> 145 </span>    c.deallocuseError(tok, varname); 
+<span class="no"> 146 </span>} 
+<span class="no"> 147 </span> 
+<span class="no"> 148 </span>void CheckLeakAutoVar::deallocReturnError(const Token *tok, const Token *deallocTok, const std::string &amp;varname) 
+<span class="no"> 149 </span>{ 
+<span class="no"> 150 </span>    const std::list&lt;const Token *&gt; locations = { deallocTok, tok }; 
+<span class="no"> 151 </span>    reportError(locations, Severity::error, &quot;deallocret&quot;, &quot;$symbol:&quot; + varname + &quot;\nReturning/dereferencing &apos;$symbol&apos; after it is deallocated / released&quot;, CWE672, false); 
+<span class="no"> 152 </span>} 
+<span class="no"> 153 </span> 
+<span class="no"> 154 </span>void CheckLeakAutoVar::configurationInfo(const Token* tok, const std::string &amp;functionName) 
+<span class="no"> 155 </span>{ 
+<span class="no"> 156 </span>    if (mSettings-&gt;checkLibrary &amp;&amp; mSettings-&gt;isEnabled(Settings::INFORMATION)) { 
+<span class="no"> 157 </span>        reportError(tok, 
+<span class="no"> 158 </span>                    Severity::information, 
+<span class="no"> 159 </span>                    &quot;checkLibraryUseIgnore&quot;, 
+<span class="no"> 160 </span>                    &quot;--check-library: Function &quot; + functionName + &quot;() should have &lt;use&gt;/&lt;leak-ignore&gt; configuration&quot;); 
+<span class="no"> 161 </span>    } 
+<span class="no"> 162 </span>} 
+<span class="no"> 163 </span> 
+<span class="no"> 164 </span>void CheckLeakAutoVar::doubleFreeError(const Token *tok, const Token *prevFreeTok, const std::string &amp;varname, int type) 
+<span class="no"> 165 </span>{ 
+<span class="no"> 166 </span>    const std::list&lt;const Token *&gt; locations = { prevFreeTok, tok }; 
+<span class="no"> 167 </span> 
+<span class="no"> 168 </span>    if (Library::isresource(type)) 
+<span class="no"> 169 </span>        reportError(locations, Severity::error, &quot;doubleFree&quot;, &quot;$symbol:&quot; + varname + &quot;\nResource handle &apos;$symbol&apos; freed twice.&quot;, CWE415, false); 
+<span class="no"> 170 </span>    else 
+<span class="no"> 171 </span>        reportError(locations, Severity::error, &quot;doubleFree&quot;, &quot;$symbol:&quot; + varname + &quot;\nMemory pointed to by &apos;$symbol&apos; is freed twice.&quot;, CWE415, false); 
+<span class="no"> 172 </span>} 
+<span class="no"> 173 </span> 
+<span class="no"> 174 </span> 
+<span class="no"> 175 </span>void CheckLeakAutoVar::check() 
+<span class="no"> 176 </span>{ 
+<span class="no"> 177 </span>    if (mSettings-&gt;clang) 
+<span class="no"> 178 </span>        return; 
+<span class="no"> 179 </span> 
+<span class="no"> 180 </span>    const SymbolDatabase *symbolDatabase = mTokenizer-&gt;getSymbolDatabase(); 
+<span class="no"> 181 </span> 
+<span class="no"> 182 </span>    // Local variables that are known to be non-zero. 
+<span class="no"> 183 </span>    const std::set&lt;int&gt; notzero; 
+<span class="no"> 184 </span> 
+<span class="no"> 185 </span>    // Check function scopes 
+<span class="no"> 186 </span>    for (const Scope * scope : symbolDatabase-&gt;functionScopes) { 
+<span class="no"> 187 </span>        if (scope-&gt;hasInlineOrLambdaFunction()) 
+<span class="no"> 188 </span>            continue; 
+<span class="no"> 189 </span> 
+<span class="no"> 190 </span>        // Empty variable info 
+<span class="no"> 191 </span>        VarInfo varInfo; 
+<span class="no"> 192 </span> 
+<span class="no"> 193 </span>        checkScope(scope-&gt;bodyStart, &amp;varInfo, notzero, 0); 
+<span class="no"> 194 </span> 
+<span class="no"> 195 </span>        varInfo.conditionalAlloc.clear(); 
+<span class="no"> 196 </span> 
+<span class="no"> 197 </span>        // Clear reference arguments from varInfo.. 
+<span class="no"> 198 </span>        std::map&lt;int, VarInfo::AllocInfo&gt;::iterator it = varInfo.alloctype.begin(); 
+<span class="no"> 199 </span>        while (it != varInfo.alloctype.end()) { 
+<span class="no"> 200 </span>            const Variable *var = symbolDatabase-&gt;getVariableFromVarId(it-&gt;first); 
+<span class="no"> 201 </span>            if (!var || 
+<span class="no"> 202 </span>                (var-&gt;isArgument() &amp;&amp; var-&gt;isReference()) || 
+<span class="no"> 203 </span>                (!var-&gt;isArgument() &amp;&amp; !var-&gt;isLocal())) 
+<span class="no"> 204 </span>                varInfo.alloctype.erase(it++); 
+<span class="no"> 205 </span>            else 
+<span class="no"> 206 </span>                ++it; 
+<span class="no"> 207 </span>        } 
+<span class="no"> 208 </span> 
+<span class="no"> 209 </span>        ret(scope-&gt;bodyEnd, varInfo); 
+<span class="no"> 210 </span>    } 
+<span class="no"> 211 </span>} 
+<span class="no"> 212 </span> 
+<span class="no"> 213 </span>static bool isVarUsedInTree(const Token *tok, nonneg int varid) 
+<span class="no"> 214 </span>{ 
+<span class="no"> 215 </span>    if (!tok) 
+<span class="no"> 216 </span>        return false; 
+<span class="no"> 217 </span>    if (tok-&gt;varId() == varid) 
+<span class="no"> 218 </span>        return true; 
+<span class="no"> 219 </span>    if (tok-&gt;str() == &quot;(&quot; &amp;&amp; Token::simpleMatch(tok-&gt;astOperand1(), &quot;sizeof&quot;)) 
+<span class="no"> 220 </span>        return false; 
+<span class="no"> 221 </span>    return isVarUsedInTree(tok-&gt;astOperand1(), varid) || isVarUsedInTree(tok-&gt;astOperand2(), varid); 
+<span class="no"> 222 </span>} 
+<span class="no"> 223 </span> 
+<span class="no"> 224 </span>static bool isPointerReleased(const Token *startToken, const Token *endToken, nonneg int varid) 
+<span class="no"> 225 </span>{ 
+<span class="no"> 226 </span>    for (const Token *tok = startToken; tok &amp;&amp; tok != endToken; tok = tok-&gt;next()) { 
+<span class="no"> 227 </span>        if (tok-&gt;varId() != varid) 
+<span class="no"> 228 </span>            continue; 
+<span class="no"> 229 </span>        if (Token::Match(tok, &quot;%var% . release ( )&quot;)) 
+<span class="no"> 230 </span>            return true; 
+<span class="no"> 231 </span>        if (Token::Match(tok, &quot;%var% =&quot;)) 
+<span class="no"> 232 </span>            return false; 
+<span class="no"> 233 </span>    } 
+<span class="no"> 234 </span>    return false; 
+<span class="no"> 235 </span>} 
+<span class="no"> 236 </span> 
+<span class="no"> 237 </span>static bool isLocalVarNoAutoDealloc(const Token *varTok, const bool isCpp) 
+<span class="no"> 238 </span>{ 
+<span class="no"> 239 </span>    // not a local variable nor argument? 
+<span class="no"> 240 </span>    const Variable *var = varTok-&gt;variable(); 
+<span class="no"> 241 </span>    if (!var) 
+<span class="no"> 242 </span>        return true; 
+<span class="no"> 243 </span>    if (!var-&gt;isArgument() &amp;&amp; (!var-&gt;isLocal() || var-&gt;isStatic())) 
+<span class="no"> 244 </span>        return false; 
+<span class="no"> 245 </span> 
+<span class="no"> 246 </span>    // Don&apos;t check reference variables 
+<span class="no"> 247 </span>    if (var-&gt;isReference()) 
+<span class="no"> 248 </span>        return false; 
+<span class="no"> 249 </span> 
+<span class="no"> 250 </span>    // non-pod variable 
+<span class="no"> 251 </span>    if (isCpp) { 
+<span class="no"> 252 </span>        // Possibly automatically deallocated memory 
+<span class="no"> 253 </span>        if (isAutoDealloc(var) &amp;&amp; Token::Match(varTok, &quot;%var% = new&quot;)) 
+<span class="no"> 254 </span>            return false; 
+<span class="no"> 255 </span>        if (!var-&gt;isPointer() &amp;&amp; !var-&gt;typeStartToken()-&gt;isStandardType()) 
+<span class="no"> 256 </span>            return false; 
+<span class="no"> 257 </span>    } 
+<span class="no"> 258 </span>    return true; 
+<span class="no"> 259 </span>} 
+<span class="no"> 260 </span> 
+<span class="no"> 261 </span>/** checks if nameToken is a name of a function in a function call: 
+<span class="no"> 262 </span>*     func(arg) 
+<span class="no"> 263 </span>* or 
+<span class="no"> 264 </span>*     func&lt;temp1_arg&gt;(arg) 
+<span class="no"> 265 </span>* @param nameToken Function name token 
+<span class="no"> 266 </span>* @return opening parenthesis token or NULL if not a function call 
+<span class="no"> 267 </span>*/ 
+<span class="no"> 268 </span> 
+<span class="no"> 269 </span>static const Token * isFunctionCall(const Token * nameToken) 
+<span class="no"> 270 </span>{ 
+<span class="no"> 271 </span>    if (nameToken-&gt;isName()) { 
+<span class="no"> 272 </span>        nameToken = nameToken-&gt;next(); 
+<span class="no"> 273 </span>        // check if function is a template 
+<span class="no"> 274 </span>        if (nameToken &amp;&amp; nameToken-&gt;link() &amp;&amp; nameToken-&gt;str() == &quot;&lt;&quot;) { 
+<span class="no"> 275 </span>            // skip template arguments 
+<span class="no"> 276 </span>            nameToken = nameToken-&gt;link()-&gt;next(); 
+<span class="no"> 277 </span>        } 
+<span class="no"> 278 </span>        // check for &apos;(&apos; 
+<span class="no"> 279 </span>        if (nameToken &amp;&amp; nameToken-&gt;link() &amp;&amp; nameToken-&gt;str() == &quot;(&quot;) { 
+<span class="no"> 280 </span>            // returning opening parenthesis pointer 
+<span class="no"> 281 </span>            return nameToken; 
+<span class="no"> 282 </span>        } 
+<span class="no"> 283 </span>    } 
+<span class="no"> 284 </span>    return nullptr; 
+<span class="no"> 285 </span>} 
+<span class="no"> 286 </span> 
+<span class="no"> 287 </span>void CheckLeakAutoVar::checkScope(const Token * const startToken, 
+<span class="no"> 288 </span>                                  VarInfo *varInfo, 
+<span class="no"> 289 </span>                                  std::set&lt;int&gt; notzero, 
+<span class="no"> 290 </span>                                  nonneg int recursiveCount) 
+<span class="no"> 291 </span>{ 
+<span class="no"> 292 </span>#if ASAN 
+<span class="no"> 293 </span>    static const nonneg int recursiveLimit = 300; 
+<span class="no"> 294 </span>#else 
+<span class="no"> 295 </span>    static const nonneg int recursiveLimit = 1000; 
+<span class="no"> 296 </span>#endif 
+<span class="no"> 297 </span>    if (++recursiveCount &gt; recursiveLimit)    // maximum number of &quot;else if ()&quot; 
+<span class="no"> 298 </span>        throw InternalError(startToken, &quot;Internal limit: CheckLeakAutoVar::checkScope() Maximum recursive count of 1000 reached.&quot;, InternalError::LIMIT); 
+<span class="no"> 299 </span> 
+<span class="no"> 300 </span>    std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo-&gt;alloctype; 
+<span class="no"> 301 </span>    std::map&lt;int, std::string&gt; &amp;possibleUsage = varInfo-&gt;possibleUsage; 
+<span class="no"> 302 </span>    const std::set&lt;int&gt; conditionalAlloc(varInfo-&gt;conditionalAlloc); 
+<span class="no"> 303 </span> 
+<span class="no"> 304 </span>    // Parse all tokens 
+<span class="no"> 305 </span>    const Token * const endToken = startToken-&gt;link(); 
+<span class="no"> 306 </span>    for (const Token *tok = startToken; tok &amp;&amp; tok != endToken; tok = tok-&gt;next()) { 
+<span class="no"> 307 </span>        if (!tok-&gt;scope()-&gt;isExecutable()) { 
+<span class="no"> 308 </span>            tok = tok-&gt;scope()-&gt;bodyEnd; 
+<span class="no"> 309 </span>            if (!tok) // Ticket #6666 (crash upon invalid code) 
+<span class="no"> 310 </span>                break; 
+<span class="no"> 311 </span>        } 
+<span class="no"> 312 </span> 
+<span class="no"> 313 </span>        // check each token 
+<span class="no"> 314 </span>        { 
+<span class="no"> 315 </span>            const Token * nextTok = checkTokenInsideExpression(tok, varInfo); 
+<span class="no"> 316 </span>            if (nextTok) { 
+<span class="no"> 317 </span>                tok = nextTok; 
+<span class="no"> 318 </span>                continue; 
+<span class="no"> 319 </span>            } 
+<span class="no"> 320 </span>        } 
+<span class="no"> 321 </span> 
+<span class="no"> 322 </span> 
+<span class="no"> 323 </span>        // look for end of statement 
+<span class="no"> 324 </span>        if (!Token::Match(tok, &quot;[;{},]&quot;) || Token::Match(tok-&gt;next(), &quot;[;{},]&quot;)) 
+<span class="no"> 325 </span>            continue; 
+<span class="no"> 326 </span> 
+<span class="no"> 327 </span>        tok = tok-&gt;next(); 
+<span class="no"> 328 </span>        if (!tok || tok == endToken) 
+<span class="no"> 329 </span>            break; 
+<span class="no"> 330 </span> 
+<span class="no"> 331 </span>        // parse statement, skip to last member 
+<span class="no"> 332 </span>        const Token *varTok = tok; 
+<span class="no"> 333 </span>        while (Token::Match(varTok, &quot;%name% ::|. %name% !!(&quot;)) 
+<span class="no"> 334 </span>            varTok = varTok-&gt;tokAt(2); 
+<span class="no"> 335 </span> 
+<span class="no"> 336 </span>        const Token *ftok = tok; 
+<span class="no"> 337 </span>        if (ftok-&gt;str() == &quot;::&quot;) 
+<span class="no"> 338 </span>            ftok = ftok-&gt;next(); 
+<span class="no"> 339 </span>        while (Token::Match(ftok, &quot;%name% :: %name%&quot;)) 
+<span class="no"> 340 </span>            ftok = ftok-&gt;tokAt(2); 
+<span class="no"> 341 </span> 
+<span class="no"> 342 </span>        // assignment.. 
+<span class="no"> 343 </span>        if (Token::Match(varTok, &quot;%var% =&quot;)) { 
+<span class="no"> 344 </span>            const Token* const tokAssignOp = varTok-&gt;next(); 
+<span class="no"> 345 </span> 
+<span class="no"> 346 </span>            // taking address of another variable.. 
+<span class="no"> 347 </span>            if (Token::Match(tokAssignOp, &quot;= %var% [+;]&quot;)) { 
+<span class="no"> 348 </span>                if (varTok-&gt;tokAt(2)-&gt;varId() != varTok-&gt;varId()) { 
+<span class="no"> 349 </span>                    // If variable points at allocated memory =&gt; error 
+<span class="no"> 350 </span>                    leakIfAllocated(varTok, *varInfo); 
+<span class="no"> 351 </span> 
+<span class="no"> 352 </span>                    // no multivariable checking currently =&gt; bail out for rhs variables 
+<span class="no"> 353 </span>                    for (const Token *tok2 = varTok; tok2; tok2 = tok2-&gt;next()) { 
+<span class="no"> 354 </span>                        if (tok2-&gt;str() == &quot;;&quot;) { 
+<span class="no"> 355 </span>                            break; 
+<span class="no"> 356 </span>                        } 
+<span class="no"> 357 </span>                        if (tok2-&gt;varId()) { 
+<span class="no"> 358 </span>                            varInfo-&gt;erase(tok2-&gt;varId()); 
+<span class="no"> 359 </span>                        } 
+<span class="no"> 360 </span>                    } 
+<span class="no"> 361 </span>                } 
+<span class="no"> 362 </span>            } 
+<span class="no"> 363 </span> 
+<span class="no"> 364 </span>            // right ast part (after `=` operator) 
+<span class="no"> 365 </span>            const Token* tokRightAstOperand = tokAssignOp-&gt;astOperand2(); 
+<span class="no"> 366 </span>            while (tokRightAstOperand &amp;&amp; tokRightAstOperand-&gt;isCast()) 
+<span class="no"> 367 </span>                tokRightAstOperand = tokRightAstOperand-&gt;astOperand2() ? tokRightAstOperand-&gt;astOperand2() : tokRightAstOperand-&gt;astOperand1(); 
+<span class="no"> 368 </span> 
+<span class="no"> 369 </span>            // is variable used in rhs? 
+<span class="no"> 370 </span>            if (isVarUsedInTree(tokRightAstOperand, varTok-&gt;varId())) 
+<span class="no"> 371 </span>                continue; 
+<span class="no"> 372 </span> 
+<span class="no"> 373 </span>            // Variable has already been allocated =&gt; error 
+<span class="no"> 374 </span>            if (conditionalAlloc.find(varTok-&gt;varId()) == conditionalAlloc.end()) 
+<span class="no"> 375 </span>                leakIfAllocated(varTok, *varInfo); 
+<span class="no"> 376 </span>            varInfo-&gt;erase(varTok-&gt;varId()); 
+<span class="no"> 377 </span> 
+<span class="no"> 378 </span>            if (!isLocalVarNoAutoDealloc(varTok, mTokenizer-&gt;isCPP())) 
+<span class="no"> 379 </span>                continue; 
+<span class="no"> 380 </span> 
+<span class="no"> 381 </span>            // allocation? 
+<span class="no"> 382 </span>            const Token *const fTok = tokRightAstOperand ? tokRightAstOperand-&gt;previous() : nullptr; 
+<span class="no"> 383 </span>            if (Token::Match(fTok, &quot;%type% (&quot;)) { 
+<span class="no"> 384 </span>                const Library::AllocFunc* f = mSettings-&gt;library.getAllocFuncInfo(fTok); 
+<span class="no"> 385 </span>                if (f &amp;&amp; f-&gt;arg == -1) { 
+<span class="no"> 386 </span>                    VarInfo::AllocInfo&amp; varAlloc = alloctype[varTok-&gt;varId()]; 
+<span class="no"> 387 </span>                    varAlloc.type = f-&gt;groupId; 
+<span class="no"> 388 </span>                    varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 389 </span>                    varAlloc.allocTok = fTok; 
+<span class="no"> 390 </span>                } 
+<span class="no"> 391 </span> 
+<span class="no"> 392 </span>                changeAllocStatusIfRealloc(alloctype, fTok, varTok); 
+<span class="no"> 393 </span>            } else if (mTokenizer-&gt;isCPP() &amp;&amp; Token::Match(varTok-&gt;tokAt(2), &quot;new !!(&quot;)) { 
+<span class="no"> 394 </span>                const Token* tok2 = varTok-&gt;tokAt(2)-&gt;astOperand1(); 
+<span class="no"> 395 </span>                const bool arrayNew = (tok2 &amp;&amp; (tok2-&gt;str() == &quot;[&quot; || (tok2-&gt;str() == &quot;(&quot; &amp;&amp; tok2-&gt;astOperand1() &amp;&amp; tok2-&gt;astOperand1()-&gt;str() == &quot;[&quot;))); 
+<span class="no"> 396 </span>                VarInfo::AllocInfo&amp; varAlloc = alloctype[varTok-&gt;varId()]; 
+<span class="no"> 397 </span>                varAlloc.type = arrayNew ? NEW_ARRAY : NEW; 
+<span class="no"> 398 </span>                varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 399 </span>                varAlloc.allocTok = varTok-&gt;tokAt(2); 
+<span class="no"> 400 </span>            } 
+<span class="no"> 401 </span> 
+<span class="no"> 402 </span>            // Assigning non-zero value variable. It might be used to 
+<span class="no"> 403 </span>            // track the execution for a later if condition. 
+<span class="no"> 404 </span>            if (Token::Match(varTok-&gt;tokAt(2), &quot;%num% ;&quot;) &amp;&amp; MathLib::toLongNumber(varTok-&gt;strAt(2)) != 0) 
+<span class="no"> 405 </span>                notzero.insert(varTok-&gt;varId()); 
+<span class="no"> 406 </span>            else if (Token::Match(varTok-&gt;tokAt(2), &quot;- %type% ;&quot;) &amp;&amp; varTok-&gt;tokAt(3)-&gt;isUpperCaseName()) 
+<span class="no"> 407 </span>                notzero.insert(varTok-&gt;varId()); 
+<span class="no"> 408 </span>            else 
+<span class="no"> 409 </span>                notzero.erase(varTok-&gt;varId()); 
+<span class="no"> 410 </span>        } 
+<span class="no"> 411 </span> 
+<span class="no"> 412 </span>        // if/else 
+<span class="no"> 413 </span>        else if (Token::simpleMatch(tok, &quot;if (&quot;)) { 
+<span class="no"> 414 </span>            // Parse function calls inside the condition 
+<span class="no"> 415 </span> 
+<span class="no"> 416 </span>            const Token * closingParenthesis = tok-&gt;linkAt(1); 
+<span class="no"> 417 </span>            for (const Token *innerTok = tok-&gt;tokAt(2); innerTok &amp;&amp; innerTok != closingParenthesis; innerTok = innerTok-&gt;next()) { 
+<span class="no"> 418 </span>                // TODO: replace with checkTokenInsideExpression() 
+<span class="no"> 419 </span> 
+<span class="no"> 420 </span>                if (!isLocalVarNoAutoDealloc(innerTok, mTokenizer-&gt;isCPP())) 
+<span class="no"> 421 </span>                    continue; 
+<span class="no"> 422 </span> 
+<span class="no"> 423 </span>                if (Token::Match(innerTok, &quot;%var% =&quot;) &amp;&amp; innerTok-&gt;astParent() == innerTok-&gt;next()) { 
+<span class="no"> 424 </span>                    // allocation? 
+<span class="no"> 425 </span>                    // right ast part (after `=` operator) 
+<span class="no"> 426 </span>                    const Token* tokRightAstOperand = innerTok-&gt;next()-&gt;astOperand2(); 
+<span class="no"> 427 </span>                    while (tokRightAstOperand &amp;&amp; tokRightAstOperand-&gt;isCast()) 
+<span class="no"> 428 </span>                        tokRightAstOperand = tokRightAstOperand-&gt;astOperand2() ? tokRightAstOperand-&gt;astOperand2() : tokRightAstOperand-&gt;astOperand1(); 
+<span class="no"> 429 </span>                    if (tokRightAstOperand &amp;&amp; Token::Match(tokRightAstOperand-&gt;previous(), &quot;%type% (&quot;)) { 
+<span class="no"> 430 </span>                        const Library::AllocFunc* f = mSettings-&gt;library.getAllocFuncInfo(tokRightAstOperand-&gt;previous()); 
+<span class="no"> 431 </span>                        if (f &amp;&amp; f-&gt;arg == -1) { 
+<span class="no"> 432 </span>                            VarInfo::AllocInfo&amp; varAlloc = alloctype[innerTok-&gt;varId()]; 
+<span class="no"> 433 </span>                            varAlloc.type = f-&gt;groupId; 
+<span class="no"> 434 </span>                            varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 435 </span>                            varAlloc.allocTok = tokRightAstOperand-&gt;previous(); 
+<span class="no"> 436 </span>                        } else { 
+<span class="no"> 437 </span>                            // Fixme: warn about leak 
+<span class="no"> 438 </span>                            alloctype.erase(innerTok-&gt;varId()); 
+<span class="no"> 439 </span>                        } 
+<span class="no"> 440 </span> 
+<span class="no"> 441 </span>                        changeAllocStatusIfRealloc(alloctype, innerTok-&gt;tokAt(2), varTok); 
+<span class="no"> 442 </span>                    } else if (mTokenizer-&gt;isCPP() &amp;&amp; Token::Match(innerTok-&gt;tokAt(2), &quot;new !!(&quot;)) { 
+<span class="no"> 443 </span>                        const Token* tok2 = innerTok-&gt;tokAt(2)-&gt;astOperand1(); 
+<span class="no"> 444 </span>                        const bool arrayNew = (tok2 &amp;&amp; (tok2-&gt;str() == &quot;[&quot; || (tok2-&gt;str() == &quot;(&quot; &amp;&amp; tok2-&gt;astOperand1() &amp;&amp; tok2-&gt;astOperand1()-&gt;str() == &quot;[&quot;))); 
+<span class="no"> 445 </span>                        VarInfo::AllocInfo&amp; varAlloc = alloctype[innerTok-&gt;varId()]; 
+<span class="no"> 446 </span>                        varAlloc.type = arrayNew ? NEW_ARRAY : NEW; 
+<span class="no"> 447 </span>                        varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 448 </span>                        varAlloc.allocTok = innerTok-&gt;tokAt(2); 
+<span class="no"> 449 </span>                    } 
+<span class="no"> 450 </span>                } 
+<span class="no"> 451 </span> 
+<span class="no"> 452 </span>                // check for function call 
+<span class="no"> 453 </span>                const Token * const openingPar = isFunctionCall(innerTok); 
+<span class="no"> 454 </span>                if (openingPar) { 
+<span class="no"> 455 </span>                    // innerTok is a function name 
+<span class="no"> 456 </span>                    const VarInfo::AllocInfo allocation(0, VarInfo::NOALLOC); 
+<span class="no"> 457 </span>                    functionCall(innerTok, openingPar, varInfo, allocation, nullptr); 
+<span class="no"> 458 </span>                    innerTok = openingPar-&gt;link(); 
+<span class="no"> 459 </span>                } 
+<span class="no"> 460 </span>            } 
+<span class="no"> 461 </span> 
+<span class="no"> 462 </span>            if (Token::simpleMatch(closingParenthesis, &quot;) {&quot;)) { 
+<span class="no"> 463 </span>                VarInfo varInfo1(*varInfo);  // VarInfo for if code 
+<span class="no"> 464 </span>                VarInfo varInfo2(*varInfo);  // VarInfo for else code 
+<span class="no"> 465 </span> 
+<span class="no"> 466 </span>                // Recursively scan variable comparisons in condition 
+<span class="no"> 467 </span>                std::stack&lt;const Token *&gt; tokens; 
+<span class="no"> 468 </span>                tokens.push(tok-&gt;next()-&gt;astOperand2()); 
+<span class="no"> 469 </span>                while (!tokens.empty()) { 
+<span class="no"> 470 </span>                    const Token *tok3 = tokens.top(); 
+<span class="no"> 471 </span>                    tokens.pop(); 
+<span class="no"> 472 </span>                    if (!tok3) 
+<span class="no"> 473 </span>                        continue; 
+<span class="no"> 474 </span>                    if (tok3-&gt;str() == &quot;&amp;&amp;&quot; || tok3-&gt;str() == &quot;||&quot;) { 
+<span class="no"> 475 </span>                        // FIXME: handle &amp;&amp; ! || better 
+<span class="no"> 476 </span>                        tokens.push(tok3-&gt;astOperand1()); 
+<span class="no"> 477 </span>                        tokens.push(tok3-&gt;astOperand2()); 
+<span class="no"> 478 </span>                        continue; 
+<span class="no"> 479 </span>                    } 
+<span class="no"> 480 </span>                    if (tok3-&gt;str() == &quot;(&quot; &amp;&amp; Token::Match(tok3-&gt;astOperand1(), &quot;UNLIKELY|LIKELY&quot;)) { 
+<span class="no"> 481 </span>                        tokens.push(tok3-&gt;astOperand2()); 
+<span class="no"> 482 </span>                        continue; 
+<span class="no"> 483 </span>                    } else if (tok3-&gt;str() == &quot;(&quot; &amp;&amp; Token::Match(tok3-&gt;previous(), &quot;%name%&quot;)) { 
+<span class="no"> 484 </span>                        const std::vector&lt;const Token *&gt; params = getArguments(tok3-&gt;previous()); 
+<span class="no"> 485 </span>                        for (const Token *par : params) { 
+<span class="no"> 486 </span>                            if (!par-&gt;isComparisonOp()) 
+<span class="no"> 487 </span>                                continue; 
+<span class="no"> 488 </span>                            const Token *vartok = nullptr; 
+<span class="no"> 489 </span>                            if (astIsVariableComparison(par, &quot;!=&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 490 </span>                                astIsVariableComparison(par, &quot;==&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 491 </span>                                astIsVariableComparison(par, &quot;&lt;&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 492 </span>                                astIsVariableComparison(par, &quot;&gt;&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 493 </span>                                astIsVariableComparison(par, &quot;==&quot;, &quot;-1&quot;, &amp;vartok) || 
+<span class="no"> 494 </span>                                astIsVariableComparison(par, &quot;!=&quot;, &quot;-1&quot;, &amp;vartok)) { 
+<span class="no"> 495 </span>                                varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 496 </span>                                varInfo2.erase(vartok-&gt;varId()); 
+<span class="no"> 497 </span>                            } 
+<span class="no"> 498 </span>                        } 
+<span class="no"> 499 </span>                        continue; 
+<span class="no"> 500 </span>                    } 
+<span class="no"> 501 </span> 
+<span class="no"> 502 </span>                    const Token *vartok = nullptr; 
+<span class="no"> 503 </span>                    if (astIsVariableComparison(tok3, &quot;!=&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 504 </span>                        varInfo2.erase(vartok-&gt;varId()); 
+<span class="no"> 505 </span>                        if (notzero.find(vartok-&gt;varId()) != notzero.end()) 
+<span class="no"> 506 </span>                            varInfo2.clear(); 
+<span class="no"> 507 </span>                    } else if (astIsVariableComparison(tok3, &quot;==&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 508 </span>                        varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 509 </span>                    } else if (astIsVariableComparison(tok3, &quot;&lt;&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 510 </span>                        varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 511 </span>                    } else if (astIsVariableComparison(tok3, &quot;&gt;&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 512 </span>                        varInfo2.erase(vartok-&gt;varId()); 
+<span class="no"> 513 </span>                    } else if (astIsVariableComparison(tok3, &quot;==&quot;, &quot;-1&quot;, &amp;vartok)) { 
+<span class="no"> 514 </span>                        varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 515 </span>                    } 
+<span class="no"> 516 </span>                } 
+<span class="no"> 517 </span> 
+<span class="no"> 518 </span>                checkScope(closingParenthesis-&gt;next(), &amp;varInfo1, notzero, recursiveCount); 
+<span class="no"> 519 </span>                closingParenthesis = closingParenthesis-&gt;linkAt(1); 
+<span class="no"> 520 </span>                if (Token::simpleMatch(closingParenthesis, &quot;} else {&quot;)) { 
+<span class="no"> 521 </span>                    checkScope(closingParenthesis-&gt;tokAt(2), &amp;varInfo2, notzero, recursiveCount); 
+<span class="no"> 522 </span>                    tok = closingParenthesis-&gt;linkAt(2)-&gt;previous(); 
+<span class="no"> 523 </span>                } else { 
+<span class="no"> 524 </span>                    tok = closingParenthesis-&gt;previous(); 
+<span class="no"> 525 </span>                } 
+<span class="no"> 526 </span> 
+<span class="no"> 527 </span>                VarInfo old; 
+<span class="no"> 528 </span>                old.swap(*varInfo); 
+<span class="no"> 529 </span> 
+<span class="no"> 530 </span>                std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator it; 
+<span class="no"> 531 </span> 
+<span class="no"> 532 </span>                for (it = old.alloctype.begin(); it != old.alloctype.end(); ++it) { 
+<span class="no"> 533 </span>                    const int varId = it-&gt;first; 
+<span class="no"> 534 </span>                    if (old.conditionalAlloc.find(varId) == old.conditionalAlloc.end()) 
+<span class="no"> 535 </span>                        continue; 
+<span class="no"> 536 </span>                    if (varInfo1.alloctype.find(varId) == varInfo1.alloctype.end() || 
+<span class="no"> 537 </span>                        varInfo2.alloctype.find(varId) == varInfo2.alloctype.end()) { 
+<span class="no"> 538 </span>                        varInfo1.erase(varId); 
+<span class="no"> 539 </span>                        varInfo2.erase(varId); 
+<span class="no"> 540 </span>                    } 
+<span class="no"> 541 </span>                } 
+<span class="no"> 542 </span> 
+<span class="no"> 543 </span>                // Conditional allocation in varInfo1 
+<span class="no"> 544 </span>                for (it = varInfo1.alloctype.begin(); it != varInfo1.alloctype.end(); ++it) { 
+<span class="no"> 545 </span>                    if (varInfo2.alloctype.find(it-&gt;first) == varInfo2.alloctype.end() &amp;&amp; 
+<span class="no"> 546 </span>                        old.alloctype.find(it-&gt;first) == old.alloctype.end()) { 
+<span class="no"> 547 </span>                        varInfo-&gt;conditionalAlloc.insert(it-&gt;first); 
+<span class="no"> 548 </span>                    } 
+<span class="no"> 549 </span>                } 
+<span class="no"> 550 </span> 
+<span class="no"> 551 </span>                // Conditional allocation in varInfo2 
+<span class="no"> 552 </span>                for (it = varInfo2.alloctype.begin(); it != varInfo2.alloctype.end(); ++it) { 
+<span class="no"> 553 </span>                    if (varInfo1.alloctype.find(it-&gt;first) == varInfo1.alloctype.end() &amp;&amp; 
+<span class="no"> 554 </span>                        old.alloctype.find(it-&gt;first) == old.alloctype.end()) { 
+<span class="no"> 555 </span>                        varInfo-&gt;conditionalAlloc.insert(it-&gt;first); 
+<span class="no"> 556 </span>                    } 
+<span class="no"> 557 </span>                } 
+<span class="no"> 558 </span> 
+<span class="no"> 559 </span>                // Conditional allocation/deallocation 
+<span class="no"> 560 </span>                for (it = varInfo1.alloctype.begin(); it != varInfo1.alloctype.end(); ++it) { 
+<span class="no"> 561 </span>                    if (it-&gt;second.managed() &amp;&amp; conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end()) { 
+<span class="no"> 562 </span>                        varInfo-&gt;conditionalAlloc.erase(it-&gt;first); 
+<span class="no"> 563 </span>                        varInfo2.erase(it-&gt;first); 
+<span class="no"> 564 </span>                    } 
+<span class="no"> 565 </span>                } 
+<span class="no"> 566 </span>                for (it = varInfo2.alloctype.begin(); it != varInfo2.alloctype.end(); ++it) { 
+<span class="no"> 567 </span>                    if (it-&gt;second.managed() &amp;&amp; conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end()) { 
+<span class="no"> 568 </span>                        varInfo-&gt;conditionalAlloc.erase(it-&gt;first); 
+<span class="no"> 569 </span>                        varInfo1.erase(it-&gt;first); 
+<span class="no"> 570 </span>                    } 
+<span class="no"> 571 </span>                } 
+<span class="no"> 572 </span> 
+<span class="no"> 573 </span>                alloctype.insert(varInfo1.alloctype.begin(), varInfo1.alloctype.end()); 
+<span class="no"> 574 </span>                alloctype.insert(varInfo2.alloctype.begin(), varInfo2.alloctype.end()); 
+<span class="no"> 575 </span> 
+<span class="no"> 576 </span>                possibleUsage.insert(varInfo1.possibleUsage.begin(), varInfo1.possibleUsage.end()); 
+<span class="no"> 577 </span>                possibleUsage.insert(varInfo2.possibleUsage.begin(), varInfo2.possibleUsage.end()); 
+<span class="no"> 578 </span>            } 
+<span class="no"> 579 </span>        } 
+<span class="no"> 580 </span> 
+<span class="no"> 581 </span>        // unknown control.. (TODO: handle loops) 
+<span class="no"> 582 </span>        else if ((Token::Match(tok, &quot;%type% (&quot;) &amp;&amp; Token::simpleMatch(tok-&gt;linkAt(1), &quot;) {&quot;)) || Token::simpleMatch(tok, &quot;do {&quot;)) { 
+<span class="no"> 583 </span>            varInfo-&gt;clear(); 
+<span class="no"> 584 </span>            break; 
+<span class="no"> 585 </span>        } 
+<span class="no"> 586 </span> 
+<span class="no"> 587 </span>        // return 
+<span class="no"> 588 </span>        else if (tok-&gt;str() == &quot;return&quot;) { 
+<span class="no"> 589 </span>            ret(tok, *varInfo); 
+<span class="no"> 590 </span>            varInfo-&gt;clear(); 
+<span class="no"> 591 </span>        } 
+<span class="no"> 592 </span> 
+<span class="no"> 593 </span>        // throw 
+<span class="no"> 594 </span>        else if (mTokenizer-&gt;isCPP() &amp;&amp; tok-&gt;str() == &quot;throw&quot;) { 
+<span class="no"> 595 </span>            bool tryFound = false; 
+<span class="no"> 596 </span>            const Scope* scope = tok-&gt;scope(); 
+<span class="no"> 597 </span>            while (scope &amp;&amp; scope-&gt;isExecutable()) { 
+<span class="no"> 598 </span>                if (scope-&gt;type == Scope::eTry) 
+<span class="no"> 599 </span>                    tryFound = true; 
+<span class="no"> 600 </span>                scope = scope-&gt;nestedIn; 
+<span class="no"> 601 </span>            } 
+<span class="no"> 602 </span>            // If the execution leaves the function then treat it as return 
+<span class="no"> 603 </span>            if (!tryFound) 
+<span class="no"> 604 </span>                ret(tok, *varInfo); 
+<span class="no"> 605 </span>            varInfo-&gt;clear(); 
+<span class="no"> 606 </span>        } 
+<span class="no"> 607 </span> 
+<span class="no"> 608 </span>        // delete 
+<span class="no"> 609 </span>        else if (mTokenizer-&gt;isCPP() &amp;&amp; tok-&gt;str() == &quot;delete&quot;) { 
+<span class="no"> 610 </span>            const Token * delTok = tok; 
+<span class="no"> 611 </span>            const bool arrayDelete = Token::simpleMatch(tok-&gt;next(), &quot;[ ]&quot;); 
+<span class="no"> 612 </span>            if (arrayDelete) 
+<span class="no"> 613 </span>                tok = tok-&gt;tokAt(3); 
+<span class="no"> 614 </span>            else 
+<span class="no"> 615 </span>                tok = tok-&gt;next(); 
+<span class="no"> 616 </span>            if (tok-&gt;str() == &quot;(&quot;) 
+<span class="no"> 617 </span>                tok = tok-&gt;next(); 
+<span class="no"> 618 </span>            while (Token::Match(tok, &quot;%name% ::|.&quot;)) 
+<span class="no"> 619 </span>                tok = tok-&gt;tokAt(2); 
+<span class="no"> 620 </span>            const bool isnull = tok-&gt;hasKnownIntValue() &amp;&amp; tok-&gt;values().front().intvalue == 0; 
+<span class="no"> 621 </span>            if (!isnull &amp;&amp; tok-&gt;varId() &amp;&amp; tok-&gt;strAt(1) != &quot;[&quot;) { 
+<span class="no"> 622 </span>                const VarInfo::AllocInfo allocation(arrayDelete ? NEW_ARRAY : NEW, VarInfo::DEALLOC, delTok); 
+<span class="no"> 623 </span>                changeAllocStatus(varInfo, allocation, tok, tok); 
+<span class="no"> 624 </span>            } 
+<span class="no"> 625 </span>        } 
+<span class="no"> 626 </span> 
+<span class="no"> 627 </span>        // Function call.. 
+<span class="no"> 628 </span>        else if (isFunctionCall(ftok)) { 
+<span class="no"> 629 </span>            const Token * openingPar = isFunctionCall(ftok); 
+<span class="no"> 630 </span>            const Library::AllocFunc* af = mSettings-&gt;library.getDeallocFuncInfo(ftok); 
+<span class="no"> 631 </span>            VarInfo::AllocInfo allocation(af ? af-&gt;groupId : 0, VarInfo::DEALLOC, ftok); 
+<span class="no"> 632 </span>            if (allocation.type == 0) 
+<span class="no"> 633 </span>                allocation.status = VarInfo::NOALLOC; 
+<span class="no"> 634 </span>            functionCall(ftok, openingPar, varInfo, allocation, af); 
+<span class="no"> 635 </span> 
+<span class="no"> 636 </span>            tok = ftok-&gt;next()-&gt;link(); 
+<span class="no"> 637 </span> 
+<span class="no"> 638 </span>            // Handle scopes that might be noreturn 
+<span class="no"> 639 </span>            if (allocation.status == VarInfo::NOALLOC &amp;&amp; Token::simpleMatch(tok, &quot;) ; }&quot;)) { 
+<span class="no"> 640 </span>                const std::string &amp;functionName(tok-&gt;link()-&gt;previous()-&gt;str()); 
+<span class="no"> 641 </span>                bool unknown = false; 
+<span class="no"> 642 </span>                if (mTokenizer-&gt;isScopeNoReturn(tok-&gt;tokAt(2), &amp;unknown)) { 
+<span class="no"> 643 </span>                    if (!unknown) 
+<span class="no"> 644 </span>                        varInfo-&gt;clear(); 
+<span class="no"> 645 </span>                    else if (!mSettings-&gt;library.isLeakIgnore(functionName) &amp;&amp; !mSettings-&gt;library.isUse(functionName)) 
+<span class="no"> 646 </span>                        varInfo-&gt;possibleUsageAll(functionName); 
+<span class="no"> 647 </span>                } 
+<span class="no"> 648 </span>            } 
+<span class="no"> 649 </span> 
+<span class="no"> 650 </span>            continue; 
+<span class="no"> 651 </span>        } 
+<span class="no"> 652 </span> 
+<span class="no"> 653 </span>        // goto =&gt; weird execution path 
+<span class="no"> 654 </span>        else if (tok-&gt;str() == &quot;goto&quot;) { 
+<span class="no"> 655 </span>            varInfo-&gt;clear(); 
+<span class="no"> 656 </span>        } 
+<span class="no"> 657 </span> 
+<span class="no"> 658 </span>        // continue/break 
+<span class="no"> 659 </span>        else if (Token::Match(tok, &quot;continue|break ;&quot;)) { 
+<span class="no"> 660 </span>            varInfo-&gt;clear(); 
+<span class="no"> 661 </span>        } 
+<span class="no"> 662 </span> 
+<span class="no"> 663 </span>        // Check smart pointer 
+<span class="no"> 664 </span>        else if (Token::Match(ftok, &quot;%name% &lt;&quot;) &amp;&amp; mSettings-&gt;library.isSmartPointer(tok)) { 
+<span class="no"> 665 </span>            const Token * typeEndTok = ftok-&gt;linkAt(1); 
+<span class="no"> 666 </span>            if (!Token::Match(typeEndTok, &quot;&gt; %var% {|( %var% ,|)|}&quot;)) 
+<span class="no"> 667 </span>                continue; 
+<span class="no"> 668 </span> 
+<span class="no"> 669 </span>            tok = typeEndTok-&gt;linkAt(2); 
+<span class="no"> 670 </span> 
+<span class="no"> 671 </span>            const int varid = typeEndTok-&gt;next()-&gt;varId(); 
+<span class="no"> 672 </span>            if (isPointerReleased(typeEndTok-&gt;tokAt(2), endToken, varid)) 
+<span class="no"> 673 </span>                continue; 
+<span class="no"> 674 </span> 
+<span class="no"> 675 </span>            bool arrayDelete = false; 
+<span class="no"> 676 </span>            if (Token::findsimplematch(ftok-&gt;next(), &quot;[ ]&quot;, typeEndTok)) 
+<span class="no"> 677 </span>                arrayDelete = true; 
+<span class="no"> 678 </span> 
+<span class="no"> 679 </span>            // Check deleter 
+<span class="no"> 680 </span>            const Token * deleterToken = nullptr; 
+<span class="no"> 681 </span>            const Token * endDeleterToken = nullptr; 
+<span class="no"> 682 </span>            const Library::AllocFunc* af = nullptr; 
+<span class="no"> 683 </span>            if (Token::Match(ftok, &quot;unique_ptr &lt; %type% ,&quot;)) { 
+<span class="no"> 684 </span>                deleterToken = ftok-&gt;tokAt(4); 
+<span class="no"> 685 </span>                endDeleterToken = typeEndTok; 
+<span class="no"> 686 </span>            } else if (Token::Match(typeEndTok, &quot;&gt; %var% {|( %var% ,&quot;)) { 
+<span class="no"> 687 </span>                deleterToken = typeEndTok-&gt;tokAt(5); 
+<span class="no"> 688 </span>                endDeleterToken = typeEndTok-&gt;linkAt(2); 
+<span class="no"> 689 </span>            } 
+<span class="no"> 690 </span>            if (deleterToken) { 
+<span class="no"> 691 </span>                // Skip the decaying plus in expressions like +[](T*){} 
+<span class="no"> 692 </span>                if (deleterToken-&gt;str() == &quot;+&quot;) { 
+<span class="no"> 693 </span>                    deleterToken = deleterToken-&gt;next(); 
+<span class="no"> 694 </span>                } 
+<span class="no"> 695 </span>                // Check if its a pointer to a function 
+<span class="no"> 696 </span>                const Token * dtok = Token::findmatch(deleterToken, &quot;&amp; %name%&quot;, endDeleterToken); 
+<span class="no"> 697 </span>                if (dtok) { 
+<span class="no"> 698 </span>                    af = mSettings-&gt;library.getDeallocFuncInfo(dtok-&gt;tokAt(1)); 
+<span class="no"> 699 </span>                } else { 
+<span class="no"> 700 </span>                    const Token * tscopeStart = nullptr; 
+<span class="no"> 701 </span>                    const Token * tscopeEnd = nullptr; 
+<span class="no"> 702 </span>                    // If the deleter is a lambda, check if it calls the dealloc function 
+<span class="no"> 703 </span>                    if (deleterToken-&gt;str() == &quot;[&quot; &amp;&amp; 
+<span class="no"> 704 </span>                        Token::simpleMatch(deleterToken-&gt;link(), &quot;] (&quot;) &amp;&amp; 
+<span class="no"> 705 </span>                        // TODO: Check for mutable keyword 
+<span class="no"> 706 </span>                        Token::simpleMatch(deleterToken-&gt;link()-&gt;linkAt(1), &quot;) {&quot;)) { 
+<span class="no"> 707 </span>                        tscopeStart = deleterToken-&gt;link()-&gt;linkAt(1)-&gt;tokAt(1); 
+<span class="no"> 708 </span>                        tscopeEnd = tscopeStart-&gt;link(); 
+<span class="no"> 709 </span>                        // If the deleter is a class, check if class calls the dealloc function 
+<span class="no"> 710 </span>                    } else if ((dtok = Token::findmatch(deleterToken, &quot;%type%&quot;, endDeleterToken)) &amp;&amp; dtok-&gt;type()) { 
+<span class="no"> 711 </span>                        const Scope * tscope = dtok-&gt;type()-&gt;classScope; 
+<span class="no"> 712 </span>                        if (tscope) { 
+<span class="no"> 713 </span>                            tscopeStart = tscope-&gt;bodyStart; 
+<span class="no"> 714 </span>                            tscopeEnd = tscope-&gt;bodyEnd; 
+<span class="no"> 715 </span>                        } 
+<span class="no"> 716 </span>                    } 
+<span class="no"> 717 </span> 
+<span class="no"> 718 </span>                    if (tscopeStart &amp;&amp; tscopeEnd) { 
+<span class="no"> 719 </span>                        for (const Token *tok2 = tscopeStart; tok2 != tscopeEnd; tok2 = tok2-&gt;next()) { 
+<span class="no"> 720 </span>                            af = mSettings-&gt;library.getDeallocFuncInfo(tok2); 
+<span class="no"> 721 </span>                            if (af) 
+<span class="no"> 722 </span>                                break; 
+<span class="no"> 723 </span>                        } 
+<span class="no"> 724 </span>                    } 
+<span class="no"> 725 </span>                } 
+<span class="no"> 726 </span>            } 
+<span class="no"> 727 </span> 
+<span class="no"> 728 </span>            const Token * vtok = typeEndTok-&gt;tokAt(3); 
+<span class="no"> 729 </span>            const VarInfo::AllocInfo allocation(af ? af-&gt;groupId : (arrayDelete ? NEW_ARRAY : NEW), VarInfo::OWNED, ftok); 
+<span class="no"> 730 </span>            changeAllocStatus(varInfo, allocation, vtok, vtok); 
+<span class="no"> 731 </span>        } 
+<span class="no"> 732 </span>    } 
+<span class="no"> 733 </span>} 
+<span class="no"> 734 </span> 
+<span class="no"> 735 </span> 
+<span class="no"> 736 </span>const Token * CheckLeakAutoVar::checkTokenInsideExpression(const Token * const tok, VarInfo *varInfo) 
+<span class="no"> 737 </span>{ 
+<span class="no"> 738 </span>    // Deallocation and then dereferencing pointer.. 
+<span class="no"> 739 </span>    if (tok-&gt;varId() &gt; 0) { 
+<span class="no"> 740 </span>        // TODO : Write a separate checker for this that uses valueFlowForward. 
+<span class="no"> 741 </span>        const std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator var = varInfo-&gt;alloctype.find(tok-&gt;varId()); 
+<span class="no"> 742 </span>        if (var != varInfo-&gt;alloctype.end()) { 
+<span class="no"> 743 </span>            bool unknown = false; 
+<span class="no"> 744 </span>            if (var-&gt;second.status == VarInfo::DEALLOC &amp;&amp; CheckNullPointer::isPointerDeRef(tok, unknown, mSettings) &amp;&amp; !unknown) { 
+<span class="no"> 745 </span>                deallocUseError(tok, tok-&gt;str()); 
+<span class="no"> 746 </span>            } else if (Token::simpleMatch(tok-&gt;tokAt(-2), &quot;= &amp;&quot;)) { 
+<span class="no"> 747 </span>                varInfo-&gt;erase(tok-&gt;varId()); 
+<span class="no"> 748 </span>            } else { 
+<span class="no"> 749 </span>                // check if tok is assigned into another variable 
+<span class="no"> 750 </span>                const Token *rhs = tok; 
+<span class="no"> 751 </span>                while (rhs-&gt;astParent()) { 
+<span class="no"> 752 </span>                    if (rhs-&gt;astParent()-&gt;str() == &quot;=&quot;) 
+<span class="no"> 753 </span>                        break; 
+<span class="no"> 754 </span>                    rhs = rhs-&gt;astParent(); 
+<span class="no"> 755 </span>                } 
+<span class="no"> 756 </span>                if (rhs-&gt;varId() == tok-&gt;varId()) { 
+<span class="no"> 757 </span>                    // simple assignment 
+<span class="no"> 758 </span>                    varInfo-&gt;erase(tok-&gt;varId()); 
+<span class="no"> 759 </span>                } else if (rhs-&gt;str() == &quot;(&quot; &amp;&amp; mSettings-&gt;library.returnValue(rhs-&gt;astOperand1()) != emptyString) { 
+<span class="no"> 760 </span>                    // #9298, assignment through return value of a function 
+<span class="no"> 761 </span>                    const std::string &amp;returnValue = mSettings-&gt;library.returnValue(rhs-&gt;astOperand1()); 
+<span class="no"> 762 </span>                    if (returnValue.compare(0, 3, &quot;arg&quot;) == 0) { 
+<span class="no"> 763 </span>                        int argn; 
+<span class="no"> 764 </span>                        const Token *func = getTokenArgumentFunction(tok, argn); 
+<span class="no"> 765 </span>                        if (func) { 
+<span class="no"> 766 </span>                            const std::string arg = &quot;arg&quot; + std::to_string(argn + 1); 
+<span class="no"> 767 </span>                            if (returnValue == arg) { 
+<span class="no"> 768 </span>                                varInfo-&gt;erase(tok-&gt;varId()); 
+<span class="no"> 769 </span>                            } 
+<span class="no"> 770 </span>                        } 
+<span class="no"> 771 </span>                    } 
+<span class="no"> 772 </span>                } 
+<span class="no"> 773 </span>            } 
+<span class="no"> 774 </span>        } else if (Token::Match(tok-&gt;previous(), &quot;&amp; %name% = %var% ;&quot;)) { 
+<span class="no"> 775 </span>            varInfo-&gt;referenced.insert(tok-&gt;tokAt(2)-&gt;varId()); 
+<span class="no"> 776 </span>        } 
+<span class="no"> 777 </span>    } 
+<span class="no"> 778 </span> 
+<span class="no"> 779 </span>    // check for function call 
+<span class="no"> 780 </span>    const Token * const openingPar = isFunctionCall(tok); 
+<span class="no"> 781 </span>    if (openingPar) { 
+<span class="no"> 782 </span>        const Library::AllocFunc* allocFunc = mSettings-&gt;library.getDeallocFuncInfo(tok); 
+<span class="no"> 783 </span>        VarInfo::AllocInfo alloc(allocFunc ? allocFunc-&gt;groupId : 0, VarInfo::DEALLOC, tok); 
+<span class="no"> 784 </span>        if (alloc.type == 0) 
+<span class="no"> 785 </span>            alloc.status = VarInfo::NOALLOC; 
+<span class="no"> 786 </span>        functionCall(tok, openingPar, varInfo, alloc, nullptr); 
+<span class="no"> 787 </span>        const std::string &amp;returnValue = mSettings-&gt;library.returnValue(tok); 
+<span class="no"> 788 </span>        if (returnValue.compare(0, 3, &quot;arg&quot;) == 0) 
+<span class="no"> 789 </span>            // the function returns one of its argument, we need to process a potential assignment 
+<span class="no"> 790 </span>            return openingPar; 
+<span class="no"> 791 </span>        return openingPar-&gt;link(); 
+<span class="no"> 792 </span>    } 
+<span class="no"> 793 </span> 
+<span class="no"> 794 </span>    return nullptr; 
+<span class="no"> 795 </span>} 
+<span class="no"> 796 </span> 
+<span class="no"> 797 </span> 
+<span class="no"> 798 </span>void CheckLeakAutoVar::changeAllocStatusIfRealloc(std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype, const Token *fTok, const Token *retTok) 
+<span class="no"> 799 </span>{ 
+<span class="no"> 800 </span>    const Library::AllocFunc* f = mSettings-&gt;library.getReallocFuncInfo(fTok); 
+<span class="no"> 801 </span>    if (f &amp;&amp; f-&gt;arg == -1 &amp;&amp; f-&gt;reallocArg &gt; 0 &amp;&amp; f-&gt;reallocArg &lt;= numberOfArguments(fTok)) { 
+<span class="no"> 802 </span>        const Token* argTok = getArguments(fTok).at(f-&gt;reallocArg - 1); 
+<span class="no"> 803 </span>        VarInfo::AllocInfo&amp; argAlloc = alloctype[argTok-&gt;varId()]; 
+<span class="no"> 804 </span>        VarInfo::AllocInfo&amp; retAlloc = alloctype[retTok-&gt;varId()]; 
+<span class="no"> 805 </span>        if (argAlloc.type != 0 &amp;&amp; argAlloc.type != f-&gt;groupId) 
+<span class="no"> 806 </span>            mismatchError(fTok, argAlloc.allocTok, argTok-&gt;str()); 
+<span class="no"> 807 </span>        argAlloc.status = VarInfo::DEALLOC; 
+<span class="no"> 808 </span>        argAlloc.allocTok = fTok; 
+<span class="no"> 809 </span>        retAlloc.type = f-&gt;groupId; 
+<span class="no"> 810 </span>        retAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 811 </span>        retAlloc.allocTok = fTok; 
+<span class="no"> 812 </span>    } 
+<span class="no"> 813 </span>} 
+<span class="no"> 814 </span> 
+<span class="no"> 815 </span> 
+<span class="no"> 816 </span>void CheckLeakAutoVar::changeAllocStatus(VarInfo *varInfo, const VarInfo::AllocInfo&amp; allocation, const Token* tok, const Token* arg) 
+<span class="no"> 817 </span>{ 
+<span class="no"> 818 </span>    std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo-&gt;alloctype; 
+<span class="no"> 819 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt;::iterator var = alloctype.find(arg-&gt;varId()); 
+<span class="no"> 820 </span>    if (var != alloctype.end()) { 
+<span class="no"> 821 </span>        if (allocation.status == VarInfo::NOALLOC) { 
+<span class="no"> 822 </span>            // possible usage 
+<span class="no"> 823 </span>            varInfo-&gt;possibleUsage[arg-&gt;varId()] = tok-&gt;str(); 
+<span class="no"> 824 </span>            if (var-&gt;second.status == VarInfo::DEALLOC &amp;&amp; arg-&gt;previous()-&gt;str() == &quot;&amp;&quot;) 
+<span class="no"> 825 </span>                varInfo-&gt;erase(arg-&gt;varId()); 
+<span class="no"> 826 </span>        } else if (var-&gt;second.managed()) { 
+<span class="no"> 827 </span>            doubleFreeError(tok, var-&gt;second.allocTok, arg-&gt;str(), allocation.type); 
+<span class="no"> 828 </span>        } else if (var-&gt;second.type != allocation.type) { 
+<span class="no"> 829 </span>            // mismatching allocation and deallocation 
+<span class="no"> 830 </span>            mismatchError(tok, var-&gt;second.allocTok, arg-&gt;str()); 
+<span class="no"> 831 </span>            varInfo-&gt;erase(arg-&gt;varId()); 
+<span class="no"> 832 </span>        } else { 
+<span class="no"> 833 </span>            // deallocation 
+<span class="no"> 834 </span>            var-&gt;second.status = allocation.status; 
+<span class="no"> 835 </span>            var-&gt;second.type = allocation.type; 
+<span class="no"> 836 </span>            var-&gt;second.allocTok = allocation.allocTok; 
+<span class="no"> 837 </span>        } 
+<span class="no"> 838 </span>    } else if (allocation.status != VarInfo::NOALLOC) { 
+<span class="no"> 839 </span>        alloctype[arg-&gt;varId()].status = VarInfo::DEALLOC; 
+<span class="no"> 840 </span>        alloctype[arg-&gt;varId()].allocTok = tok; 
+<span class="no"> 841 </span>    } 
+<span class="no"> 842 </span>} 
+<span class="no"> 843 </span> 
+<span class="no"> 844 </span>void CheckLeakAutoVar::functionCall(const Token *tokName, const Token *tokOpeningPar, VarInfo *varInfo, const VarInfo::AllocInfo&amp; allocation, const Library::AllocFunc* af) 
+<span class="no"> 845 </span>{ 
+<span class="no"> 846 </span>    // Ignore function call? 
+<span class="no"> 847 </span>    if (mSettings-&gt;library.isLeakIgnore(tokName-&gt;str())) 
+<span class="no"> 848 </span>        return; 
+<span class="no"> 849 </span>    if (mSettings-&gt;library.getReallocFuncInfo(tokName)) 
+<span class="no"> 850 </span>        return; 
+<span class="no"> 851 </span> 
+<span class="no"> 852 </span>    const Token * const tokFirstArg = tokOpeningPar-&gt;next(); 
+<span class="no"> 853 </span>    if (!tokFirstArg || tokFirstArg-&gt;str() == &quot;)&quot;) { 
+<span class="no"> 854 </span>        // no arguments 
+<span class="no"> 855 </span>        return; 
+<span class="no"> 856 </span>    } 
+<span class="no"> 857 </span> 
+<span class="no"> 858 </span>    int argNr = 1; 
+<span class="no"> 859 </span>    for (<span id="n4" class="en4"><a data-partner="#m4" class="mov" href="#n4">const Token *arg = </a><span id="n6" class="en6"><a data-partner="#m6" class="upd" href="#n6">tokFirstArg</a></span><a data-partner="#m4" class="mov" href="#n4">;</a></span> <span id="n2" class="en2"><a data-partner="#m2" class="upd" href="#n2">arg</a></span>; <span id="n3" class="en3"><a data-partner="#m3" class="upd" href="#n3">arg</a></span> = <span id="n5" class="en5"><a data-partner="#m5" class="upd" href="#n5">arg</a></span>-&gt;nextArgument()) { 
+<span class="no"> 860 </span>        if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
+<span class="no"> 861 </span>            arg = arg-&gt;next(); 
+<span class="no"> 862 </span>            if (Token::simpleMatch(arg, &quot;( std :: nothrow )&quot;)) 
+<span class="no"> 863 </span>                arg = arg-&gt;tokAt(5); 
+<span class="no"> 864 </span>        } 
+<span class="no"> 865 </span> 
+<span class="no"> 866 </span>        // Skip casts 
+<span class="no"> 867 </span>        while (arg &amp;&amp; arg-&gt;isCast()) 
+<span class="no"> 868 </span>            arg = arg-&gt;astOperand2() ? arg-&gt;astOperand2() : arg-&gt;astOperand1(); 
+<span class="no"> 869 </span>        const Token * const argTypeStartTok = arg; 
+<span class="no"> 870 </span> 
+<span class="no"> 871 </span>        while (Token::Match(arg, &quot;%name% .|:: %name%&quot;)) 
+<span class="no"> 872 </span>            arg = arg-&gt;tokAt(2); 
+<span class="no"> 873 </span> 
+<span class="no"> 874 </span>        if (Token::Match(arg, &quot;%var% [-,)] !!.&quot;) || Token::Match(arg, &quot;&amp; %var%&quot;)) { 
+<span class="no"> 875 </span>            // goto variable 
+<span class="no"> 876 </span>            if (arg-&gt;str() == &quot;&amp;&quot;) 
+<span class="no"> 877 </span>                arg = arg-&gt;next(); 
+<span class="no"> 878 </span> 
+<span class="no"> 879 </span>            const bool isnull = arg-&gt;hasKnownIntValue() &amp;&amp; arg-&gt;values().front().intvalue == 0; 
+<span class="no"> 880 </span> 
+<span class="no"> 881 </span>            // Is variable allocated? 
+<span class="no"> 882 </span>            if (!isnull &amp;&amp; (!af || af-&gt;arg == argNr)) 
+<span class="no"> 883 </span>                changeAllocStatus(varInfo, allocation, tokName, arg); 
+<span class="no"> 884 </span>        } 
+<span class="no"> 885 </span>        // Check smart pointer 
+<span class="no"> 886 </span>        else if (Token::Match(arg, &quot;%name% &lt; %type%&quot;) &amp;&amp; mSettings-&gt;library.isSmartPointer(argTypeStartTok)) { 
+<span class="no"> 887 </span>            const Token * typeEndTok = arg-&gt;linkAt(1); 
+<span class="no"> 888 </span>            const Token * allocTok = nullptr; 
+<span class="no"> 889 </span>            if (!Token::Match(typeEndTok, &quot;&gt; {|( %var% ,|)|}&quot;)) 
+<span class="no"> 890 </span>                continue; 
+<span class="no"> 891 </span> 
+<span class="no"> 892 </span>            bool arrayDelete = false; 
+<span class="no"> 893 </span>            if (Token::findsimplematch(arg-&gt;next(), &quot;[ ]&quot;, typeEndTok)) 
+<span class="no"> 894 </span>                arrayDelete = true; 
+<span class="no"> 895 </span> 
+<span class="no"> 896 </span>            // Check deleter 
+<span class="no"> 897 </span>            const Token * deleterToken = nullptr; 
+<span class="no"> 898 </span>            const Token * endDeleterToken = nullptr; 
+<span class="no"> 899 </span>            const Library::AllocFunc* sp_af = nullptr; 
+<span class="no"> 900 </span>            if (Token::Match(arg, &quot;unique_ptr &lt; %type% ,&quot;)) { 
+<span class="no"> 901 </span>                deleterToken = arg-&gt;tokAt(4); 
+<span class="no"> 902 </span>                endDeleterToken = typeEndTok; 
+<span class="no"> 903 </span>            } else if (Token::Match(typeEndTok, &quot;&gt; {|( %var% ,&quot;)) { 
+<span class="no"> 904 </span>                deleterToken = typeEndTok-&gt;tokAt(4); 
+<span class="no"> 905 </span>                endDeleterToken = typeEndTok-&gt;linkAt(1); 
+<span class="no"> 906 </span>            } 
+<span class="no"> 907 </span>            if (deleterToken) { 
+<span class="no"> 908 </span>                // Check if its a pointer to a function 
+<span class="no"> 909 </span>                const Token * dtok = Token::findmatch(deleterToken, &quot;&amp; %name%&quot;, endDeleterToken); 
+<span class="no"> 910 </span>                if (dtok) { 
+<span class="no"> 911 </span>                    sp_af = mSettings-&gt;library.getDeallocFuncInfo(dtok-&gt;tokAt(1)); 
+<span class="no"> 912 </span>                } else { 
+<span class="no"> 913 </span>                    // If the deleter is a class, check if class calls the dealloc function 
+<span class="no"> 914 </span>                    dtok = Token::findmatch(deleterToken, &quot;%type%&quot;, endDeleterToken); 
+<span class="no"> 915 </span>                    if (dtok &amp;&amp; dtok-&gt;type()) { 
+<span class="no"> 916 </span>                        const Scope * tscope = dtok-&gt;type()-&gt;classScope; 
+<span class="no"> 917 </span>                        for (const Token *tok2 = tscope-&gt;bodyStart; tok2 != tscope-&gt;bodyEnd; tok2 = tok2-&gt;next()) { 
+<span class="no"> 918 </span>                            sp_af = mSettings-&gt;library.getDeallocFuncInfo(tok2); 
+<span class="no"> 919 </span>                            if (sp_af) { 
+<span class="no"> 920 </span>                                allocTok = tok2; 
+<span class="no"> 921 </span>                                break; 
+<span class="no"> 922 </span>                            } 
+<span class="no"> 923 </span>                        } 
+<span class="no"> 924 </span>                    } 
+<span class="no"> 925 </span>                } 
+<span class="no"> 926 </span>            } 
+<span class="no"> 927 </span> 
+<span class="no"> 928 </span>            const Token * vtok = typeEndTok-&gt;tokAt(2); 
+<span class="no"> 929 </span>            const VarInfo::AllocInfo sp_allocation(sp_af ? sp_af-&gt;groupId : (arrayDelete ? NEW_ARRAY : NEW), VarInfo::OWNED, allocTok); 
+<span class="no"> 930 </span>            changeAllocStatus(varInfo, sp_allocation, vtok, vtok); 
+<span class="no"> 931 </span>        } else { 
+<span class="no"> 932 </span>            checkTokenInsideExpression(arg, varInfo); 
+<span class="no"> 933 </span>        } 
+<span class="no"> 934 </span>        // TODO: check each token in argument expression (could contain multiple variables) 
+<span class="no"> 935 </span>        argNr++; 
+<span class="no"> 936 </span>    } 
+<span class="no"> 937 </span>} 
+<span class="no"> 938 </span> 
+<span class="no"> 939 </span> 
+<span class="no"> 940 </span>void CheckLeakAutoVar::leakIfAllocated(const Token *vartok, 
+<span class="no"> 941 </span>                                       const VarInfo &amp;varInfo) 
+<span class="no"> 942 </span>{ 
+<span class="no"> 943 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo.alloctype; 
+<span class="no"> 944 </span>    const std::map&lt;int, std::string&gt; &amp;possibleUsage = varInfo.possibleUsage; 
+<span class="no"> 945 </span> 
+<span class="no"> 946 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator var = alloctype.find(vartok-&gt;varId()); 
+<span class="no"> 947 </span>    if (var != alloctype.end() &amp;&amp; var-&gt;second.status == VarInfo::ALLOC) { 
+<span class="no"> 948 </span>        const std::map&lt;int, std::string&gt;::const_iterator use = possibleUsage.find(vartok-&gt;varId()); 
+<span class="no"> 949 </span>        if (use == possibleUsage.end()) { 
+<span class="no"> 950 </span>            leakError(vartok, vartok-&gt;str(), var-&gt;second.type); 
+<span class="no"> 951 </span>        } else { 
+<span class="no"> 952 </span>            configurationInfo(vartok, use-&gt;second); 
+<span class="no"> 953 </span>        } 
+<span class="no"> 954 </span>    } 
+<span class="no"> 955 </span>} 
+<span class="no"> 956 </span> 
+<span class="no"> 957 </span>void CheckLeakAutoVar::ret(const Token *tok, const VarInfo &amp;varInfo) 
+<span class="no"> 958 </span>{ 
+<span class="no"> 959 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo.alloctype; 
+<span class="no"> 960 </span>    const std::map&lt;int, std::string&gt; &amp;possibleUsage = varInfo.possibleUsage; 
+<span class="no"> 961 </span> 
+<span class="no"> 962 </span>    const SymbolDatabase *symbolDatabase = mTokenizer-&gt;getSymbolDatabase(); 
+<span class="no"> 963 </span>    for (std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) { 
+<span class="no"> 964 </span>        // don&apos;t warn if variable is conditionally allocated 
+<span class="no"> 965 </span>        if (!it-&gt;second.managed() &amp;&amp; varInfo.conditionalAlloc.find(it-&gt;first) != varInfo.conditionalAlloc.end()) 
+<span class="no"> 966 </span>            continue; 
+<span class="no"> 967 </span> 
+<span class="no"> 968 </span>        // don&apos;t warn if there is a reference of the variable 
+<span class="no"> 969 </span>        if (varInfo.referenced.find(it-&gt;first) != varInfo.referenced.end()) 
+<span class="no"> 970 </span>            continue; 
+<span class="no"> 971 </span> 
+<span class="no"> 972 </span>        const int varid = it-&gt;first; 
+<span class="no"> 973 </span>        const Variable *var = symbolDatabase-&gt;getVariableFromVarId(varid); 
+<span class="no"> 974 </span>        if (var) { 
+<span class="no"> 975 </span>            bool used = false; 
+<span class="no"> 976 </span>            for (const Token *tok2 = tok; tok2; tok2 = tok2-&gt;next()) { 
+<span class="no"> 977 </span>                if (tok2-&gt;str() == &quot;;&quot;) 
+<span class="no"> 978 </span>                    break; 
+<span class="no"> 979 </span>                if (!Token::Match(tok2, &quot;return|(|{|,&quot;)) 
+<span class="no"> 980 </span>                    continue; 
+<span class="no"> 981 </span> 
+<span class="no"> 982 </span>                const Token* tok3 = tok2-&gt;next(); 
+<span class="no"> 983 </span>                while (tok3 &amp;&amp; tok3-&gt;isCast() &amp;&amp; tok3-&gt;valueType() &amp;&amp; 
+<span class="no"> 984 </span>                       (tok3-&gt;valueType()-&gt;pointer || 
+<span class="no"> 985 </span>                        (tok3-&gt;valueType()-&gt;typeSize(*mSettings) == 0) || 
+<span class="no"> 986 </span>                        (tok3-&gt;valueType()-&gt;typeSize(*mSettings) &gt;= mSettings-&gt;sizeof_pointer))) 
+<span class="no"> 987 </span>                    tok3 = tok3-&gt;astOperand2() ? tok3-&gt;astOperand2() : tok3-&gt;astOperand1(); 
+<span class="no"> 988 </span>                if (Token::Match(tok3, &quot;%varid%&quot;, varid)) 
+<span class="no"> 989 </span>                    tok2 = tok3-&gt;next(); 
+<span class="no"> 990 </span>                else if (Token::Match(tok3, &quot;&amp; %varid% . %name%&quot;, varid)) 
+<span class="no"> 991 </span>                    tok2 = tok3-&gt;tokAt(4); 
+<span class="no"> 992 </span>                else 
+<span class="no"> 993 </span>                    continue; 
+<span class="no"> 994 </span>                if (Token::Match(tok2, &quot;[});,]&quot;)) { 
+<span class="no"> 995 </span>                    used = true; 
+<span class="no"> 996 </span>                    break; 
+<span class="no"> 997 </span>                } 
+<span class="no"> 998 </span>            } 
+<span class="no"> 999 </span> 
+<span class="no">1000 </span>            // return deallocated pointer 
+<span class="no">1001 </span>            if (used &amp;&amp; it-&gt;second.status == VarInfo::DEALLOC) 
+<span class="no">1002 </span>                deallocReturnError(tok, it-&gt;second.allocTok, var-&gt;name()); 
+<span class="no">1003 </span> 
+<span class="no">1004 </span>            else if (!used &amp;&amp; !it-&gt;second.managed()) { 
+<span class="no">1005 </span>                const std::map&lt;int, std::string&gt;::const_iterator use = possibleUsage.find(varid); 
+<span class="no">1006 </span>                if (use == possibleUsage.end()) { 
+<span class="no">1007 </span>                    leakError(tok, var-&gt;name(), it-&gt;second.type); 
+<span class="no">1008 </span>                } else { 
+<span class="no">1009 </span>                    configurationInfo(tok, use-&gt;second); 
+<span class="no">1010 </span>                } 
+<span class="no">1011 </span>            } 
+<span class="no">1012 </span>        } 
+<span class="no">1013 </span>    } 
+<span class="no">1014 </span>} 
+<span class="no">1015 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">19_B (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">   1 </span>/* 
+<span class="no">   2 </span> * Cppcheck - A tool for static C/C++ code analysis 
+<span class="no">   3 </span> * Copyright (C) 2007-2020 Cppcheck team. 
+<span class="no">   4 </span> * 
+<span class="no">   5 </span> * This program is free software: you can redistribute it and/or modify 
+<span class="no">   6 </span> * it under the terms of the GNU General Public License as published by 
+<span class="no">   7 </span> * the Free Software Foundation, either version 3 of the License, or 
+<span class="no">   8 </span> * (at your option) any later version. 
+<span class="no">   9 </span> * 
+<span class="no">  10 </span> * This program is distributed in the hope that it will be useful, 
+<span class="no">  11 </span> * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+<span class="no">  12 </span> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+<span class="no">  13 </span> * GNU General Public License for more details. 
+<span class="no">  14 </span> * 
+<span class="no">  15 </span> * You should have received a copy of the GNU General Public License 
+<span class="no">  16 </span> * along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;. 
+<span class="no">  17 </span> */ 
+<span class="no">  18 </span> 
+<span class="no">  19 </span>//--------------------------------------------------------------------------- 
+<span class="no">  20 </span>// Leaks when using auto variables 
+<span class="no">  21 </span>//--------------------------------------------------------------------------- 
+<span class="no">  22 </span> 
+<span class="no">  23 </span>#include &quot;checkleakautovar.h&quot; 
+<span class="no">  24 </span> 
+<span class="no">  25 </span>#include &quot;astutils.h&quot; 
+<span class="no">  26 </span>#include &quot;checkmemoryleak.h&quot;  // &lt;- CheckMemoryLeak::memoryLeak 
+<span class="no">  27 </span>#include &quot;checknullpointer.h&quot; // &lt;- CheckNullPointer::isPointerDeRef 
+<span class="no">  28 </span>#include &quot;mathlib.h&quot; 
+<span class="no">  29 </span>#include &quot;settings.h&quot; 
+<span class="no">  30 </span>#include &quot;errortypes.h&quot; 
+<span class="no">  31 </span>#include &quot;symboldatabase.h&quot; 
+<span class="no">  32 </span>#include &quot;token.h&quot; 
+<span class="no">  33 </span>#include &quot;tokenize.h&quot; 
+<span class="no">  34 </span> 
+<span class="no">  35 </span>#include &lt;cstddef&gt; 
+<span class="no">  36 </span>#include &lt;iostream&gt; 
+<span class="no">  37 </span>#include &lt;list&gt; 
+<span class="no">  38 </span>#include &lt;stack&gt; 
+<span class="no">  39 </span>#include &lt;utility&gt; 
+<span class="no">  40 </span> 
+<span class="no">  41 </span>//--------------------------------------------------------------------------- 
+<span class="no">  42 </span> 
+<span class="no">  43 </span>// Register this check class (by creating a static instance of it) 
+<span class="no">  44 </span>namespace { 
+<span class="no">  45 </span>    CheckLeakAutoVar instance; 
+<span class="no">  46 </span>} 
+<span class="no">  47 </span> 
+<span class="no">  48 </span>static const CWE CWE672(672U); 
+<span class="no">  49 </span>static const CWE CWE415(415U); 
+<span class="no">  50 </span> 
+<span class="no">  51 </span>// Hardcoded allocation types (not from library) 
+<span class="no">  52 </span>static const int NEW_ARRAY = -2; 
+<span class="no">  53 </span>static const int NEW = -1; 
+<span class="no">  54 </span> 
+<span class="no">  55 </span> 
+<span class="no">  56 </span>/** 
+<span class="no">  57 </span> * @brief Is variable type some class with automatic deallocation? 
+<span class="no">  58 </span> * @param vartok variable token 
+<span class="no">  59 </span> * @return true unless it can be seen there is no automatic deallocation 
+<span class="no">  60 </span> */ 
+<span class="no">  61 </span>static bool isAutoDealloc(const Variable *var) 
+<span class="no">  62 </span>{ 
+<span class="no">  63 </span>    if (var-&gt;valueType() &amp;&amp; var-&gt;valueType()-&gt;type != ValueType::Type::RECORD &amp;&amp; var-&gt;valueType()-&gt;type != ValueType::Type::UNKNOWN_TYPE) 
+<span class="no">  64 </span>        return false; 
+<span class="no">  65 </span> 
+<span class="no">  66 </span>    // return false if the type is a simple record type without side effects 
+<span class="no">  67 </span>    // a type that has no side effects (no constructors and no members with constructors) 
+<span class="no">  68 </span>    /** @todo false negative: check base class for side effects */ 
+<span class="no">  69 </span>    /** @todo false negative: check constructors for side effects */ 
+<span class="no">  70 </span>    if (var-&gt;typeScope() &amp;&amp; var-&gt;typeScope()-&gt;numConstructors == 0 &amp;&amp; 
+<span class="no">  71 </span>        (var-&gt;typeScope()-&gt;varlist.empty() || var-&gt;type()-&gt;needInitialization == Type::NeedInitialization::True) &amp;&amp; 
+<span class="no">  72 </span>        var-&gt;type()-&gt;derivedFrom.empty()) 
+<span class="no">  73 </span>        return false; 
+<span class="no">  74 </span> 
+<span class="no">  75 </span>    return true; 
+<span class="no">  76 </span>} 
+<span class="no">  77 </span> 
+<span class="no">  78 </span>//--------------------------------------------------------------------------- 
+<span class="no">  79 </span> 
+<span class="no">  80 </span>void VarInfo::print() 
+<span class="no">  81 </span>{ 
+<span class="no">  82 </span>    std::cout &lt;&lt; &quot;size=&quot; &lt;&lt; alloctype.size() &lt;&lt; std::endl; 
+<span class="no">  83 </span>    for (std::map&lt;int, AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) { 
+<span class="no">  84 </span>        std::string strusage; 
+<span class="no">  85 </span>        const std::map&lt;int, std::string&gt;::const_iterator use = 
+<span class="no">  86 </span>            possibleUsage.find(it-&gt;first); 
+<span class="no">  87 </span>        if (use != possibleUsage.end()) 
+<span class="no">  88 </span>            strusage = use-&gt;second; 
+<span class="no">  89 </span> 
+<span class="no">  90 </span>        std::string status; 
+<span class="no">  91 </span>        switch (it-&gt;second.status) { 
+<span class="no">  92 </span>        case OWNED: 
+<span class="no">  93 </span>            status = &quot;owned&quot;; 
+<span class="no">  94 </span>            break; 
+<span class="no">  95 </span>        case DEALLOC: 
+<span class="no">  96 </span>            status = &quot;dealloc&quot;; 
+<span class="no">  97 </span>            break; 
+<span class="no">  98 </span>        case ALLOC: 
+<span class="no">  99 </span>            status = &quot;alloc&quot;; 
+<span class="no"> 100 </span>            break; 
+<span class="no"> 101 </span>        case NOALLOC: 
+<span class="no"> 102 </span>            status = &quot;noalloc&quot;; 
+<span class="no"> 103 </span>            break; 
+<span class="no"> 104 </span>        default: 
+<span class="no"> 105 </span>            status = &quot;?&quot;; 
+<span class="no"> 106 </span>            break; 
+<span class="no"> 107 </span>        } 
+<span class="no"> 108 </span> 
+<span class="no"> 109 </span>        std::cout &lt;&lt; &quot;status=&quot; &lt;&lt; status &lt;&lt; &quot; &quot; 
+<span class="no"> 110 </span>                  &lt;&lt; &quot;alloctype=&apos;&quot; &lt;&lt; it-&gt;second.type &lt;&lt; &quot;&apos; &quot; 
+<span class="no"> 111 </span>                  &lt;&lt; &quot;possibleUsage=&apos;&quot; &lt;&lt; strusage &lt;&lt; &quot;&apos; &quot; 
+<span class="no"> 112 </span>                  &lt;&lt; &quot;conditionalAlloc=&quot; &lt;&lt; (conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end() ? &quot;yes&quot; : &quot;no&quot;) &lt;&lt; &quot; &quot; 
+<span class="no"> 113 </span>                  &lt;&lt; &quot;referenced=&quot; &lt;&lt; (referenced.find(it-&gt;first) != referenced.end() ? &quot;yes&quot; : &quot;no&quot;) &lt;&lt; &quot; &quot; 
+<span class="no"> 114 </span>                  &lt;&lt; std::endl; 
+<span class="no"> 115 </span>    } 
+<span class="no"> 116 </span>} 
+<span class="no"> 117 </span> 
+<span class="no"> 118 </span>void VarInfo::possibleUsageAll(const std::string &amp;functionName) 
+<span class="no"> 119 </span>{ 
+<span class="no"> 120 </span>    possibleUsage.clear(); 
+<span class="no"> 121 </span>    for (std::map&lt;int, AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) 
+<span class="no"> 122 </span>        possibleUsage[it-&gt;first] = functionName; 
+<span class="no"> 123 </span>} 
+<span class="no"> 124 </span> 
+<span class="no"> 125 </span> 
+<span class="no"> 126 </span>void CheckLeakAutoVar::leakError(const Token *tok, const std::string &amp;varname, int type) 
+<span class="no"> 127 </span>{ 
+<span class="no"> 128 </span>    const CheckMemoryLeak checkmemleak(mTokenizer, mErrorLogger, mSettings); 
+<span class="no"> 129 </span>    if (Library::isresource(type)) 
+<span class="no"> 130 </span>        checkmemleak.resourceLeakError(tok, varname); 
+<span class="no"> 131 </span>    else 
+<span class="no"> 132 </span>        checkmemleak.memleakError(tok, varname); 
+<span class="no"> 133 </span>} 
+<span class="no"> 134 </span> 
+<span class="no"> 135 </span>void CheckLeakAutoVar::mismatchError(const Token *deallocTok, const Token *allocTok, const std::string &amp;varname) 
+<span class="no"> 136 </span>{ 
+<span class="no"> 137 </span>    const CheckMemoryLeak c(mTokenizer, mErrorLogger, mSettings); 
+<span class="no"> 138 </span>    const std::list&lt;const Token *&gt; callstack = { allocTok, deallocTok }; 
+<span class="no"> 139 </span>    c.mismatchAllocDealloc(callstack, varname); 
+<span class="no"> 140 </span>} 
+<span class="no"> 141 </span> 
+<span class="no"> 142 </span>void CheckLeakAutoVar::deallocUseError(const Token *tok, const std::string &amp;varname) 
+<span class="no"> 143 </span>{ 
+<span class="no"> 144 </span>    const CheckMemoryLeak c(mTokenizer, mErrorLogger, mSettings); 
+<span class="no"> 145 </span>    c.deallocuseError(tok, varname); 
+<span class="no"> 146 </span>} 
+<span class="no"> 147 </span> 
+<span class="no"> 148 </span>void CheckLeakAutoVar::deallocReturnError(const Token *tok, const Token *deallocTok, const std::string &amp;varname) 
+<span class="no"> 149 </span>{ 
+<span class="no"> 150 </span>    const std::list&lt;const Token *&gt; locations = { deallocTok, tok }; 
+<span class="no"> 151 </span>    reportError(locations, Severity::error, &quot;deallocret&quot;, &quot;$symbol:&quot; + varname + &quot;\nReturning/dereferencing &apos;$symbol&apos; after it is deallocated / released&quot;, CWE672, false); 
+<span class="no"> 152 </span>} 
+<span class="no"> 153 </span> 
+<span class="no"> 154 </span>void CheckLeakAutoVar::configurationInfo(const Token* tok, const std::string &amp;functionName) 
+<span class="no"> 155 </span>{ 
+<span class="no"> 156 </span>    if (mSettings-&gt;checkLibrary &amp;&amp; mSettings-&gt;isEnabled(Settings::INFORMATION)) { 
+<span class="no"> 157 </span>        reportError(tok, 
+<span class="no"> 158 </span>                    Severity::information, 
+<span class="no"> 159 </span>                    &quot;checkLibraryUseIgnore&quot;, 
+<span class="no"> 160 </span>                    &quot;--check-library: Function &quot; + functionName + &quot;() should have &lt;use&gt;/&lt;leak-ignore&gt; configuration&quot;); 
+<span class="no"> 161 </span>    } 
+<span class="no"> 162 </span>} 
+<span class="no"> 163 </span> 
+<span class="no"> 164 </span>void CheckLeakAutoVar::doubleFreeError(const Token *tok, const Token *prevFreeTok, const std::string &amp;varname, int type) 
+<span class="no"> 165 </span>{ 
+<span class="no"> 166 </span>    const std::list&lt;const Token *&gt; locations = { prevFreeTok, tok }; 
+<span class="no"> 167 </span> 
+<span class="no"> 168 </span>    if (Library::isresource(type)) 
+<span class="no"> 169 </span>        reportError(locations, Severity::error, &quot;doubleFree&quot;, &quot;$symbol:&quot; + varname + &quot;\nResource handle &apos;$symbol&apos; freed twice.&quot;, CWE415, false); 
+<span class="no"> 170 </span>    else 
+<span class="no"> 171 </span>        reportError(locations, Severity::error, &quot;doubleFree&quot;, &quot;$symbol:&quot; + varname + &quot;\nMemory pointed to by &apos;$symbol&apos; is freed twice.&quot;, CWE415, false); 
+<span class="no"> 172 </span>} 
+<span class="no"> 173 </span> 
+<span class="no"> 174 </span> 
+<span class="no"> 175 </span>void CheckLeakAutoVar::check() 
+<span class="no"> 176 </span>{ 
+<span class="no"> 177 </span>    if (mSettings-&gt;clang) 
+<span class="no"> 178 </span>        return; 
+<span class="no"> 179 </span> 
+<span class="no"> 180 </span>    const SymbolDatabase *symbolDatabase = mTokenizer-&gt;getSymbolDatabase(); 
+<span class="no"> 181 </span> 
+<span class="no"> 182 </span>    // Local variables that are known to be non-zero. 
+<span class="no"> 183 </span>    const std::set&lt;int&gt; notzero; 
+<span class="no"> 184 </span> 
+<span class="no"> 185 </span>    // Check function scopes 
+<span class="no"> 186 </span>    for (const Scope * scope : symbolDatabase-&gt;functionScopes) { 
+<span class="no"> 187 </span>        if (scope-&gt;hasInlineOrLambdaFunction()) 
+<span class="no"> 188 </span>            continue; 
+<span class="no"> 189 </span> 
+<span class="no"> 190 </span>        // Empty variable info 
+<span class="no"> 191 </span>        VarInfo varInfo; 
+<span class="no"> 192 </span> 
+<span class="no"> 193 </span>        checkScope(scope-&gt;bodyStart, &amp;varInfo, notzero, 0); 
+<span class="no"> 194 </span> 
+<span class="no"> 195 </span>        varInfo.conditionalAlloc.clear(); 
+<span class="no"> 196 </span> 
+<span class="no"> 197 </span>        // Clear reference arguments from varInfo.. 
+<span class="no"> 198 </span>        std::map&lt;int, VarInfo::AllocInfo&gt;::iterator it = varInfo.alloctype.begin(); 
+<span class="no"> 199 </span>        while (it != varInfo.alloctype.end()) { 
+<span class="no"> 200 </span>            const Variable *var = symbolDatabase-&gt;getVariableFromVarId(it-&gt;first); 
+<span class="no"> 201 </span>            if (!var || 
+<span class="no"> 202 </span>                (var-&gt;isArgument() &amp;&amp; var-&gt;isReference()) || 
+<span class="no"> 203 </span>                (!var-&gt;isArgument() &amp;&amp; !var-&gt;isLocal())) 
+<span class="no"> 204 </span>                varInfo.alloctype.erase(it++); 
+<span class="no"> 205 </span>            else 
+<span class="no"> 206 </span>                ++it; 
+<span class="no"> 207 </span>        } 
+<span class="no"> 208 </span> 
+<span class="no"> 209 </span>        ret(scope-&gt;bodyEnd, varInfo); 
+<span class="no"> 210 </span>    } 
+<span class="no"> 211 </span>} 
+<span class="no"> 212 </span> 
+<span class="no"> 213 </span>static bool isVarUsedInTree(const Token *tok, nonneg int varid) 
+<span class="no"> 214 </span>{ 
+<span class="no"> 215 </span>    if (!tok) 
+<span class="no"> 216 </span>        return false; 
+<span class="no"> 217 </span>    if (tok-&gt;varId() == varid) 
+<span class="no"> 218 </span>        return true; 
+<span class="no"> 219 </span>    if (tok-&gt;str() == &quot;(&quot; &amp;&amp; Token::simpleMatch(tok-&gt;astOperand1(), &quot;sizeof&quot;)) 
+<span class="no"> 220 </span>        return false; 
+<span class="no"> 221 </span>    return isVarUsedInTree(tok-&gt;astOperand1(), varid) || isVarUsedInTree(tok-&gt;astOperand2(), varid); 
+<span class="no"> 222 </span>} 
+<span class="no"> 223 </span> 
+<span class="no"> 224 </span>static bool isPointerReleased(const Token *startToken, const Token *endToken, nonneg int varid) 
+<span class="no"> 225 </span>{ 
+<span class="no"> 226 </span>    for (const Token *tok = startToken; tok &amp;&amp; tok != endToken; tok = tok-&gt;next()) { 
+<span class="no"> 227 </span>        if (tok-&gt;varId() != varid) 
+<span class="no"> 228 </span>            continue; 
+<span class="no"> 229 </span>        if (Token::Match(tok, &quot;%var% . release ( )&quot;)) 
+<span class="no"> 230 </span>            return true; 
+<span class="no"> 231 </span>        if (Token::Match(tok, &quot;%var% =&quot;)) 
+<span class="no"> 232 </span>            return false; 
+<span class="no"> 233 </span>    } 
+<span class="no"> 234 </span>    return false; 
+<span class="no"> 235 </span>} 
+<span class="no"> 236 </span> 
+<span class="no"> 237 </span>static bool isLocalVarNoAutoDealloc(const Token *varTok, const bool isCpp) 
+<span class="no"> 238 </span>{ 
+<span class="no"> 239 </span>    // not a local variable nor argument? 
+<span class="no"> 240 </span>    const Variable *var = varTok-&gt;variable(); 
+<span class="no"> 241 </span>    if (!var) 
+<span class="no"> 242 </span>        return true; 
+<span class="no"> 243 </span>    if (!var-&gt;isArgument() &amp;&amp; (!var-&gt;isLocal() || var-&gt;isStatic())) 
+<span class="no"> 244 </span>        return false; 
+<span class="no"> 245 </span> 
+<span class="no"> 246 </span>    // Don&apos;t check reference variables 
+<span class="no"> 247 </span>    if (var-&gt;isReference()) 
+<span class="no"> 248 </span>        return false; 
+<span class="no"> 249 </span> 
+<span class="no"> 250 </span>    // non-pod variable 
+<span class="no"> 251 </span>    if (isCpp) { 
+<span class="no"> 252 </span>        // Possibly automatically deallocated memory 
+<span class="no"> 253 </span>        if (isAutoDealloc(var) &amp;&amp; Token::Match(varTok, &quot;%var% = new&quot;)) 
+<span class="no"> 254 </span>            return false; 
+<span class="no"> 255 </span>        if (!var-&gt;isPointer() &amp;&amp; !var-&gt;typeStartToken()-&gt;isStandardType()) 
+<span class="no"> 256 </span>            return false; 
+<span class="no"> 257 </span>    } 
+<span class="no"> 258 </span>    return true; 
+<span class="no"> 259 </span>} 
+<span class="no"> 260 </span> 
+<span class="no"> 261 </span>/** checks if nameToken is a name of a function in a function call: 
+<span class="no"> 262 </span>*     func(arg) 
+<span class="no"> 263 </span>* or 
+<span class="no"> 264 </span>*     func&lt;temp1_arg&gt;(arg) 
+<span class="no"> 265 </span>* @param nameToken Function name token 
+<span class="no"> 266 </span>* @return opening parenthesis token or NULL if not a function call 
+<span class="no"> 267 </span>*/ 
+<span class="no"> 268 </span> 
+<span class="no"> 269 </span>static const Token * isFunctionCall(const Token * nameToken) 
+<span class="no"> 270 </span>{ 
+<span class="no"> 271 </span>    if (nameToken-&gt;isName()) { 
+<span class="no"> 272 </span>        nameToken = nameToken-&gt;next(); 
+<span class="no"> 273 </span>        // check if function is a template 
+<span class="no"> 274 </span>        if (nameToken &amp;&amp; nameToken-&gt;link() &amp;&amp; nameToken-&gt;str() == &quot;&lt;&quot;) { 
+<span class="no"> 275 </span>            // skip template arguments 
+<span class="no"> 276 </span>            nameToken = nameToken-&gt;link()-&gt;next(); 
+<span class="no"> 277 </span>        } 
+<span class="no"> 278 </span>        // check for &apos;(&apos; 
+<span class="no"> 279 </span>        if (nameToken &amp;&amp; nameToken-&gt;link() &amp;&amp; nameToken-&gt;str() == &quot;(&quot;) { 
+<span class="no"> 280 </span>            // returning opening parenthesis pointer 
+<span class="no"> 281 </span>            return nameToken; 
+<span class="no"> 282 </span>        } 
+<span class="no"> 283 </span>    } 
+<span class="no"> 284 </span>    return nullptr; 
+<span class="no"> 285 </span>} 
+<span class="no"> 286 </span> 
+<span class="no"> 287 </span>void CheckLeakAutoVar::checkScope(const Token * const startToken, 
+<span class="no"> 288 </span>                                  VarInfo *varInfo, 
+<span class="no"> 289 </span>                                  std::set&lt;int&gt; notzero, 
+<span class="no"> 290 </span>                                  nonneg int recursiveCount) 
+<span class="no"> 291 </span>{ 
+<span class="no"> 292 </span>#if ASAN 
+<span class="no"> 293 </span>    static const nonneg int recursiveLimit = 300; 
+<span class="no"> 294 </span>#else 
+<span class="no"> 295 </span>    static const nonneg int recursiveLimit = 1000; 
+<span class="no"> 296 </span>#endif 
+<span class="no"> 297 </span>    if (++recursiveCount &gt; recursiveLimit)    // maximum number of &quot;else if ()&quot; 
+<span class="no"> 298 </span>        throw InternalError(startToken, &quot;Internal limit: CheckLeakAutoVar::checkScope() Maximum recursive count of 1000 reached.&quot;, InternalError::LIMIT); 
+<span class="no"> 299 </span> 
+<span class="no"> 300 </span>    std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo-&gt;alloctype; 
+<span class="no"> 301 </span>    std::map&lt;int, std::string&gt; &amp;possibleUsage = varInfo-&gt;possibleUsage; 
+<span class="no"> 302 </span>    const std::set&lt;int&gt; conditionalAlloc(varInfo-&gt;conditionalAlloc); 
+<span class="no"> 303 </span> 
+<span class="no"> 304 </span>    // Parse all tokens 
+<span class="no"> 305 </span>    const Token * const endToken = startToken-&gt;link(); 
+<span class="no"> 306 </span>    for (const Token *tok = startToken; tok &amp;&amp; tok != endToken; tok = tok-&gt;next()) { 
+<span class="no"> 307 </span>        if (!tok-&gt;scope()-&gt;isExecutable()) { 
+<span class="no"> 308 </span>            tok = tok-&gt;scope()-&gt;bodyEnd; 
+<span class="no"> 309 </span>            if (!tok) // Ticket #6666 (crash upon invalid code) 
+<span class="no"> 310 </span>                break; 
+<span class="no"> 311 </span>        } 
+<span class="no"> 312 </span> 
+<span class="no"> 313 </span>        // check each token 
+<span class="no"> 314 </span>        { 
+<span class="no"> 315 </span>            const Token * nextTok = checkTokenInsideExpression(tok, varInfo); 
+<span class="no"> 316 </span>            if (nextTok) { 
+<span class="no"> 317 </span>                tok = nextTok; 
+<span class="no"> 318 </span>                continue; 
+<span class="no"> 319 </span>            } 
+<span class="no"> 320 </span>        } 
+<span class="no"> 321 </span> 
+<span class="no"> 322 </span> 
+<span class="no"> 323 </span>        // look for end of statement 
+<span class="no"> 324 </span>        if (!Token::Match(tok, &quot;[;{},]&quot;) || Token::Match(tok-&gt;next(), &quot;[;{},]&quot;)) 
+<span class="no"> 325 </span>            continue; 
+<span class="no"> 326 </span> 
+<span class="no"> 327 </span>        tok = tok-&gt;next(); 
+<span class="no"> 328 </span>        if (!tok || tok == endToken) 
+<span class="no"> 329 </span>            break; 
+<span class="no"> 330 </span> 
+<span class="no"> 331 </span>        // parse statement, skip to last member 
+<span class="no"> 332 </span>        const Token *varTok = tok; 
+<span class="no"> 333 </span>        while (Token::Match(varTok, &quot;%name% ::|. %name% !!(&quot;)) 
+<span class="no"> 334 </span>            varTok = varTok-&gt;tokAt(2); 
+<span class="no"> 335 </span> 
+<span class="no"> 336 </span>        const Token *ftok = tok; 
+<span class="no"> 337 </span>        if (ftok-&gt;str() == &quot;::&quot;) 
+<span class="no"> 338 </span>            ftok = ftok-&gt;next(); 
+<span class="no"> 339 </span>        while (Token::Match(ftok, &quot;%name% :: %name%&quot;)) 
+<span class="no"> 340 </span>            ftok = ftok-&gt;tokAt(2); 
+<span class="no"> 341 </span> 
+<span class="no"> 342 </span>        // assignment.. 
+<span class="no"> 343 </span>        if (Token::Match(varTok, &quot;%var% =&quot;)) { 
+<span class="no"> 344 </span>            const Token* const tokAssignOp = varTok-&gt;next(); 
+<span class="no"> 345 </span> 
+<span class="no"> 346 </span>            // taking address of another variable.. 
+<span class="no"> 347 </span>            if (Token::Match(tokAssignOp, &quot;= %var% [+;]&quot;)) { 
+<span class="no"> 348 </span>                if (varTok-&gt;tokAt(2)-&gt;varId() != varTok-&gt;varId()) { 
+<span class="no"> 349 </span>                    // If variable points at allocated memory =&gt; error 
+<span class="no"> 350 </span>                    leakIfAllocated(varTok, *varInfo); 
+<span class="no"> 351 </span> 
+<span class="no"> 352 </span>                    // no multivariable checking currently =&gt; bail out for rhs variables 
+<span class="no"> 353 </span>                    for (const Token *tok2 = varTok; tok2; tok2 = tok2-&gt;next()) { 
+<span class="no"> 354 </span>                        if (tok2-&gt;str() == &quot;;&quot;) { 
+<span class="no"> 355 </span>                            break; 
+<span class="no"> 356 </span>                        } 
+<span class="no"> 357 </span>                        if (tok2-&gt;varId()) { 
+<span class="no"> 358 </span>                            varInfo-&gt;erase(tok2-&gt;varId()); 
+<span class="no"> 359 </span>                        } 
+<span class="no"> 360 </span>                    } 
+<span class="no"> 361 </span>                } 
+<span class="no"> 362 </span>            } 
+<span class="no"> 363 </span> 
+<span class="no"> 364 </span>            // right ast part (after `=` operator) 
+<span class="no"> 365 </span>            const Token* tokRightAstOperand = tokAssignOp-&gt;astOperand2(); 
+<span class="no"> 366 </span>            while (tokRightAstOperand &amp;&amp; tokRightAstOperand-&gt;isCast()) 
+<span class="no"> 367 </span>                tokRightAstOperand = tokRightAstOperand-&gt;astOperand2() ? tokRightAstOperand-&gt;astOperand2() : tokRightAstOperand-&gt;astOperand1(); 
+<span class="no"> 368 </span> 
+<span class="no"> 369 </span>            // is variable used in rhs? 
+<span class="no"> 370 </span>            if (isVarUsedInTree(tokRightAstOperand, varTok-&gt;varId())) 
+<span class="no"> 371 </span>                continue; 
+<span class="no"> 372 </span> 
+<span class="no"> 373 </span>            // Variable has already been allocated =&gt; error 
+<span class="no"> 374 </span>            if (conditionalAlloc.find(varTok-&gt;varId()) == conditionalAlloc.end()) 
+<span class="no"> 375 </span>                leakIfAllocated(varTok, *varInfo); 
+<span class="no"> 376 </span>            varInfo-&gt;erase(varTok-&gt;varId()); 
+<span class="no"> 377 </span> 
+<span class="no"> 378 </span>            if (!isLocalVarNoAutoDealloc(varTok, mTokenizer-&gt;isCPP())) 
+<span class="no"> 379 </span>                continue; 
+<span class="no"> 380 </span> 
+<span class="no"> 381 </span>            // allocation? 
+<span class="no"> 382 </span>            const Token *const fTok = tokRightAstOperand ? tokRightAstOperand-&gt;previous() : nullptr; 
+<span class="no"> 383 </span>            if (Token::Match(fTok, &quot;%type% (&quot;)) { 
+<span class="no"> 384 </span>                const Library::AllocFunc* f = mSettings-&gt;library.getAllocFuncInfo(fTok); 
+<span class="no"> 385 </span>                if (f &amp;&amp; f-&gt;arg == -1) { 
+<span class="no"> 386 </span>                    VarInfo::AllocInfo&amp; varAlloc = alloctype[varTok-&gt;varId()]; 
+<span class="no"> 387 </span>                    varAlloc.type = f-&gt;groupId; 
+<span class="no"> 388 </span>                    varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 389 </span>                    varAlloc.allocTok = fTok; 
+<span class="no"> 390 </span>                } 
+<span class="no"> 391 </span> 
+<span class="no"> 392 </span>                changeAllocStatusIfRealloc(alloctype, fTok, varTok); 
+<span class="no"> 393 </span>            } else if (mTokenizer-&gt;isCPP() &amp;&amp; Token::Match(varTok-&gt;tokAt(2), &quot;new !!(&quot;)) { 
+<span class="no"> 394 </span>                const Token* tok2 = varTok-&gt;tokAt(2)-&gt;astOperand1(); 
+<span class="no"> 395 </span>                const bool arrayNew = (tok2 &amp;&amp; (tok2-&gt;str() == &quot;[&quot; || (tok2-&gt;str() == &quot;(&quot; &amp;&amp; tok2-&gt;astOperand1() &amp;&amp; tok2-&gt;astOperand1()-&gt;str() == &quot;[&quot;))); 
+<span class="no"> 396 </span>                VarInfo::AllocInfo&amp; varAlloc = alloctype[varTok-&gt;varId()]; 
+<span class="no"> 397 </span>                varAlloc.type = arrayNew ? NEW_ARRAY : NEW; 
+<span class="no"> 398 </span>                varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 399 </span>                varAlloc.allocTok = varTok-&gt;tokAt(2); 
+<span class="no"> 400 </span>            } 
+<span class="no"> 401 </span> 
+<span class="no"> 402 </span>            // Assigning non-zero value variable. It might be used to 
+<span class="no"> 403 </span>            // track the execution for a later if condition. 
+<span class="no"> 404 </span>            if (Token::Match(varTok-&gt;tokAt(2), &quot;%num% ;&quot;) &amp;&amp; MathLib::toLongNumber(varTok-&gt;strAt(2)) != 0) 
+<span class="no"> 405 </span>                notzero.insert(varTok-&gt;varId()); 
+<span class="no"> 406 </span>            else if (Token::Match(varTok-&gt;tokAt(2), &quot;- %type% ;&quot;) &amp;&amp; varTok-&gt;tokAt(3)-&gt;isUpperCaseName()) 
+<span class="no"> 407 </span>                notzero.insert(varTok-&gt;varId()); 
+<span class="no"> 408 </span>            else 
+<span class="no"> 409 </span>                notzero.erase(varTok-&gt;varId()); 
+<span class="no"> 410 </span>        } 
+<span class="no"> 411 </span> 
+<span class="no"> 412 </span>        // if/else 
+<span class="no"> 413 </span>        else if (Token::simpleMatch(tok, &quot;if (&quot;)) { 
+<span class="no"> 414 </span>            // Parse function calls inside the condition 
+<span class="no"> 415 </span> 
+<span class="no"> 416 </span>            const Token * closingParenthesis = tok-&gt;linkAt(1); 
+<span class="no"> 417 </span>            for (const Token *innerTok = tok-&gt;tokAt(2); innerTok &amp;&amp; innerTok != closingParenthesis; innerTok = innerTok-&gt;next()) { 
+<span class="no"> 418 </span>                // TODO: replace with checkTokenInsideExpression() 
+<span class="no"> 419 </span> 
+<span class="no"> 420 </span>                if (!isLocalVarNoAutoDealloc(innerTok, mTokenizer-&gt;isCPP())) 
+<span class="no"> 421 </span>                    continue; 
+<span class="no"> 422 </span> 
+<span class="no"> 423 </span>                if (Token::Match(innerTok, &quot;%var% =&quot;) &amp;&amp; innerTok-&gt;astParent() == innerTok-&gt;next()) { 
+<span class="no"> 424 </span>                    // allocation? 
+<span class="no"> 425 </span>                    // right ast part (after `=` operator) 
+<span class="no"> 426 </span>                    const Token* tokRightAstOperand = innerTok-&gt;next()-&gt;astOperand2(); 
+<span class="no"> 427 </span>                    while (tokRightAstOperand &amp;&amp; tokRightAstOperand-&gt;isCast()) 
+<span class="no"> 428 </span>                        tokRightAstOperand = tokRightAstOperand-&gt;astOperand2() ? tokRightAstOperand-&gt;astOperand2() : tokRightAstOperand-&gt;astOperand1(); 
+<span class="no"> 429 </span>                    if (tokRightAstOperand &amp;&amp; Token::Match(tokRightAstOperand-&gt;previous(), &quot;%type% (&quot;)) { 
+<span class="no"> 430 </span>                        const Library::AllocFunc* f = mSettings-&gt;library.getAllocFuncInfo(tokRightAstOperand-&gt;previous()); 
+<span class="no"> 431 </span>                        if (f &amp;&amp; f-&gt;arg == -1) { 
+<span class="no"> 432 </span>                            VarInfo::AllocInfo&amp; varAlloc = alloctype[innerTok-&gt;varId()]; 
+<span class="no"> 433 </span>                            varAlloc.type = f-&gt;groupId; 
+<span class="no"> 434 </span>                            varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 435 </span>                            varAlloc.allocTok = tokRightAstOperand-&gt;previous(); 
+<span class="no"> 436 </span>                        } else { 
+<span class="no"> 437 </span>                            // Fixme: warn about leak 
+<span class="no"> 438 </span>                            alloctype.erase(innerTok-&gt;varId()); 
+<span class="no"> 439 </span>                        } 
+<span class="no"> 440 </span> 
+<span class="no"> 441 </span>                        changeAllocStatusIfRealloc(alloctype, innerTok-&gt;tokAt(2), varTok); 
+<span class="no"> 442 </span>                    } else if (mTokenizer-&gt;isCPP() &amp;&amp; Token::Match(innerTok-&gt;tokAt(2), &quot;new !!(&quot;)) { 
+<span class="no"> 443 </span>                        const Token* tok2 = innerTok-&gt;tokAt(2)-&gt;astOperand1(); 
+<span class="no"> 444 </span>                        const bool arrayNew = (tok2 &amp;&amp; (tok2-&gt;str() == &quot;[&quot; || (tok2-&gt;str() == &quot;(&quot; &amp;&amp; tok2-&gt;astOperand1() &amp;&amp; tok2-&gt;astOperand1()-&gt;str() == &quot;[&quot;))); 
+<span class="no"> 445 </span>                        VarInfo::AllocInfo&amp; varAlloc = alloctype[innerTok-&gt;varId()]; 
+<span class="no"> 446 </span>                        varAlloc.type = arrayNew ? NEW_ARRAY : NEW; 
+<span class="no"> 447 </span>                        varAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 448 </span>                        varAlloc.allocTok = innerTok-&gt;tokAt(2); 
+<span class="no"> 449 </span>                    } 
+<span class="no"> 450 </span>                } 
+<span class="no"> 451 </span> 
+<span class="no"> 452 </span>                // check for function call 
+<span class="no"> 453 </span>                const Token * const openingPar = isFunctionCall(innerTok); 
+<span class="no"> 454 </span>                if (openingPar) { 
+<span class="no"> 455 </span>                    // innerTok is a function name 
+<span class="no"> 456 </span>                    const VarInfo::AllocInfo allocation(0, VarInfo::NOALLOC); 
+<span class="no"> 457 </span>                    functionCall(innerTok, openingPar, varInfo, allocation, nullptr); 
+<span class="no"> 458 </span>                    innerTok = openingPar-&gt;link(); 
+<span class="no"> 459 </span>                } 
+<span class="no"> 460 </span>            } 
+<span class="no"> 461 </span> 
+<span class="no"> 462 </span>            if (Token::simpleMatch(closingParenthesis, &quot;) {&quot;)) { 
+<span class="no"> 463 </span>                VarInfo varInfo1(*varInfo);  // VarInfo for if code 
+<span class="no"> 464 </span>                VarInfo varInfo2(*varInfo);  // VarInfo for else code 
+<span class="no"> 465 </span> 
+<span class="no"> 466 </span>                // Recursively scan variable comparisons in condition 
+<span class="no"> 467 </span>                std::stack&lt;const Token *&gt; tokens; 
+<span class="no"> 468 </span>                tokens.push(tok-&gt;next()-&gt;astOperand2()); 
+<span class="no"> 469 </span>                while (!tokens.empty()) { 
+<span class="no"> 470 </span>                    const Token *tok3 = tokens.top(); 
+<span class="no"> 471 </span>                    tokens.pop(); 
+<span class="no"> 472 </span>                    if (!tok3) 
+<span class="no"> 473 </span>                        continue; 
+<span class="no"> 474 </span>                    if (tok3-&gt;str() == &quot;&amp;&amp;&quot; || tok3-&gt;str() == &quot;||&quot;) { 
+<span class="no"> 475 </span>                        // FIXME: handle &amp;&amp; ! || better 
+<span class="no"> 476 </span>                        tokens.push(tok3-&gt;astOperand1()); 
+<span class="no"> 477 </span>                        tokens.push(tok3-&gt;astOperand2()); 
+<span class="no"> 478 </span>                        continue; 
+<span class="no"> 479 </span>                    } 
+<span class="no"> 480 </span>                    if (tok3-&gt;str() == &quot;(&quot; &amp;&amp; Token::Match(tok3-&gt;astOperand1(), &quot;UNLIKELY|LIKELY&quot;)) { 
+<span class="no"> 481 </span>                        tokens.push(tok3-&gt;astOperand2()); 
+<span class="no"> 482 </span>                        continue; 
+<span class="no"> 483 </span>                    } else if (tok3-&gt;str() == &quot;(&quot; &amp;&amp; Token::Match(tok3-&gt;previous(), &quot;%name%&quot;)) { 
+<span class="no"> 484 </span>                        const std::vector&lt;const Token *&gt; params = getArguments(tok3-&gt;previous()); 
+<span class="no"> 485 </span>                        for (const Token *par : params) { 
+<span class="no"> 486 </span>                            if (!par-&gt;isComparisonOp()) 
+<span class="no"> 487 </span>                                continue; 
+<span class="no"> 488 </span>                            const Token *vartok = nullptr; 
+<span class="no"> 489 </span>                            if (astIsVariableComparison(par, &quot;!=&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 490 </span>                                astIsVariableComparison(par, &quot;==&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 491 </span>                                astIsVariableComparison(par, &quot;&lt;&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 492 </span>                                astIsVariableComparison(par, &quot;&gt;&quot;, &quot;0&quot;, &amp;vartok) || 
+<span class="no"> 493 </span>                                astIsVariableComparison(par, &quot;==&quot;, &quot;-1&quot;, &amp;vartok) || 
+<span class="no"> 494 </span>                                astIsVariableComparison(par, &quot;!=&quot;, &quot;-1&quot;, &amp;vartok)) { 
+<span class="no"> 495 </span>                                varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 496 </span>                                varInfo2.erase(vartok-&gt;varId()); 
+<span class="no"> 497 </span>                            } 
+<span class="no"> 498 </span>                        } 
+<span class="no"> 499 </span>                        continue; 
+<span class="no"> 500 </span>                    } 
+<span class="no"> 501 </span> 
+<span class="no"> 502 </span>                    const Token *vartok = nullptr; 
+<span class="no"> 503 </span>                    if (astIsVariableComparison(tok3, &quot;!=&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 504 </span>                        varInfo2.erase(vartok-&gt;varId()); 
+<span class="no"> 505 </span>                        if (notzero.find(vartok-&gt;varId()) != notzero.end()) 
+<span class="no"> 506 </span>                            varInfo2.clear(); 
+<span class="no"> 507 </span>                    } else if (astIsVariableComparison(tok3, &quot;==&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 508 </span>                        varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 509 </span>                    } else if (astIsVariableComparison(tok3, &quot;&lt;&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 510 </span>                        varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 511 </span>                    } else if (astIsVariableComparison(tok3, &quot;&gt;&quot;, &quot;0&quot;, &amp;vartok)) { 
+<span class="no"> 512 </span>                        varInfo2.erase(vartok-&gt;varId()); 
+<span class="no"> 513 </span>                    } else if (astIsVariableComparison(tok3, &quot;==&quot;, &quot;-1&quot;, &amp;vartok)) { 
+<span class="no"> 514 </span>                        varInfo1.erase(vartok-&gt;varId()); 
+<span class="no"> 515 </span>                    } 
+<span class="no"> 516 </span>                } 
+<span class="no"> 517 </span> 
+<span class="no"> 518 </span>                checkScope(closingParenthesis-&gt;next(), &amp;varInfo1, notzero, recursiveCount); 
+<span class="no"> 519 </span>                closingParenthesis = closingParenthesis-&gt;linkAt(1); 
+<span class="no"> 520 </span>                if (Token::simpleMatch(closingParenthesis, &quot;} else {&quot;)) { 
+<span class="no"> 521 </span>                    checkScope(closingParenthesis-&gt;tokAt(2), &amp;varInfo2, notzero, recursiveCount); 
+<span class="no"> 522 </span>                    tok = closingParenthesis-&gt;linkAt(2)-&gt;previous(); 
+<span class="no"> 523 </span>                } else { 
+<span class="no"> 524 </span>                    tok = closingParenthesis-&gt;previous(); 
+<span class="no"> 525 </span>                } 
+<span class="no"> 526 </span> 
+<span class="no"> 527 </span>                VarInfo old; 
+<span class="no"> 528 </span>                old.swap(*varInfo); 
+<span class="no"> 529 </span> 
+<span class="no"> 530 </span>                std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator it; 
+<span class="no"> 531 </span> 
+<span class="no"> 532 </span>                for (it = old.alloctype.begin(); it != old.alloctype.end(); ++it) { 
+<span class="no"> 533 </span>                    const int varId = it-&gt;first; 
+<span class="no"> 534 </span>                    if (old.conditionalAlloc.find(varId) == old.conditionalAlloc.end()) 
+<span class="no"> 535 </span>                        continue; 
+<span class="no"> 536 </span>                    if (varInfo1.alloctype.find(varId) == varInfo1.alloctype.end() || 
+<span class="no"> 537 </span>                        varInfo2.alloctype.find(varId) == varInfo2.alloctype.end()) { 
+<span class="no"> 538 </span>                        varInfo1.erase(varId); 
+<span class="no"> 539 </span>                        varInfo2.erase(varId); 
+<span class="no"> 540 </span>                    } 
+<span class="no"> 541 </span>                } 
+<span class="no"> 542 </span> 
+<span class="no"> 543 </span>                // Conditional allocation in varInfo1 
+<span class="no"> 544 </span>                for (it = varInfo1.alloctype.begin(); it != varInfo1.alloctype.end(); ++it) { 
+<span class="no"> 545 </span>                    if (varInfo2.alloctype.find(it-&gt;first) == varInfo2.alloctype.end() &amp;&amp; 
+<span class="no"> 546 </span>                        old.alloctype.find(it-&gt;first) == old.alloctype.end()) { 
+<span class="no"> 547 </span>                        varInfo-&gt;conditionalAlloc.insert(it-&gt;first); 
+<span class="no"> 548 </span>                    } 
+<span class="no"> 549 </span>                } 
+<span class="no"> 550 </span> 
+<span class="no"> 551 </span>                // Conditional allocation in varInfo2 
+<span class="no"> 552 </span>                for (it = varInfo2.alloctype.begin(); it != varInfo2.alloctype.end(); ++it) { 
+<span class="no"> 553 </span>                    if (varInfo1.alloctype.find(it-&gt;first) == varInfo1.alloctype.end() &amp;&amp; 
+<span class="no"> 554 </span>                        old.alloctype.find(it-&gt;first) == old.alloctype.end()) { 
+<span class="no"> 555 </span>                        varInfo-&gt;conditionalAlloc.insert(it-&gt;first); 
+<span class="no"> 556 </span>                    } 
+<span class="no"> 557 </span>                } 
+<span class="no"> 558 </span> 
+<span class="no"> 559 </span>                // Conditional allocation/deallocation 
+<span class="no"> 560 </span>                for (it = varInfo1.alloctype.begin(); it != varInfo1.alloctype.end(); ++it) { 
+<span class="no"> 561 </span>                    if (it-&gt;second.managed() &amp;&amp; conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end()) { 
+<span class="no"> 562 </span>                        varInfo-&gt;conditionalAlloc.erase(it-&gt;first); 
+<span class="no"> 563 </span>                        varInfo2.erase(it-&gt;first); 
+<span class="no"> 564 </span>                    } 
+<span class="no"> 565 </span>                } 
+<span class="no"> 566 </span>                for (it = varInfo2.alloctype.begin(); it != varInfo2.alloctype.end(); ++it) { 
+<span class="no"> 567 </span>                    if (it-&gt;second.managed() &amp;&amp; conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end()) { 
+<span class="no"> 568 </span>                        varInfo-&gt;conditionalAlloc.erase(it-&gt;first); 
+<span class="no"> 569 </span>                        varInfo1.erase(it-&gt;first); 
+<span class="no"> 570 </span>                    } 
+<span class="no"> 571 </span>                } 
+<span class="no"> 572 </span> 
+<span class="no"> 573 </span>                alloctype.insert(varInfo1.alloctype.begin(), varInfo1.alloctype.end()); 
+<span class="no"> 574 </span>                alloctype.insert(varInfo2.alloctype.begin(), varInfo2.alloctype.end()); 
+<span class="no"> 575 </span> 
+<span class="no"> 576 </span>                possibleUsage.insert(varInfo1.possibleUsage.begin(), varInfo1.possibleUsage.end()); 
+<span class="no"> 577 </span>                possibleUsage.insert(varInfo2.possibleUsage.begin(), varInfo2.possibleUsage.end()); 
+<span class="no"> 578 </span>            } 
+<span class="no"> 579 </span>        } 
+<span class="no"> 580 </span> 
+<span class="no"> 581 </span>        // unknown control.. (TODO: handle loops) 
+<span class="no"> 582 </span>        else if ((Token::Match(tok, &quot;%type% (&quot;) &amp;&amp; Token::simpleMatch(tok-&gt;linkAt(1), &quot;) {&quot;)) || Token::simpleMatch(tok, &quot;do {&quot;)) { 
+<span class="no"> 583 </span>            varInfo-&gt;clear(); 
+<span class="no"> 584 </span>            break; 
+<span class="no"> 585 </span>        } 
+<span class="no"> 586 </span> 
+<span class="no"> 587 </span>        // return 
+<span class="no"> 588 </span>        else if (tok-&gt;str() == &quot;return&quot;) { 
+<span class="no"> 589 </span>            ret(tok, *varInfo); 
+<span class="no"> 590 </span>            varInfo-&gt;clear(); 
+<span class="no"> 591 </span>        } 
+<span class="no"> 592 </span> 
+<span class="no"> 593 </span>        // throw 
+<span class="no"> 594 </span>        else if (mTokenizer-&gt;isCPP() &amp;&amp; tok-&gt;str() == &quot;throw&quot;) { 
+<span class="no"> 595 </span>            bool tryFound = false; 
+<span class="no"> 596 </span>            const Scope* scope = tok-&gt;scope(); 
+<span class="no"> 597 </span>            while (scope &amp;&amp; scope-&gt;isExecutable()) { 
+<span class="no"> 598 </span>                if (scope-&gt;type == Scope::eTry) 
+<span class="no"> 599 </span>                    tryFound = true; 
+<span class="no"> 600 </span>                scope = scope-&gt;nestedIn; 
+<span class="no"> 601 </span>            } 
+<span class="no"> 602 </span>            // If the execution leaves the function then treat it as return 
+<span class="no"> 603 </span>            if (!tryFound) 
+<span class="no"> 604 </span>                ret(tok, *varInfo); 
+<span class="no"> 605 </span>            varInfo-&gt;clear(); 
+<span class="no"> 606 </span>        } 
+<span class="no"> 607 </span> 
+<span class="no"> 608 </span>        // delete 
+<span class="no"> 609 </span>        else if (mTokenizer-&gt;isCPP() &amp;&amp; tok-&gt;str() == &quot;delete&quot;) { 
+<span class="no"> 610 </span>            const Token * delTok = tok; 
+<span class="no"> 611 </span>            const bool arrayDelete = Token::simpleMatch(tok-&gt;next(), &quot;[ ]&quot;); 
+<span class="no"> 612 </span>            if (arrayDelete) 
+<span class="no"> 613 </span>                tok = tok-&gt;tokAt(3); 
+<span class="no"> 614 </span>            else 
+<span class="no"> 615 </span>                tok = tok-&gt;next(); 
+<span class="no"> 616 </span>            if (tok-&gt;str() == &quot;(&quot;) 
+<span class="no"> 617 </span>                tok = tok-&gt;next(); 
+<span class="no"> 618 </span>            while (Token::Match(tok, &quot;%name% ::|.&quot;)) 
+<span class="no"> 619 </span>                tok = tok-&gt;tokAt(2); 
+<span class="no"> 620 </span>            const bool isnull = tok-&gt;hasKnownIntValue() &amp;&amp; tok-&gt;values().front().intvalue == 0; 
+<span class="no"> 621 </span>            if (!isnull &amp;&amp; tok-&gt;varId() &amp;&amp; tok-&gt;strAt(1) != &quot;[&quot;) { 
+<span class="no"> 622 </span>                const VarInfo::AllocInfo allocation(arrayDelete ? NEW_ARRAY : NEW, VarInfo::DEALLOC, delTok); 
+<span class="no"> 623 </span>                changeAllocStatus(varInfo, allocation, tok, tok); 
+<span class="no"> 624 </span>            } 
+<span class="no"> 625 </span>        } 
+<span class="no"> 626 </span> 
+<span class="no"> 627 </span>        // Function call.. 
+<span class="no"> 628 </span>        else if (isFunctionCall(ftok)) { 
+<span class="no"> 629 </span>            const Token * openingPar = isFunctionCall(ftok); 
+<span class="no"> 630 </span>            const Library::AllocFunc* af = mSettings-&gt;library.getDeallocFuncInfo(ftok); 
+<span class="no"> 631 </span>            VarInfo::AllocInfo allocation(af ? af-&gt;groupId : 0, VarInfo::DEALLOC, ftok); 
+<span class="no"> 632 </span>            if (allocation.type == 0) 
+<span class="no"> 633 </span>                allocation.status = VarInfo::NOALLOC; 
+<span class="no"> 634 </span>            functionCall(ftok, openingPar, varInfo, allocation, af); 
+<span class="no"> 635 </span> 
+<span class="no"> 636 </span>            tok = ftok-&gt;next()-&gt;link(); 
+<span class="no"> 637 </span> 
+<span class="no"> 638 </span>            // Handle scopes that might be noreturn 
+<span class="no"> 639 </span>            if (allocation.status == VarInfo::NOALLOC &amp;&amp; Token::simpleMatch(tok, &quot;) ; }&quot;)) { 
+<span class="no"> 640 </span>                const std::string &amp;functionName(tok-&gt;link()-&gt;previous()-&gt;str()); 
+<span class="no"> 641 </span>                bool unknown = false; 
+<span class="no"> 642 </span>                if (mTokenizer-&gt;isScopeNoReturn(tok-&gt;tokAt(2), &amp;unknown)) { 
+<span class="no"> 643 </span>                    if (!unknown) 
+<span class="no"> 644 </span>                        varInfo-&gt;clear(); 
+<span class="no"> 645 </span>                    else if (!mSettings-&gt;library.isLeakIgnore(functionName) &amp;&amp; !mSettings-&gt;library.isUse(functionName)) 
+<span class="no"> 646 </span>                        varInfo-&gt;possibleUsageAll(functionName); 
+<span class="no"> 647 </span>                } 
+<span class="no"> 648 </span>            } 
+<span class="no"> 649 </span> 
+<span class="no"> 650 </span>            continue; 
+<span class="no"> 651 </span>        } 
+<span class="no"> 652 </span> 
+<span class="no"> 653 </span>        // goto =&gt; weird execution path 
+<span class="no"> 654 </span>        else if (tok-&gt;str() == &quot;goto&quot;) { 
+<span class="no"> 655 </span>            varInfo-&gt;clear(); 
+<span class="no"> 656 </span>        } 
+<span class="no"> 657 </span> 
+<span class="no"> 658 </span>        // continue/break 
+<span class="no"> 659 </span>        else if (Token::Match(tok, &quot;continue|break ;&quot;)) { 
+<span class="no"> 660 </span>            varInfo-&gt;clear(); 
+<span class="no"> 661 </span>        } 
+<span class="no"> 662 </span> 
+<span class="no"> 663 </span>        // Check smart pointer 
+<span class="no"> 664 </span>        else if (Token::Match(ftok, &quot;%name% &lt;&quot;) &amp;&amp; mSettings-&gt;library.isSmartPointer(tok)) { 
+<span class="no"> 665 </span>            const Token * typeEndTok = ftok-&gt;linkAt(1); 
+<span class="no"> 666 </span>            if (!Token::Match(typeEndTok, &quot;&gt; %var% {|( %var% ,|)|}&quot;)) 
+<span class="no"> 667 </span>                continue; 
+<span class="no"> 668 </span> 
+<span class="no"> 669 </span>            tok = typeEndTok-&gt;linkAt(2); 
+<span class="no"> 670 </span> 
+<span class="no"> 671 </span>            const int varid = typeEndTok-&gt;next()-&gt;varId(); 
+<span class="no"> 672 </span>            if (isPointerReleased(typeEndTok-&gt;tokAt(2), endToken, varid)) 
+<span class="no"> 673 </span>                continue; 
+<span class="no"> 674 </span> 
+<span class="no"> 675 </span>            bool arrayDelete = false; 
+<span class="no"> 676 </span>            if (Token::findsimplematch(ftok-&gt;next(), &quot;[ ]&quot;, typeEndTok)) 
+<span class="no"> 677 </span>                arrayDelete = true; 
+<span class="no"> 678 </span> 
+<span class="no"> 679 </span>            // Check deleter 
+<span class="no"> 680 </span>            const Token * deleterToken = nullptr; 
+<span class="no"> 681 </span>            const Token * endDeleterToken = nullptr; 
+<span class="no"> 682 </span>            const Library::AllocFunc* af = nullptr; 
+<span class="no"> 683 </span>            if (Token::Match(ftok, &quot;unique_ptr &lt; %type% ,&quot;)) { 
+<span class="no"> 684 </span>                deleterToken = ftok-&gt;tokAt(4); 
+<span class="no"> 685 </span>                endDeleterToken = typeEndTok; 
+<span class="no"> 686 </span>            } else if (Token::Match(typeEndTok, &quot;&gt; %var% {|( %var% ,&quot;)) { 
+<span class="no"> 687 </span>                deleterToken = typeEndTok-&gt;tokAt(5); 
+<span class="no"> 688 </span>                endDeleterToken = typeEndTok-&gt;linkAt(2); 
+<span class="no"> 689 </span>            } 
+<span class="no"> 690 </span>            if (deleterToken) { 
+<span class="no"> 691 </span>                // Skip the decaying plus in expressions like +[](T*){} 
+<span class="no"> 692 </span>                if (deleterToken-&gt;str() == &quot;+&quot;) { 
+<span class="no"> 693 </span>                    deleterToken = deleterToken-&gt;next(); 
+<span class="no"> 694 </span>                } 
+<span class="no"> 695 </span>                // Check if its a pointer to a function 
+<span class="no"> 696 </span>                const Token * dtok = Token::findmatch(deleterToken, &quot;&amp; %name%&quot;, endDeleterToken); 
+<span class="no"> 697 </span>                if (dtok) { 
+<span class="no"> 698 </span>                    af = mSettings-&gt;library.getDeallocFuncInfo(dtok-&gt;tokAt(1)); 
+<span class="no"> 699 </span>                } else { 
+<span class="no"> 700 </span>                    const Token * tscopeStart = nullptr; 
+<span class="no"> 701 </span>                    const Token * tscopeEnd = nullptr; 
+<span class="no"> 702 </span>                    // If the deleter is a lambda, check if it calls the dealloc function 
+<span class="no"> 703 </span>                    if (deleterToken-&gt;str() == &quot;[&quot; &amp;&amp; 
+<span class="no"> 704 </span>                        Token::simpleMatch(deleterToken-&gt;link(), &quot;] (&quot;) &amp;&amp; 
+<span class="no"> 705 </span>                        // TODO: Check for mutable keyword 
+<span class="no"> 706 </span>                        Token::simpleMatch(deleterToken-&gt;link()-&gt;linkAt(1), &quot;) {&quot;)) { 
+<span class="no"> 707 </span>                        tscopeStart = deleterToken-&gt;link()-&gt;linkAt(1)-&gt;tokAt(1); 
+<span class="no"> 708 </span>                        tscopeEnd = tscopeStart-&gt;link(); 
+<span class="no"> 709 </span>                        // If the deleter is a class, check if class calls the dealloc function 
+<span class="no"> 710 </span>                    } else if ((dtok = Token::findmatch(deleterToken, &quot;%type%&quot;, endDeleterToken)) &amp;&amp; dtok-&gt;type()) { 
+<span class="no"> 711 </span>                        const Scope * tscope = dtok-&gt;type()-&gt;classScope; 
+<span class="no"> 712 </span>                        if (tscope) { 
+<span class="no"> 713 </span>                            tscopeStart = tscope-&gt;bodyStart; 
+<span class="no"> 714 </span>                            tscopeEnd = tscope-&gt;bodyEnd; 
+<span class="no"> 715 </span>                        } 
+<span class="no"> 716 </span>                    } 
+<span class="no"> 717 </span> 
+<span class="no"> 718 </span>                    if (tscopeStart &amp;&amp; tscopeEnd) { 
+<span class="no"> 719 </span>                        for (const Token *tok2 = tscopeStart; tok2 != tscopeEnd; tok2 = tok2-&gt;next()) { 
+<span class="no"> 720 </span>                            af = mSettings-&gt;library.getDeallocFuncInfo(tok2); 
+<span class="no"> 721 </span>                            if (af) 
+<span class="no"> 722 </span>                                break; 
+<span class="no"> 723 </span>                        } 
+<span class="no"> 724 </span>                    } 
+<span class="no"> 725 </span>                } 
+<span class="no"> 726 </span>            } 
+<span class="no"> 727 </span> 
+<span class="no"> 728 </span>            const Token * vtok = typeEndTok-&gt;tokAt(3); 
+<span class="no"> 729 </span>            const VarInfo::AllocInfo allocation(af ? af-&gt;groupId : (arrayDelete ? NEW_ARRAY : NEW), VarInfo::OWNED, ftok); 
+<span class="no"> 730 </span>            changeAllocStatus(varInfo, allocation, vtok, vtok); 
+<span class="no"> 731 </span>        } 
+<span class="no"> 732 </span>    } 
+<span class="no"> 733 </span>} 
+<span class="no"> 734 </span> 
+<span class="no"> 735 </span> 
+<span class="no"> 736 </span>const Token * CheckLeakAutoVar::checkTokenInsideExpression(const Token * const tok, VarInfo *varInfo) 
+<span class="no"> 737 </span>{ 
+<span class="no"> 738 </span>    // Deallocation and then dereferencing pointer.. 
+<span class="no"> 739 </span>    if (tok-&gt;varId() &gt; 0) { 
+<span class="no"> 740 </span>        // TODO : Write a separate checker for this that uses valueFlowForward. 
+<span class="no"> 741 </span>        const std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator var = varInfo-&gt;alloctype.find(tok-&gt;varId()); 
+<span class="no"> 742 </span>        if (var != varInfo-&gt;alloctype.end()) { 
+<span class="no"> 743 </span>            bool unknown = false; 
+<span class="no"> 744 </span>            if (var-&gt;second.status == VarInfo::DEALLOC &amp;&amp; CheckNullPointer::isPointerDeRef(tok, unknown, mSettings) &amp;&amp; !unknown) { 
+<span class="no"> 745 </span>                deallocUseError(tok, tok-&gt;str()); 
+<span class="no"> 746 </span>            } else if (Token::simpleMatch(tok-&gt;tokAt(-2), &quot;= &amp;&quot;)) { 
+<span class="no"> 747 </span>                varInfo-&gt;erase(tok-&gt;varId()); 
+<span class="no"> 748 </span>            } else { 
+<span class="no"> 749 </span>                // check if tok is assigned into another variable 
+<span class="no"> 750 </span>                const Token *rhs = tok; 
+<span class="no"> 751 </span>                while (rhs-&gt;astParent()) { 
+<span class="no"> 752 </span>                    if (rhs-&gt;astParent()-&gt;str() == &quot;=&quot;) 
+<span class="no"> 753 </span>                        break; 
+<span class="no"> 754 </span>                    rhs = rhs-&gt;astParent(); 
+<span class="no"> 755 </span>                } 
+<span class="no"> 756 </span>                if (rhs-&gt;varId() == tok-&gt;varId()) { 
+<span class="no"> 757 </span>                    // simple assignment 
+<span class="no"> 758 </span>                    varInfo-&gt;erase(tok-&gt;varId()); 
+<span class="no"> 759 </span>                } else if (rhs-&gt;str() == &quot;(&quot; &amp;&amp; mSettings-&gt;library.returnValue(rhs-&gt;astOperand1()) != emptyString) { 
+<span class="no"> 760 </span>                    // #9298, assignment through return value of a function 
+<span class="no"> 761 </span>                    const std::string &amp;returnValue = mSettings-&gt;library.returnValue(rhs-&gt;astOperand1()); 
+<span class="no"> 762 </span>                    if (returnValue.compare(0, 3, &quot;arg&quot;) == 0) { 
+<span class="no"> 763 </span>                        int argn; 
+<span class="no"> 764 </span>                        const Token *func = getTokenArgumentFunction(tok, argn); 
+<span class="no"> 765 </span>                        if (func) { 
+<span class="no"> 766 </span>                            const std::string arg = &quot;arg&quot; + std::to_string(argn + 1); 
+<span class="no"> 767 </span>                            if (returnValue == arg) { 
+<span class="no"> 768 </span>                                varInfo-&gt;erase(tok-&gt;varId()); 
+<span class="no"> 769 </span>                            } 
+<span class="no"> 770 </span>                        } 
+<span class="no"> 771 </span>                    } 
+<span class="no"> 772 </span>                } 
+<span class="no"> 773 </span>            } 
+<span class="no"> 774 </span>        } else if (Token::Match(tok-&gt;previous(), &quot;&amp; %name% = %var% ;&quot;)) { 
+<span class="no"> 775 </span>            varInfo-&gt;referenced.insert(tok-&gt;tokAt(2)-&gt;varId()); 
+<span class="no"> 776 </span>        } 
+<span class="no"> 777 </span>    } 
+<span class="no"> 778 </span> 
+<span class="no"> 779 </span>    // check for function call 
+<span class="no"> 780 </span>    const Token * const openingPar = isFunctionCall(tok); 
+<span class="no"> 781 </span>    if (openingPar) { 
+<span class="no"> 782 </span>        const Library::AllocFunc* allocFunc = mSettings-&gt;library.getDeallocFuncInfo(tok); 
+<span class="no"> 783 </span>        VarInfo::AllocInfo alloc(allocFunc ? allocFunc-&gt;groupId : 0, VarInfo::DEALLOC, tok); 
+<span class="no"> 784 </span>        if (alloc.type == 0) 
+<span class="no"> 785 </span>            alloc.status = VarInfo::NOALLOC; 
+<span class="no"> 786 </span>        functionCall(tok, openingPar, varInfo, alloc, nullptr); 
+<span class="no"> 787 </span>        const std::string &amp;returnValue = mSettings-&gt;library.returnValue(tok); 
+<span class="no"> 788 </span>        if (returnValue.compare(0, 3, &quot;arg&quot;) == 0) 
+<span class="no"> 789 </span>            // the function returns one of its argument, we need to process a potential assignment 
+<span class="no"> 790 </span>            return openingPar; 
+<span class="no"> 791 </span>        return openingPar-&gt;link(); 
+<span class="no"> 792 </span>    } 
+<span class="no"> 793 </span> 
+<span class="no"> 794 </span>    return nullptr; 
+<span class="no"> 795 </span>} 
+<span class="no"> 796 </span> 
+<span class="no"> 797 </span> 
+<span class="no"> 798 </span>void CheckLeakAutoVar::changeAllocStatusIfRealloc(std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype, const Token *fTok, const Token *retTok) 
+<span class="no"> 799 </span>{ 
+<span class="no"> 800 </span>    const Library::AllocFunc* f = mSettings-&gt;library.getReallocFuncInfo(fTok); 
+<span class="no"> 801 </span>    if (f &amp;&amp; f-&gt;arg == -1 &amp;&amp; f-&gt;reallocArg &gt; 0 &amp;&amp; f-&gt;reallocArg &lt;= numberOfArguments(fTok)) { 
+<span class="no"> 802 </span>        const Token* argTok = getArguments(fTok).at(f-&gt;reallocArg - 1); 
+<span class="no"> 803 </span>        VarInfo::AllocInfo&amp; argAlloc = alloctype[argTok-&gt;varId()]; 
+<span class="no"> 804 </span>        VarInfo::AllocInfo&amp; retAlloc = alloctype[retTok-&gt;varId()]; 
+<span class="no"> 805 </span>        if (argAlloc.type != 0 &amp;&amp; argAlloc.type != f-&gt;groupId) 
+<span class="no"> 806 </span>            mismatchError(fTok, argAlloc.allocTok, argTok-&gt;str()); 
+<span class="no"> 807 </span>        argAlloc.status = VarInfo::DEALLOC; 
+<span class="no"> 808 </span>        argAlloc.allocTok = fTok; 
+<span class="no"> 809 </span>        retAlloc.type = f-&gt;groupId; 
+<span class="no"> 810 </span>        retAlloc.status = VarInfo::ALLOC; 
+<span class="no"> 811 </span>        retAlloc.allocTok = fTok; 
+<span class="no"> 812 </span>    } 
+<span class="no"> 813 </span>} 
+<span class="no"> 814 </span> 
+<span class="no"> 815 </span> 
+<span class="no"> 816 </span>void CheckLeakAutoVar::changeAllocStatus(VarInfo *varInfo, const VarInfo::AllocInfo&amp; allocation, const Token* tok, const Token* arg) 
+<span class="no"> 817 </span>{ 
+<span class="no"> 818 </span>    std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo-&gt;alloctype; 
+<span class="no"> 819 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt;::iterator var = alloctype.find(arg-&gt;varId()); 
+<span class="no"> 820 </span>    if (var != alloctype.end()) { 
+<span class="no"> 821 </span>        if (allocation.status == VarInfo::NOALLOC) { 
+<span class="no"> 822 </span>            // possible usage 
+<span class="no"> 823 </span>            varInfo-&gt;possibleUsage[arg-&gt;varId()] = tok-&gt;str(); 
+<span class="no"> 824 </span>            if (var-&gt;second.status == VarInfo::DEALLOC &amp;&amp; arg-&gt;previous()-&gt;str() == &quot;&amp;&quot;) 
+<span class="no"> 825 </span>                varInfo-&gt;erase(arg-&gt;varId()); 
+<span class="no"> 826 </span>        } else if (var-&gt;second.managed()) { 
+<span class="no"> 827 </span>            doubleFreeError(tok, var-&gt;second.allocTok, arg-&gt;str(), allocation.type); 
+<span class="no"> 828 </span>        } else if (var-&gt;second.type != allocation.type) { 
+<span class="no"> 829 </span>            // mismatching allocation and deallocation 
+<span class="no"> 830 </span>            mismatchError(tok, var-&gt;second.allocTok, arg-&gt;str()); 
+<span class="no"> 831 </span>            varInfo-&gt;erase(arg-&gt;varId()); 
+<span class="no"> 832 </span>        } else { 
+<span class="no"> 833 </span>            // deallocation 
+<span class="no"> 834 </span>            var-&gt;second.status = allocation.status; 
+<span class="no"> 835 </span>            var-&gt;second.type = allocation.type; 
+<span class="no"> 836 </span>            var-&gt;second.allocTok = allocation.allocTok; 
+<span class="no"> 837 </span>        } 
+<span class="no"> 838 </span>    } else if (allocation.status != VarInfo::NOALLOC) { 
+<span class="no"> 839 </span>        alloctype[arg-&gt;varId()].status = VarInfo::DEALLOC; 
+<span class="no"> 840 </span>        alloctype[arg-&gt;varId()].allocTok = tok; 
+<span class="no"> 841 </span>    } 
+<span class="no"> 842 </span>} 
+<span class="no"> 843 </span> 
+<span class="no"> 844 </span>void CheckLeakAutoVar::functionCall(const Token *tokName, const Token *tokOpeningPar, VarInfo *varInfo, const VarInfo::AllocInfo&amp; allocation, const Library::AllocFunc* af) 
+<span class="no"> 845 </span>{ 
+<span class="no"> 846 </span>    // Ignore function call? 
+<span class="no"> 847 </span>    if (mSettings-&gt;library.isLeakIgnore(tokName-&gt;str())) 
+<span class="no"> 848 </span>        return; 
+<span class="no"> 849 </span>    if (mSettings-&gt;library.getReallocFuncInfo(tokName)) 
+<span class="no"> 850 </span>        return; 
+<span class="no"> 851 </span> 
+<span class="no"> 852 </span>    const Token * const tokFirstArg = tokOpeningPar-&gt;next(); 
+<span class="no"> 853 </span>    if (!tokFirstArg || tokFirstArg-&gt;str() == &quot;)&quot;) { 
+<span class="no"> 854 </span>        // no arguments 
+<span class="no"> 855 </span>        return; 
+<span class="no"> 856 </span>    } 
+<span class="no"> 857 </span> 
+<span class="no"> 858 </span>    int argNr = 1; 
+<span class="no"> 859 </span>    <span id="p1" class="ep1">for (<span id="n1" class="en1"><a class="ins" href="#n1">const Token *funcArg = tokFirstArg;</a></span> <span id="m2" class="em2"><a data-partner="#n2" class="upd" href="#m2">funcArg</a></span>; <span id="m3" class="em3"><a data-partner="#n3" class="upd" href="#m3">funcArg</a></span> = <span id="m5" class="em5"><a data-partner="#n5" class="upd" href="#m5">funcArg</a></span>-&gt;nextArgument()) { 
+<span class="no"> 860 </span>        <span id="m4" class="em4"><a data-partner="#n4" class="mov" href="#m4">const Token* arg = </a><span id="m6" class="em6"><a data-partner="#n6" class="upd" href="#m6">funcArg</a></span><a data-partner="#n4" class="mov" href="#m4">;</a></span> 
+<span class="no"> 861 </span>        if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
+<span class="no"> 862 </span>            arg = arg-&gt;next(); 
+<span class="no"> 863 </span>            if (Token::simpleMatch(arg, &quot;( std :: nothrow )&quot;)) 
+<span class="no"> 864 </span>                arg = arg-&gt;tokAt(5); 
+<span class="no"> 865 </span>        } 
+<span class="no"> 866 </span> 
+<span class="no"> 867 </span>        // Skip casts 
+<span class="no"> 868 </span>        while (arg &amp;&amp; arg-&gt;isCast()) 
+<span class="no"> 869 </span>            arg = arg-&gt;astOperand2() ? arg-&gt;astOperand2() : arg-&gt;astOperand1(); 
+<span class="no"> 870 </span>        const Token * const argTypeStartTok = arg; 
+<span class="no"> 871 </span> 
+<span class="no"> 872 </span>        while (Token::Match(arg, &quot;%name% .|:: %name%&quot;)) 
+<span class="no"> 873 </span>            arg = arg-&gt;tokAt(2); 
+<span class="no"> 874 </span> 
+<span class="no"> 875 </span>        if (Token::Match(arg, &quot;%var% [-,)] !!.&quot;) || Token::Match(arg, &quot;&amp; %var%&quot;)) { 
+<span class="no"> 876 </span>            // goto variable 
+<span class="no"> 877 </span>            if (arg-&gt;str() == &quot;&amp;&quot;) 
+<span class="no"> 878 </span>                arg = arg-&gt;next(); 
+<span class="no"> 879 </span> 
+<span class="no"> 880 </span>            const bool isnull = arg-&gt;hasKnownIntValue() &amp;&amp; arg-&gt;values().front().intvalue == 0; 
+<span class="no"> 881 </span> 
+<span class="no"> 882 </span>            // Is variable allocated? 
+<span class="no"> 883 </span>            if (!isnull &amp;&amp; (!af || af-&gt;arg == argNr)) 
+<span class="no"> 884 </span>                changeAllocStatus(varInfo, allocation, tokName, arg); 
+<span class="no"> 885 </span>        } 
+<span class="no"> 886 </span>        // Check smart pointer 
+<span class="no"> 887 </span>        else if (Token::Match(arg, &quot;%name% &lt; %type%&quot;) &amp;&amp; mSettings-&gt;library.isSmartPointer(argTypeStartTok)) { 
+<span class="no"> 888 </span>            const Token * typeEndTok = arg-&gt;linkAt(1); 
+<span class="no"> 889 </span>            const Token * allocTok = nullptr; 
+<span class="no"> 890 </span>            if (!Token::Match(typeEndTok, &quot;&gt; {|( %var% ,|)|}&quot;)) 
+<span class="no"> 891 </span>                continue; 
+<span class="no"> 892 </span> 
+<span class="no"> 893 </span>            bool arrayDelete = false; 
+<span class="no"> 894 </span>            if (Token::findsimplematch(arg-&gt;next(), &quot;[ ]&quot;, typeEndTok)) 
+<span class="no"> 895 </span>                arrayDelete = true; 
+<span class="no"> 896 </span> 
+<span class="no"> 897 </span>            // Check deleter 
+<span class="no"> 898 </span>            const Token * deleterToken = nullptr; 
+<span class="no"> 899 </span>            const Token * endDeleterToken = nullptr; 
+<span class="no"> 900 </span>            const Library::AllocFunc* sp_af = nullptr; 
+<span class="no"> 901 </span>            if (Token::Match(arg, &quot;unique_ptr &lt; %type% ,&quot;)) { 
+<span class="no"> 902 </span>                deleterToken = arg-&gt;tokAt(4); 
+<span class="no"> 903 </span>                endDeleterToken = typeEndTok; 
+<span class="no"> 904 </span>            } else if (Token::Match(typeEndTok, &quot;&gt; {|( %var% ,&quot;)) { 
+<span class="no"> 905 </span>                deleterToken = typeEndTok-&gt;tokAt(4); 
+<span class="no"> 906 </span>                endDeleterToken = typeEndTok-&gt;linkAt(1); 
+<span class="no"> 907 </span>            } 
+<span class="no"> 908 </span>            if (deleterToken) { 
+<span class="no"> 909 </span>                // Check if its a pointer to a function 
+<span class="no"> 910 </span>                const Token * dtok = Token::findmatch(deleterToken, &quot;&amp; %name%&quot;, endDeleterToken); 
+<span class="no"> 911 </span>                if (dtok) { 
+<span class="no"> 912 </span>                    sp_af = mSettings-&gt;library.getDeallocFuncInfo(dtok-&gt;tokAt(1)); 
+<span class="no"> 913 </span>                } else { 
+<span class="no"> 914 </span>                    // If the deleter is a class, check if class calls the dealloc function 
+<span class="no"> 915 </span>                    dtok = Token::findmatch(deleterToken, &quot;%type%&quot;, endDeleterToken); 
+<span class="no"> 916 </span>                    if (dtok &amp;&amp; dtok-&gt;type()) { 
+<span class="no"> 917 </span>                        const Scope * tscope = dtok-&gt;type()-&gt;classScope; 
+<span class="no"> 918 </span>                        for (const Token *tok2 = tscope-&gt;bodyStart; tok2 != tscope-&gt;bodyEnd; tok2 = tok2-&gt;next()) { 
+<span class="no"> 919 </span>                            sp_af = mSettings-&gt;library.getDeallocFuncInfo(tok2); 
+<span class="no"> 920 </span>                            if (sp_af) { 
+<span class="no"> 921 </span>                                allocTok = tok2; 
+<span class="no"> 922 </span>                                break; 
+<span class="no"> 923 </span>                            } 
+<span class="no"> 924 </span>                        } 
+<span class="no"> 925 </span>                    } 
+<span class="no"> 926 </span>                } 
+<span class="no"> 927 </span>            } 
+<span class="no"> 928 </span> 
+<span class="no"> 929 </span>            const Token * vtok = typeEndTok-&gt;tokAt(2); 
+<span class="no"> 930 </span>            const VarInfo::AllocInfo sp_allocation(sp_af ? sp_af-&gt;groupId : (arrayDelete ? NEW_ARRAY : NEW), VarInfo::OWNED, allocTok); 
+<span class="no"> 931 </span>            changeAllocStatus(varInfo, sp_allocation, vtok, vtok); 
+<span class="no"> 932 </span>        } else { 
+<span class="no"> 933 </span>            checkTokenInsideExpression(arg, varInfo); 
+<span class="no"> 934 </span>        } 
+<span class="no"> 935 </span>        // TODO: check each token in argument expression (could contain multiple variables) 
+<span class="no"> 936 </span>        argNr++; 
+<span class="no"> 937 </span>    }</span> 
+<span class="no"> 938 </span>} 
+<span class="no"> 939 </span> 
+<span class="no"> 940 </span> 
+<span class="no"> 941 </span>void CheckLeakAutoVar::leakIfAllocated(const Token *vartok, 
+<span class="no"> 942 </span>                                       const VarInfo &amp;varInfo) 
+<span class="no"> 943 </span>{ 
+<span class="no"> 944 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo.alloctype; 
+<span class="no"> 945 </span>    const std::map&lt;int, std::string&gt; &amp;possibleUsage = varInfo.possibleUsage; 
+<span class="no"> 946 </span> 
+<span class="no"> 947 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator var = alloctype.find(vartok-&gt;varId()); 
+<span class="no"> 948 </span>    if (var != alloctype.end() &amp;&amp; var-&gt;second.status == VarInfo::ALLOC) { 
+<span class="no"> 949 </span>        const std::map&lt;int, std::string&gt;::const_iterator use = possibleUsage.find(vartok-&gt;varId()); 
+<span class="no"> 950 </span>        if (use == possibleUsage.end()) { 
+<span class="no"> 951 </span>            leakError(vartok, vartok-&gt;str(), var-&gt;second.type); 
+<span class="no"> 952 </span>        } else { 
+<span class="no"> 953 </span>            configurationInfo(vartok, use-&gt;second); 
+<span class="no"> 954 </span>        } 
+<span class="no"> 955 </span>    } 
+<span class="no"> 956 </span>} 
+<span class="no"> 957 </span> 
+<span class="no"> 958 </span>void CheckLeakAutoVar::ret(const Token *tok, const VarInfo &amp;varInfo) 
+<span class="no"> 959 </span>{ 
+<span class="no"> 960 </span>    const std::map&lt;int, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo.alloctype; 
+<span class="no"> 961 </span>    const std::map&lt;int, std::string&gt; &amp;possibleUsage = varInfo.possibleUsage; 
+<span class="no"> 962 </span> 
+<span class="no"> 963 </span>    const SymbolDatabase *symbolDatabase = mTokenizer-&gt;getSymbolDatabase(); 
+<span class="no"> 964 </span>    for (std::map&lt;int, VarInfo::AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) { 
+<span class="no"> 965 </span>        // don&apos;t warn if variable is conditionally allocated 
+<span class="no"> 966 </span>        if (!it-&gt;second.managed() &amp;&amp; varInfo.conditionalAlloc.find(it-&gt;first) != varInfo.conditionalAlloc.end()) 
+<span class="no"> 967 </span>            continue; 
+<span class="no"> 968 </span> 
+<span class="no"> 969 </span>        // don&apos;t warn if there is a reference of the variable 
+<span class="no"> 970 </span>        if (varInfo.referenced.find(it-&gt;first) != varInfo.referenced.end()) 
+<span class="no"> 971 </span>            continue; 
+<span class="no"> 972 </span> 
+<span class="no"> 973 </span>        const int varid = it-&gt;first; 
+<span class="no"> 974 </span>        const Variable *var = symbolDatabase-&gt;getVariableFromVarId(varid); 
+<span class="no"> 975 </span>        if (var) { 
+<span class="no"> 976 </span>            bool used = false; 
+<span class="no"> 977 </span>            for (const Token *tok2 = tok; tok2; tok2 = tok2-&gt;next()) { 
+<span class="no"> 978 </span>                if (tok2-&gt;str() == &quot;;&quot;) 
+<span class="no"> 979 </span>                    break; 
+<span class="no"> 980 </span>                if (!Token::Match(tok2, &quot;return|(|{|,&quot;)) 
+<span class="no"> 981 </span>                    continue; 
+<span class="no"> 982 </span> 
+<span class="no"> 983 </span>                const Token* tok3 = tok2-&gt;next(); 
+<span class="no"> 984 </span>                while (tok3 &amp;&amp; tok3-&gt;isCast() &amp;&amp; tok3-&gt;valueType() &amp;&amp; 
+<span class="no"> 985 </span>                       (tok3-&gt;valueType()-&gt;pointer || 
+<span class="no"> 986 </span>                        (tok3-&gt;valueType()-&gt;typeSize(*mSettings) == 0) || 
+<span class="no"> 987 </span>                        (tok3-&gt;valueType()-&gt;typeSize(*mSettings) &gt;= mSettings-&gt;sizeof_pointer))) 
+<span class="no"> 988 </span>                    tok3 = tok3-&gt;astOperand2() ? tok3-&gt;astOperand2() : tok3-&gt;astOperand1(); 
+<span class="no"> 989 </span>                if (Token::Match(tok3, &quot;%varid%&quot;, varid)) 
+<span class="no"> 990 </span>                    tok2 = tok3-&gt;next(); 
+<span class="no"> 991 </span>                else if (Token::Match(tok3, &quot;&amp; %varid% . %name%&quot;, varid)) 
+<span class="no"> 992 </span>                    tok2 = tok3-&gt;tokAt(4); 
+<span class="no"> 993 </span>                else 
+<span class="no"> 994 </span>                    continue; 
+<span class="no"> 995 </span>                if (Token::Match(tok2, &quot;[});,]&quot;)) { 
+<span class="no"> 996 </span>                    used = true; 
+<span class="no"> 997 </span>                    break; 
+<span class="no"> 998 </span>                } 
+<span class="no"> 999 </span>            } 
+<span class="no">1000 </span> 
+<span class="no">1001 </span>            // return deallocated pointer 
+<span class="no">1002 </span>            if (used &amp;&amp; it-&gt;second.status == VarInfo::DEALLOC) 
+<span class="no">1003 </span>                deallocReturnError(tok, it-&gt;second.allocTok, var-&gt;name()); 
+<span class="no">1004 </span> 
+<span class="no">1005 </span>            else if (!used &amp;&amp; !it-&gt;second.managed()) { 
+<span class="no">1006 </span>                const std::map&lt;int, std::string&gt;::const_iterator use = possibleUsage.find(varid); 
+<span class="no">1007 </span>                if (use == possibleUsage.end()) { 
+<span class="no">1008 </span>                    leakError(tok, var-&gt;name(), it-&gt;second.type); 
+<span class="no">1009 </span>                } else { 
+<span class="no">1010 </span>                    configurationInfo(tok, use-&gt;second); 
+<span class="no">1011 </span>                } 
+<span class="no">1012 </span>            } 
+<span class="no">1013 </span>        } 
+<span class="no">1014 </span>    } 
+<span class="no">1015 </span>} 
+<span class="no">1016 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

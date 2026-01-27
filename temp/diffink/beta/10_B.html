@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .codebox {
+    line-height: 1.5;
+    flex: 1;
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    background: #f7f7f7;
+    font-size: 12px;
+    scroll-padding-top: 54px;
+  }
+  .edit {
+    height: 60px;
+    font-size: 14px;
+  }
+  .editbox {
+    line-height: 1.8;
+    flex: 1;
+    font-weight: 500;
+    padding: 4px 8px;
+    min-height: 0;
+    background: #f7f7f7;
+    overflow: auto;
+    font-size: 14px;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .page:has(#m2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n2:target) .em2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .i1, .i2, .i3, .i4 {
+    display: none;
+  }
+  .page {
+    max-width: 100vw;
+    padding: 0 12px 8px 12px;
+    margin: 0 auto;
+  }
+  .ins, .del, .mov, .upd {
+    border-bottom:  0.05em solid black;
+    padding-bottom: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
+    padding-top: 0.05em;
+  }
+  .sec {
+    line-height: 1;
+    font-weight: bold;
+    padding: 0;
+    font-size: 24px;
+    margin: 12px 0;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .toolbar {
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .grid {
+    gap: 12px;
+    height: calc(100vh - 186px);
+    min-height: 252px;
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .page:has(#n4:target) .en4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p4:target) .ep4 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n3:target) .en3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p3:target) .ep3 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .panel, .edit {
+    box-sizing: border-box;
+    display: flex;
+    min-width: 0;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  .error {
+    color: #b51700;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .token {
+    color: #017100;
+  }
+  .no {
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+    letter-spacing: normal;
+    padding-top: 0.15em;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .panel-header {
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    align-items: center;
+    display: flex;
+    padding: 8px 10px;
+    justify-content: space-between;
+    background: #ebebeb;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .page:has(#m2:target) .en2 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#m1:target) .en1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#m1:target) .em1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  .page:has(#n1:target) .em1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+</style>
+</head>
+<body>
+<script>
+function jumpVia(ViaId, FinalId) {
+  location.hash = ViaId;
+  requestAnimationFrame(() => {
+    location.hash = FinalId;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-partner]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const Via = a.dataset.partner;
+      const FinalId = a.getAttribute('href').slice(1);
+      if (!Via || !FinalId) return;
+      e.preventDefault();
+      jumpVia(Via, FinalId);
+    });
+  });
+});
+
+</script>
+  <div class="page">
+    <div class="sec">
+      <span class="clear">Edit</span>
+      <span class="i1">Edit #1</span>
+      <span class="i2">Edit #2</span>
+      <span class="i3">Edit #3</span>
+      <span class="i4">Edit #4</span>
+    </div>
+    <div class="toolbar">
+      <span class="clear"><a href="#n4">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n4">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+    </div>
+    <div class="edit">
+      <div class="editbox">
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> ,</a>: <span class=token>&quot;,&quot;</span> [218, 66] - [218, 67]
+<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> ,</a>: <span class=token>&quot;,&quot;</span> [218, 79] - [218, 80]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> ,</a>: <span class=token>&quot;,&quot;</span> [218, 79] - [218, 80]
+<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> ,</a>: <span class=token>&quot;,&quot;</span> [218, 88] - [218, 89]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> ,</a>: <span class=token>&quot;,&quot;</span> [218, 66] - [218, 67]
+<span style="font-weight:600">  into   </span><a href="#p3"> array_initializer</a> [218, 60] - [218, 101]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n4"> string_literal</a> [218, 90] - [218, 100]
+<span style="font-weight:600">  into           </span><a href="#p4"> array_initializer</a> [218, 60] - [218, 101]</span></code></pre>
+      </div>
+    </div>
+    <div class="sec">Code</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">10_B (original)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>package org.jsoup.parser; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import org.jsoup.helper.Validate; 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>import java.util.HashMap; 
+<span class="no">  6 </span>import java.util.Map; 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>/** 
+<span class="no">  9 </span> * HTML Tag capabilities. 
+<span class="no"> 10 </span> * 
+<span class="no"> 11 </span> * @author Jonathan Hedley, jonathan@hedley.net 
+<span class="no"> 12 </span> */ 
+<span class="no"> 13 </span>public class Tag { 
+<span class="no"> 14 </span>    private static final Map&lt;String, Tag&gt; tags = new HashMap&lt;String, Tag&gt;(); // map of known tags 
+<span class="no"> 15 </span> 
+<span class="no"> 16 </span>    private String tagName; 
+<span class="no"> 17 </span>    private boolean isBlock = true; // block or inline 
+<span class="no"> 18 </span>    private boolean formatAsBlock = true; // should be formatted as a block 
+<span class="no"> 19 </span>    private boolean canContainBlock = true; // Can this tag hold block level tags? 
+<span class="no"> 20 </span>    private boolean canContainInline = true; // only pcdata if not 
+<span class="no"> 21 </span>    private boolean empty = false; // can hold nothing; e.g. img 
+<span class="no"> 22 </span>    private boolean selfClosing = false; // can self close (&lt;foo /&gt;). used for unknown tags that self close, without forcing them as empty. 
+<span class="no"> 23 </span>    private boolean preserveWhitespace = false; // for pre, textarea, script etc 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>    private Tag(String tagName) { 
+<span class="no"> 26 </span>        this.tagName = tagName.toLowerCase(); 
+<span class="no"> 27 </span>    } 
+<span class="no"> 28 </span> 
+<span class="no"> 29 </span>    /** 
+<span class="no"> 30 </span>     * Get this tag&apos;s name. 
+<span class="no"> 31 </span>     * 
+<span class="no"> 32 </span>     * @return the tag&apos;s name 
+<span class="no"> 33 </span>     */ 
+<span class="no"> 34 </span>    public String getName() { 
+<span class="no"> 35 </span>        return tagName; 
+<span class="no"> 36 </span>    } 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>    /** 
+<span class="no"> 39 </span>     * Get a Tag by name. If not previously defined (unknown), returns a new generic tag, that can do anything. 
+<span class="no"> 40 </span>     * &lt;p/&gt; 
+<span class="no"> 41 </span>     * Pre-defined tags (P, DIV etc) will be ==, but unknown tags are not registered and will only .equals(). 
+<span class="no"> 42 </span>     * 
+<span class="no"> 43 </span>     * @param tagName Name of tag, e.g. &quot;p&quot;. Case insensitive. 
+<span class="no"> 44 </span>     * @return The tag, either defined or new generic. 
+<span class="no"> 45 </span>     */ 
+<span class="no"> 46 </span>    public static Tag valueOf(String tagName) { 
+<span class="no"> 47 </span>        Validate.notNull(tagName); 
+<span class="no"> 48 </span>        tagName = tagName.trim().toLowerCase(); 
+<span class="no"> 49 </span>        Validate.notEmpty(tagName); 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>        synchronized (tags) { 
+<span class="no"> 52 </span>            Tag tag = tags.get(tagName); 
+<span class="no"> 53 </span>            if (tag == null) { 
+<span class="no"> 54 </span>                // not defined: create default; go anywhere, do anything! (incl be inside a &lt;p&gt;) 
+<span class="no"> 55 </span>                tag = new Tag(tagName); 
+<span class="no"> 56 </span>                tag.isBlock = false; 
+<span class="no"> 57 </span>                tag.canContainBlock = true; 
+<span class="no"> 58 </span>            } 
+<span class="no"> 59 </span>            return tag; 
+<span class="no"> 60 </span>        } 
+<span class="no"> 61 </span>    } 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /** 
+<span class="no"> 64 </span>     * Gets if this is a block tag. 
+<span class="no"> 65 </span>     * 
+<span class="no"> 66 </span>     * @return if block tag 
+<span class="no"> 67 </span>     */ 
+<span class="no"> 68 </span>    public boolean isBlock() { 
+<span class="no"> 69 </span>        return isBlock; 
+<span class="no"> 70 </span>    } 
+<span class="no"> 71 </span> 
+<span class="no"> 72 </span>    /** 
+<span class="no"> 73 </span>     * Gets if this tag should be formatted as a block (or as inline) 
+<span class="no"> 74 </span>     * 
+<span class="no"> 75 </span>     * @return if should be formatted as block or inline 
+<span class="no"> 76 </span>     */ 
+<span class="no"> 77 </span>    public boolean formatAsBlock() { 
+<span class="no"> 78 </span>        return formatAsBlock; 
+<span class="no"> 79 </span>    } 
+<span class="no"> 80 </span> 
+<span class="no"> 81 </span>    /** 
+<span class="no"> 82 </span>     * Gets if this tag can contain block tags. 
+<span class="no"> 83 </span>     * 
+<span class="no"> 84 </span>     * @return if tag can contain block tags 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public boolean canContainBlock() { 
+<span class="no"> 87 </span>        return canContainBlock; 
+<span class="no"> 88 </span>    } 
+<span class="no"> 89 </span> 
+<span class="no"> 90 </span>    /** 
+<span class="no"> 91 </span>     * Gets if this tag is an inline tag. 
+<span class="no"> 92 </span>     * 
+<span class="no"> 93 </span>     * @return if this tag is an inline tag. 
+<span class="no"> 94 </span>     */ 
+<span class="no"> 95 </span>    public boolean isInline() { 
+<span class="no"> 96 </span>        return !isBlock; 
+<span class="no"> 97 </span>    } 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>    /** 
+<span class="no">100 </span>     * Gets if this tag is a data only tag. 
+<span class="no">101 </span>     * 
+<span class="no">102 </span>     * @return if this tag is a data only tag 
+<span class="no">103 </span>     */ 
+<span class="no">104 </span>    public boolean isData() { 
+<span class="no">105 </span>        return !canContainInline &amp;&amp; !isEmpty(); 
+<span class="no">106 </span>    } 
+<span class="no">107 </span> 
+<span class="no">108 </span>    /** 
+<span class="no">109 </span>     * Get if this is an empty tag 
+<span class="no">110 </span>     * 
+<span class="no">111 </span>     * @return if this is an empty tag 
+<span class="no">112 </span>     */ 
+<span class="no">113 </span>    public boolean isEmpty() { 
+<span class="no">114 </span>        return empty; 
+<span class="no">115 </span>    } 
+<span class="no">116 </span> 
+<span class="no">117 </span>    /** 
+<span class="no">118 </span>     * Get if this tag is self closing. 
+<span class="no">119 </span>     * 
+<span class="no">120 </span>     * @return if this tag should be output as self closing. 
+<span class="no">121 </span>     */ 
+<span class="no">122 </span>    public boolean isSelfClosing() { 
+<span class="no">123 </span>        return empty || selfClosing; 
+<span class="no">124 </span>    } 
+<span class="no">125 </span> 
+<span class="no">126 </span>    /** 
+<span class="no">127 </span>     * Get if this is a pre-defined tag, or was auto created on parsing. 
+<span class="no">128 </span>     * 
+<span class="no">129 </span>     * @return if a known tag 
+<span class="no">130 </span>     */ 
+<span class="no">131 </span>    public boolean isKnownTag() { 
+<span class="no">132 </span>        return tags.containsKey(tagName); 
+<span class="no">133 </span>    } 
+<span class="no">134 </span> 
+<span class="no">135 </span>    /** 
+<span class="no">136 </span>     * Check if this tagname is a known tag. 
+<span class="no">137 </span>     * 
+<span class="no">138 </span>     * @param tagName name of tag 
+<span class="no">139 </span>     * @return if known HTML tag 
+<span class="no">140 </span>     */ 
+<span class="no">141 </span>    public static boolean isKnownTag(String tagName) { 
+<span class="no">142 </span>        return tags.containsKey(tagName); 
+<span class="no">143 </span>    } 
+<span class="no">144 </span> 
+<span class="no">145 </span>    /** 
+<span class="no">146 </span>     * Get if this tag should preserve whitespace within child text nodes. 
+<span class="no">147 </span>     * 
+<span class="no">148 </span>     * @return if preserve whitepace 
+<span class="no">149 </span>     */ 
+<span class="no">150 </span>    public boolean preserveWhitespace() { 
+<span class="no">151 </span>        return preserveWhitespace; 
+<span class="no">152 </span>    } 
+<span class="no">153 </span> 
+<span class="no">154 </span>    Tag setSelfClosing() { 
+<span class="no">155 </span>        selfClosing = true; 
+<span class="no">156 </span>        return this; 
+<span class="no">157 </span>    } 
+<span class="no">158 </span> 
+<span class="no">159 </span>    @Override 
+<span class="no">160 </span>    public boolean equals(Object o) { 
+<span class="no">161 </span>        if (this == o) return true; 
+<span class="no">162 </span>        if (!(o instanceof Tag)) return false; 
+<span class="no">163 </span> 
+<span class="no">164 </span>        Tag tag = (Tag) o; 
+<span class="no">165 </span> 
+<span class="no">166 </span>        if (canContainBlock != tag.canContainBlock) return false; 
+<span class="no">167 </span>        if (canContainInline != tag.canContainInline) return false; 
+<span class="no">168 </span>        if (empty != tag.empty) return false; 
+<span class="no">169 </span>        if (formatAsBlock != tag.formatAsBlock) return false; 
+<span class="no">170 </span>        if (isBlock != tag.isBlock) return false; 
+<span class="no">171 </span>        if (preserveWhitespace != tag.preserveWhitespace) return false; 
+<span class="no">172 </span>        if (selfClosing != tag.selfClosing) return false; 
+<span class="no">173 </span>        if (!tagName.equals(tag.tagName)) return false; 
+<span class="no">174 </span> 
+<span class="no">175 </span>        return true; 
+<span class="no">176 </span>    } 
+<span class="no">177 </span> 
+<span class="no">178 </span>    @Override 
+<span class="no">179 </span>    public int hashCode() { 
+<span class="no">180 </span>        int result = tagName.hashCode(); 
+<span class="no">181 </span>        result = 31 * result + (isBlock ? 1 : 0); 
+<span class="no">182 </span>        result = 31 * result + (formatAsBlock ? 1 : 0); 
+<span class="no">183 </span>        result = 31 * result + (canContainBlock ? 1 : 0); 
+<span class="no">184 </span>        result = 31 * result + (canContainInline ? 1 : 0); 
+<span class="no">185 </span>        result = 31 * result + (empty ? 1 : 0); 
+<span class="no">186 </span>        result = 31 * result + (selfClosing ? 1 : 0); 
+<span class="no">187 </span>        result = 31 * result + (preserveWhitespace ? 1 : 0); 
+<span class="no">188 </span>        return result; 
+<span class="no">189 </span>    } 
+<span class="no">190 </span> 
+<span class="no">191 </span>    public String toString() { 
+<span class="no">192 </span>        return tagName; 
+<span class="no">193 </span>    } 
+<span class="no">194 </span> 
+<span class="no">195 </span>    // internal static initialisers: 
+<span class="no">196 </span>    // prepped from http://www.w3.org/TR/REC-html40/sgml/dtd.html and other sources 
+<span class="no">197 </span>    private static final String[] blockTags = { 
+<span class="no">198 </span>            &quot;html&quot;, &quot;head&quot;, &quot;body&quot;, &quot;frameset&quot;, &quot;script&quot;, &quot;noscript&quot;, &quot;style&quot;, &quot;meta&quot;, &quot;link&quot;, &quot;title&quot;, &quot;frame&quot;, 
+<span class="no">199 </span>            &quot;noframes&quot;, &quot;section&quot;, &quot;nav&quot;, &quot;aside&quot;, &quot;hgroup&quot;, &quot;header&quot;, &quot;footer&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, 
+<span class="no">200 </span>            &quot;ul&quot;, &quot;ol&quot;, &quot;pre&quot;, &quot;div&quot;, &quot;blockquote&quot;, &quot;hr&quot;, &quot;address&quot;, &quot;figure&quot;, &quot;figcaption&quot;, &quot;form&quot;, &quot;fieldset&quot;, &quot;ins&quot;, 
+<span class="no">201 </span>            &quot;del&quot;, &quot;dl&quot;, &quot;dt&quot;, &quot;dd&quot;, &quot;li&quot;, &quot;table&quot;, &quot;caption&quot;, &quot;thead&quot;, &quot;tfoot&quot;, &quot;tbody&quot;, &quot;colgroup&quot;, &quot;col&quot;, &quot;tr&quot;, &quot;th&quot;, 
+<span class="no">202 </span>            &quot;td&quot;, &quot;video&quot;, &quot;audio&quot;, &quot;canvas&quot;, &quot;details&quot;, &quot;menu&quot;, &quot;plaintext&quot; 
+<span class="no">203 </span>    }; 
+<span class="no">204 </span>    private static final String[] inlineTags = { 
+<span class="no">205 </span>            &quot;object&quot;, &quot;base&quot;, &quot;font&quot;, &quot;tt&quot;, &quot;i&quot;, &quot;b&quot;, &quot;u&quot;, &quot;big&quot;, &quot;small&quot;, &quot;em&quot;, &quot;strong&quot;, &quot;dfn&quot;, &quot;code&quot;, &quot;samp&quot;, &quot;kbd&quot;, 
+<span class="no">206 </span>            &quot;var&quot;, &quot;cite&quot;, &quot;abbr&quot;, &quot;time&quot;, &quot;acronym&quot;, &quot;mark&quot;, &quot;ruby&quot;, &quot;rt&quot;, &quot;rp&quot;, &quot;a&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;map&quot;, &quot;q&quot;, 
+<span class="no">207 </span>            &quot;sub&quot;, &quot;sup&quot;, &quot;bdo&quot;, &quot;iframe&quot;, &quot;embed&quot;, &quot;span&quot;, &quot;input&quot;, &quot;select&quot;, &quot;textarea&quot;, &quot;label&quot;, &quot;button&quot;, &quot;optgroup&quot;, 
+<span class="no">208 </span>            &quot;option&quot;, &quot;legend&quot;, &quot;datalist&quot;, &quot;keygen&quot;, &quot;output&quot;, &quot;progress&quot;, &quot;meter&quot;, &quot;area&quot;, &quot;param&quot;, &quot;source&quot;, &quot;track&quot;, 
+<span class="no">209 </span>            &quot;summary&quot;, &quot;command&quot;, &quot;device&quot; 
+<span class="no">210 </span>    }; 
+<span class="no">211 </span>    private static final String[] emptyTags = { 
+<span class="no">212 </span>            &quot;meta&quot;, &quot;link&quot;, &quot;base&quot;, &quot;frame&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;embed&quot;, &quot;hr&quot;, &quot;input&quot;, &quot;keygen&quot;, &quot;col&quot;, &quot;command&quot;, 
+<span class="no">213 </span>            &quot;device&quot; 
+<span class="no">214 </span>    }; 
+<span class="no">215 </span>    private static final String[] formatAsInlineTags = { 
+<span class="no">216 </span>            &quot;title&quot;, &quot;a&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;pre&quot;, &quot;address&quot;, &quot;li&quot;, &quot;th&quot;, &quot;td&quot;, &quot;script&quot;, &quot;style&quot; 
+<span class="no">217 </span>    }; 
+<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = {&quot;pre&quot;<span class="en1" id="n1"><a class="mov" href="#n1" data-partner="#m1">,</a></span> &quot;plaintext&quot;<span class="en2" id="n2"><a class="mov" href="#n2" data-partner="#m2">,</a></span> &quot;title&quot;}; 
+<span class="no">219 </span> 
+<span class="no">220 </span>    static { 
+<span class="no">221 </span>        // creates 
+<span class="no">222 </span>        for (String tagName : blockTags) { 
+<span class="no">223 </span>            Tag tag = new Tag(tagName); 
+<span class="no">224 </span>            register(tag); 
+<span class="no">225 </span>        } 
+<span class="no">226 </span>        for (String tagName : inlineTags) { 
+<span class="no">227 </span>            Tag tag = new Tag(tagName); 
+<span class="no">228 </span>            tag.isBlock = false; 
+<span class="no">229 </span>            tag.canContainBlock = false; 
+<span class="no">230 </span>            tag.formatAsBlock = false; 
+<span class="no">231 </span>            register(tag); 
+<span class="no">232 </span>        } 
+<span class="no">233 </span> 
+<span class="no">234 </span>        // mods: 
+<span class="no">235 </span>        for (String tagName : emptyTags) { 
+<span class="no">236 </span>            Tag tag = tags.get(tagName); 
+<span class="no">237 </span>            Validate.notNull(tag); 
+<span class="no">238 </span>            tag.canContainBlock = false; 
+<span class="no">239 </span>            tag.canContainInline = false; 
+<span class="no">240 </span>            tag.empty = true; 
+<span class="no">241 </span>        } 
+<span class="no">242 </span> 
+<span class="no">243 </span>        for (String tagName : formatAsInlineTags) { 
+<span class="no">244 </span>            Tag tag = tags.get(tagName); 
+<span class="no">245 </span>            Validate.notNull(tag); 
+<span class="no">246 </span>            tag.formatAsBlock = false; 
+<span class="no">247 </span>        } 
+<span class="no">248 </span> 
+<span class="no">249 </span>        for (String tagName : preserveWhitespaceTags) { 
+<span class="no">250 </span>            Tag tag = tags.get(tagName); 
+<span class="no">251 </span>            Validate.notNull(tag); 
+<span class="no">252 </span>            tag.preserveWhitespace = true; 
+<span class="no">253 </span>        } 
+<span class="no">254 </span>    } 
+<span class="no">255 </span> 
+<span class="no">256 </span>    private static Tag register(Tag tag) { 
+<span class="no">257 </span>        synchronized (tags) { 
+<span class="no">258 </span>            tags.put(tag.tagName, tag); 
+<span class="no">259 </span>        } 
+<span class="no">260 </span>        return tag; 
+<span class="no">261 </span>    } 
+<span class="no">262 </span>} 
+<span class="no">263 </span></code></pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">10_B (modified)</div>
+        <div class="codebox">
+          <pre><code><span class="no">  1 </span>package org.jsoup.parser; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import org.jsoup.helper.Validate; 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>import java.util.HashMap; 
+<span class="no">  6 </span>import java.util.Map; 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>/** 
+<span class="no">  9 </span> * HTML Tag capabilities. 
+<span class="no"> 10 </span> * 
+<span class="no"> 11 </span> * @author Jonathan Hedley, jonathan@hedley.net 
+<span class="no"> 12 </span> */ 
+<span class="no"> 13 </span>public class Tag { 
+<span class="no"> 14 </span>    private static final Map&lt;String, Tag&gt; tags = new HashMap&lt;String, Tag&gt;(); // map of known tags 
+<span class="no"> 15 </span> 
+<span class="no"> 16 </span>    private String tagName; 
+<span class="no"> 17 </span>    private boolean isBlock = true; // block or inline 
+<span class="no"> 18 </span>    private boolean formatAsBlock = true; // should be formatted as a block 
+<span class="no"> 19 </span>    private boolean canContainBlock = true; // Can this tag hold block level tags? 
+<span class="no"> 20 </span>    private boolean canContainInline = true; // only pcdata if not 
+<span class="no"> 21 </span>    private boolean empty = false; // can hold nothing; e.g. img 
+<span class="no"> 22 </span>    private boolean selfClosing = false; // can self close (&lt;foo /&gt;). used for unknown tags that self close, without forcing them as empty. 
+<span class="no"> 23 </span>    private boolean preserveWhitespace = false; // for pre, textarea, script etc 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>    private Tag(String tagName) { 
+<span class="no"> 26 </span>        this.tagName = tagName.toLowerCase(); 
+<span class="no"> 27 </span>    } 
+<span class="no"> 28 </span> 
+<span class="no"> 29 </span>    /** 
+<span class="no"> 30 </span>     * Get this tag&apos;s name. 
+<span class="no"> 31 </span>     * 
+<span class="no"> 32 </span>     * @return the tag&apos;s name 
+<span class="no"> 33 </span>     */ 
+<span class="no"> 34 </span>    public String getName() { 
+<span class="no"> 35 </span>        return tagName; 
+<span class="no"> 36 </span>    } 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>    /** 
+<span class="no"> 39 </span>     * Get a Tag by name. If not previously defined (unknown), returns a new generic tag, that can do anything. 
+<span class="no"> 40 </span>     * &lt;p/&gt; 
+<span class="no"> 41 </span>     * Pre-defined tags (P, DIV etc) will be ==, but unknown tags are not registered and will only .equals(). 
+<span class="no"> 42 </span>     * 
+<span class="no"> 43 </span>     * @param tagName Name of tag, e.g. &quot;p&quot;. Case insensitive. 
+<span class="no"> 44 </span>     * @return The tag, either defined or new generic. 
+<span class="no"> 45 </span>     */ 
+<span class="no"> 46 </span>    public static Tag valueOf(String tagName) { 
+<span class="no"> 47 </span>        Validate.notNull(tagName); 
+<span class="no"> 48 </span>        tagName = tagName.trim().toLowerCase(); 
+<span class="no"> 49 </span>        Validate.notEmpty(tagName); 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>        synchronized (tags) { 
+<span class="no"> 52 </span>            Tag tag = tags.get(tagName); 
+<span class="no"> 53 </span>            if (tag == null) { 
+<span class="no"> 54 </span>                // not defined: create default; go anywhere, do anything! (incl be inside a &lt;p&gt;) 
+<span class="no"> 55 </span>                tag = new Tag(tagName); 
+<span class="no"> 56 </span>                tag.isBlock = false; 
+<span class="no"> 57 </span>                tag.canContainBlock = true; 
+<span class="no"> 58 </span>            } 
+<span class="no"> 59 </span>            return tag; 
+<span class="no"> 60 </span>        } 
+<span class="no"> 61 </span>    } 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /** 
+<span class="no"> 64 </span>     * Gets if this is a block tag. 
+<span class="no"> 65 </span>     * 
+<span class="no"> 66 </span>     * @return if block tag 
+<span class="no"> 67 </span>     */ 
+<span class="no"> 68 </span>    public boolean isBlock() { 
+<span class="no"> 69 </span>        return isBlock; 
+<span class="no"> 70 </span>    } 
+<span class="no"> 71 </span> 
+<span class="no"> 72 </span>    /** 
+<span class="no"> 73 </span>     * Gets if this tag should be formatted as a block (or as inline) 
+<span class="no"> 74 </span>     * 
+<span class="no"> 75 </span>     * @return if should be formatted as block or inline 
+<span class="no"> 76 </span>     */ 
+<span class="no"> 77 </span>    public boolean formatAsBlock() { 
+<span class="no"> 78 </span>        return formatAsBlock; 
+<span class="no"> 79 </span>    } 
+<span class="no"> 80 </span> 
+<span class="no"> 81 </span>    /** 
+<span class="no"> 82 </span>     * Gets if this tag can contain block tags. 
+<span class="no"> 83 </span>     * 
+<span class="no"> 84 </span>     * @return if tag can contain block tags 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public boolean canContainBlock() { 
+<span class="no"> 87 </span>        return canContainBlock; 
+<span class="no"> 88 </span>    } 
+<span class="no"> 89 </span> 
+<span class="no"> 90 </span>    /** 
+<span class="no"> 91 </span>     * Gets if this tag is an inline tag. 
+<span class="no"> 92 </span>     * 
+<span class="no"> 93 </span>     * @return if this tag is an inline tag. 
+<span class="no"> 94 </span>     */ 
+<span class="no"> 95 </span>    public boolean isInline() { 
+<span class="no"> 96 </span>        return !isBlock; 
+<span class="no"> 97 </span>    } 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>    /** 
+<span class="no">100 </span>     * Gets if this tag is a data only tag. 
+<span class="no">101 </span>     * 
+<span class="no">102 </span>     * @return if this tag is a data only tag 
+<span class="no">103 </span>     */ 
+<span class="no">104 </span>    public boolean isData() { 
+<span class="no">105 </span>        return !canContainInline &amp;&amp; !isEmpty(); 
+<span class="no">106 </span>    } 
+<span class="no">107 </span> 
+<span class="no">108 </span>    /** 
+<span class="no">109 </span>     * Get if this is an empty tag 
+<span class="no">110 </span>     * 
+<span class="no">111 </span>     * @return if this is an empty tag 
+<span class="no">112 </span>     */ 
+<span class="no">113 </span>    public boolean isEmpty() { 
+<span class="no">114 </span>        return empty; 
+<span class="no">115 </span>    } 
+<span class="no">116 </span> 
+<span class="no">117 </span>    /** 
+<span class="no">118 </span>     * Get if this tag is self closing. 
+<span class="no">119 </span>     * 
+<span class="no">120 </span>     * @return if this tag should be output as self closing. 
+<span class="no">121 </span>     */ 
+<span class="no">122 </span>    public boolean isSelfClosing() { 
+<span class="no">123 </span>        return empty || selfClosing; 
+<span class="no">124 </span>    } 
+<span class="no">125 </span> 
+<span class="no">126 </span>    /** 
+<span class="no">127 </span>     * Get if this is a pre-defined tag, or was auto created on parsing. 
+<span class="no">128 </span>     * 
+<span class="no">129 </span>     * @return if a known tag 
+<span class="no">130 </span>     */ 
+<span class="no">131 </span>    public boolean isKnownTag() { 
+<span class="no">132 </span>        return tags.containsKey(tagName); 
+<span class="no">133 </span>    } 
+<span class="no">134 </span> 
+<span class="no">135 </span>    /** 
+<span class="no">136 </span>     * Check if this tagname is a known tag. 
+<span class="no">137 </span>     * 
+<span class="no">138 </span>     * @param tagName name of tag 
+<span class="no">139 </span>     * @return if known HTML tag 
+<span class="no">140 </span>     */ 
+<span class="no">141 </span>    public static boolean isKnownTag(String tagName) { 
+<span class="no">142 </span>        return tags.containsKey(tagName); 
+<span class="no">143 </span>    } 
+<span class="no">144 </span> 
+<span class="no">145 </span>    /** 
+<span class="no">146 </span>     * Get if this tag should preserve whitespace within child text nodes. 
+<span class="no">147 </span>     * 
+<span class="no">148 </span>     * @return if preserve whitepace 
+<span class="no">149 </span>     */ 
+<span class="no">150 </span>    public boolean preserveWhitespace() { 
+<span class="no">151 </span>        return preserveWhitespace; 
+<span class="no">152 </span>    } 
+<span class="no">153 </span> 
+<span class="no">154 </span>    Tag setSelfClosing() { 
+<span class="no">155 </span>        selfClosing = true; 
+<span class="no">156 </span>        return this; 
+<span class="no">157 </span>    } 
+<span class="no">158 </span> 
+<span class="no">159 </span>    @Override 
+<span class="no">160 </span>    public boolean equals(Object o) { 
+<span class="no">161 </span>        if (this == o) return true; 
+<span class="no">162 </span>        if (!(o instanceof Tag)) return false; 
+<span class="no">163 </span> 
+<span class="no">164 </span>        Tag tag = (Tag) o; 
+<span class="no">165 </span> 
+<span class="no">166 </span>        if (canContainBlock != tag.canContainBlock) return false; 
+<span class="no">167 </span>        if (canContainInline != tag.canContainInline) return false; 
+<span class="no">168 </span>        if (empty != tag.empty) return false; 
+<span class="no">169 </span>        if (formatAsBlock != tag.formatAsBlock) return false; 
+<span class="no">170 </span>        if (isBlock != tag.isBlock) return false; 
+<span class="no">171 </span>        if (preserveWhitespace != tag.preserveWhitespace) return false; 
+<span class="no">172 </span>        if (selfClosing != tag.selfClosing) return false; 
+<span class="no">173 </span>        if (!tagName.equals(tag.tagName)) return false; 
+<span class="no">174 </span> 
+<span class="no">175 </span>        return true; 
+<span class="no">176 </span>    } 
+<span class="no">177 </span> 
+<span class="no">178 </span>    @Override 
+<span class="no">179 </span>    public int hashCode() { 
+<span class="no">180 </span>        int result = tagName.hashCode(); 
+<span class="no">181 </span>        result = 31 * result + (isBlock ? 1 : 0); 
+<span class="no">182 </span>        result = 31 * result + (formatAsBlock ? 1 : 0); 
+<span class="no">183 </span>        result = 31 * result + (canContainBlock ? 1 : 0); 
+<span class="no">184 </span>        result = 31 * result + (canContainInline ? 1 : 0); 
+<span class="no">185 </span>        result = 31 * result + (empty ? 1 : 0); 
+<span class="no">186 </span>        result = 31 * result + (selfClosing ? 1 : 0); 
+<span class="no">187 </span>        result = 31 * result + (preserveWhitespace ? 1 : 0); 
+<span class="no">188 </span>        return result; 
+<span class="no">189 </span>    } 
+<span class="no">190 </span> 
+<span class="no">191 </span>    public String toString() { 
+<span class="no">192 </span>        return tagName; 
+<span class="no">193 </span>    } 
+<span class="no">194 </span> 
+<span class="no">195 </span>    // internal static initialisers: 
+<span class="no">196 </span>    // prepped from http://www.w3.org/TR/REC-html40/sgml/dtd.html and other sources 
+<span class="no">197 </span>    private static final String[] blockTags = { 
+<span class="no">198 </span>            &quot;html&quot;, &quot;head&quot;, &quot;body&quot;, &quot;frameset&quot;, &quot;script&quot;, &quot;noscript&quot;, &quot;style&quot;, &quot;meta&quot;, &quot;link&quot;, &quot;title&quot;, &quot;frame&quot;, 
+<span class="no">199 </span>            &quot;noframes&quot;, &quot;section&quot;, &quot;nav&quot;, &quot;aside&quot;, &quot;hgroup&quot;, &quot;header&quot;, &quot;footer&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, 
+<span class="no">200 </span>            &quot;ul&quot;, &quot;ol&quot;, &quot;pre&quot;, &quot;div&quot;, &quot;blockquote&quot;, &quot;hr&quot;, &quot;address&quot;, &quot;figure&quot;, &quot;figcaption&quot;, &quot;form&quot;, &quot;fieldset&quot;, &quot;ins&quot;, 
+<span class="no">201 </span>            &quot;del&quot;, &quot;dl&quot;, &quot;dt&quot;, &quot;dd&quot;, &quot;li&quot;, &quot;table&quot;, &quot;caption&quot;, &quot;thead&quot;, &quot;tfoot&quot;, &quot;tbody&quot;, &quot;colgroup&quot;, &quot;col&quot;, &quot;tr&quot;, &quot;th&quot;, 
+<span class="no">202 </span>            &quot;td&quot;, &quot;video&quot;, &quot;audio&quot;, &quot;canvas&quot;, &quot;details&quot;, &quot;menu&quot;, &quot;plaintext&quot; 
+<span class="no">203 </span>    }; 
+<span class="no">204 </span>    private static final String[] inlineTags = { 
+<span class="no">205 </span>            &quot;object&quot;, &quot;base&quot;, &quot;font&quot;, &quot;tt&quot;, &quot;i&quot;, &quot;b&quot;, &quot;u&quot;, &quot;big&quot;, &quot;small&quot;, &quot;em&quot;, &quot;strong&quot;, &quot;dfn&quot;, &quot;code&quot;, &quot;samp&quot;, &quot;kbd&quot;, 
+<span class="no">206 </span>            &quot;var&quot;, &quot;cite&quot;, &quot;abbr&quot;, &quot;time&quot;, &quot;acronym&quot;, &quot;mark&quot;, &quot;ruby&quot;, &quot;rt&quot;, &quot;rp&quot;, &quot;a&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;map&quot;, &quot;q&quot;, 
+<span class="no">207 </span>            &quot;sub&quot;, &quot;sup&quot;, &quot;bdo&quot;, &quot;iframe&quot;, &quot;embed&quot;, &quot;span&quot;, &quot;input&quot;, &quot;select&quot;, &quot;textarea&quot;, &quot;label&quot;, &quot;button&quot;, &quot;optgroup&quot;, 
+<span class="no">208 </span>            &quot;option&quot;, &quot;legend&quot;, &quot;datalist&quot;, &quot;keygen&quot;, &quot;output&quot;, &quot;progress&quot;, &quot;meter&quot;, &quot;area&quot;, &quot;param&quot;, &quot;source&quot;, &quot;track&quot;, 
+<span class="no">209 </span>            &quot;summary&quot;, &quot;command&quot;, &quot;device&quot; 
+<span class="no">210 </span>    }; 
+<span class="no">211 </span>    private static final String[] emptyTags = { 
+<span class="no">212 </span>            &quot;meta&quot;, &quot;link&quot;, &quot;base&quot;, &quot;frame&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;embed&quot;, &quot;hr&quot;, &quot;input&quot;, &quot;keygen&quot;, &quot;col&quot;, &quot;command&quot;, 
+<span class="no">213 </span>            &quot;device&quot; 
+<span class="no">214 </span>    }; 
+<span class="no">215 </span>    private static final String[] formatAsInlineTags = { 
+<span class="no">216 </span>            &quot;title&quot;, &quot;a&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;pre&quot;, &quot;address&quot;, &quot;li&quot;, &quot;th&quot;, &quot;td&quot;, &quot;script&quot;, &quot;style&quot; 
+<span class="no">217 </span>    }; 
+<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = <span class="ep4" id="p4"><span class="ep3" id="p3">{&quot;pre&quot;<span class="en3" id="n3"><a class="ins" href="#n3">,</a></span> &quot;plaintext&quot;<span class="em1" id="m1"><a class="mov" href="#m1" data-partner="#n1">,</a></span> &quot;title&quot;<span class="em2" id="m2"><a class="mov" href="#m2" data-partner="#n2">,</a></span> <span class="en4" id="n4"><a class="ins" href="#n4">&quot;textarea&quot;</a></span>}</span></span>; 
+<span class="no">219 </span> 
+<span class="no">220 </span>    static { 
+<span class="no">221 </span>        // creates 
+<span class="no">222 </span>        for (String tagName : blockTags) { 
+<span class="no">223 </span>            Tag tag = new Tag(tagName); 
+<span class="no">224 </span>            register(tag); 
+<span class="no">225 </span>        } 
+<span class="no">226 </span>        for (String tagName : inlineTags) { 
+<span class="no">227 </span>            Tag tag = new Tag(tagName); 
+<span class="no">228 </span>            tag.isBlock = false; 
+<span class="no">229 </span>            tag.canContainBlock = false; 
+<span class="no">230 </span>            tag.formatAsBlock = false; 
+<span class="no">231 </span>            register(tag); 
+<span class="no">232 </span>        } 
+<span class="no">233 </span> 
+<span class="no">234 </span>        // mods: 
+<span class="no">235 </span>        for (String tagName : emptyTags) { 
+<span class="no">236 </span>            Tag tag = tags.get(tagName); 
+<span class="no">237 </span>            Validate.notNull(tag); 
+<span class="no">238 </span>            tag.canContainBlock = false; 
+<span class="no">239 </span>            tag.canContainInline = false; 
+<span class="no">240 </span>            tag.empty = true; 
+<span class="no">241 </span>        } 
+<span class="no">242 </span> 
+<span class="no">243 </span>        for (String tagName : formatAsInlineTags) { 
+<span class="no">244 </span>            Tag tag = tags.get(tagName); 
+<span class="no">245 </span>            Validate.notNull(tag); 
+<span class="no">246 </span>            tag.formatAsBlock = false; 
+<span class="no">247 </span>        } 
+<span class="no">248 </span> 
+<span class="no">249 </span>        for (String tagName : preserveWhitespaceTags) { 
+<span class="no">250 </span>            Tag tag = tags.get(tagName); 
+<span class="no">251 </span>            Validate.notNull(tag); 
+<span class="no">252 </span>            tag.preserveWhitespace = true; 
+<span class="no">253 </span>        } 
+<span class="no">254 </span>    } 
+<span class="no">255 </span> 
+<span class="no">256 </span>    private static Tag register(Tag tag) { 
+<span class="no">257 </span>        synchronized (tags) { 
+<span class="no">258 </span>            tags.put(tag.tagName, tag); 
+<span class="no">259 </span>        } 
+<span class="no">260 </span>        return tag; 
+<span class="no">261 </span>    } 
+<span class="no">262 </span>} 
+<span class="no">263 </span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
