@@ -5,122 +5,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  .page:has(#p9:target) .ep9 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .toolbar {
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
   .grid {
+    height: calc(100vh - 186px);
+    display: grid;
+    min-height: 252px;
     min-width: 512px;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-    height: calc(100vh - 186px);
-    min-height: 252px;
-    display: grid;
   }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#n5:target) .en5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p5:target) .ep5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p2:target) .ep2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .panel, .edit {
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    flex-direction: column;
-    display: flex;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
     display: block;
   }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
     display: none;
   }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .panel-header {
-    background: #ebebeb;
-    align-items: center;
-    padding: 8px 10px;
-    justify-content: space-between;
-    font-size: 14px;
-    line-height: 1;
-    border-bottom: 1px solid #afafaf;
-    display: flex;
-    font-weight: bold;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  .page:has(#m6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#m6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .page:has(#p7:target) .ep7 {
+  .page:has(#n15:target) .en15 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#n6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n3:target) .en3 {
+  .page:has(#p15:target) .ep15 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
@@ -134,78 +53,63 @@
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
+  .page:has(#n16:target) .en16 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
+  .page:has(#n10:target) .en10 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
-  .error {
-    color: #b51700;
+  .page:has(#p10:target) .ep10 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7 {
-    display: none;
-  }
-  .toolbar {
+  .panel-header {
+    font-weight: bold;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    background: #ebebeb;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
     line-height: 1;
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-  }
-  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .token {
-    color: #017100;
-  }
-  .edit {
-    font-size: 14px;
-    min-width: 512px;
-    height: 60px;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  pre {
-    margin: 0;
-  }
-  .editbox {
-    overflow: auto;
-    font-size: 14px;
-    background: #f7f7f7;
-    flex: 1;
-    font-weight: 500;
-    line-height: 1.8;
-    padding: 4px 8px;
-    min-height: 0;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .no {
-    letter-spacing: normal;
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    padding-bottom: 0.15em;
-    font-weight: normal;
+    padding: 8px 10px;
   }
   .codebox {
+    letter-spacing: 0.05em;
     overflow: auto;
-    background: #f7f7f7;
     scroll-behavior: smooth;
     padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    flex: 1;
+    background: #f7f7f7;
     scroll-padding-top: 54px;
-    letter-spacing: 0.05em;
+    font-size: 12px;
+    min-height: 0;
     line-height: 1.5;
+    flex: 1;
+  }
+  .page:has(#n17:target) .en17 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p17:target) .ep17 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .page:has(#n4:target) .en4 {
     color: white;
@@ -221,32 +125,189 @@
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
+  .editbox {
+    line-height: 1.8;
+    padding: 4px 8px;
+    background: #f7f7f7;
+    overflow: auto;
+    font-size: 14px;
+    min-height: 0;
+    flex: 1;
+    font-weight: 500;
   }
-  .bold {
-    font-weight: bold;
-  }
-  .page {
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0 16px 8px 16px;
-  }
-  .page:has(#n2:target) .en2 {
+  .page:has(#n11:target) .en11 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
   }
+  .page:has(#p11:target) .ep11 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .token {
+    color: #017100;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
   .ins, .del, .mov, .upd {
     border-top:  0.05em solid black;
     padding-top: 0.05em;
+    border-bottom:  0.05em solid black;
     padding-bottom: 0.05em;
     box-shadow: inset -0.05em 0 0 black;
-    border-bottom:  0.05em solid black;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#m12:target) .i12, .page:has(#n12:target) .i12 {
+    display: block;
+  }
+  .page:has(#m12:target) .clear, .page:has(#n12:target) .clear {
+    display: none;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .page:has(#n12:target) .en12 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m12:target) .en12 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m12:target) .em12 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n12:target) .em12 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page:has(#p13:target) .clear, .page:has(#n13:target) .clear {
+    display: none;
+  }
+  .page:has(#n5:target) .en5 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p5:target) .ep5 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n1:target) .en1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
   }
   .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#p1:target) .ep1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p15:target) .i15, .page:has(#n15:target) .i15 {
+    display: block;
+  }
+  .page:has(#p15:target) .clear, .page:has(#n15:target) .clear {
+    display: none;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .no {
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    letter-spacing: normal;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+  }
+  .edit {
+    height: 60px;
+    min-width: 512px;
+    font-size: 14px;
+  }
+  .panel, .edit {
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+  .page:has(#p11:target) .i11, .page:has(#n11:target) .i11 {
+    display: block;
+  }
+  .page:has(#n8:target) .en8 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .page:has(#p16:target) .i16, .page:has(#n16:target) .i16 {
     display: block;
   }
   .page:has(#n7:target) .en7 {
@@ -256,40 +317,179 @@
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .sec {
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    padding: 0;
-    font-weight: bold;
-  }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#n1:target) .en1 {
+  .page:has(#p7:target) .ep7 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
+  .page:has(#p6:target) .ep6 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
   }
   .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
     display: none;
   }
-  .page:has(#p1:target) .ep1 {
+  .page:has(#n9:target) .en9 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+  body {
+    background: white;
+    margin: 0;
+  }
+  .page:has(#n2:target) .en2 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p2:target) .ep2 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p17:target) .clear, .page:has(#n17:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11, .i12, .i13, .i14, .i15, .i16, .i17 {
+    display: none;
+  }
+  .page:has(#n13:target) .en13 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p13:target) .ep13 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p17:target) .i17, .page:has(#n17:target) .i17 {
+    display: block;
+  }
+  .page:has(#p16:target) .clear, .page:has(#n16:target) .clear {
+    display: none;
+  }
+  .page:has(#p14:target) .i14, .page:has(#n14:target) .i14 {
+    display: block;
+  }
+  .page:has(#p13:target) .i13, .page:has(#n13:target) .i13 {
+    display: block;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .page:has(#p8:target) .ep8 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p11:target) .clear, .page:has(#n11:target) .clear {
+    display: none;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .page:has(#p16:target) .ep16 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .page {
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
+    max-width: 100vw;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .page:has(#n3:target) .en3 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p14:target) .clear, .page:has(#n14:target) .clear {
+    display: none;
+  }
+  .page:has(#n6:target) .en6 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .sec {
+    padding: 0;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+    font-weight: bold;
+  }
+  .page:has(#n14:target) .en14 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p14:target) .ep14 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
+    display: block;
+  }
+  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
     display: none;
   }
 </style>
@@ -326,27 +526,65 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="i5">Edit #5</span>
       <span class="i6">Edit #6</span>
       <span class="i7">Edit #7</span>
+      <span class="i8">Edit #8</span>
+      <span class="i9">Edit #9</span>
+      <span class="i10">Edit #10</span>
+      <span class="i11">Edit #11</span>
+      <span class="i12">Edit #12</span>
+      <span class="i13">Edit #13</span>
+      <span class="i14">Edit #14</span>
+      <span class="i15">Edit #15</span>
+      <span class="i16">Edit #16</span>
+      <span class="i17">Edit #17</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n7">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n7">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n17">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n17">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6" data-partner="#m6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i8"><a href="#n7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i10"><a href="#n9">Prev</a> | <a href="#n11">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i11"><a href="#n10">Prev</a> | <a href="#n12" data-partner="#m12">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i12"><a href="#n11">Prev</a> | <a href="#n13">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i13"><a href="#n12" data-partner="#m12">Prev</a> | <a href="#n14">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i14"><a href="#n13">Prev</a> | <a href="#n15">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i15"><a href="#n14">Prev</a> | <a href="#n16">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i16"><a href="#n15">Prev</a> | <a href="#n17">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i17"><a href="#n16">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> if_statement</a> [184, 21] - [186, 22]
-<span style="font-weight:600">  into   </span><a href="#p1"> block</a> [174, 69] - [187, 18]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> if</a>: <span class=token>&quot;if&quot;</span> [184, 21] - [184, 23]
-<span style="font-weight:600">  into   </span><a href="#p2"> if_statement</a> [184, 21] - [186, 22]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n3"> parenthesized_expression</a> [184, 24] - [184, 49]
-<span style="font-weight:600">  into           </span><a href="#p3"> if_statement</a> [184, 21] - [186, 22]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> block</a> [184, 50] - [186, 22]
-<span style="font-weight:600">  into   </span><a href="#p4"> if_statement</a> [184, 21] - [186, 22]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> {</a>: <span class=token>&quot;{&quot;</span> [184, 50] - [184, 51]
-<span style="font-weight:600">  into   </span><a href="#p5"> block</a> [184, 50] - [186, 22]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n6" data-partner="m6"> expression_statement</a> [184, 25] - [184, 110]
-<span style="font-weight:600">  to   </span><a href="#m6" data-partner="n6"> expression_statement</a> [185, 25] - [185, 110]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n7"> }</a>: <span class=token>&quot;}&quot;</span> [186, 21] - [186, 22]
-<span style="font-weight:600">  into   </span><a href="#p7"> block</a> [184, 50] - [186, 22]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> block</a> [174, 69] - [187, 18]
+<span style="font-weight:600">  into   </span><a href="#p1"> if_statement</a> [173, 17] - [187, 18]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> {</a>: <span class=token>&quot;{&quot;</span> [174, 69] - [174, 70]
+<span style="font-weight:600">  into   </span><a href="#p2"> block</a> [174, 69] - [187, 18]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> block_comment</a>: <span class=token>&quot;/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense;
+                     *   but it appears to check that JavaType impl class is the same which is
+                     *   important for some reason?
+                     *   Disabling the check will break 2 Enum-related tests.
+                     */&quot;</span> [175, 21] - [179, 24]
+<span style="font-weight:600">  into   </span><a href="#p3"> block</a> [174, 69] - [187, 18]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> line_comment</a>: <span class=token>&quot;// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full&quot;</span> [180, 21] - [180, 90]
+<span style="font-weight:600">  into   </span><a href="#p4"> block</a> [174, 69] - [187, 18]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> line_comment</a>: <span class=token>&quot;//   generic type with custom type resolvers. If so, should try to retain them.&quot;</span> [181, 21] - [181, 100]
+<span style="font-weight:600">  into   </span><a href="#p5"> block</a> [174, 69] - [187, 18]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n6"> line_comment</a>: <span class=token>&quot;//  Whether this is sufficient to avoid problems remains to be seen, but for&quot;</span> [182, 21] - [182, 97]
+<span style="font-weight:600">  into   </span><a href="#p6"> block</a> [174, 69] - [187, 18]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n7"> line_comment</a>: <span class=token>&quot;//  now it should improve things.&quot;</span> [183, 21] - [183, 54]
+<span style="font-weight:600">  into   </span><a href="#p7"> block</a> [174, 69] - [187, 18]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n8"> if_statement</a> [184, 21] - [186, 22]
+<span style="font-weight:600">  into   </span><a href="#p8"> block</a> [174, 69] - [187, 18]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n9"> }</a>: <span class=token>&quot;}&quot;</span> [187, 17] - [187, 18]
+<span style="font-weight:600">  into   </span><a href="#p9"> block</a> [174, 69] - [187, 18]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n10"> if</a>: <span class=token>&quot;if&quot;</span> [184, 21] - [184, 23]
+<span style="font-weight:600">  into   </span><a href="#p10"> if_statement</a> [184, 21] - [186, 22]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n11"> parenthesized_expression</a> [184, 24] - [184, 49]
+<span style="font-weight:600">  into           </span><a href="#p11"> if_statement</a> [184, 21] - [186, 22]</span><span class="i12"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n12" data-partner="m12"> block</a> [174, 69] - [185, 18]
+<span style="font-weight:600">  to   </span><a href="#m12" data-partner="n12"> block</a> [184, 50] - [186, 22]</span><span class="i13"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n13"> block_comment</a>: <span class=token>&quot;/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense;
+                     *   but it appears to check that JavaType impl class is the same which is
+                     *   important for some reason?
+                     *   Disabling the check will break 2 Enum-related tests.
+                     */&quot;</span> [175, 21] - [179, 24]
+<span style="font-weight:600">  from   </span><a href="#p13"> block</a> [174, 69] - [185, 18]</span><span class="i14"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n14"> line_comment</a>: <span class=token>&quot;// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full&quot;</span> [180, 21] - [180, 90]
+<span style="font-weight:600">  from   </span><a href="#p14"> block</a> [174, 69] - [185, 18]</span><span class="i15"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n15"> line_comment</a>: <span class=token>&quot;//   generic type with custom type resolvers. If so, should try to retain them.&quot;</span> [181, 21] - [181, 100]
+<span style="font-weight:600">  from   </span><a href="#p15"> block</a> [174, 69] - [185, 18]</span><span class="i16"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n16"> line_comment</a>: <span class=token>&quot;//  Whether this is sufficient to avoid problems remains to be seen, but for&quot;</span> [182, 21] - [182, 97]
+<span style="font-weight:600">  from   </span><a href="#p16"> block</a> [174, 69] - [185, 18]</span><span class="i17"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n17"> line_comment</a>: <span class=token>&quot;//  now it should improve things.&quot;</span> [183, 21] - [183, 54]
+<span style="font-weight:600">  from   </span><a href="#p17"> block</a> [174, 69] - [185, 18]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -527,18 +765,18 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">171 </span>                 *   type in process (getting SimpleType of Map.class which will not work as expected) 
 <span class="no">172 </span>                 */ 
 <span class="no">173 </span>                if ((_baseType != null) 
-<span class="no">174 </span>                        &amp;&amp; _baseType.getClass() == type.getClass()) { 
-<span class="no">175 </span>                    /* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense; 
+<span class="no">174 </span>                        &amp;&amp; _baseType.getClass() == type.getClass()) <span id="p17" class="ep17"><span id="p16" class="ep16"><span id="p15" class="ep15"><span id="p14" class="ep14"><span id="p13" class="ep13"><span id="n12" class="en12"><a href="#n12" class="mov" data-partner="#m12">{ 
+<span class="no">175 </span>                    </a><span id="n13" class="en13"><a class="del" href="#n13">/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense; 
 <span class="no">176 </span>                     *   but it appears to check that JavaType impl class is the same which is 
 <span class="no">177 </span>                     *   important for some reason? 
 <span class="no">178 </span>                     *   Disabling the check will break 2 Enum-related tests. 
-<span class="no">179 </span>                     */ 
-<span class="no">180 </span>                    // 19-Jun-2016, tatu: As per [databind#1270] we may actually get full 
-<span class="no">181 </span>                    //   generic type with custom type resolvers. If so, should try to retain them. 
-<span class="no">182 </span>                    //  Whether this is sufficient to avoid problems remains to be seen, but for 
-<span class="no">183 </span>                    //  now it should improve things. 
-<span class="no">184 </span>                        <span id="n6" class="en6"><a href="#n6" class="mov" data-partner="#m6">type = ctxt.getTypeFactory().constructSpecializedType(_baseType, type.getRawClass());</a></span> 
-<span class="no">185 </span>                } 
+<span class="no">179 </span>                     */</a></span><a href="#n12" class="mov" data-partner="#m12"> 
+<span class="no">180 </span>                    </a><span id="n14" class="en14"><a class="del" href="#n14">// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full</a></span><a href="#n12" class="mov" data-partner="#m12"> 
+<span class="no">181 </span>                    </a><span id="n15" class="en15"><a class="del" href="#n15">//   generic type with custom type resolvers. If so, should try to retain them.</a></span><a href="#n12" class="mov" data-partner="#m12"> 
+<span class="no">182 </span>                    </a><span id="n16" class="en16"><a class="del" href="#n16">//  Whether this is sufficient to avoid problems remains to be seen, but for</a></span><a href="#n12" class="mov" data-partner="#m12"> 
+<span class="no">183 </span>                    </a><span id="n17" class="en17"><a class="del" href="#n17">//  now it should improve things.</a></span><a href="#n12" class="mov" data-partner="#m12"> 
+<span class="no">184 </span>                        type = ctxt.getTypeFactory().constructSpecializedType(_baseType, type.getRawClass()); 
+<span class="no">185 </span>                }</a></span></span></span></span></span></span> 
 <span class="no">186 </span>                deser = ctxt.findContextualValueDeserializer(type, _property); 
 <span class="no">187 </span>            } 
 <span class="no">188 </span>            _deserializers.put(typeId, deser); 
@@ -819,21 +1057,21 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">170 </span>                 *   we may try to narrow a SimpleType (Object.class) into MapType (Map.class), losing actual 
 <span class="no">171 </span>                 *   type in process (getting SimpleType of Map.class which will not work as expected) 
 <span class="no">172 </span>                 */ 
-<span class="no">173 </span>                if ((_baseType != null) 
-<span class="no">174 </span>                        &amp;&amp; _baseType.getClass() == type.getClass()) <span id="p1" class="ep1">{ 
-<span class="no">175 </span>                    /* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense; 
+<span class="no">173 </span>                <span id="p1" class="ep1">if ((_baseType != null) 
+<span class="no">174 </span>                        &amp;&amp; _baseType.getClass() == type.getClass()) <span id="p9" class="ep9"><span id="p8" class="ep8"><span id="p7" class="ep7"><span id="p6" class="ep6"><span id="p5" class="ep5"><span id="p4" class="ep4"><span id="p3" class="ep3"><span id="p2" class="ep2"><span id="n1" class="en1"><span id="n2" class="en2"><a class="ins" href="#n2">{</a></span><a class="ins" href="#n1"> 
+<span class="no">175 </span>                    </a><span id="n3" class="en3"><a class="ins" href="#n3">/* 09-Aug-2015, tatu: Not sure if the second part of the check makes sense; 
 <span class="no">176 </span>                     *   but it appears to check that JavaType impl class is the same which is 
 <span class="no">177 </span>                     *   important for some reason? 
 <span class="no">178 </span>                     *   Disabling the check will break 2 Enum-related tests. 
-<span class="no">179 </span>                     */ 
-<span class="no">180 </span>                    // 19-Jun-2016, tatu: As per [databind#1270] we may actually get full 
-<span class="no">181 </span>                    //   generic type with custom type resolvers. If so, should try to retain them. 
-<span class="no">182 </span>                    //  Whether this is sufficient to avoid problems remains to be seen, but for 
-<span class="no">183 </span>                    //  now it should improve things. 
-<span class="no">184 </span>                    <span id="p4" class="ep4"><span id="p3" class="ep3"><span id="p2" class="ep2"><span id="n1" class="en1"><span id="n2" class="en2"><a class="ins" href="#n2">if</a></span><a class="ins" href="#n1"> </a><span id="n3" class="en3"><a class="ins" href="#n3">(!type.hasGenericTypes())</a></span><a class="ins" href="#n1"> </a><span id="p7" class="ep7"><span id="p5" class="ep5"><span id="n4" class="en4"><span id="n5" class="en5"><a class="ins" href="#n5">{</a></span><a class="ins" href="#n4"> 
-<span class="no">185 </span>                        </a><span id="m6" class="em6"><a href="#m6" class="mov" data-partner="#n6">type = ctxt.getTypeFactory().constructSpecializedType(_baseType, type.getRawClass());</a></span><a class="ins" href="#n4"> 
-<span class="no">186 </span>                    </a><span id="n7" class="en7"><a class="ins" href="#n7">}</a></span></span></span></span></span></span></span></span> 
-<span class="no">187 </span>                }</span> 
+<span class="no">179 </span>                     */</a></span><a class="ins" href="#n1"> 
+<span class="no">180 </span>                    </a><span id="n4" class="en4"><a class="ins" href="#n4">// 19-Jun-2016, tatu: As per [databind#1270] we may actually get full</a></span><a class="ins" href="#n1"> 
+<span class="no">181 </span>                    </a><span id="n5" class="en5"><a class="ins" href="#n5">//   generic type with custom type resolvers. If so, should try to retain them.</a></span><a class="ins" href="#n1"> 
+<span class="no">182 </span>                    </a><span id="n6" class="en6"><a class="ins" href="#n6">//  Whether this is sufficient to avoid problems remains to be seen, but for</a></span><a class="ins" href="#n1"> 
+<span class="no">183 </span>                    </a><span id="n7" class="en7"><a class="ins" href="#n7">//  now it should improve things.</a></span><a class="ins" href="#n1"> 
+<span class="no">184 </span>                    </a><span id="p11" class="ep11"><span id="p10" class="ep10"><span id="n8" class="en8"><span id="n10" class="en10"><a class="ins" href="#n10">if</a></span><a class="ins" href="#n8"> </a><span id="n11" class="en11"><a class="ins" href="#n11">(!type.hasGenericTypes())</a></span><a class="ins" href="#n8"> </a><span id="m12" class="em12"><a href="#m12" class="mov" data-partner="#n12">{ 
+<span class="no">185 </span>                        type = ctxt.getTypeFactory().constructSpecializedType(_baseType, type.getRawClass()); 
+<span class="no">186 </span>                    }</a></span></span></span></span><a class="ins" href="#n1"> 
+<span class="no">187 </span>                </a><span id="n9" class="en9"><a class="ins" href="#n9">}</a></span></span></span></span></span></span></span></span></span></span></span> 
 <span class="no">188 </span>                deser = ctxt.findContextualValueDeserializer(type, _property); 
 <span class="no">189 </span>            } 
 <span class="no">190 </span>            _deserializers.put(typeId, deser); 

@@ -5,366 +5,172 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#m6:target) .i6, .page:has(#n6:target) .i6 {
+  .page:has(#n1:target) .en1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .grid {
+    height: calc(100vh - 186px);
+    display: grid;
+    min-height: 252px;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .page:has(#m1:target) .en1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m1:target) .em1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n1:target) .em1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  pre {
+    margin: 0;
+  }
+  .ins, .del, .mov, .upd {
+    border-top:  0.05em solid black;
+    padding-top: 0.05em;
+    border-bottom:  0.05em solid black;
+    padding-bottom: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+  }
+  .panel, .edit {
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+  .no {
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+  }
+  .error {
+    color: #b51700;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .token {
+    color: #017100;
+  }
+  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
   }
-  .page:has(#m6:target) .clear, .page:has(#n6:target) .clear {
+  body {
+    margin: 0;
+    background: white;
+  }
+  .i1 {
     display: none;
   }
-  .page:has(#n9:target) .en9 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .editbox {
+    padding: 4px 8px;
+    background: #f7f7f7;
+    min-height: 0;
+    overflow: auto;
+    font-size: 14px;
+    line-height: 1.8;
+    flex: 1;
+    font-weight: 500;
   }
-  .page:has(#p9:target) .ep9 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .panel-header {
+    padding: 8px 10px;
+    font-weight: bold;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    background: #ebebeb;
+  }
+  .edit {
+    height: 60px;
+    min-width: 512px;
+    font-size: 14px;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .toolbar {
+    font-size: 16px;
+    line-height: 1;
+    margin-bottom: 6px;
+    padding: 0;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
   }
   .page {
     margin: 0 auto;
     max-width: 100vw;
     padding: 0 16px 8px 16px;
   }
-  .page:has(#n2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p2:target) .ep2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .toolbar {
+  .sec {
     padding: 0;
-    margin-bottom: 6px;
+    font-size: 24px;
     line-height: 1;
-    font-size: 16px;
-  }
-  .grid {
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-    gap: 16px;
-    height: calc(100vh - 186px);
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p10:target) .ep10 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .panel, .edit {
-    border: 1px solid #afafaf;
-    display: flex;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    flex-direction: column;
-    border-radius: 6px;
-  }
-  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .panel-header {
-    display: flex;
-    align-items: center;
-    padding: 8px 10px;
     font-weight: bold;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    line-height: 1;
-    justify-content: space-between;
-    background: #ebebeb;
-  }
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
-    display: none;
-  }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
+    margin: 12px 0;
   }
   .codebox {
+    padding: 4px;
     letter-spacing: 0.05em;
     overflow: auto;
     scroll-behavior: smooth;
-    padding: 4px;
+    background: #f7f7f7;
     min-height: 0;
     font-size: 12px;
-    background: #f7f7f7;
-    flex: 1;
     scroll-padding-top: 54px;
-    line-height: 1.5;
-  }
-  .page:has(#n4:target) .en4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .ep4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .edit {
-    min-width: 512px;
-    height: 60px;
-    font-size: 14px;
-  }
-  .editbox {
-    padding: 4px 8px;
-    min-height: 0;
-    overflow: auto;
-    font-size: 14px;
-    background: #f7f7f7;
     flex: 1;
-    line-height: 1.8;
-    font-weight: 500;
-  }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  pre {
-    margin: 0;
-  }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    letter-spacing: normal;
-  }
-  .token {
-    color: #017100;
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .error {
-    color: #b51700;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p5:target) .ep5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#n7:target) .en7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p7:target) .ep7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m6:target) .em6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n6:target) .em6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n8:target) .en8 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .page:has(#p3:target) .ep3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#p8:target) .ep8 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  .sec {
-    padding: 0;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-  }
-  .page:has(#n10:target) .en10 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .ins, .del, .mov, .upd {
-    border-top:  0.05em solid black;
-    border-bottom:  0.05em solid black;
-    padding-bottom: 0.05em;
-    padding-top: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
+    line-height: 1.5;
   }
 </style>
 </head>
@@ -394,42 +200,15 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="sec">
       <span class="clear">Edit</span>
       <span class="i1">Edit #1</span>
-      <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
-      <span class="i7">Edit #7</span>
-      <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n10">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n10">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6" data-partner="#m6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> binary_expression</a> [394, 46] - [394, 72]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> binary_expression</a> [394, 25] - [394, 72]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> ||</a>: <span class=token>&quot;||&quot;</span> [394, 43] - [394, 45]
-<span style="font-weight:600">  into   </span><a href="#p2"> binary_expression</a> [394, 25] - [394, 72]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> binary_expression</a> [394, 46] - [394, 72]
-<span style="font-weight:600">  into   </span><a href="#p3"> binary_expression</a> [394, 25] - [394, 72]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n4"> method_invocation</a> [394, 46] - [394, 63]
-<span style="font-weight:600">  into           </span><a href="#p4"> binary_expression</a> [394, 46] - [394, 72]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> &amp;&amp;</a>: <span class=token>&quot;&amp;&amp;&quot;</span> [394, 64] - [394, 66]
-<span style="font-weight:600">  into   </span><a href="#p5"> binary_expression</a> [394, 46] - [394, 72]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n6" data-partner="m6"> unary_expression</a> [394, 67] - [394, 72]
-<span style="font-weight:600">  to   </span><a href="#m6" data-partner="n6"> unary_expression</a> [394, 67] - [394, 72]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n7"> &amp;&amp;</a>: <span class=token>&quot;&amp;&amp;&quot;</span> [394, 64] - [394, 66]
-<span style="font-weight:600">  from   </span><a href="#p7"> binary_expression</a> [394, 46] - [394, 72]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete subtree </span><a href="#n8"> method_invocation</a> [394, 25] - [394, 42]
-<span style="font-weight:600">  from           </span><a href="#p8"> binary_expression</a> [394, 25] - [394, 72]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n9"> ||</a>: <span class=token>&quot;||&quot;</span> [394, 43] - [394, 45]
-<span style="font-weight:600">  from   </span><a href="#p9"> binary_expression</a> [394, 25] - [394, 72]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n10"> binary_expression</a> [394, 25] - [394, 72]
-<span style="font-weight:600">  from   </span><a href="#p10"> parenthesized_expression</a> [394, 24] - [394, 73]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n1" data-partner="m1"> string_fragment</a>: <span class=token>&quot;td&quot;</span> [394, 47] - [394, 49]
+<span style="font-weight:600">  to     </span><a href="#m1" data-partner="n1"> string_fragment</a>: <span class=token>&quot;th&quot;</span> [394, 47] - [394, 49]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -830,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">391 </span>            if (&quot;select&quot;.equals(name)) { 
 <span class="no">392 </span>                transition(HtmlTreeBuilderState.InSelect); 
 <span class="no">393 </span>                break; // frag 
-<span class="no">394 </span>            } else if (<span id="p10" class="ep10">(<span id="n10" class="en10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="n8" class="en8"><a class="del" href="#n8">&quot;td&quot;.equals(name)</a></span><a class="del" href="#n10"> </a><span id="n9" class="en9"><a class="del" href="#n9">||</a></span><a class="del" href="#n10"> </a><span id="p7" class="ep7"><span id="n1" class="en1"><a class="mov" href="#n1" data-partner="#m1">&quot;td&quot;.equals(name) </a><span id="n7" class="en7"><a class="del" href="#n7">&amp;&amp;</a></span><a class="mov" href="#n1" data-partner="#m1"> </a><span id="n6" class="en6"><a class="mov" href="#n6" data-partner="#m6">!last</a></span></span></span></span></span></span>)</span>) { 
+<span class="no">394 </span>            } else if ((&quot;td&quot;.equals(name) || &quot;<span id="n1" class="en1"><a href="#n1" class="upd" data-partner="#m1">td</a></span>&quot;.equals(name) &amp;&amp; !last)) { 
 <span class="no">395 </span>                transition(HtmlTreeBuilderState.InCell); 
 <span class="no">396 </span>                break; 
 <span class="no">397 </span>            } else if (&quot;tr&quot;.equals(name)) { 
@@ -1539,7 +1318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">391 </span>            if (&quot;select&quot;.equals(name)) { 
 <span class="no">392 </span>                transition(HtmlTreeBuilderState.InSelect); 
 <span class="no">393 </span>                break; // frag 
-<span class="no">394 </span>            } else if ((<span id="p3" class="ep3"><span id="p2" class="ep2"><span id="m1" class="em1"><a class="mov" href="#m1" data-partner="#n1">&quot;td&quot;.equals(name) </a><span id="n2" class="en2"><a class="ins" href="#n2">||</a></span><a class="mov" href="#m1" data-partner="#n1"> </a><span id="p5" class="ep5"><span id="p4" class="ep4"><span id="n3" class="en3"><span id="n4" class="en4"><a class="ins" href="#n4">&quot;th&quot;.equals(name)</a></span><a class="ins" href="#n3"> </a><span id="n5" class="en5"><a class="ins" href="#n5">&amp;&amp;</a></span><a class="ins" href="#n3"> </a><span id="m6" class="em6"><a class="mov" href="#m6" data-partner="#n6">!last</a></span></span></span></span></span></span></span>)) { 
+<span class="no">394 </span>            } else if ((&quot;td&quot;.equals(name) || &quot;<span id="m1" class="em1"><a href="#m1" class="upd" data-partner="#n1">th</a></span>&quot;.equals(name) &amp;&amp; !last)) { 
 <span class="no">395 </span>                transition(HtmlTreeBuilderState.InCell); 
 <span class="no">396 </span>                break; 
 <span class="no">397 </span>            } else if (&quot;tr&quot;.equals(name)) { 

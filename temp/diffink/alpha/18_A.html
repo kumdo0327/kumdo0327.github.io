@@ -5,143 +5,122 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .page:has(#m1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
   }
-  .page:has(#m1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  pre {
-    margin: 0;
-  }
-  body {
-    background: white;
-    margin: 0;
-  }
-  .page:has(#n8:target) .en8 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p8:target) .ep8 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n4:target) .en4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .ep4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
     display: none;
   }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
+  .page:has(#n7:target) .en7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
-  .bold {
-    font-weight: bold;
+  .page:has(#p7:target) .ep7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m2:target) .em2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n2:target) .em2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
   .editbox a:hover, .toolbar a:hover {
     text-decoration: underline;
   }
-  .page {
-    margin: 0 auto;
-    padding: 0 16px 8px 16px;
-    max-width: 100vw;
-  }
-  .page:has(#n6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .codebox a {
-    text-decoration: none;
-    color: inherit;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
     display: block;
   }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
     display: none;
   }
+  .sec {
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+    margin: 12px 0;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .toolbar {
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+  }
   .grid {
-    height: calc(100vh - 186px);
     display: grid;
     min-width: 512px;
     grid-template-columns: 1fr 1fr;
     min-height: 252px;
     gap: 16px;
+    height: calc(100vh - 186px);
   }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
     display: block;
   }
-  .ins, .del, .mov, .upd {
-    border-top:  0.05em solid black;
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    box-shadow: inset -0.05em 0 0 black;
+  .page:has(#n3:target) .en3 {
     padding-top: 0.05em;
-  }
-  .error {
-    color: #b51700;
-  }
-  .toolbar {
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-    line-height: 1;
-  }
-  .page:has(#n2:target) .en2 {
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
-    padding-top: 0.05em;
   }
-  .page:has(#p2:target) .ep2 {
+  .page:has(#p3:target) .ep3 {
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
-    padding-top: 0.05em;
+  }
+  .panel, .edit {
+    border: 1px solid #afafaf;
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    flex-direction: column;
+    border-radius: 6px;
   }
   .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
     display: block;
@@ -149,38 +128,224 @@
   .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
     display: none;
   }
-  .page:has(#p9:target) .ep9 {
+  .panel-header {
+    padding: 8px 10px;
+    justify-content: space-between;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+    background: #ebebeb;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#n4:target) .en4 {
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
+  }
+  .page:has(#p4:target) .ep4 {
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
-  .token {
-    color: #017100;
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
   }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    letter-spacing: normal;
-    padding-top: 0.15em;
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .edit {
+    min-width: 512px;
+    height: 60px;
+    font-size: 14px;
   }
   .editbox {
-    line-height: 1.8;
     padding: 4px 8px;
     min-height: 0;
     overflow: auto;
     font-size: 14px;
-    background: #f7f7f7;
-    flex: 1;
     font-weight: 500;
+    flex: 1;
+    line-height: 1.8;
+    background: #f7f7f7;
   }
-  .edit {
-    height: 60px;
-    min-width: 512px;
-    font-size: 14px;
+  .page:has(#p8:target) .ep8 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
+    display: block;
+  }
+  .no {
+    letter-spacing: normal;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+  }
+  .token {
+    color: #017100;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+  .ins, .del, .mov, .upd {
+    border-top:  0.05em solid black;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    border-bottom:  0.05em solid black;
+    box-shadow: inset -0.05em 0 0 black;
+  }
+  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
+    display: none;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .page:has(#n9:target) .en9 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p9:target) .ep9 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
+    display: none;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page {
+    margin: 0 auto;
+    max-width: 100vw;
+    padding: 0 16px 8px 16px;
+  }
+  .page:has(#n5:target) .en5 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p5:target) .ep5 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m1:target) .em1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n1:target) .em1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .page:has(#p6:target) .ep6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
+    display: block;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .page:has(#n10:target) .en10 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p10:target) .ep10 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
   .codebox {
     padding: 4px;
@@ -190,147 +355,16 @@
     letter-spacing: 0.05em;
     overflow: auto;
     scroll-behavior: smooth;
-    background: #f7f7f7;
     scroll-padding-top: 54px;
     line-height: 1.5;
+    background: #f7f7f7;
   }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .panel, .edit {
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-  }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .sec {
-    padding: 0;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9 {
-    display: none;
-  }
-  .page:has(#n9:target) .en9 {
+  .page:has(#n8:target) .en8 {
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .panel-header {
-    align-items: center;
-    padding: 8px 10px;
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    line-height: 1;
-    display: flex;
-    background: #ebebeb;
-    font-weight: bold;
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p3:target) .ep3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n7:target) .en7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p7:target) .ep7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p5:target) .ep5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p6:target) .ep6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
   }
 </style>
 </head>
@@ -368,31 +402,34 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="i7">Edit #7</span>
       <span class="i8">Edit #8</span>
       <span class="i9">Edit #9</span>
+      <span class="i10">Edit #10</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n9">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n9">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n10">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n10">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i8"><a href="#n7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i10"><a href="#n9">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n1" data-partner="m1"> string_content</a>: <span class=token>&quot; failed.&quot;</span> [87, 60] - [87, 68]
-<span style="font-weight:600">  to     </span><a href="#m1" data-partner="n1"> string_content</a>: <span class=token>&quot;Storing value failed.&quot;</span> [87, 38] - [87, 59]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n2"> string_content</a>: <span class=token>&quot;Storing value &quot;</span> [87, 38] - [87, 52]
-<span style="font-weight:600">  from   </span><a href="#p2"> string_literal</a> [87, 37] - [87, 69]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n3"> escape_sequence</a>: <span class=token>&quot;\&quot;&quot;</span> [87, 52] - [87, 54]
-<span style="font-weight:600">  from   </span><a href="#p3"> string_literal</a> [87, 37] - [87, 69]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n4"> string_content</a>: <span class=token>&quot;%.*s&quot;</span> [87, 54] - [87, 58]
-<span style="font-weight:600">  from   </span><a href="#p4"> string_literal</a> [87, 37] - [87, 69]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n5"> escape_sequence</a>: <span class=token>&quot;\&quot;&quot;</span> [87, 58] - [87, 60]
-<span style="font-weight:600">  from   </span><a href="#p5"> string_literal</a> [87, 37] - [87, 69]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> ,</a>: <span class=token>&quot;,&quot;</span> [87, 69] - [87, 70]
-<span style="font-weight:600">  from   </span><a href="#p6"> argument_list</a> [87, 19] - [87, 93]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete subtree </span><a href="#n7"> cast_expression</a> [87, 71] - [87, 85]
-<span style="font-weight:600">  from           </span><a href="#p7"> argument_list</a> [87, 19] - [87, 93]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> ,</a>: <span class=token>&quot;,&quot;</span> [87, 85] - [87, 86]
-<span style="font-weight:600">  from   </span><a href="#p8"> argument_list</a> [87, 19] - [87, 93]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n9"> identifier</a>: <span class=token>&quot;value&quot;</span> [87, 87] - [87, 92]
-<span style="font-weight:600">  from   </span><a href="#p9"> argument_list</a> [87, 19] - [87, 93]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> string_literal</a> [87, 37] - [87, 69]
+<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> string_literal</a> [87, 37] - [87, 60]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n2" data-partner="m2"> string_content</a>: <span class=token>&quot; failed.&quot;</span> [87, 60] - [87, 68]
+<span style="font-weight:600">  to     </span><a href="#m2" data-partner="n2"> string_content</a>: <span class=token>&quot;Storing value failed.&quot;</span> [87, 38] - [87, 59]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n3"> ,</a>: <span class=token>&quot;,&quot;</span> [87, 35] - [87, 36]
+<span style="font-weight:600">  from   </span><a href="#p3"> argument_list</a> [87, 19] - [87, 93]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n4"> string_content</a>: <span class=token>&quot;Storing value &quot;</span> [87, 38] - [87, 52]
+<span style="font-weight:600">  from   </span><a href="#p4"> string_literal</a> [87, 37] - [87, 69]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n5"> escape_sequence</a>: <span class=token>&quot;\&quot;&quot;</span> [87, 52] - [87, 54]
+<span style="font-weight:600">  from   </span><a href="#p5"> string_literal</a> [87, 37] - [87, 69]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> string_content</a>: <span class=token>&quot;%.*s&quot;</span> [87, 54] - [87, 58]
+<span style="font-weight:600">  from   </span><a href="#p6"> string_literal</a> [87, 37] - [87, 69]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n7"> escape_sequence</a>: <span class=token>&quot;\&quot;&quot;</span> [87, 58] - [87, 60]
+<span style="font-weight:600">  from   </span><a href="#p7"> string_literal</a> [87, 37] - [87, 69]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> ,</a>: <span class=token>&quot;,&quot;</span> [87, 69] - [87, 70]
+<span style="font-weight:600">  from   </span><a href="#p8"> argument_list</a> [87, 19] - [87, 93]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete subtree </span><a href="#n9"> cast_expression</a> [87, 71] - [87, 85]
+<span style="font-weight:600">  from           </span><a href="#p9"> argument_list</a> [87, 19] - [87, 93]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n10"> identifier</a>: <span class=token>&quot;value&quot;</span> [87, 87] - [87, 92]
+<span style="font-weight:600">  from   </span><a href="#p10"> argument_list</a> [87, 19] - [87, 93]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -486,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">  84 </span>            LOGVAL_ERRITEM(ctx, err); 
 <span class="no">  85 </span>            ly_err_free(err); 
 <span class="no">  86 </span>        } else { 
-<span class="no">  87 </span>            LOGVAL<span class="ep9" id="p9"><span class="ep8" id="p8"><span class="ep7" id="p7"><span class="ep6" id="p6">(ctx, LYVE_OTHER, <span class="ep5" id="p5"><span class="ep4" id="p4"><span class="ep3" id="p3"><span class="ep2" id="p2">&quot;<span class="en2" id="n2"><a href="#n2" class="del">Storing value </a></span><span class="en3" id="n3"><a href="#n3" class="del">\&quot;</a></span><span class="en4" id="n4"><a href="#n4" class="del">%.*s</a></span><span class="en5" id="n5"><a href="#n5" class="del">\&quot;</a></span><span class="en1" id="n1"><a href="#n1" class="upd" data-partner="#m1"> failed.</a></span>&quot;</span></span></span></span><span class="en6" id="n6"><a href="#n6" class="del">,</a></span> <span class="en7" id="n7"><a href="#n7" class="del">(int)value_len</a></span><span class="en8" id="n8"><a href="#n8" class="del">,</a></span> <span class="en9" id="n9"><a href="#n9" class="del">value</a></span>)</span></span></span></span>; 
+<span class="no">  87 </span>            LOGVAL<span id="p10" class="ep10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="p3" class="ep3">(ctx, LYVE_OTHER<span id="n3" class="en3"><a href="#n3" class="del">,</a></span> <span id="p7" class="ep7"><span id="p6" class="ep6"><span id="p5" class="ep5"><span id="p4" class="ep4"><span id="n1" class="en1"><a data-partner="#m1" href="#n1" class="mov">&quot;</a><span id="n4" class="en4"><a href="#n4" class="del">Storing value </a></span><span id="n5" class="en5"><a href="#n5" class="del">\&quot;</a></span><span id="n6" class="en6"><a href="#n6" class="del">%.*s</a></span><span id="n7" class="en7"><a href="#n7" class="del">\&quot;</a></span><span id="n2" class="en2"><a data-partner="#m2" href="#n2" class="upd"> failed.</a></span><a data-partner="#m1" href="#n1" class="mov">&quot;</a></span></span></span></span></span><span id="n8" class="en8"><a href="#n8" class="del">,</a></span> <span id="n9" class="en9"><a href="#n9" class="del">(int)value_len</a></span>, <span id="n10" class="en10"><a href="#n10" class="del">value</a></span>)</span></span></span></span>; 
 <span class="no">  88 </span>        } 
 <span class="no">  89 </span>        return ret; 
 <span class="no">  90 </span>    } 
@@ -5270,7 +5307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">  84 </span>            LOGVAL_ERRITEM(ctx, err); 
 <span class="no">  85 </span>            ly_err_free(err); 
 <span class="no">  86 </span>        } else { 
-<span class="no">  87 </span>            LOGVAL(ctx, LYVE_OTHER, &quot;<span class="em1" id="m1"><a href="#m1" class="upd" data-partner="#n1">Storing value failed.</a></span>&quot;); 
+<span class="no">  87 </span>            LOGVAL(ctx, LYVE_OTHER, <span id="m1" class="em1"><a data-partner="#n1" href="#m1" class="mov">&quot;</a><span id="m2" class="em2"><a data-partner="#n2" href="#m2" class="upd">Storing value failed.</a></span><a data-partner="#n1" href="#m1" class="mov">&quot;</a></span>); 
 <span class="no">  88 </span>        } 
 <span class="no">  89 </span>        return ret; 
 <span class="no">  90 </span>    } 
