@@ -5,27 +5,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .grid {
+    gap: 16px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-height: 252px;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+  }
   .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
   }
   .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
     display: none;
   }
-  body {
-    background: white;
-    margin: 0;
-  }
-  .no {
-    letter-spacing: normal;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-  }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
+  .panel, .edit {
+    flex-direction: column;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
   }
   .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
     display: block;
@@ -33,74 +40,110 @@
   .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
     display: none;
   }
-  .error {
-    color: #b51700;
-  }
   .i1, .i2 {
     display: none;
   }
-  .ins, .del, .mov, .upd {
-    border-top:  0.05em solid black;
+  .panel-header {
+    padding: 8px 10px;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    background: #ebebeb;
+    border-bottom: 1px solid #afafaf;
+    align-items: center;
+  }
+  .page:has(#n1:target) .en1 {
     padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    box-shadow: inset -0.05em 0 0 black;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
     padding-top: 0.05em;
+  }
+  .codebox {
+    padding: 4px;
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    line-height: 1.5;
+    min-height: 0;
+    background: #f7f7f7;
+    scroll-padding-top: 54px;
+    font-size: 12px;
+    flex: 1;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .edit {
+    font-size: 14px;
+    height: 60px;
+    min-width: 512px;
+  }
+  .editbox {
+    padding: 4px 8px;
+    font-weight: 500;
+    background: #f7f7f7;
+    min-height: 0;
+    overflow: auto;
+    font-size: 14px;
+    line-height: 1.8;
+    flex: 1;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page {
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
+    max-width: 100vw;
+  }
+  .no {
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+  }
+  .token {
+    color: #017100;
   }
   .sec {
     font-weight: bold;
+    font-size: 24px;
     margin: 12px 0;
     line-height: 1;
-    font-size: 24px;
     padding: 0;
   }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
+  .bold {
+    font-weight: bold;
   }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
+  .error {
+    color: #b51700;
   }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .toolbar {
-    margin-bottom: 6px;
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .grid {
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    height: calc(100vh - 186px);
-    min-height: 252px;
+  .ins, .del, .mov, .upd {
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    padding-top: 0.05em;
+    border-bottom:  0.05em solid black;
   }
   .upd {
     background: rgba(255, 217, 50, 0.4);
-  }
-  .panel, .edit {
-    display: flex;
-    border-radius: 6px;
-    overflow: hidden;
-    box-sizing: border-box;
-    min-width: 0;
-    flex-direction: column;
-    border: 1px solid #afafaf;
-  }
-  .panel-header {
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    display: flex;
-    font-weight: bold;
-    line-height: 1;
-    background: #ebebeb;
-    padding: 8px 10px;
-    align-items: center;
   }
   .page:has(#n2:target) .en2 {
     padding-bottom: 0.05em;
@@ -116,66 +159,24 @@
     background: #3f3f3f;
     padding-top: 0.05em;
   }
-  .page {
-    max-width: 100vw;
-    padding: 0 12px 8px 12px;
-    margin: 0 auto;
+  .toolbar {
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
   }
-  .codebox {
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    background: #f7f7f7;
-    scroll-padding-top: 54px;
-    padding: 4px;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#p1:target) .ep1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .token {
-    color: #017100;
-  }
-  .edit {
-    height: 60px;
-    font-size: 14px;
-  }
-  .editbox {
-    min-height: 0;
-    background: #f7f7f7;
-    overflow: auto;
-    font-weight: 500;
-    line-height: 1.8;
-    flex: 1;
-    font-size: 14px;
-    padding: 4px 8px;
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
   }
   .codebox a {
     text-decoration: none;
     color: inherit;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  pre {
+    margin: 0;
   }
 </style>
 </head>
@@ -13645,7 +13646,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 2779 </span>  // have to do anything here to lower funclet bundles. 
 <span class="no"> 2780 </span>  assert(!I.hasOperandBundlesOtherThan(<span id="p2" class="ep2"><span id="p1" class="ep1">{LLVMContext::OB_deopt, 
 <span class="no"> 2781 </span>                                        LLVMContext::OB_gc_transition, 
-<span class="no"> 2782 </span>                                        <span id="n1" class="en1"><a class="ins" href="#n1">LLVMContext::OB_gc_live</a></span><span id="n2" class="en2"><a class="ins" href="#n2">,</a></span> 
+<span class="no"> 2782 </span>                                        <span id="n1" class="en1"><a href="#n1" class="ins">LLVMContext::OB_gc_live</a></span><span id="n2" class="en2"><a href="#n2" class="ins">,</a></span> 
 <span class="no"> 2783 </span>                                        LLVMContext::OB_funclet, 
 <span class="no"> 2784 </span>                                        LLVMContext::OB_cfguardtarget}</span></span>) &amp;&amp; 
 <span class="no"> 2785 </span>         &quot;Cannot lower invokes with arbitrary operand bundles yet!&quot;); 

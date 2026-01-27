@@ -5,46 +5,143 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .error {
-    color: #b51700;
+  .editbox {
+    font-weight: 500;
+    line-height: 1.8;
+    padding: 4px 8px;
+    min-height: 0;
+    overflow: auto;
+    font-size: 14px;
+    flex: 1;
+    background: #f7f7f7;
   }
-  .page:has(#n1:target) .en1 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
   }
-  .sec {
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  pre {
+    margin: 0;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .no {
+    padding-top: 0.15em;
+    letter-spacing: normal;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .bold {
     font-weight: bold;
-    margin: 12px 0;
-    font-size: 24px;
-    padding: 0;
-    line-height: 1;
   }
-  .page:has(#m1:target) .en1 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
   }
-  .page:has(#m1:target) .em1 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
+  .page {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
   }
-  .page:has(#n1:target) .em1 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
   }
   .ins {
     background: rgba(97, 216, 54, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .grid {
+    gap: 16px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    min-height: 252px;
+  }
+  .panel, .edit {
+    flex-direction: column;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+  }
+  .panel-header {
+    align-items: center;
+    padding: 8px 10px;
+    justify-content: space-between;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    display: flex;
+    font-weight: bold;
+    background: #ebebeb;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .token {
+    color: #017100;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .ep2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .i1, .i2 {
+    display: none;
+  }
+  .codebox {
+    padding: 4px;
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: 0.05em;
+    scroll-padding-top: 54px;
+    overflow: auto;
+    scroll-behavior: smooth;
+    flex: 1;
+    background: #f7f7f7;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
   .toolbar {
     line-height: 1;
@@ -52,198 +149,34 @@
     padding: 0;
     margin-bottom: 6px;
   }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .grid {
-    gap: 12px;
-    height: calc(100vh - 186px);
-    min-height: 252px;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    display: grid;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#n4:target) .en4 {
+  .page:has(#n1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
   }
-  .page:has(#p4:target) .ep4 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .panel, .edit {
-    flex-direction: column;
-    box-sizing: border-box;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    display: flex;
-  }
-  .page:has(#n2:target) .en2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#m2:target) .en2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#m2:target) .em2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#n2:target) .em2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .panel-header {
+  .sec {
+    padding: 0;
     font-weight: bold;
-    padding: 8px 10px;
-    background: #ebebeb;
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
+    font-size: 24px;
+    margin: 12px 0;
     line-height: 1;
-    align-items: center;
-    display: flex;
   }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .codebox {
-    padding: 4px;
-    background: #f7f7f7;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    letter-spacing: 0.05em;
-    scroll-padding-top: 54px;
-    overflow: auto;
-    scroll-behavior: smooth;
-    min-height: 0;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
+  .error {
+    color: #b51700;
   }
   .ins, .del, .mov, .upd {
     box-shadow: inset -0.05em 0 0 black;
-    padding-bottom: 0.05em;
     padding-top: 0.05em;
     border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
     border-bottom:  0.05em solid black;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .token {
-    color: #017100;
   }
   .edit {
     font-size: 14px;
+    min-width: 512px;
     height: 60px;
-  }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .no {
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    letter-spacing: normal;
-    padding-bottom: 0.15em;
-  }
-  .editbox {
-    flex: 1;
-    min-height: 0;
-    padding: 4px 8px;
-    background: #f7f7f7;
-    font-weight: 500;
-    overflow: auto;
-    font-size: 14px;
-    line-height: 1.8;
-  }
-  pre {
-    margin: 0;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  .page:has(#n3:target) .en3 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#p3:target) .ep3 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .i1, .i2, .i3, .i4 {
-    display: none;
-  }
-  .page {
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0 12px 8px 12px;
   }
 </style>
 </head>
@@ -274,23 +207,17 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="clear">Edit</span>
       <span class="i1">Edit #1</span>
       <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n4">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n4">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n2">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n2">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> ,</a>: <span class=token>&quot;,&quot;</span> [91, 15] - [91, 16]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> ,</a>: <span class=token>&quot;,&quot;</span> [91, 43] - [91, 44]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> ,</a>: <span class=token>&quot;,&quot;</span> [91, 43] - [91, 44]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> ,</a>: <span class=token>&quot;,&quot;</span> [91, 60] - [91, 61]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> ,</a>: <span class=token>&quot;,&quot;</span> [91, 15] - [91, 16]
-<span style="font-weight:600">  into   </span><a href="#p3"> argument_list</a> [90, 31] - [92, 6]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n4"> keyword_argument</a> [91, 62] - [91, 80]
-<span style="font-weight:600">  into           </span><a href="#p4"> argument_list</a> [90, 31] - [92, 6]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> ,</a>: <span class=token>&quot;,&quot;</span> [91, 60] - [91, 61]
+<span style="font-weight:600">  into   </span><a href="#p1"> argument_list</a> [90, 31] - [92, 6]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n2"> keyword_argument</a> [91, 62] - [91, 80]
+<span style="font-weight:600">  into           </span><a href="#p2"> argument_list</a> [90, 31] - [92, 6]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -388,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 88 </span>    )) 
 <span class="no"> 89 </span> 
 <span class="no"> 90 </span>    user_choice = click.prompt( 
-<span class="no"> 91 </span>        prompt<span id="n1" class="en1"><a data-partner="#m1" href="#n1" class="mov">,</a></span> type=click.Choice(choices)<span id="n2" class="en2"><a data-partner="#m2" href="#n2" class="mov">,</a></span> default=default 
+<span class="no"> 91 </span>        prompt, type=click.Choice(choices), default=default 
 <span class="no"> 92 </span>    ) 
 <span class="no"> 93 </span>    return choice_map[user_choice] 
 <span class="no"> 94 </span> 
@@ -635,8 +562,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 87 </span>        u&apos;Choose from {}&apos;.format(u&apos;, &apos;.join(choices)) 
 <span class="no"> 88 </span>    )) 
 <span class="no"> 89 </span> 
-<span class="no"> 90 </span>    user_choice = click.prompt<span id="p4" class="ep4"><span id="p3" class="ep3">( 
-<span class="no"> 91 </span>        prompt<span id="n3" class="en3"><a href="#n3" class="ins">,</a></span> type=click.Choice(choices)<span id="m1" class="em1"><a data-partner="#n1" href="#m1" class="mov">,</a></span> default=default<span id="m2" class="em2"><a data-partner="#n2" href="#m2" class="mov">,</a></span> <span id="n4" class="en4"><a href="#n4" class="ins">show_choices=False</a></span> 
+<span class="no"> 90 </span>    user_choice = click.prompt<span class="ep2" id="p2"><span class="ep1" id="p1">( 
+<span class="no"> 91 </span>        prompt, type=click.Choice(choices), default=default<span class="en1" id="n1"><a href="#n1" class="ins">,</a></span> <span class="en2" id="n2"><a href="#n2" class="ins">show_choices=False</a></span> 
 <span class="no"> 92 </span>    )</span></span> 
 <span class="no"> 93 </span>    return choice_map[user_choice] 
 <span class="no"> 94 </span> 

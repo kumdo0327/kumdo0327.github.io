@@ -5,12 +5,51 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .page:has(#p2:target) .ep2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
+  .page:has(#n7:target) .en7 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m7:target) .en7 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m7:target) .em7 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n7:target) .em7 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n14:target) .en14 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p14:target) .ep14 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  body {
+    margin: 0;
+    background: white;
   }
   .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
     display: block;
@@ -18,19 +57,17 @@
   .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
     display: none;
   }
-  .toolbar {
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-    line-height: 1;
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
   }
-  .grid {
-    height: calc(100vh - 186px);
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-    gap: 12px;
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page {
+    margin: 0 auto;
+    max-width: 100vw;
+    padding: 0 16px 8px 16px;
   }
   .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
     display: block;
@@ -38,86 +75,39 @@
   .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
     display: none;
   }
-  .page:has(#p4:target) .ep4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
+  .page:has(#n8:target) .en8 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .edit {
-    height: 60px;
-    font-size: 14px;
-  }
-  .page:has(#n6:target) .en6 {
     padding-bottom: 0.05em;
     font-weight: 900;
+  }
+  .page:has(#p8:target) .ep8 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .page:has(#n6:target) .em6 {
     padding-bottom: 0.05em;
     font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  }
+  .toolbar {
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
   }
   .page:has(#n3:target) .en3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .page:has(#p3:target) .ep3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    letter-spacing: normal;
-  }
-  .editbox {
-    padding: 4px 8px;
-    font-weight: 500;
-    min-height: 0;
-    background: #f7f7f7;
-    overflow: auto;
-    font-size: 14px;
-    line-height: 1.8;
-    flex: 1;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .token {
-    color: #017100;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
     display: block;
@@ -125,171 +115,336 @@
   .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
     display: none;
   }
+  .page:has(#p9:target) .ep9 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
+    display: block;
+  }
+  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
+    display: none;
+  }
+  .page:has(#p12:target) .ep12 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .page:has(#m11:target) .i11, .page:has(#n11:target) .i11 {
+    display: block;
+  }
+  .page:has(#n4:target) .en4 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p4:target) .ep4 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m11:target) .en11 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m11:target) .em11 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n11:target) .em11 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .page:has(#p12:target) .i12, .page:has(#n12:target) .i12 {
+    display: block;
+  }
+  .page:has(#p12:target) .clear, .page:has(#n12:target) .clear {
+    display: none;
+  }
+  .page:has(#p10:target) .ep10 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .page:has(#n13:target) .en13 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p13:target) .ep13 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p13:target) .i13, .page:has(#n13:target) .i13 {
+    display: block;
+  }
+  .page:has(#p13:target) .clear, .page:has(#n13:target) .clear {
+    display: none;
+  }
+  .page:has(#n5:target) .en5 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p5:target) .ep5 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
   .error {
     color: #b51700;
   }
-  pre {
-    margin: 0;
+  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
+    display: block;
   }
-  .ins, .del, .mov, .upd {
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    box-shadow: inset -0.05em 0 0 black;
-    padding-top: 0.05em;
-    border-top:  0.05em solid black;
-  }
-  .codebox {
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    scroll-behavior: smooth;
-    background: #f7f7f7;
-    scroll-padding-top: 54px;
-    overflow: auto;
-    letter-spacing: 0.05em;
-  }
-  .panel-header {
-    padding: 8px 10px;
-    align-items: center;
-    line-height: 1;
-    justify-content: space-between;
-    font-weight: bold;
-    display: flex;
-    border-bottom: 1px solid #afafaf;
-    background: #ebebeb;
-    font-size: 14px;
-  }
-  .panel, .edit {
-    flex-direction: column;
-    box-sizing: border-box;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    display: flex;
-  }
-  .sec {
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    padding: 0;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n4:target) .en4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m6:target) .clear, .page:has(#n6:target) .clear {
+  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
     display: none;
   }
-  .page:has(#p7:target) .ep7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .token {
+    color: #017100;
   }
-  .page:has(#p1:target) .ep1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .page:has(#p14:target) .i14, .page:has(#n14:target) .i14 {
+    display: block;
   }
-  .page {
-    margin: 0 auto;
-    padding: 0 12px 8px 12px;
-    max-width: 100vw;
+  .page:has(#p14:target) .clear, .page:has(#n14:target) .clear {
+    display: none;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11, .i12, .i13, .i14 {
+    display: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
   }
   .mov {
     background: rgba(159, 143, 255, 0.4);
   }
-  .page:has(#m6:target) .em6 {
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .ins, .del, .mov, .upd {
+    border-bottom:  0.05em solid black;
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
     padding-bottom: 0.05em;
-    font-weight: 900;
+    padding-top: 0.05em;
+  }
+  .page:has(#n1:target) .en1 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .bold {
+    font-weight: bold;
   }
   .upd {
     background: rgba(255, 217, 50, 0.4);
   }
-  .page:has(#p5:target) .ep5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
+  .no {
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    letter-spacing: normal;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+  }
+  .page:has(#p1:target) .ep1 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  body {
-    background: white;
+  pre {
     margin: 0;
   }
-  .page:has(#m6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
+  .editbox {
+    font-weight: 500;
+    flex: 1;
+    background: #f7f7f7;
+    line-height: 1.8;
+    padding: 4px 8px;
+    min-height: 0;
+    overflow: auto;
+    font-size: 14px;
   }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7 {
-    display: none;
+  .edit {
+    min-width: 512px;
+    height: 60px;
+    font-size: 14px;
   }
-  .codebox a {
-    text-decoration: none;
-    color: inherit;
+  .page:has(#n6:target) .en6 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .codebox {
+    flex: 1;
+    background: #f7f7f7;
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    scroll-padding-top: 54px;
+    padding: 4px;
+    min-height: 0;
+    line-height: 1.5;
+    font-size: 12px;
+  }
+  .panel-header {
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    background: #ebebeb;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .page:has(#p6:target) .ep6 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .panel, .edit {
+    box-sizing: border-box;
+    flex-direction: column;
+    border-radius: 6px;
+    border: 1px solid #afafaf;
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-height: 252px;
+    min-width: 512px;
+  }
+  .sec {
+    margin: 12px 0;
+    line-height: 1;
+    padding: 0;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  .page:has(#n10:target) .en10 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
   }
+  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#n9:target) .en9 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .page:has(#n12:target) .en12 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
   .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
     display: none;
   }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
-  }
-  .page:has(#m6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#n7:target) .en7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
   .page:has(#n2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p2:target) .ep2 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n11:target) .en11 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m11:target) .clear, .page:has(#n11:target) .clear {
+    display: none;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
   }
 </style>
 </head>
@@ -325,27 +480,48 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="i5">Edit #5</span>
       <span class="i6">Edit #6</span>
       <span class="i7">Edit #7</span>
+      <span class="i8">Edit #8</span>
+      <span class="i9">Edit #9</span>
+      <span class="i10">Edit #10</span>
+      <span class="i11">Edit #11</span>
+      <span class="i12">Edit #12</span>
+      <span class="i13">Edit #13</span>
+      <span class="i14">Edit #14</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n7">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n7">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n14">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n14">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6" data-partner="#m6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7" data-partner="#m7">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i8"><a href="#n7" data-partner="#m7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i10"><a href="#n9">Prev</a> | <a href="#n11" data-partner="#m11">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i11"><a href="#n10">Prev</a> | <a href="#n12">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i12"><a href="#n11" data-partner="#m11">Prev</a> | <a href="#n13">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i13"><a href="#n12">Prev</a> | <a href="#n14">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i14"><a href="#n13">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> if_statement</a> [50, 9] - [52, 10]
-<span style="font-weight:600">  into   </span><a href="#p1"> block</a> [46, 46] - [54, 6]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> if</a>: <span class=token>&quot;if&quot;</span> [50, 9] - [50, 11]
-<span style="font-weight:600">  into   </span><a href="#p2"> if_statement</a> [50, 9] - [52, 10]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n3"> parenthesized_expression</a> [50, 12] - [50, 24]
-<span style="font-weight:600">  into           </span><a href="#p3"> if_statement</a> [50, 9] - [52, 10]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> block</a> [50, 25] - [52, 10]
-<span style="font-weight:600">  into   </span><a href="#p4"> if_statement</a> [50, 9] - [52, 10]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> {</a>: <span class=token>&quot;{&quot;</span> [50, 25] - [50, 26]
-<span style="font-weight:600">  into   </span><a href="#p5"> block</a> [50, 25] - [52, 10]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n6" data-partner="m6"> expression_statement</a> [50, 13] - [50, 48]
-<span style="font-weight:600">  to   </span><a href="#m6" data-partner="n6"> expression_statement</a> [51, 13] - [51, 48]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n7"> }</a>: <span class=token>&quot;}&quot;</span> [52, 9] - [52, 10]
-<span style="font-weight:600">  into   </span><a href="#p7"> block</a> [50, 25] - [52, 10]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> block</a> [46, 46] - [54, 6]
+<span style="font-weight:600">  into   </span><a href="#p1"> method_declaration</a> [46, 5] - [54, 6]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> {</a>: <span class=token>&quot;{&quot;</span> [46, 46] - [46, 47]
+<span style="font-weight:600">  into   </span><a href="#p2"> block</a> [46, 46] - [54, 6]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> line_comment</a>: <span class=token>&quot;// 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of&quot;</span> [47, 9] - [47, 86]
+<span style="font-weight:600">  into   </span><a href="#p3"> block</a> [46, 46] - [54, 6]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> line_comment</a>: <span class=token>&quot;//    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless,&quot;</span> [48, 9] - [48, 94]
+<span style="font-weight:600">  into   </span><a href="#p4"> block</a> [46, 46] - [54, 6]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> line_comment</a>: <span class=token>&quot;//    need to use existing id if there is one:&quot;</span> [49, 9] - [49, 55]
+<span style="font-weight:600">  into   </span><a href="#p5"> block</a> [46, 46] - [54, 6]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n6"> if_statement</a> [50, 9] - [52, 10]
+<span style="font-weight:600">  into   </span><a href="#p6"> block</a> [46, 46] - [54, 6]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n7" data-partner="m7"> return_statement</a> [51, 9] - [51, 19]
+<span style="font-weight:600">  to   </span><a href="#m7" data-partner="n7"> return_statement</a> [53, 9] - [53, 19]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n8"> }</a>: <span class=token>&quot;}&quot;</span> [54, 5] - [54, 6]
+<span style="font-weight:600">  into   </span><a href="#p8"> block</a> [46, 46] - [54, 6]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n9"> if</a>: <span class=token>&quot;if&quot;</span> [50, 9] - [50, 11]
+<span style="font-weight:600">  into   </span><a href="#p9"> if_statement</a> [50, 9] - [52, 10]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n10"> parenthesized_expression</a> [50, 12] - [50, 24]
+<span style="font-weight:600">  into           </span><a href="#p10"> if_statement</a> [50, 9] - [52, 10]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n11" data-partner="m11"> block</a> [46, 46] - [52, 6]
+<span style="font-weight:600">  to   </span><a href="#m11" data-partner="n11"> block</a> [50, 25] - [52, 10]</span><span class="i12"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n12"> line_comment</a>: <span class=token>&quot;// 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of&quot;</span> [47, 9] - [47, 86]
+<span style="font-weight:600">  from   </span><a href="#p12"> block</a> [46, 46] - [52, 6]</span><span class="i13"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n13"> line_comment</a>: <span class=token>&quot;//    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless,&quot;</span> [48, 9] - [48, 94]
+<span style="font-weight:600">  from   </span><a href="#p13"> block</a> [46, 46] - [52, 6]</span><span class="i14"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n14"> line_comment</a>: <span class=token>&quot;//    need to use existing id if there is one:&quot;</span> [49, 9] - [49, 55]
+<span style="font-weight:600">  from   </span><a href="#p14"> block</a> [46, 46] - [52, 6]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -398,13 +574,13 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">43 </span>        return false; 
 <span class="no">44 </span>    } 
 <span class="no">45 </span>     
-<span class="no">46 </span>    public Object generateId(Object forPojo) { 
-<span class="no">47 </span>        // 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of 
-<span class="no">48 </span>        //    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless, 
-<span class="no">49 </span>        //    need to use existing id if there is one: 
-<span class="no">50 </span>            <span class="en6" id="n6"><a class="mov" href="#n6" data-partner="#m6">id = generator.generateId(forPojo);</a></span> 
-<span class="no">51 </span>        return id; 
-<span class="no">52 </span>    } 
+<span class="no">46 </span>    public Object generateId(Object forPojo) <span id="p14" class="ep14"><span id="p13" class="ep13"><span id="p12" class="ep12"><span id="n11" class="en11"><a data-partner="#m11" class="mov" href="#n11">{ 
+<span class="no">47 </span>        </a><span id="n12" class="en12"><a class="del" href="#n12">// 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of</a></span><a data-partner="#m11" class="mov" href="#n11"> 
+<span class="no">48 </span>        </a><span id="n13" class="en13"><a class="del" href="#n13">//    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless,</a></span><a data-partner="#m11" class="mov" href="#n11"> 
+<span class="no">49 </span>        </a><span id="n14" class="en14"><a class="del" href="#n14">//    need to use existing id if there is one:</a></span><a data-partner="#m11" class="mov" href="#n11"> 
+<span class="no">50 </span>            id = generator.generateId(forPojo); 
+<span class="no">51 </span>        </a><span id="n7" class="en7"><a data-partner="#m7" class="mov" href="#n7">return id;</a></span><a data-partner="#m11" class="mov" href="#n11"> 
+<span class="no">52 </span>    }</a></span></span></span></span> 
 <span class="no">53 </span> 
 <span class="no">54 </span>    /** 
 <span class="no">55 </span>     * Method called to output Object Id as specified. 
@@ -479,15 +655,15 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">43 </span>        return false; 
 <span class="no">44 </span>    } 
 <span class="no">45 </span>     
-<span class="no">46 </span>    public Object generateId(Object forPojo) <span class="ep1" id="p1">{ 
-<span class="no">47 </span>        // 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of 
-<span class="no">48 </span>        //    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless, 
-<span class="no">49 </span>        //    need to use existing id if there is one: 
-<span class="no">50 </span>        <span class="ep4" id="p4"><span class="ep3" id="p3"><span class="ep2" id="p2"><span class="en1" id="n1"><span class="en2" id="n2"><a class="ins" href="#n2">if</a></span><a class="ins" href="#n1"> </a><span class="en3" id="n3"><a class="ins" href="#n3">(id == null)</a></span><a class="ins" href="#n1"> </a><span class="ep7" id="p7"><span class="ep5" id="p5"><span class="en4" id="n4"><span class="en5" id="n5"><a class="ins" href="#n5">{</a></span><a class="ins" href="#n4"> 
-<span class="no">51 </span>            </a><span class="em6" id="m6"><a class="mov" href="#m6" data-partner="#n6">id = generator.generateId(forPojo);</a></span><a class="ins" href="#n4"> 
-<span class="no">52 </span>        </a><span class="en7" id="n7"><a class="ins" href="#n7">}</a></span></span></span></span></span></span></span></span> 
-<span class="no">53 </span>        return id; 
-<span class="no">54 </span>    }</span> 
+<span class="no">46 </span>    <span id="p1" class="ep1">public Object generateId(Object forPojo) <span id="p8" class="ep8"><span id="p6" class="ep6"><span id="p5" class="ep5"><span id="p4" class="ep4"><span id="p3" class="ep3"><span id="p2" class="ep2"><span id="n1" class="en1"><span id="n2" class="en2"><a class="ins" href="#n2">{</a></span><a class="ins" href="#n1"> 
+<span class="no">47 </span>        </a><span id="n3" class="en3"><a class="ins" href="#n3">// 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of</a></span><a class="ins" href="#n1"> 
+<span class="no">48 </span>        </a><span id="n4" class="en4"><a class="ins" href="#n4">//    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless,</a></span><a class="ins" href="#n1"> 
+<span class="no">49 </span>        </a><span id="n5" class="en5"><a class="ins" href="#n5">//    need to use existing id if there is one:</a></span><a class="ins" href="#n1"> 
+<span class="no">50 </span>        </a><span id="p10" class="ep10"><span id="p9" class="ep9"><span id="n6" class="en6"><span id="n9" class="en9"><a class="ins" href="#n9">if</a></span><a class="ins" href="#n6"> </a><span id="n10" class="en10"><a class="ins" href="#n10">(id == null)</a></span><a class="ins" href="#n6"> </a><span id="m11" class="em11"><a data-partner="#n11" class="mov" href="#m11">{ 
+<span class="no">51 </span>            id = generator.generateId(forPojo); 
+<span class="no">52 </span>        }</a></span></span></span></span><a class="ins" href="#n1"> 
+<span class="no">53 </span>        </a><span id="m7" class="em7"><a data-partner="#n7" class="mov" href="#m7">return id;</a></span><a class="ins" href="#n1"> 
+<span class="no">54 </span>    </a><span id="n8" class="en8"><a class="ins" href="#n8">}</a></span></span></span></span></span></span></span></span></span> 
 <span class="no">55 </span> 
 <span class="no">56 </span>    /** 
 <span class="no">57 </span>     * Method called to output Object Id as specified. 

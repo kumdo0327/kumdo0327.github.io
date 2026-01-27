@@ -5,325 +5,60 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#p6:target) .ep6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
   .page:has(#n7:target) .en7 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
   }
   .page:has(#p7:target) .ep7 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .panel, .edit {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .page:has(#n9:target) .en9 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p9:target) .ep9 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .panel-header {
-    font-weight: bold;
-    display: flex;
-    background: #ebebeb;
-    padding: 8px 10px;
-    line-height: 1;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .page:has(#m2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m2:target) .em2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n2:target) .em2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p8:target) .ep8 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .codebox {
-    flex: 1;
-    background: #f7f7f7;
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    scroll-padding-top: 54px;
-  }
-  .edit {
-    height: 60px;
-    font-size: 14px;
-  }
-  .editbox {
-    padding: 4px 8px;
-    font-weight: 500;
-    min-height: 0;
-    flex: 1;
-    background: #f7f7f7;
-    font-size: 14px;
-    line-height: 1.8;
-    overflow: auto;
-  }
-  .page:has(#n10:target) .en10 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p10:target) .ep10 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .page:has(#n4:target) .en4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m4:target) .en4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m4:target) .em4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p3:target) .ep3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n11:target) .en11 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p11:target) .ep11 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
   }
   .upd {
     background: rgba(255, 217, 50, 0.4);
   }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  body {
-    background: white;
-    margin: 0;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
-  }
-  .page:has(#m4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .page {
-    margin: 0 auto;
-    padding: 0 12px 8px 12px;
-    max-width: 100vw;
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .page:has(#p11:target) .i11, .page:has(#n11:target) .i11 {
-    display: block;
-  }
-  .page:has(#p11:target) .clear, .page:has(#n11:target) .clear {
-    display: none;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .sec {
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    padding: 0;
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .ins, .del, .mov, .upd {
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
+  .page:has(#n2:target) .en2 {
+    background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
-  .error {
-    color: #b51700;
+  .page:has(#m2:target) .en2 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
-  .bold {
-    font-weight: bold;
+  .page:has(#m2:target) .em2 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
-  .toolbar {
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-    line-height: 1;
+  .page:has(#n2:target) .em2 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
-  .token {
-    color: #017100;
+  .editbox {
+    background: #f7f7f7;
+    padding: 4px 8px;
+    min-height: 0;
+    line-height: 1.8;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: auto;
+    flex: 1;
   }
   .grid {
     height: calc(100vh - 186px);
@@ -331,22 +66,30 @@
     min-width: 512px;
     grid-template-columns: 1fr 1fr;
     min-height: 252px;
-    gap: 12px;
+    gap: 16px;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  pre {
+    margin: 0;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
   }
   .no {
+    background: #f7f7f7;
+    padding-top: 0.15em;
     padding-bottom: 0.15em;
     font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
     letter-spacing: normal;
-    padding-top: 0.15em;
-  }
-  .page:has(#n4:target) .em4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+    color: #878787;
   }
   .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
     display: block;
@@ -354,50 +97,234 @@
   .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
     display: none;
   }
-  .page:has(#n8:target) .en8 {
+  .page:has(#n5:target) .en5 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
+  }
+  .page:has(#p5:target) .ep5 {
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
-  .page:has(#m4:target) .i4, .page:has(#n4:target) .i4 {
+  .bold {
+    font-weight: bold;
+  }
+  .error {
+    color: #b51700;
+  }
+  .token {
+    color: #017100;
+  }
+  .ins, .del, .mov, .upd {
+    border-bottom:  0.05em solid black;
+    padding-top: 0.05em;
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+  }
+  .edit {
+    height: 60px;
+    min-width: 512px;
+    font-size: 14px;
+  }
+  .codebox {
+    background: #f7f7f7;
+    padding: 4px;
+    min-height: 0;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    scroll-behavior: smooth;
+    scroll-padding-top: 54px;
+    flex: 1;
+    overflow: auto;
+    font-size: 12px;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
     display: block;
   }
-  .page:has(#n2:target) .en2 {
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .page:has(#n1:target) .en1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
+  }
+  .panel-header {
+    border-bottom: 1px solid #afafaf;
+    padding: 8px 10px;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ebebeb;
+    font-weight: bold;
+  }
+  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .page:has(#m1:target) .en1 {
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#m1:target) .em1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#n1:target) .em1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .panel, .edit {
+    box-sizing: border-box;
+    display: flex;
+    min-width: 0;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8 {
+    display: none;
+  }
+  .toolbar {
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .page:has(#n6:target) .en6 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .sec {
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+    margin: 12px 0;
+  }
+  .page {
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
+    max-width: 100vw;
+  }
+  .page:has(#p6:target) .ep6 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#p3:target) .ep3 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page:has(#p4:target) .ep4 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
   .codebox a {
     text-decoration: none;
     color: inherit;
   }
-  .page:has(#p5:target) .ep5 {
+  .page:has(#n3:target) .en3 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
+  }
+  .page:has(#p8:target) .ep8 {
     background: #3f3f3f;
     padding-top: 0.05em;
-  }
-  .page:has(#n5:target) .en5 {
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
+  }
+  .page:has(#n8:target) .en8 {
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11 {
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page:has(#n4:target) .en4 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
     display: none;
-  }
-  .page:has(#n6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
   }
 </style>
 </head>
@@ -434,38 +361,29 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="i6">Edit #6</span>
       <span class="i7">Edit #7</span>
       <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
-      <span class="i11">Edit #11</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n11">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n11">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n8">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n8">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4" data-partner="#m4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4" data-partner="#m4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9">Prev</a> | <a href="#n11">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i11"><a href="#n10">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i8"><a href="#n7">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> parenthesized_expression</a> [632, 32] - [632, 61]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> parenthesized_expression</a> [632, 12] - [632, 52]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> method_invocation</a> [632, 13] - [632, 28]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> method_invocation</a> [632, 13] - [632, 28]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> &amp;&amp;</a>: <span class=token>&quot;&amp;&amp;&quot;</span> [632, 29] - [632, 31]
-<span style="font-weight:600">  into   </span><a href="#p3"> binary_expression</a> [632, 13] - [632, 51]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n4" data-partner="m4"> identifier</a>: <span class=token>&quot;getArgName&quot;</span> [632, 40] - [632, 50]
-<span style="font-weight:600">  to     </span><a href="#m4" data-partner="n4"> identifier</a>: <span class=token>&quot;hasArgName&quot;</span> [632, 39] - [632, 49]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n5"> !=</a>: <span class=token>&quot;!=&quot;</span> [632, 53] - [632, 55]
-<span style="font-weight:600">  from   </span><a href="#p5"> binary_expression</a> [632, 33] - [632, 60]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> null_literal</a>: <span class=token>&quot;null&quot;</span> [632, 56] - [632, 60]
-<span style="font-weight:600">  from   </span><a href="#p6"> binary_expression</a> [632, 33] - [632, 60]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n7"> (</a>: <span class=token>&quot;(&quot;</span> [632, 12] - [632, 13]
-<span style="font-weight:600">  from   </span><a href="#p7"> parenthesized_expression</a> [632, 12] - [632, 62]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> &amp;&amp;</a>: <span class=token>&quot;&amp;&amp;&quot;</span> [632, 29] - [632, 31]
-<span style="font-weight:600">  from   </span><a href="#p8"> binary_expression</a> [632, 13] - [632, 61]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n9"> binary_expression</a> [632, 13] - [632, 61]
-<span style="font-weight:600">  from   </span><a href="#p9"> parenthesized_expression</a> [632, 12] - [632, 62]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n10"> )</a>: <span class=token>&quot;)&quot;</span> [632, 61] - [632, 62]
-<span style="font-weight:600">  from   </span><a href="#p10"> parenthesized_expression</a> [632, 12] - [632, 62]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n11"> parenthesized_expression</a> [632, 12] - [632, 62]
-<span style="font-weight:600">  from   </span><a href="#p11"> if_statement</a> [632, 9] - [635, 10]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> method_invocation</a> [632, 33] - [632, 52]
+<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> method_invocation</a> [632, 32] - [632, 51]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n2" data-partner="m2"> identifier</a>: <span class=token>&quot;getArgName&quot;</span> [632, 40] - [632, 50]
+<span style="font-weight:600">  to     </span><a href="#m2" data-partner="n2"> identifier</a>: <span class=token>&quot;hasArgName&quot;</span> [632, 39] - [632, 49]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n3"> (</a>: <span class=token>&quot;(&quot;</span> [632, 32] - [632, 33]
+<span style="font-weight:600">  from   </span><a href="#p3"> parenthesized_expression</a> [632, 32] - [632, 61]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n4"> !=</a>: <span class=token>&quot;!=&quot;</span> [632, 53] - [632, 55]
+<span style="font-weight:600">  from   </span><a href="#p4"> binary_expression</a> [632, 33] - [632, 60]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n5"> null_literal</a>: <span class=token>&quot;null&quot;</span> [632, 56] - [632, 60]
+<span style="font-weight:600">  from   </span><a href="#p5"> binary_expression</a> [632, 33] - [632, 60]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> binary_expression</a> [632, 33] - [632, 60]
+<span style="font-weight:600">  from   </span><a href="#p6"> parenthesized_expression</a> [632, 32] - [632, 61]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n7"> )</a>: <span class=token>&quot;)&quot;</span> [632, 60] - [632, 61]
+<span style="font-weight:600">  from   </span><a href="#p7"> parenthesized_expression</a> [632, 32] - [632, 61]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> parenthesized_expression</a> [632, 32] - [632, 61]
+<span style="font-weight:600">  from   </span><a href="#p8"> binary_expression</a> [632, 13] - [632, 61]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -1104,10 +1022,10 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">629 </span>        } 
 <span class="no">630 </span> 
 <span class="no">631 </span>        // if the Option has a value 
-<span class="no">632 </span>        <span class="ep11" id="p11">if <span class="en11" id="n11"><span class="ep10" id="p10"><span class="ep9" id="p9"><span class="ep7" id="p7"><span class="en7" id="n7"><a class="del" href="#n7">(</a></span><span class="en9" id="n9"><span class="ep8" id="p8"><span class="en2" id="n2"><a class="mov" href="#n2" data-partner="#m2">option.hasArg()</a></span><a class="del" href="#n9"> </a><span class="en8" id="n8"><a class="del" href="#n8">&amp;&amp;</a></span><a class="del" href="#n9"> </a><span class="en1" id="n1"><a class="mov" href="#n1" data-partner="#m1">(<span class="ep6" id="p6"><span class="ep5" id="p5">option.</a><span class="en4" id="n4"><a class="upd" href="#n4" data-partner="#m4">getArgName</a></span><a class="mov" href="#n1" data-partner="#m1">() </a><span class="en5" id="n5"><a class="del" href="#n5">!=</a></span><a class="mov" href="#n1" data-partner="#m1"> </a><span class="en6" id="n6"><a class="del" href="#n6">null</a></span></span></span><a class="mov" href="#n1" data-partner="#m1">)</a></span></span></span><span class="en10" id="n10"><a class="del" href="#n10">)</a></span></span></span></span></span> 
+<span class="no">632 </span>        if (<span class="ep8" id="p8">option.hasArg() &amp;&amp; <span class="en8" id="n8"><span class="ep7" id="p7"><span class="ep6" id="p6"><span class="ep3" id="p3"><span class="en3" id="n3"><a class="del" href="#n3">(</a></span><span class="en6" id="n6"><span class="ep5" id="p5"><span class="ep4" id="p4"><span class="en1" id="n1"><a class="mov" data-partner="#m1" href="#n1">option.</a><span class="en2" id="n2"><a class="upd" data-partner="#m2" href="#n2">getArgName</a></span><a class="mov" data-partner="#m1" href="#n1">()</a></span><a class="del" href="#n6"> </a><span class="en4" id="n4"><a class="del" href="#n4">!=</a></span><a class="del" href="#n6"> </a><span class="en5" id="n5"><a class="del" href="#n5">null</a></span></span></span></span><span class="en7" id="n7"><a class="del" href="#n7">)</a></span></span></span></span></span></span>) 
 <span class="no">633 </span>        { 
 <span class="no">634 </span>            buff.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
-<span class="no">635 </span>        }</span> 
+<span class="no">635 </span>        } 
 <span class="no">636 </span> 
 <span class="no">637 </span>        // if the Option is not a required option 
 <span class="no">638 </span>        if (!required) 
@@ -2101,7 +2019,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">629 </span>        } 
 <span class="no">630 </span> 
 <span class="no">631 </span>        // if the Option has a value 
-<span class="no">632 </span>        if <span class="em1" id="m1"><a class="mov" href="#m1" data-partner="#n1">(</a><span class="ep3" id="p3"><span class="em2" id="m2"><a class="mov" href="#m2" data-partner="#n2">option.hasArg()</a></span><a class="mov" href="#m1" data-partner="#n1"> </a><span class="en3" id="n3"><a class="ins" href="#n3">&amp;&amp;</a></span><a class="mov" href="#m1" data-partner="#n1"> option.</a><span class="em4" id="m4"><a class="upd" href="#m4" data-partner="#n4">hasArgName</a></span><a class="mov" href="#m1" data-partner="#n1">()</span>)</a></span> 
+<span class="no">632 </span>        if (option.hasArg() &amp;&amp; <span class="em1" id="m1"><a class="mov" data-partner="#n1" href="#m1">option.</a><span class="em2" id="m2"><a class="upd" data-partner="#n2" href="#m2">hasArgName</a></span><a class="mov" data-partner="#n1" href="#m1">()</a></span>) 
 <span class="no">633 </span>        { 
 <span class="no">634 </span>            buff.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
 <span class="no">635 </span>        } 

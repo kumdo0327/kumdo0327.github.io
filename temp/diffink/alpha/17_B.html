@@ -5,215 +5,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#p11:target) .i11, .page:has(#n11:target) .i11 {
-    display: block;
-  }
-  .page:has(#p11:target) .clear, .page:has(#n11:target) .clear {
-    display: none;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11 {
-    display: none;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .page:has(#n11:target) .en11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p11:target) .ep11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
   .panel, .edit {
-    flex-direction: column;
     border: 1px solid #afafaf;
     border-radius: 6px;
     overflow: hidden;
     min-width: 0;
-    box-sizing: border-box;
     display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
   }
-  .page:has(#n5:target) .en5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m5:target) .en5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m5:target) .em5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n5:target) .em5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
   }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
     display: none;
   }
   .panel-header {
-    display: flex;
-    border-bottom: 1px solid #afafaf;
     align-items: center;
     background: #ebebeb;
     justify-content: space-between;
-    font-size: 14px;
     padding: 8px 10px;
+    border-bottom: 1px solid #afafaf;
+    font-size: 14px;
     line-height: 1;
+    display: flex;
     font-weight: bold;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .page:has(#n7:target) .en7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m7:target) .en7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m7:target) .em7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n7:target) .em7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#m4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .page:has(#m1:target) .en1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m1:target) .em1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n1:target) .em1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#m5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .page:has(#n8:target) .en8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p8:target) .ep8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#m6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
   }
   .page:has(#n2:target) .en2 {
     color: white;
@@ -229,68 +45,72 @@
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#m2:target) .em2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n2:target) .em2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .ins, .del, .mov, .upd {
-    border-bottom:  0.05em solid black;
-    padding-top: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
-    padding-bottom: 0.05em;
-    border-top:  0.05em solid black;
-  }
-  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
     display: block;
   }
-  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
     display: none;
   }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
+  .codebox {
+    background: #f7f7f7;
+    padding: 4px;
+    min-height: 0;
+    flex: 1;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow: auto;
+    scroll-behavior: smooth;
+    scroll-padding-top: 54px;
+    letter-spacing: 0.05em;
   }
-  .sec {
-    padding: 0;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    font-weight: bold;
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
   }
-  .page:has(#n9:target) .en9 {
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .edit {
+    min-width: 512px;
+    height: 60px;
+    font-size: 14px;
+  }
+  .editbox {
+    font-weight: 500;
+    background: #f7f7f7;
+    line-height: 1.8;
+    overflow: auto;
+    padding: 4px 8px;
+    min-height: 0;
+    flex: 1;
+    font-size: 14px;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#p1:target) .ep1 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#m9:target) .en9 {
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .page:has(#n3:target) .en3 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#m9:target) .em9 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n9:target) .em9 {
+  .page:has(#p3:target) .ep3 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
@@ -300,139 +120,86 @@
   .token {
     color: #017100;
   }
-  .no {
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    letter-spacing: normal;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .codebox {
-    background: #f7f7f7;
-    overflow: auto;
-    letter-spacing: 0.05em;
-    padding: 4px;
-    min-height: 0;
-    scroll-behavior: smooth;
-    font-size: 12px;
-    scroll-padding-top: 54px;
-    line-height: 1.5;
-    flex: 1;
-  }
-  .grid {
-    height: calc(100vh - 186px);
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-    gap: 12px;
-  }
-  .page:has(#n3:target) .en3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .en3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .em3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n3:target) .em3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .editbox {
-    min-height: 0;
-    padding: 4px 8px;
-    background: #f7f7f7;
-    font-weight: 500;
-    overflow: auto;
-    font-size: 14px;
-    line-height: 1.8;
-    flex: 1;
-  }
-  body {
-    background: white;
-    margin: 0;
-  }
-  .page:has(#m9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#m9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
   .codebox a {
-    text-decoration: none;
     color: inherit;
-  }
-  .edit {
-    height: 60px;
-    font-size: 14px;
-  }
-  pre {
-    margin: 0;
-  }
-  .editbox a, .toolbar a {
     text-decoration: none;
-    color: #0076ba;
-  }
-  .toolbar {
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-    line-height: 1;
-  }
-  .page:has(#n10:target) .en10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p10:target) .ep10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page {
-    margin: 0 auto;
-    padding: 0 12px 8px 12px;
-    max-width: 100vw;
-  }
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
   }
   .bold {
     font-weight: bold;
   }
   .error {
     color: #b51700;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .ins, .del, .mov, .upd {
+    border-top:  0.05em solid black;
+    padding-top: 0.05em;
+    border-bottom:  0.05em solid black;
+    padding-bottom: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .page {
+    margin: 0 auto;
+    max-width: 100vw;
+    padding: 0 16px 8px 16px;
+  }
+  .page:has(#m2:target) .em2 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .no {
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .sec {
+    margin: 12px 0;
+    line-height: 1;
+    padding: 0;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .page:has(#n1:target) .en1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .page:has(#p4:target) .ep4 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .page:has(#n4:target) .en4 {
     color: white;
@@ -441,33 +208,29 @@
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#m4:target) .en4 {
+  .toolbar {
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+  }
+  .page:has(#n2:target) .em2 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
   }
-  .page:has(#m4:target) .em4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    height: calc(100vh - 186px);
+    min-width: 512px;
+    display: grid;
+    min-height: 252px;
   }
-  .page:has(#n4:target) .em4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n1:target) .en1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
+  .i1, .i2, .i3, .i4 {
+    display: none;
   }
 </style>
 </head>
@@ -500,42 +263,21 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="i2">Edit #2</span>
       <span class="i3">Edit #3</span>
       <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
-      <span class="i7">Edit #7</span>
-      <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
-      <span class="i11">Edit #11</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n11">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n11">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4" data-partner="#m4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5" data-partner="#m5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4" data-partner="#m4">Prev</a> | <a href="#n6" data-partner="#m6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5" data-partner="#m5">Prev</a> | <a href="#n7" data-partner="#m7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7" data-partner="#m7">Prev</a> | <a href="#n9" data-partner="#m9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9" data-partner="#m9">Prev</a> | <a href="#n11">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i11"><a href="#n10">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n4">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n4">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"><span class="error"> ERROR</span></a> [3044, 1] - [3044, 26]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"><span class="error"> ERROR</span></a> [3044, 1] - [3044, 26]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"><span class="error"> ERROR</span></a> [3045, 1] - [3045, 40]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"><span class="error"> ERROR</span></a> [3045, 1] - [3045, 40]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n3" data-partner="m3"><span class="error"> ERROR</span></a> [3046, 1] - [3046, 31]
-<span style="font-weight:600">  to   </span><a href="#m3" data-partner="n3"><span class="error"> ERROR</span></a> [3046, 1] - [3046, 31]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n4" data-partner="m4"><span class="error"> ERROR</span></a> [3047, 1] - [3047, 49]
-<span style="font-weight:600">  to   </span><a href="#m4" data-partner="n4"><span class="error"> ERROR</span></a> [3047, 1] - [3047, 49]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n5" data-partner="m5"><span class="error"> ERROR</span></a> [3048, 1] - [3048, 29]
-<span style="font-weight:600">  to   </span><a href="#m5" data-partner="n5"><span class="error"> ERROR</span></a> [3048, 1] - [3048, 29]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n6" data-partner="m6"><span class="error"> ERROR</span></a> [3049, 1] - [3049, 34]
-<span style="font-weight:600">  to   </span><a href="#m6" data-partner="n6"><span class="error"> ERROR</span></a> [3049, 1] - [3049, 34]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n7" data-partner="m7"> expression_statement</a> [3043, 39] - [3043, 40]
-<span style="font-weight:600">  to   </span><a href="#m7" data-partner="n7"> expression_statement</a> [3049, 34] - [3049, 35]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n8"> binary_expression</a> [1444, 11] - [1444, 71]
-<span style="font-weight:600">  into   </span><a href="#p8"> condition_clause</a> [1444, 10] - [1444, 72]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n9" data-partner="m9"> binary_expression</a> [1444, 11] - [1444, 53]
-<span style="font-weight:600">  to   </span><a href="#m9" data-partner="n9"> binary_expression</a> [1444, 11] - [1444, 53]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n10"> &amp;&amp;</a>: <span class=token>&quot;&amp;&amp;&quot;</span> [1444, 54] - [1444, 56]
-<span style="font-weight:600">  into   </span><a href="#p10"> binary_expression</a> [1444, 11] - [1444, 71]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n11"> binary_expression</a> [1444, 57] - [1444, 71]
-<span style="font-weight:600">  into           </span><a href="#p11"> binary_expression</a> [1444, 11] - [1444, 71]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> binary_expression</a> [1444, 11] - [1444, 71]
+<span style="font-weight:600">  into   </span><a href="#p1"> condition_clause</a> [1444, 10] - [1444, 72]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> binary_expression</a> [1444, 11] - [1444, 53]
+<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> binary_expression</a> [1444, 11] - [1444, 53]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> &amp;&amp;</a>: <span class=token>&quot;&amp;&amp;&quot;</span> [1444, 54] - [1444, 56]
+<span style="font-weight:600">  into   </span><a href="#p3"> binary_expression</a> [1444, 11] - [1444, 71]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n4"> binary_expression</a> [1444, 57] - [1444, 71]
+<span style="font-weight:600">  into           </span><a href="#p4"> binary_expression</a> [1444, 11] - [1444, 71]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -1986,7 +1728,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1441 </span> 
 <span class="no">1442 </span>    void on_oct() { 
 <span class="no">1443 </span>      int num_digits = internal::count_digits&lt;3&gt;(abs_value); 
-<span class="no">1444 </span>      if (<span class="en9" id="n9"><a href="#n9" data-partner="#m9" class="mov">specs.alt &amp;&amp; specs.precision &lt;= num_digits</a></span>) { 
+<span class="no">1444 </span>      if (<span id="n2" class="en2"><a href="#n2" class="mov" data-partner="#m2">specs.alt &amp;&amp; specs.precision &lt;= num_digits</a></span>) { 
 <span class="no">1445 </span>        // Octal prefix &apos;0&apos; is counted as a digit, so only add it if precision 
 <span class="no">1446 </span>        // is not greater than the number of digits. 
 <span class="no">1447 </span>        prefix[prefix_size++] = &apos;0&apos;; 
@@ -3585,13 +3327,13 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">3040 </span>  } 
 <span class="no">3041 </span> 
 <span class="no">3042 </span>FMT_FORMAT_AS(signed char, int); 
-<span class="no">3043 </span>FMT_FORMAT_AS(unsigned char, unsigned)<span class="en7" id="n7"><a href="#n7" data-partner="#m7" class="mov">;</a></span> 
-<span class="no">3044 </span><span class="en1" id="n1"><a href="#n1" data-partner="#m1" class="mov">FMT_FORMAT_AS(short, int)</a></span>; 
-<span class="no">3045 </span><span class="en2" id="n2"><a href="#n2" data-partner="#m2" class="mov">FMT_FORMAT_AS(unsigned short, unsigned)</a></span>; 
-<span class="no">3046 </span><span class="en3" id="n3"><a href="#n3" data-partner="#m3" class="mov">FMT_FORMAT_AS(long, long long)</a></span>; 
-<span class="no">3047 </span><span class="en4" id="n4"><a href="#n4" data-partner="#m4" class="mov">FMT_FORMAT_AS(unsigned long, unsigned long long)</a></span>; 
-<span class="no">3048 </span><span class="en5" id="n5"><a href="#n5" data-partner="#m5" class="mov">FMT_FORMAT_AS(float, double)</a></span>; 
-<span class="no">3049 </span><span class="en6" id="n6"><a href="#n6" data-partner="#m6" class="mov">FMT_FORMAT_AS(Char*, const Char*)</a></span>; 
+<span class="no">3043 </span>FMT_FORMAT_AS(unsigned char, unsigned); 
+<span class="no">3044 </span>FMT_FORMAT_AS(short, int); 
+<span class="no">3045 </span>FMT_FORMAT_AS(unsigned short, unsigned); 
+<span class="no">3046 </span>FMT_FORMAT_AS(long, long long); 
+<span class="no">3047 </span>FMT_FORMAT_AS(unsigned long, unsigned long long); 
+<span class="no">3048 </span>FMT_FORMAT_AS(float, double); 
+<span class="no">3049 </span>FMT_FORMAT_AS(Char*, const Char*); 
 <span class="no">3050 </span>FMT_FORMAT_AS(std::basic_string&lt;Char&gt;, basic_string_view&lt;Char&gt;); 
 <span class="no">3051 </span>FMT_FORMAT_AS(std::nullptr_t, const void*); 
 <span class="no">3052 </span>FMT_FORMAT_AS(internal::std_string_view&lt;Char&gt;, basic_string_view&lt;Char&gt;); 
@@ -5597,7 +5339,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1441 </span> 
 <span class="no">1442 </span>    void on_oct() { 
 <span class="no">1443 </span>      int num_digits = internal::count_digits&lt;3&gt;(abs_value); 
-<span class="no">1444 </span>      if <span class="ep8" id="p8">(<span class="ep11" id="p11"><span class="ep10" id="p10"><span class="en8" id="n8"><span class="em9" id="m9"><a href="#m9" data-partner="#n9" class="mov">specs.alt &amp;&amp; specs.precision &lt;= num_digits</a></span><a href="#n8" class="ins"> </a><span class="en10" id="n10"><a href="#n10" class="ins">&amp;&amp;</a></span><a href="#n8" class="ins"> </a><span class="en11" id="n11"><a href="#n11" class="ins">abs_value != 0</a></span></span></span></span>)</span> { 
+<span class="no">1444 </span>      if <span id="p1" class="ep1">(<span id="p4" class="ep4"><span id="p3" class="ep3"><span id="n1" class="en1"><span id="m2" class="em2"><a href="#m2" class="mov" data-partner="#n2">specs.alt &amp;&amp; specs.precision &lt;= num_digits</a></span><a href="#n1" class="ins"> </a><span id="n3" class="en3"><a href="#n3" class="ins">&amp;&amp;</a></span><a href="#n1" class="ins"> </a><span id="n4" class="en4"><a href="#n4" class="ins">abs_value != 0</a></span></span></span></span>)</span> { 
 <span class="no">1445 </span>        // Octal prefix &apos;0&apos; is counted as a digit, so only add it if precision 
 <span class="no">1446 </span>        // is not greater than the number of digits. 
 <span class="no">1447 </span>        prefix[prefix_size++] = &apos;0&apos;; 
@@ -7197,12 +6939,12 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">3041 </span> 
 <span class="no">3042 </span>FMT_FORMAT_AS(signed char, int); 
 <span class="no">3043 </span>FMT_FORMAT_AS(unsigned char, unsigned); 
-<span class="no">3044 </span><span class="em1" id="m1"><a href="#m1" data-partner="#n1" class="mov">FMT_FORMAT_AS(short, int)</a></span>; 
-<span class="no">3045 </span><span class="em2" id="m2"><a href="#m2" data-partner="#n2" class="mov">FMT_FORMAT_AS(unsigned short, unsigned)</a></span>; 
-<span class="no">3046 </span><span class="em3" id="m3"><a href="#m3" data-partner="#n3" class="mov">FMT_FORMAT_AS(long, long long)</a></span>; 
-<span class="no">3047 </span><span class="em4" id="m4"><a href="#m4" data-partner="#n4" class="mov">FMT_FORMAT_AS(unsigned long, unsigned long long)</a></span>; 
-<span class="no">3048 </span><span class="em5" id="m5"><a href="#m5" data-partner="#n5" class="mov">FMT_FORMAT_AS(float, double)</a></span>; 
-<span class="no">3049 </span><span class="em6" id="m6"><a href="#m6" data-partner="#n6" class="mov">FMT_FORMAT_AS(Char*, const Char*)</a></span><span class="em7" id="m7"><a href="#m7" data-partner="#n7" class="mov">;</a></span> 
+<span class="no">3044 </span>FMT_FORMAT_AS(short, int); 
+<span class="no">3045 </span>FMT_FORMAT_AS(unsigned short, unsigned); 
+<span class="no">3046 </span>FMT_FORMAT_AS(long, long long); 
+<span class="no">3047 </span>FMT_FORMAT_AS(unsigned long, unsigned long long); 
+<span class="no">3048 </span>FMT_FORMAT_AS(float, double); 
+<span class="no">3049 </span>FMT_FORMAT_AS(Char*, const Char*); 
 <span class="no">3050 </span>FMT_FORMAT_AS(std::basic_string&lt;Char&gt;, basic_string_view&lt;Char&gt;); 
 <span class="no">3051 </span>FMT_FORMAT_AS(std::nullptr_t, const void*); 
 <span class="no">3052 </span>FMT_FORMAT_AS(internal::std_string_view&lt;Char&gt;, basic_string_view&lt;Char&gt;); 

@@ -3,68 +3,14 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .i1, .i2, .i3, .i4, .i5 {
-    display: none;
-  }
-  .panel, .edit {
-    display: flex;
-    border-radius: 6px;
-    overflow: hidden;
-    box-sizing: border-box;
-    min-width: 0;
-    flex-direction: column;
-    border: 1px solid #afafaf;
-  }
-  .page:has(#n5:target) .en5 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#p5:target) .ep5 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .panel-header {
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    display: flex;
-    background: #ebebeb;
+  .sec {
+    font-size: 24px;
     line-height: 1;
-    padding: 8px 10px;
     font-weight: bold;
-    align-items: center;
-  }
-  .codebox {
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    letter-spacing: 0.05em;
-    overflow: auto;
-    background: #f7f7f7;
-    scroll-behavior: smooth;
-    scroll-padding-top: 54px;
-    padding: 4px;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
+    padding: 0;
+    margin: 12px 0;
   }
   .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
@@ -72,184 +18,183 @@
   .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
     display: none;
   }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .page:has(#p1:target) .ep1 {
-    font-weight: 900;
-    color: white;
+  .page:has(#m2:target) .em2 {
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#n2:target) .em2 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .codebox {
+    min-height: 0;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    flex: 1;
+    scroll-padding-top: 54px;
+    scroll-behavior: smooth;
+    background: #f7f7f7;
+    overflow: auto;
+    line-height: 1.5;
+    padding: 4px;
+  }
+  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
   }
   .edit {
+    min-width: 512px;
     height: 60px;
     font-size: 14px;
   }
   .editbox {
-    min-height: 0;
-    font-size: 14px;
-    overflow: auto;
     background: #f7f7f7;
-    line-height: 1.8;
+    overflow: auto;
+    font-size: 14px;
+    min-height: 0;
     flex: 1;
     font-weight: 500;
+    line-height: 1.8;
     padding: 4px 8px;
   }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .ins, .del, .mov, .upd {
-    border-top:  0.05em solid black;
-    border-bottom:  0.05em solid black;
-    padding-top: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
-    padding-bottom: 0.05em;
-  }
-  .token {
-    color: #017100;
-  }
-  .page:has(#n2:target) .en2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#m2:target) .en2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#m2:target) .em2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#n2:target) .em2 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .bold {
+  .panel-header {
+    font-size: 14px;
+    display: flex;
     font-weight: bold;
+    background: #ebebeb;
+    align-items: center;
+    justify-content: space-between;
+    line-height: 1;
+    padding: 8px 10px;
+    border-bottom: 1px solid #afafaf;
   }
-  .page:has(#n3:target) .en3 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#m3:target) .en3 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#m3:target) .em3 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#n3:target) .em3 {
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-  }
-  .error {
-    color: #b51700;
-  }
-  .page {
-    max-width: 100vw;
-    padding: 0 12px 8px 12px;
-    margin: 0 auto;
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
     display: block;
   }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
     display: none;
-  }
-  .no {
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    letter-spacing: normal;
-    padding-bottom: 0.15em;
   }
   pre {
     margin: 0;
   }
-  .sec {
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    padding: 0;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .page:has(#n4:target) .en4 {
-    font-weight: 900;
-    color: white;
+  .page:has(#n3:target) .en3 {
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
-  }
-  .page:has(#p4:target) .ep4 {
     font-weight: 900;
     color: white;
+  }
+  .page:has(#p3:target) .ep3 {
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
-  .toolbar {
-    margin-bottom: 6px;
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .grid {
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    height: calc(100vh - 186px);
-    min-height: 252px;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
+  .panel, .edit {
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #afafaf;
   }
   .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
     display: block;
   }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .error {
+    color: #b51700;
+  }
+  .i1, .i2, .i3, .i4 {
+    display: none;
+  }
+  .page:has(#p1:target) .ep1 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .no {
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    letter-spacing: normal;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
   body {
     background: white;
     margin: 0;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .ins, .del, .mov, .upd {
+    box-shadow: inset -0.05em 0 0 black;
+    padding-top: 0.05em;
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    border-bottom:  0.05em solid black;
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .token {
+    color: #017100;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .page:has(#n4:target) .en4 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#p4:target) .ep4 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#m2:target) .en2 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .page:has(#n2:target) .en2 {
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+  }
+  .editbox a, .toolbar a {
+    text-decoration: none;
+    color: #0076ba;
   }
   .codebox a {
     text-decoration: none;
@@ -258,12 +203,34 @@
   .editbox a:hover, .toolbar a:hover {
     text-decoration: underline;
   }
+  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page {
+    max-width: 100vw;
+    padding: 0 16px 8px 16px;
+    margin: 0 auto;
+  }
+  .toolbar {
+    margin-bottom: 6px;
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+  }
+  .grid {
+    min-height: 252px;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    display: grid;
+    gap: 16px;
+    height: calc(100vh - 186px);
+  }
   .page:has(#n1:target) .en1 {
-    font-weight: 900;
-    color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
     padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
   }
 </style>
 </head>
@@ -296,24 +263,21 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="i2">Edit #2</span>
       <span class="i3">Edit #3</span>
       <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n5">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n5">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n4">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n4">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
       <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
         <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> comment</a>: <span class=token>&quot;# The fields for Power CPUs include &apos;processor&apos; and &apos;cpu&apos;.&quot;</span> [245, 9] - [245, 67]
 <span style="font-weight:600">  into   </span><a href="#p1"> block</a> [159, 9] - [278, 25]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n2" data-partner="m2"> comment</a>: <span class=token>&quot;# Always use &apos;processor&apos; count for ARM systems&quot;</span> [245, 9] - [245, 55]
-<span style="font-weight:600">  to     </span><a href="#m2" data-partner="n2"> comment</a>: <span class=token>&quot;# Always use &apos;processor&apos; count for ARM and Power systems&quot;</span> [246, 9] - [246, 65]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n3" data-partner="m3"> ,</a>: <span class=token>&quot;,&quot;</span> [246, 78] - [246, 79]
-<span style="font-weight:600">  to   </span><a href="#m3" data-partner="n3"> ,</a>: <span class=token>&quot;,&quot;</span> [247, 87] - [247, 88]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> ,</a>: <span class=token>&quot;,&quot;</span> [247, 78] - [247, 79]
-<span style="font-weight:600">  into   </span><a href="#p4"> tuple</a> [247, 71] - [247, 95]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n5"> string</a> [247, 89] - [247, 94]
-<span style="font-weight:600">  into           </span><a href="#p5"> tuple</a> [247, 71] - [247, 95]</span></code></pre>
+<span style="font-weight:600">  to     </span><a href="#m2" data-partner="n2"> comment</a>: <span class=token>&quot;# Always use &apos;processor&apos; count for ARM and Power systems&quot;</span> [246, 9] - [246, 65]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> ,</a>: <span class=token>&quot;,&quot;</span> [247, 87] - [247, 88]
+<span style="font-weight:600">  into   </span><a href="#p3"> tuple</a> [247, 71] - [247, 95]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n4"> string</a> [247, 89] - [247, 94]
+<span style="font-weight:600">  into           </span><a href="#p4"> tuple</a> [247, 71] - [247, 95]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -565,8 +529,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">242 </span> 
 <span class="no">243 </span>        # The fields for ARM CPUs do not always include &apos;vendor_id&apos; or &apos;model name&apos;, 
 <span class="no">244 </span>        # and sometimes includes both &apos;processor&apos; and &apos;Processor&apos;. 
-<span class="no">245 </span>        <span class="en2" id="n2"><a href="#n2" data-partner="#m2" class="upd"># Always use &apos;processor&apos; count for ARM systems</a></span> 
-<span class="no">246 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith((&apos;armv&apos;<span class="en3" id="n3"><a href="#n3" data-partner="#m3" class="mov">,</a></span> &apos;aarch&apos;)): 
+<span class="no">245 </span>        <span class="en2" id="n2"><a class="upd" data-partner="#m2" href="#n2"># Always use &apos;processor&apos; count for ARM systems</a></span> 
+<span class="no">246 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith((&apos;armv&apos;, &apos;aarch&apos;)): 
 <span class="no">247 </span>            i = processor_occurence 
 <span class="no">248 </span> 
 <span class="no">249 </span>        # FIXME 
@@ -1376,9 +1340,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">242 </span> 
 <span class="no">243 </span>        # The fields for ARM CPUs do not always include &apos;vendor_id&apos; or &apos;model name&apos;, 
 <span class="no">244 </span>        # and sometimes includes both &apos;processor&apos; and &apos;Processor&apos;. 
-<span class="no">245 </span>        <span class="en1" id="n1"><a href="#n1" class="ins"># The fields for Power CPUs include &apos;processor&apos; and &apos;cpu&apos;.</a></span> 
-<span class="no">246 </span>        <span class="em2" id="m2"><a href="#m2" data-partner="#n2" class="upd"># Always use &apos;processor&apos; count for ARM and Power systems</a></span> 
-<span class="no">247 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith(<span class="ep5" id="p5"><span class="ep4" id="p4">(&apos;armv&apos;<span class="en4" id="n4"><a href="#n4" class="ins">,</a></span> &apos;aarch&apos;<span class="em3" id="m3"><a href="#m3" data-partner="#n3" class="mov">,</a></span> <span class="en5" id="n5"><a href="#n5" class="ins">&apos;ppc&apos;</a></span>)</span></span>): 
+<span class="no">245 </span>        <span class="en1" id="n1"><a class="ins" href="#n1"># The fields for Power CPUs include &apos;processor&apos; and &apos;cpu&apos;.</a></span> 
+<span class="no">246 </span>        <span class="em2" id="m2"><a class="upd" data-partner="#n2" href="#m2"># Always use &apos;processor&apos; count for ARM and Power systems</a></span> 
+<span class="no">247 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith(<span class="ep4" id="p4"><span class="ep3" id="p3">(&apos;armv&apos;, &apos;aarch&apos;<span class="en3" id="n3"><a class="ins" href="#n3">,</a></span> <span class="en4" id="n4"><a class="ins" href="#n4">&apos;ppc&apos;</a></span>)</span></span>): 
 <span class="no">248 </span>            i = processor_occurence 
 <span class="no">249 </span> 
 <span class="no">250 </span>        # FIXME 

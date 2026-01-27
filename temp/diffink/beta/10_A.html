@@ -3,112 +3,17 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#p2:target) .ep2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .panel-header {
-    padding: 8px 10px;
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    font-weight: bold;
-    display: flex;
-    background: #ebebeb;
-    line-height: 1;
-    align-items: center;
-  }
-  .codebox {
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    scroll-padding-top: 54px;
-    letter-spacing: 0.05em;
-    background: #f7f7f7;
-    overflow: auto;
-    scroll-behavior: smooth;
-  }
-  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .edit {
-    height: 60px;
-    font-size: 14px;
-  }
-  .editbox {
-    line-height: 1.8;
-    flex: 1;
-    font-weight: 500;
-    padding: 4px 8px;
-    min-height: 0;
-    background: #f7f7f7;
-    overflow: auto;
-    font-size: 14px;
-  }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    letter-spacing: normal;
-    padding-top: 0.15em;
-  }
-  .i1, .i2 {
-    display: none;
-  }
-  .codebox a {
-    text-decoration: none;
-    color: inherit;
-  }
-  .token {
-    color: #017100;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .error {
-    color: #b51700;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .ins, .del, .mov, .upd {
-    box-shadow: inset -0.05em 0 0 black;
-    padding-bottom: 0.05em;
-    border-top:  0.05em solid black;
-    border-bottom:  0.05em solid black;
-    padding-top: 0.05em;
-  }
-  .page {
-    max-width: 100vw;
-    padding: 0 12px 8px 12px;
-    margin: 0 auto;
-  }
   .ins:hover, .del:hover, .mov:hover, .upd:hover {
     text-decoration-line: none;
   }
-  .sec {
-    line-height: 1;
-    font-weight: bold;
-    padding: 0;
-    font-size: 24px;
-    margin: 12px 0;
+  .page:has(#n1:target) .en1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .ins {
     background: rgba(97, 216, 54, 0.4);
@@ -117,65 +22,161 @@
     background: rgba(255, 100, 78, 0.4);
   }
   .page:has(#p1:target) .ep1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .mov {
     background: rgba(159, 143, 255, 0.4);
   }
-  .toolbar {
-    margin-bottom: 6px;
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
+  .grid {
+    height: calc(100vh - 186px);
+    min-height: 252px;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    display: grid;
+    gap: 16px;
+  }
+  .panel, .edit {
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+  }
+  .page:has(#n2:target) .en2 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#p2:target) .ep2 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .codebox {
+    padding: 4px;
+    min-height: 0;
+    font-size: 12px;
+    flex: 1;
+    background: #f7f7f7;
+    overflow: auto;
+    scroll-behavior: smooth;
+    scroll-padding-top: 54px;
+    line-height: 1.5;
+    letter-spacing: 0.05em;
   }
   .upd {
     background: rgba(255, 217, 50, 0.4);
   }
-  .grid {
-    gap: 12px;
-    height: calc(100vh - 186px);
-    display: grid;
-    min-height: 252px;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
   }
-  .panel, .edit {
-    box-sizing: border-box;
-    flex-direction: column;
-    min-width: 0;
-    display: flex;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid #afafaf;
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .edit {
+    height: 60px;
+    min-width: 512px;
+    font-size: 14px;
+  }
+  .editbox {
+    padding: 4px 8px;
+    background: #f7f7f7;
+    min-height: 0;
+    overflow: auto;
+    font-size: 14px;
+    line-height: 1.8;
+    flex: 1;
+    font-weight: 500;
+  }
+  .page {
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
+    max-width: 100vw;
+  }
+  .i1, .i2 {
+    display: none;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
   }
   pre {
     margin: 0;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .no {
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .panel-header {
+    align-items: center;
+    padding: 8px 10px;
+    justify-content: space-between;
+    font-size: 14px;
+    display: flex;
+    font-weight: bold;
+    background: #ebebeb;
+    line-height: 1;
+    border-bottom: 1px solid #afafaf;
+  }
+  .token {
+    color: #017100;
   }
   .editbox a, .toolbar a {
     text-decoration: none;
     color: #0076ba;
   }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .bold {
+    font-weight: bold;
   }
-  body {
-    background: white;
-    margin: 0;
+  .error {
+    color: #b51700;
   }
-  .page:has(#n2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
+  .toolbar {
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .ins, .del, .mov, .upd {
+    border-top:  0.05em solid black;
     padding-top: 0.05em;
+    border-bottom:  0.05em solid black;
+    padding-bottom: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+  }
+  .sec {
+    margin: 12px 0;
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
   }
 </style>
 </head>
@@ -709,7 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">215 </span>    private static final String[] formatAsInlineTags = { 
 <span class="no">216 </span>            &quot;title&quot;, &quot;a&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;pre&quot;, &quot;address&quot;, &quot;li&quot;, &quot;th&quot;, &quot;td&quot;, &quot;script&quot;, &quot;style&quot; 
 <span class="no">217 </span>    }; 
-<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = <span id="p2" class="ep2"><span id="p1" class="ep1">{&quot;pre&quot;, &quot;plaintext&quot;, &quot;title&quot;<span id="n1" class="en1"><a href="#n1" class="ins">,</a></span> <span id="n2" class="en2"><a href="#n2" class="ins">&quot;textarea&quot;</a></span>}</span></span>; 
+<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = <span class="ep2" id="p2"><span class="ep1" id="p1">{&quot;pre&quot;, &quot;plaintext&quot;, &quot;title&quot;<span class="en1" id="n1"><a href="#n1" class="ins">,</a></span> <span class="en2" id="n2"><a href="#n2" class="ins">&quot;textarea&quot;</a></span>}</span></span>; 
 <span class="no">219 </span> 
 <span class="no">220 </span>    static { 
 <span class="no">221 </span>        // creates 

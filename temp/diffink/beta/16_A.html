@@ -5,34 +5,149 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .sec {
-    padding: 0;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    font-weight: bold;
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .error {
+    color: #b51700;
   }
   .toolbar {
-    padding: 0;
-    margin-bottom: 6px;
     line-height: 1;
     font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+  .ins, .del, .mov, .upd {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
+    border-bottom:  0.05em solid black;
   }
   .grid {
+    gap: 16px;
+    height: calc(100vh - 186px);
     display: grid;
     min-width: 512px;
     grid-template-columns: 1fr 1fr;
     min-height: 252px;
-    gap: 12px;
-    height: calc(100vh - 186px);
   }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .panel, .edit {
+    flex-direction: column;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
   }
   .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
     display: none;
   }
-  .page:has(#p1:target) .ep1 {
+  .page:has(#p7:target) .ep7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .panel-header {
+    font-weight: bold;
+    background: #ebebeb;
+    align-items: center;
+    padding: 8px 10px;
+    justify-content: space-between;
+    display: flex;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+  }
+  .page:has(#m5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#m5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .codebox {
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    background: #f7f7f7;
+    padding: 4px;
+    min-height: 0;
+    scroll-padding-top: 54px;
+    font-size: 12px;
+    flex: 1;
+    line-height: 1.5;
+  }
+  .edit {
+    font-size: 14px;
+    min-width: 512px;
+    height: 60px;
+  }
+  .editbox {
+    font-weight: 500;
+    line-height: 1.8;
+    padding: 4px 8px;
+    min-height: 0;
+    overflow: auto;
+    font-size: 14px;
+    background: #f7f7f7;
+    flex: 1;
+  }
+  .page:has(#n8:target) .en8 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p8:target) .ep8 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .page:has(#m3:target) .em3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n3:target) .em3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .page:has(#n9:target) .en9 {
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
@@ -46,163 +161,10 @@
     color: white;
     background: #3f3f3f;
   }
-  .page:has(#m5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#m5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .panel-header {
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    display: flex;
-    font-weight: bold;
-    line-height: 1;
-    background: #ebebeb;
-    padding: 8px 10px;
-  }
-  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .page:has(#n10:target) .en10 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p2:target) .ep2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .codebox {
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    background: #f7f7f7;
-    scroll-padding-top: 54px;
-  }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .page:has(#m5:target) .en5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m5:target) .em5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .edit {
-    font-size: 14px;
-    height: 60px;
-  }
-  .editbox {
-    padding: 4px 8px;
-    min-height: 0;
-    font-size: 14px;
-    overflow: auto;
-    font-weight: 500;
-    line-height: 1.8;
-    background: #f7f7f7;
-    flex: 1;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .no {
-    padding-top: 0.15em;
-    letter-spacing: normal;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-  }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .token {
-    color: #017100;
-  }
-  .page:has(#m3:target) .en3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .error {
-    color: #b51700;
-  }
   .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
     display: block;
   }
-  .ins, .del, .mov, .upd {
-    padding-top: 0.05em;
-    border-top:  0.05em solid black;
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    box-shadow: inset -0.05em 0 0 black;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .page:has(#n6:target) .en6 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p6:target) .ep6 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
+  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
     display: none;
   }
   .page:has(#n4:target) .en4 {
@@ -219,71 +181,7 @@
     color: white;
     background: #3f3f3f;
   }
-  .page:has(#n7:target) .en7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p7:target) .ep7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .page:has(#n3:target) .em3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m3:target) .em3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n5:target) .em5 {
+  .page:has(#n10:target) .en10 {
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
@@ -297,31 +195,35 @@
     color: white;
     background: #3f3f3f;
   }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#n8:target) .en8 {
+  .page:has(#n1:target) .en1 {
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
   }
-  body {
-    margin: 0;
-    background: white;
+  .page:has(#p1:target) .ep1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
+  .page:has(#m5:target) .en5 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
-  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
+  .page:has(#m5:target) .em5 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .page:has(#n9:target) .en9 {
+  .page:has(#n5:target) .em5 {
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
@@ -331,39 +233,138 @@
   .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
   }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
   }
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
   }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#p8:target) .ep8 {
+  .page:has(#n7:target) .en7 {
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
   }
-  .page {
-    margin: 0 auto;
-    max-width: 100vw;
-    padding: 0 12px 8px 12px;
+  .page:has(#p2:target) .ep2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
+    display: none;
+  }
+  .page:has(#p6:target) .ep6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
   .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
     display: block;
   }
-  .panel, .edit {
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .page:has(#n5:target) .en5 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .page:has(#m3:target) .en3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .page:has(#n3:target) .en3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
+    display: block;
+  }
+  .no {
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    color: #878787;
+    background: #f7f7f7;
+    letter-spacing: normal;
+  }
+  .sec {
+    padding: 0;
+    font-weight: bold;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
+    display: none;
+  }
+  .token {
+    color: #017100;
+  }
+  .bold {
+    font-weight: bold;
   }
 </style>
 </head>
@@ -856,10 +857,10 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 418 </span>      ReturnTy = TypeArray[0]; 
 <span class="no"> 419 </span>  } 
 <span class="no"> 420 </span> 
-<span class="no"> 421 </span>  <span id="p10" class="ep10">if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) <span id="n10" class="en10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="n8" class="en8"><a href="#n8" class="del">{</a></span><a href="#n10" class="del"> 
-<span class="no"> 422 </span>    </a><span id="n3" class="en3"><a href="#n3" class="mov" data-partner="#m3">if (</a><span id="n5" class="en5"><a href="#n5" class="mov" data-partner="#m5">isNonTrivial(ReturnDCTy)</a></span><a href="#n3" class="mov" data-partner="#m3">) 
-<span class="no"> 423 </span>      FO |= FunctionOptions::CxxReturnUdt;</a></span><a href="#n10" class="del"> 
-<span class="no"> 424 </span>  </a><span id="n9" class="en9"><a href="#n9" class="del">}</a></span></span></span></span></span> 
+<span class="no"> 421 </span>  <span id="p10" class="ep10">if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) <span id="n10" class="en10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="n8" class="en8"><a class="del" href="#n8">{</a></span><a class="del" href="#n10"> 
+<span class="no"> 422 </span>    </a><span id="n3" class="en3"><a data-partner="#m3" class="mov" href="#n3">if (</a><span id="n5" class="en5"><a data-partner="#m5" class="mov" href="#n5">isNonTrivial(ReturnDCTy)</a></span><a data-partner="#m3" class="mov" href="#n3">) 
+<span class="no"> 423 </span>      FO |= FunctionOptions::CxxReturnUdt;</a></span><a class="del" href="#n10"> 
+<span class="no"> 424 </span>  </a><span id="n9" class="en9"><a class="del" href="#n9">}</a></span></span></span></span></span> 
 <span class="no"> 425 </span> 
 <span class="no"> 426 </span>  // DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison. 
 <span class="no"> 427 </span>  if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
@@ -3993,10 +3994,10 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 418 </span>      ReturnTy = TypeArray[0]; 
 <span class="no"> 419 </span>  } 
 <span class="no"> 420 </span> 
-<span class="no"> 421 </span>  <span id="n1" class="en1"><a href="#n1" class="ins">// Add CxxReturnUdt option to functions that return nontrivial record types</a></span> 
-<span class="no"> 422 </span>  <span id="n2" class="en2"><a href="#n2" class="ins">// or methods that return record types.</a></span> 
+<span class="no"> 421 </span>  <span id="n1" class="en1"><a class="ins" href="#n1">// Add CxxReturnUdt option to functions that return nontrivial record types</a></span> 
+<span class="no"> 422 </span>  <span id="n2" class="en2"><a class="ins" href="#n2">// or methods that return record types.</a></span> 
 <span class="no"> 423 </span>  if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) 
-<span class="no"> 424 </span>    <span id="m3" class="em3"><a href="#m3" class="mov" data-partner="#n3">if <span id="p4" class="ep4">(</a><span id="p7" class="ep7"><span id="p6" class="ep6"><span id="n4" class="en4"><span id="m5" class="em5"><a href="#m5" class="mov" data-partner="#n5">isNonTrivial(ReturnDCTy)</a></span><a href="#n4" class="ins"> </a><span id="n6" class="en6"><a href="#n6" class="ins">||</a></span><a href="#n4" class="ins"> </a><span id="n7" class="en7"><a href="#n7" class="ins">ClassTy</a></span></span></span></span><a href="#m3" class="mov" data-partner="#n3">)</span> 
+<span class="no"> 424 </span>    <span id="m3" class="em3"><a data-partner="#n3" class="mov" href="#m3">if <span id="p4" class="ep4">(</a><span id="p7" class="ep7"><span id="p6" class="ep6"><span id="n4" class="en4"><span id="m5" class="em5"><a data-partner="#n5" class="mov" href="#m5">isNonTrivial(ReturnDCTy)</a></span><a class="ins" href="#n4"> </a><span id="n6" class="en6"><a class="ins" href="#n6">||</a></span><a class="ins" href="#n4"> </a><span id="n7" class="en7"><a class="ins" href="#n7">ClassTy</a></span></span></span></span><a data-partner="#n3" class="mov" href="#m3">)</span> 
 <span class="no"> 425 </span>      FO |= FunctionOptions::CxxReturnUdt;</a></span> 
 <span class="no"> 426 </span> 
 <span class="no"> 427 </span>  // DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison. 

@@ -11,52 +11,63 @@
   .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
     display: none;
   }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
+  .edit {
+    min-width: 512px;
+    height: 60px;
+    font-size: 14px;
+  }
+  .editbox {
+    padding: 4px 8px;
+    min-height: 0;
+    background: #f7f7f7;
+    font-size: 14px;
+    line-height: 1.8;
+    flex: 1;
+    overflow: auto;
+    font-weight: 500;
+  }
+  pre {
+    margin: 0;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .no {
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .page:has(#p3:target) .ep3 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .token {
+    color: #017100;
   }
   .editbox a, .toolbar a {
     color: #0076ba;
     text-decoration: none;
   }
-  .page:has(#n3:target) .en3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .bold {
+    font-weight: bold;
   }
-  .page:has(#p3:target) .ep3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
   }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .codebox {
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    scroll-padding-top: 54px;
-    background: #f7f7f7;
-    padding: 4px;
-    min-height: 0;
+  .page {
+    margin: 0 auto;
+    max-width: 100vw;
+    padding: 0 16px 8px 16px;
   }
   .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
     display: block;
@@ -64,87 +75,26 @@
   .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
     display: none;
   }
-  .page:has(#n1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .i1, .i2, .i3 {
-    display: none;
-  }
-  .edit {
-    font-size: 14px;
-    height: 60px;
-  }
-  .editbox {
-    font-size: 14px;
-    overflow: auto;
-    font-weight: 500;
-    line-height: 1.8;
-    flex: 1;
-    background: #f7f7f7;
-    padding: 4px 8px;
-    min-height: 0;
-  }
-  pre {
-    margin: 0;
-  }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    letter-spacing: normal;
-    padding-top: 0.15em;
-  }
-  .token {
-    color: #017100;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .error {
-    color: #b51700;
-  }
-  .ins, .del, .mov, .upd {
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
-    padding-top: 0.05em;
-  }
   .page:has(#m1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .sec {
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 1;
-    margin: 12px 0;
     padding: 0;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+    font-weight: bold;
   }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
+  .page:has(#n1:target) .em1 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
-  }
-  .page:has(#p2:target) .ep2 {
     padding-bottom: 0.05em;
     font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
   }
   .ins {
     background: rgba(97, 216, 54, 0.4);
@@ -153,63 +103,114 @@
     background: rgba(255, 100, 78, 0.4);
   }
   .toolbar {
-    line-height: 1;
-    font-size: 16px;
     padding: 0;
     margin-bottom: 6px;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
+    line-height: 1;
+    font-size: 16px;
   }
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    height: calc(100vh - 186px);
     min-width: 512px;
+    grid-template-columns: 1fr 1fr;
     min-height: 252px;
+    gap: 16px;
+    height: calc(100vh - 186px);
+  }
+  .panel, .edit {
+    border: 1px solid #afafaf;
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    flex-direction: column;
+    border-radius: 6px;
   }
   .upd {
     background: rgba(255, 217, 50, 0.4);
   }
-  .page:has(#m1:target) .em1 {
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .ins, .del, .mov, .upd {
+    border-top:  0.05em solid black;
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
-    font-weight: 900;
+    box-shadow: inset -0.05em 0 0 black;
+    border-bottom:  0.05em solid black;
+  }
+  .page:has(#n2:target) .en2 {
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
-  }
-  .page {
-    margin: 0 auto;
-    max-width: 100vw;
-    padding: 0 12px 8px 12px;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .panel, .edit {
-    border-radius: 6px;
-    display: flex;
-    box-sizing: border-box;
-    min-width: 0;
-    flex-direction: column;
-    overflow: hidden;
-    border: 1px solid #afafaf;
+    padding-bottom: 0.05em;
+    font-weight: 900;
   }
   .panel-header {
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
     display: flex;
     font-weight: bold;
-    line-height: 1;
-    background: #ebebeb;
-    align-items: center;
     padding: 8px 10px;
+    justify-content: space-between;
+    background: #ebebeb;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    align-items: center;
   }
-  body {
-    margin: 0;
-    background: white;
+  .error {
+    color: #b51700;
+  }
+  .page:has(#p2:target) .ep2 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:has(#n1:target) .en1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#n3:target) .en3 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .page:has(#m1:target) .em1 {
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+  }
+  .i1, .i2, .i3 {
+    display: none;
+  }
+  .codebox {
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    background: #f7f7f7;
+    font-size: 12px;
+    flex: 1;
+    scroll-padding-top: 54px;
+    line-height: 1.5;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
   }
 </style>
 </head>
@@ -13680,9 +13681,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 2777 </span> 
 <span class="no"> 2778 </span>  // Deopt bundles are lowered in LowerCallSiteWithDeoptBundle, and we don&apos;t 
 <span class="no"> 2779 </span>  // have to do anything here to lower funclet bundles. 
-<span class="no"> 2780 </span>  assert(!I.hasOperandBundlesOtherThan(<span id="p3" class="ep3"><span id="p2" class="ep2">{LLVMContext::OB_deopt<span id="n2" class="en2"><a href="#n2" class="ins">,</a></span> 
+<span class="no"> 2780 </span>  assert(!I.hasOperandBundlesOtherThan(<span id="p3" class="ep3"><span id="p2" class="ep2">{LLVMContext::OB_deopt<span id="n2" class="en2"><a class="ins" href="#n2">,</a></span> 
 <span class="no"> 2781 </span>                                        LLVMContext::OB_gc_transition<span id="m1" class="em1"><a href="#m1" class="mov" data-partner="#n1">,</a></span> 
-<span class="no"> 2782 </span>                                        <span id="n3" class="en3"><a href="#n3" class="ins">LLVMContext::OB_gc_live</a></span>, 
+<span class="no"> 2782 </span>                                        <span id="n3" class="en3"><a class="ins" href="#n3">LLVMContext::OB_gc_live</a></span>, 
 <span class="no"> 2783 </span>                                        LLVMContext::OB_funclet, 
 <span class="no"> 2784 </span>                                        LLVMContext::OB_cfguardtarget}</span></span>) &amp;&amp; 
 <span class="no"> 2785 </span>         &quot;Cannot lower invokes with arbitrary operand bundles yet!&quot;); 

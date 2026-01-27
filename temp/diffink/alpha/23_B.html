@@ -5,262 +5,25 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  body {
-    background: white;
-    margin: 0;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p5:target) .ep5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
-  }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7 {
-    display: none;
-  }
-  .page:has(#p2:target) .ep2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .sec {
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    padding: 0;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .page:has(#n6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
   .toolbar {
     font-size: 16px;
     padding: 0;
     margin-bottom: 6px;
     line-height: 1;
   }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#p6:target) .ep6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .ins, .del, .mov, .upd {
-    padding-bottom: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
-    padding-top: 0.05em;
-    border-bottom:  0.05em solid black;
-  }
   .page:has(#n3:target) .en3 {
-    padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
   }
   .page:has(#p3:target) .ep3 {
-    padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
-  }
-  .editbox {
-    padding: 4px 8px;
-    font-weight: 500;
-    min-height: 0;
-    background: #f7f7f7;
-    overflow: auto;
-    font-size: 14px;
-    line-height: 1.8;
-    flex: 1;
-  }
-  .error {
-    color: #b51700;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .panel, .edit {
-    flex-direction: column;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-  }
-  .codebox {
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    letter-spacing: 0.05em;
-    background: #f7f7f7;
-    scroll-behavior: smooth;
-    scroll-padding-top: 54px;
-    overflow: auto;
-  }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    letter-spacing: normal;
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-  }
-  pre {
-    margin: 0;
-  }
-  .edit {
-    height: 60px;
-    font-size: 14px;
-  }
-  .token {
-    color: #017100;
-  }
-  .panel-header {
-    padding: 8px 10px;
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    font-weight: bold;
-    display: flex;
-    background: #ebebeb;
-    line-height: 1;
-    align-items: center;
-  }
-  .page:has(#n7:target) .en7 {
     padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p7:target) .ep7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .grid {
-    height: calc(100vh - 186px);
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-    gap: 12px;
-  }
-  .page {
-    margin: 0 auto;
-    padding: 0 12px 8px 12px;
-    max-width: 100vw;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#m1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .ep4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
   }
   .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
     display: block;
@@ -268,28 +31,266 @@
   .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
     display: none;
   }
+  .panel, .edit {
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .page:has(#n1:target) .en1 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#n7:target) .en7 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    justify-content: space-between;
+    background: #ebebeb;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    font-weight: bold;
+  }
+  .page:has(#m1:target) .en1 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#m1:target) .em1 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#n1:target) .em1 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  .ins, .del, .mov, .upd {
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    padding-top: 0.05em;
+    border-bottom:  0.05em solid black;
+    box-shadow: inset -0.05em 0 0 black;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7 {
+    display: none;
+  }
+  .codebox {
+    letter-spacing: 0.05em;
+    overflow: auto;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    background: #f7f7f7;
+    font-size: 12px;
+    scroll-padding-top: 54px;
+    line-height: 1.5;
+    flex: 1;
+  }
   .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
   }
   .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
     display: none;
   }
-  .codebox a {
+  .error {
+    color: #b51700;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .editbox a, .toolbar a {
     text-decoration: none;
-    color: inherit;
+    color: #0076ba;
   }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#n4:target) .en4 {
-    padding-bottom: 0.05em;
+  .page:has(#p6:target) .ep6 {
     font-weight: 900;
     color: white;
     background: #3f3f3f;
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .edit {
+    height: 60px;
+    min-width: 512px;
+    font-size: 14px;
+  }
+  .editbox {
+    font-weight: 500;
+    padding: 4px 8px;
+    min-height: 0;
+    background: #f7f7f7;
+    font-size: 14px;
+    line-height: 1.8;
+    flex: 1;
+    overflow: auto;
+  }
+  pre {
+    margin: 0;
+  }
+  .grid {
+    height: calc(100vh - 186px);
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    min-height: 252px;
+    gap: 16px;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#n5:target) .en5 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .no {
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+  }
+  .codebox a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .token {
+    color: #017100;
+  }
+  .page:has(#n2:target) .en2 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#p2:target) .ep2 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page {
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
+    max-width: 100vw;
+  }
+  .page:has(#p5:target) .ep5 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#n4:target) .en4 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#p7:target) .ep7 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .page:has(#p4:target) .ep4 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .sec {
+    font-weight: bold;
+    padding: 0;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+  }
+  .page:has(#n6:target) .en6 {
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+  }
+  .ins {
+    background: rgba(97, 216, 54, 0.4);
   }
   .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
     display: block;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
   }
 </style>
 </head>
@@ -1215,7 +1216,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 860 </span> 
 <span class="no"> 861 </span>            force_properties = dict( 
 <span class="no"> 862 </span>                (k, v) for k, v in ie_result.items() if v is not None) 
-<span class="no"> 863 </span>            for f in (&apos;_type&apos;<span class="en1" id="n1"><a class="mov" href="#n1" data-partner="#m1">,</a></span> &apos;url&apos;, &apos;ie_key&apos;): 
+<span class="no"> 863 </span>            for f in (&apos;_type&apos;<span class="en1" id="n1"><a href="#n1" data-partner="#m1" class="mov">,</a></span> &apos;url&apos;, &apos;ie_key&apos;): 
 <span class="no"> 864 </span>                if f in force_properties: 
 <span class="no"> 865 </span>                    del force_properties[f] 
 <span class="no"> 866 </span>            new_result = info.copy() 
@@ -3544,7 +3545,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 860 </span> 
 <span class="no"> 861 </span>            force_properties = dict( 
 <span class="no"> 862 </span>                (k, v) for k, v in ie_result.items() if v is not None) 
-<span class="no"> 863 </span>            for f in <span class="ep7" id="p7"><span class="ep6" id="p6"><span class="ep5" id="p5"><span class="ep4" id="p4"><span class="ep3" id="p3"><span class="ep2" id="p2">(&apos;_type&apos;<span class="en2" id="n2"><a class="ins" href="#n2">,</a></span> &apos;url&apos;<span class="en3" id="n3"><a class="ins" href="#n3">,</a></span> <span class="en4" id="n4"><a class="ins" href="#n4">&apos;id&apos;</a></span><span class="en5" id="n5"><a class="ins" href="#n5">,</a></span> <span class="en6" id="n6"><a class="ins" href="#n6">&apos;extractor&apos;</a></span><span class="em1" id="m1"><a class="mov" href="#m1" data-partner="#n1">,</a></span> <span class="en7" id="n7"><a class="ins" href="#n7">&apos;extractor_key&apos;</a></span>, &apos;ie_key&apos;)</span></span></span></span></span></span>: 
+<span class="no"> 863 </span>            for f in <span class="ep7" id="p7"><span class="ep6" id="p6"><span class="ep5" id="p5"><span class="ep4" id="p4"><span class="ep3" id="p3"><span class="ep2" id="p2">(&apos;_type&apos;<span class="en2" id="n2"><a href="#n2" class="ins">,</a></span> &apos;url&apos;<span class="en3" id="n3"><a href="#n3" class="ins">,</a></span> <span class="en4" id="n4"><a href="#n4" class="ins">&apos;id&apos;</a></span><span class="en5" id="n5"><a href="#n5" class="ins">,</a></span> <span class="en6" id="n6"><a href="#n6" class="ins">&apos;extractor&apos;</a></span><span class="em1" id="m1"><a href="#m1" data-partner="#n1" class="mov">,</a></span> <span class="en7" id="n7"><a href="#n7" class="ins">&apos;extractor_key&apos;</a></span>, &apos;ie_key&apos;)</span></span></span></span></span></span>: 
 <span class="no"> 864 </span>                if f in force_properties: 
 <span class="no"> 865 </span>                    del force_properties[f] 
 <span class="no"> 866 </span>            new_result = info.copy() 

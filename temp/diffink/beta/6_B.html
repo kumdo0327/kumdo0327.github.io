@@ -3,26 +3,171 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .page {
-    margin: 0 auto;
-    max-width: 100vw;
-    padding: 0 12px 8px 12px;
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .ep2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3, .i4 {
+    display: none;
   }
   .page:has(#n3:target) .en3 {
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
-    padding-top: 0.05em;
   }
   .page:has(#p3:target) .ep3 {
+    padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
+  }
+  .panel-header {
+    align-items: center;
+    padding: 8px 10px;
+    justify-content: space-between;
+    font-size: 14px;
+    border-bottom: 1px solid #afafaf;
+    line-height: 1;
+    font-weight: bold;
+    display: flex;
+    background: #ebebeb;
+  }
+  .page:has(#n4:target) .en4 {
     padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .codebox {
+    padding: 4px;
+    min-height: 0;
+    font-size: 12px;
+    flex: 1;
+    scroll-behavior: smooth;
+    scroll-padding-top: 54px;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    overflow: auto;
+    background: #f7f7f7;
+  }
+  .upd {
+    background: rgba(255, 217, 50, 0.4);
+  }
+  .edit {
+    min-width: 512px;
+    height: 60px;
+    font-size: 14px;
+  }
+  .editbox {
+    padding: 4px 8px;
+    flex: 1;
+    line-height: 1.8;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 0;
+    overflow: auto;
+    background: #f7f7f7;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .ins:hover, .del:hover, .mov:hover, .upd:hover {
+    text-decoration-line: none;
+  }
+  .no {
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .ins, .del, .mov, .upd {
+    border-bottom:  0.05em solid black;
+    padding-top: 0.05em;
+    box-shadow: inset -0.05em 0 0 black;
+    padding-bottom: 0.05em;
+    border-top:  0.05em solid black;
+  }
+  .token {
+    color: #017100;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .error {
+    color: #b51700;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .panel, .edit {
+    box-sizing: border-box;
+    flex-direction: column;
+    border-radius: 6px;
+    border: 1px solid #afafaf;
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
   }
   .sec {
     margin: 12px 0;
@@ -31,83 +176,20 @@
     padding: 0;
     font-size: 24px;
   }
-  .token {
-    color: #017100;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .em1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n4:target) .en4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .ep4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .panel, .edit {
-    box-sizing: border-box;
-    min-width: 0;
-    flex-direction: column;
-    display: flex;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
+  .page {
+    margin: 0 auto;
+    max-width: 100vw;
+    padding: 0 16px 8px 16px;
   }
   .ins {
     background: rgba(97, 216, 54, 0.4);
+  }
+  .page:has(#p4:target) .ep4 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
   }
   .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
     display: block;
@@ -115,175 +197,26 @@
   .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
     display: none;
   }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .ins, .del, .mov, .upd {
-    border-top:  0.05em solid black;
-    padding-bottom: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
-    border-bottom:  0.05em solid black;
-    padding-top: 0.05em;
-  }
-  .panel-header {
-    padding: 8px 10px;
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    font-weight: bold;
-    line-height: 1;
-    background: #ebebeb;
-    display: flex;
-    align-items: center;
-  }
-  .error {
-    color: #b51700;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m2:target) .em2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n2:target) .em2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p5:target) .ep5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .codebox {
-    scroll-behavior: smooth;
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    flex: 1;
-    scroll-padding-top: 54px;
-    letter-spacing: 0.05em;
-    background: #f7f7f7;
-    overflow: auto;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    letter-spacing: normal;
-    padding-top: 0.15em;
-  }
-  pre {
-    margin: 0;
-  }
-  .editbox {
-    font-size: 14px;
-    line-height: 1.8;
-    flex: 1;
-    font-weight: 500;
-    padding: 4px 8px;
-    background: #f7f7f7;
-    min-height: 0;
-    overflow: auto;
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    height: calc(100vh - 186px);
-    display: grid;
-    min-height: 252px;
-    min-width: 512px;
-  }
   .toolbar {
     padding: 0;
     margin-bottom: 6px;
     line-height: 1;
     font-size: 16px;
   }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#p6:target) .ep6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
   body {
     margin: 0;
     background: white;
   }
-  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-height: 252px;
+    min-width: 512px;
   }
-  .page:has(#n6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
     display: block;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  .edit {
-    font-size: 14px;
-    height: 60px;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6 {
-    display: none;
   }
 </style>
 </head>
@@ -316,27 +249,21 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="i2">Edit #2</span>
       <span class="i3">Edit #3</span>
       <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
     </div>
     <div class="toolbar">
-      <span class="clear"><a href="#n6">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n6">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="clear"><a href="#n4">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i1"><a href="#n4">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
+      <span class="i4"><a href="#n3">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
     </div>
     <div class="edit">
       <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> ,</a>: <span class=token>&quot;,&quot;</span> [360, 36] - [360, 37]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> ,</a>: <span class=token>&quot;,&quot;</span> [360, 45] - [360, 46]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> ,</a>: <span class=token>&quot;,&quot;</span> [360, 45] - [360, 46]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> ,</a>: <span class=token>&quot;,&quot;</span> [360, 54] - [360, 55]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> ,</a>: <span class=token>&quot;,&quot;</span> [360, 36] - [360, 37]
-<span style="font-weight:600">  into   </span><a href="#p3"> argument_list</a> [360, 28] - [360, 67]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n4"> string_literal</a> [360, 56] - [360, 66]
-<span style="font-weight:600">  into           </span><a href="#p4"> argument_list</a> [360, 28] - [360, 67]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> ,</a>: <span class=token>&quot;,&quot;</span> [364, 33] - [364, 34]
-<span style="font-weight:600">  into   </span><a href="#p5"> argument_list</a> [364, 28] - [364, 46]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n6"> string_literal</a> [364, 35] - [364, 45]
-<span style="font-weight:600">  into           </span><a href="#p6"> argument_list</a> [364, 28] - [364, 46]</span></code></pre>
+        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> ,</a>: <span class=token>&quot;,&quot;</span> [360, 54] - [360, 55]
+<span style="font-weight:600">  into   </span><a href="#p1"> argument_list</a> [360, 28] - [360, 67]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n2"> string_literal</a> [360, 56] - [360, 66]
+<span style="font-weight:600">  into           </span><a href="#p2"> argument_list</a> [360, 28] - [360, 67]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n3"> ,</a>: <span class=token>&quot;,&quot;</span> [364, 33] - [364, 34]
+<span style="font-weight:600">  into   </span><a href="#p3"> argument_list</a> [364, 28] - [364, 46]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n4"> string_literal</a> [364, 35] - [364, 45]
+<span style="font-weight:600">  into           </span><a href="#p4"> argument_list</a> [364, 28] - [364, 46]</span></code></pre>
       </div>
     </div>
     <div class="sec">Code</div>
@@ -703,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">357 </span>    } 
 <span class="no">358 </span> 
 <span class="no">359 </span>    void clearStackToTableBodyContext() { 
-<span class="no">360 </span>        clearStackToContext(&quot;tbody&quot;<span id="n1" class="en1"><a href="#n1" class="mov" data-partner="#m1">,</a></span> &quot;tfoot&quot;<span id="n2" class="en2"><a href="#n2" class="mov" data-partner="#m2">,</a></span> &quot;thead&quot;); 
+<span class="no">360 </span>        clearStackToContext(&quot;tbody&quot;, &quot;tfoot&quot;, &quot;thead&quot;); 
 <span class="no">361 </span>    } 
 <span class="no">362 </span> 
 <span class="no">363 </span>    void clearStackToTableRowContext() { 
@@ -1434,11 +1361,11 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">357 </span>    } 
 <span class="no">358 </span> 
 <span class="no">359 </span>    void clearStackToTableBodyContext() { 
-<span class="no">360 </span>        clearStackToContext<span id="p4" class="ep4"><span id="p3" class="ep3">(&quot;tbody&quot;<span id="n3" class="en3"><a href="#n3" class="ins">,</a></span> &quot;tfoot&quot;<span id="m1" class="em1"><a href="#m1" class="mov" data-partner="#n1">,</a></span> &quot;thead&quot;<span id="m2" class="em2"><a href="#m2" class="mov" data-partner="#n2">,</a></span> <span id="n4" class="en4"><a href="#n4" class="ins">&quot;template&quot;</a></span>)</span></span>; 
+<span class="no">360 </span>        clearStackToContext<span class="ep2" id="p2"><span class="ep1" id="p1">(&quot;tbody&quot;, &quot;tfoot&quot;, &quot;thead&quot;<span class="en1" id="n1"><a class="ins" href="#n1">,</a></span> <span class="en2" id="n2"><a class="ins" href="#n2">&quot;template&quot;</a></span>)</span></span>; 
 <span class="no">361 </span>    } 
 <span class="no">362 </span> 
 <span class="no">363 </span>    void clearStackToTableRowContext() { 
-<span class="no">364 </span>        clearStackToContext<span id="p6" class="ep6"><span id="p5" class="ep5">(&quot;tr&quot;<span id="n5" class="en5"><a href="#n5" class="ins">,</a></span> <span id="n6" class="en6"><a href="#n6" class="ins">&quot;template&quot;</a></span>)</span></span>; 
+<span class="no">364 </span>        clearStackToContext<span class="ep4" id="p4"><span class="ep3" id="p3">(&quot;tr&quot;<span class="en3" id="n3"><a class="ins" href="#n3">,</a></span> <span class="en4" id="n4"><a class="ins" href="#n4">&quot;template&quot;</a></span>)</span></span>; 
 <span class="no">365 </span>    } 
 <span class="no">366 </span> 
 <span class="no">367 </span>    private void clearStackToContext(String... nodeNames) { 

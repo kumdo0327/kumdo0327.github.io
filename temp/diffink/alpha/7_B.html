@@ -5,75 +5,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
-    display: none;
-  }
-  .page:has(#n9:target) .en9 {
+  .page:has(#n5:target) .en5 {
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
   }
-  .page:has(#p9:target) .ep9 {
+  .page:has(#p5:target) .ep5 {
     padding-top: 0.05em;
     padding-bottom: 0.05em;
     font-weight: 900;
     color: white;
     background: #3f3f3f;
-  }
-  .edit {
-    font-size: 14px;
-    height: 60px;
-  }
-  .editbox {
-    padding: 4px 8px;
-    line-height: 1.8;
-    flex: 1;
-    font-size: 14px;
-    font-weight: 500;
-    min-height: 0;
-    overflow: auto;
-    background: #f7f7f7;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p3:target) .ep3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .token {
-    color: #017100;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .error {
-    color: #b51700;
-  }
-  .ins, .del, .mov, .upd {
-    padding-top: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
   }
   .page:has(#n10:target) .en10 {
     padding-top: 0.05em;
@@ -89,14 +33,304 @@
     color: white;
     background: #3f3f3f;
   }
+  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
+    display: block;
+  }
+  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
+    display: none;
+  }
+  body {
+    margin: 0;
+    background: white;
+  }
+  .codebox a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:has(#n6:target) .en6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p6:target) .ep6 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .editbox a, .toolbar a {
+    color: #0076ba;
+    text-decoration: none;
+  }
+  .editbox a:hover, .toolbar a:hover {
+    text-decoration: underline;
+  }
+  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
+    display: none;
+  }
+  .page {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 0 16px 8px 16px;
+  }
+  .page:has(#n7:target) .en7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
+    display: none;
+  }
+  .sec {
+    padding: 0;
+    font-weight: bold;
+    font-size: 24px;
+    margin: 12px 0;
+    line-height: 1;
+  }
+  .page:has(#m7:target) .en7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#m7:target) .em7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
+    display: none;
+  }
+  .toolbar {
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+  .grid {
+    gap: 16px;
+    height: calc(100vh - 186px);
+    display: grid;
+    min-width: 512px;
+    grid-template-columns: 1fr 1fr;
+    min-height: 252px;
+  }
+  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
+    display: none;
+  }
+  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
+    display: block;
+  }
+  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
+    display: none;
+  }
+  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
+    display: none;
+  }
+  .panel, .edit {
+    flex-direction: column;
+    border: 1px solid #afafaf;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+  }
+  .page:has(#p1:target) .ep1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
+    display: block;
+  }
+  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
+    display: none;
+  }
+  .page:has(#n8:target) .en8 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p8:target) .ep8 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
+    display: block;
+  }
+  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
+    display: none;
+  }
+  .page:has(#n2:target) .en2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p2:target) .ep2 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .panel-header {
+    border-bottom: 1px solid #afafaf;
+    display: flex;
+    font-weight: bold;
+    background: #ebebeb;
+    align-items: center;
+    padding: 8px 10px;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .page:has(#n9:target) .en9 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .codebox {
+    overflow: auto;
+    letter-spacing: 0.05em;
+    background: #f7f7f7;
+    scroll-behavior: smooth;
+    padding: 4px;
+    min-height: 0;
+    scroll-padding-top: 54px;
+    font-size: 12px;
+    flex: 1;
+    line-height: 1.5;
+  }
+  .mov {
+    background: rgba(159, 143, 255, 0.4);
+  }
+  .del {
+    background: rgba(255, 100, 78, 0.4);
+  }
+  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
+    display: none;
+  }
+  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
+    display: block;
+  }
+  .page:has(#n3:target) .en3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#p3:target) .ep3 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .edit {
+    font-size: 14px;
+    min-width: 512px;
+    height: 60px;
+  }
+  .editbox {
+    font-weight: 500;
+    line-height: 1.8;
+    padding: 4px 8px;
+    min-height: 0;
+    overflow: auto;
+    font-size: 14px;
+    flex: 1;
+    background: #f7f7f7;
+  }
+  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
+    display: block;
+  }
+  .page:has(#p9:target) .ep9 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .page:has(#n1:target) .en1 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  pre {
+    margin: 0;
+  }
+  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
+    display: none;
+  }
+  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
+    display: block;
+  }
+  .no {
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #878787;
+    background: #f7f7f7;
+  }
+  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
+    display: block;
+  }
+  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
+    display: block;
+  }
+  .token {
+    color: #017100;
+  }
   .ins:hover, .del:hover, .mov:hover, .upd:hover {
     text-decoration-line: none;
+  }
+  .bold {
+    font-weight: bold;
   }
   .ins {
     background: rgba(97, 216, 54, 0.4);
   }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
+  .page:has(#n7:target) .em7 {
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    font-weight: 900;
+    color: white;
+    background: #3f3f3f;
+  }
+  .ins, .del, .mov, .upd {
+    border-bottom:  0.05em solid black;
+    box-shadow: inset -0.05em 0 0 black;
+    border-top:  0.05em solid black;
+    padding-bottom: 0.05em;
+    padding-top: 0.05em;
+  }
+  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
+    display: block;
   }
   .page:has(#n4:target) .en4 {
     padding-top: 0.05em;
@@ -115,241 +349,8 @@
   .upd {
     background: rgba(255, 217, 50, 0.4);
   }
-  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p5:target) .ep5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .page {
-    margin: 0 auto;
-    max-width: 100vw;
-    padding: 0 12px 8px 12px;
-  }
-  .page:has(#n6:target) .en6 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p6:target) .ep6 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .sec {
-    margin: 12px 0;
-    line-height: 1;
-    font-weight: bold;
-    padding: 0;
-    font-size: 24px;
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .toolbar {
-    padding: 0;
-    margin-bottom: 6px;
-    line-height: 1;
-    font-size: 16px;
-  }
-  .grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    height: calc(100vh - 186px);
-    display: grid;
-    min-height: 252px;
-    min-width: 512px;
-  }
-  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .panel, .edit {
-    box-sizing: border-box;
-    min-width: 0;
-    flex-direction: column;
-    display: flex;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n7:target) .en7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p1:target) .ep1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m7:target) .en7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m7:target) .em7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .panel-header {
-    border-bottom: 1px solid #afafaf;
-    font-weight: bold;
-    display: flex;
-    background: #ebebeb;
-    line-height: 1;
-    padding: 8px 10px;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#p8:target) .ep8 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .codebox {
-    line-height: 1.5;
-    flex: 1;
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    scroll-padding-top: 54px;
-    padding: 4px;
-    min-height: 0;
-    background: #f7f7f7;
-    font-size: 12px;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .no {
-    padding-top: 0.15em;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    letter-spacing: normal;
-    color: #878787;
-    background: #f7f7f7;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#n8:target) .en8 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .page:has(#n7:target) .em7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p2:target) .ep2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
+  .error {
+    color: #b51700;
   }
 </style>
 </head>
@@ -876,7 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">452 </span>        h[3] = h[2]; 
 <span class="no">453 </span>        if (this.rightBlock != null) { 
 <span class="no">454 </span>            RectangleConstraint c4 = new RectangleConstraint(0.0, 
-<span class="no">455 </span>                    new Range(0.0, <span id="n7" class="en7"><a href="#n7" data-partner="#m7" class="mov">constraint.getWidth() - w[2]</a></span>), 
+<span class="no">455 </span>                    new Range(0.0, <span id="n7" class="en7"><a data-partner="#m7" href="#n7" class="mov">constraint.getWidth() - w[2]</a></span>), 
 <span class="no">456 </span>                    LengthConstraintType.RANGE, h[2], null, 
 <span class="no">457 </span>                    LengthConstraintType.FIXED); 
 <span class="no">458 </span>            Size2D size = this.rightBlock.arrange(g2, c4); 
@@ -1416,7 +1417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">452 </span>        h[3] = h[2]; 
 <span class="no">453 </span>        if (this.rightBlock != null) { 
 <span class="no">454 </span>            RectangleConstraint c4 = new RectangleConstraint(0.0, 
-<span class="no">455 </span>                    new Range<span id="p1" class="ep1">(0.0, <span id="p5" class="ep5"><span id="p4" class="ep4"><span id="p3" class="ep3"><span id="p2" class="ep2"><span id="n1" class="en1"><span id="n2" class="en2"><a href="#n2" class="ins">Math</a></span><span id="n3" class="en3"><a href="#n3" class="ins">.</a></span><span id="n4" class="en4"><a href="#n4" class="ins">max</a></span><span id="p10" class="ep10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="p6" class="ep6"><span id="n5" class="en5"><span id="n6" class="en6"><a href="#n6" class="ins">(</a></span><span id="m7" class="em7"><a href="#m7" data-partner="#n7" class="mov">constraint.getWidth() - w[2]</a></span><span id="n8" class="en8"><a href="#n8" class="ins">,</a></span><a href="#n5" class="ins"> </a><span id="n9" class="en9"><a href="#n9" class="ins">0.0</a></span><span id="n10" class="en10"><a href="#n10" class="ins">)</a></span></span></span></span></span></span></span></span></span></span></span>)</span>, 
+<span class="no">455 </span>                    new Range<span id="p1" class="ep1">(0.0, <span id="p5" class="ep5"><span id="p4" class="ep4"><span id="p3" class="ep3"><span id="p2" class="ep2"><span id="n1" class="en1"><span id="n2" class="en2"><a href="#n2" class="ins">Math</a></span><span id="n3" class="en3"><a href="#n3" class="ins">.</a></span><span id="n4" class="en4"><a href="#n4" class="ins">max</a></span><span id="p10" class="ep10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="p6" class="ep6"><span id="n5" class="en5"><span id="n6" class="en6"><a href="#n6" class="ins">(</a></span><span id="m7" class="em7"><a data-partner="#n7" href="#m7" class="mov">constraint.getWidth() - w[2]</a></span><span id="n8" class="en8"><a href="#n8" class="ins">,</a></span><a href="#n5" class="ins"> </a><span id="n9" class="en9"><a href="#n9" class="ins">0.0</a></span><span id="n10" class="en10"><a href="#n10" class="ins">)</a></span></span></span></span></span></span></span></span></span></span></span>)</span>, 
 <span class="no">456 </span>                    LengthConstraintType.RANGE, h[2], null, 
 <span class="no">457 </span>                    LengthConstraintType.FIXED); 
 <span class="no">458 </span>            Size2D size = this.rightBlock.arrange(g2, c4); 
