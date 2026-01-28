@@ -10,8 +10,8 @@ Integrated M.S. & Ph.D. Student,
 - [GitHub](https://github.com/kumdo0327), [ORCID](https://orcid.org/0009-0009-7531-3654)
 
 ## Research Interests
-- Source Code Differencing
-- Fault Localization
+- Software Maintenance and Evolution
+- Program Comprehension
 
 ## Education
 - Mar 2025 - present
