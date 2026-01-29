@@ -420,6 +420,8 @@
         answers: loadAnswers(),
       };
 
+      let isChoosing = false;
+
       function loadAnswers() {
         try {
           const raw = localStorage.getItem(storageKey);
@@ -442,6 +444,9 @@
         viewerA.src = `./${pairId}_A.html`;
         viewerB.src = `./${pairId}_B.html`;
         updateProgress();
+        setTimeout(() => {
+          isChoosing = false;
+        }, 500);
       }
 
       function updateProgress() {
@@ -490,19 +495,23 @@
         }
       }
 
-      document.getElementById("chooseA").addEventListener("click", () => {
-        setAnswer("A");
+      function handleChoice(value) {
+        if (isChoosing) return;
+        isChoosing = true;
+        setAnswer(value);
         next();
+      }
+
+      document.getElementById("chooseA").addEventListener("click", () => {
+        handleChoice("A");
       });
 
       document.getElementById("chooseB").addEventListener("click", () => {
-        setAnswer("B");
-        next();
+        handleChoice("B");
       });
 
       document.getElementById("chooseE").addEventListener("click", () => {
-        setAnswer("Unclear");
-        next();
+        handleChoice("Unclear");
       });
 
       document.getElementById("nextBtn").addEventListener("click", next);
