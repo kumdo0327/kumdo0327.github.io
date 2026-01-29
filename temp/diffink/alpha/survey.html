@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Diff Viewer A/B Survey</title>
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --panel: #121824;
+        --panel-2: #0f141f;
+        --accent: #00b894;
+        --accent-2: #0984e3;
+        --warn: #e17055;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --border: #253047;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI",
+          sans-serif;
+        background: radial-gradient(1200px 800px at 10% 10%, #141b2b, #0b0f14);
+        color: var(--text);
+      }
+
+      .shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        padding: 8px 14px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(120deg, #111826, #0f151f);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+
+      .title {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .header-status {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .title h1 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: 0.2px;
+      }
+
+      .title span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      button {
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition:
+          transform 0.08s ease,
+          background 0.2s ease;
+      }
+
+      button:hover {
+        background: var(--panel-2);
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      button.primary {
+        border-color: rgba(0, 184, 148, 0.6);
+        background: rgba(0, 184, 148, 0.14);
+      }
+
+      button.secondary {
+        border-color: rgba(9, 132, 227, 0.6);
+        background: rgba(9, 132, 227, 0.14);
+      }
+
+      button.warn {
+        border-color: rgba(225, 112, 85, 0.6);
+        background: rgba(225, 112, 85, 0.16);
+      }
+
+      main {
+        flex: 1;
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 8px;
+        padding: 8px 12px 10px;
+      }
+
+      .viewer {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .viewer header {
+        position: static;
+        border-bottom: 1px solid var(--border);
+        padding: 12px 16px;
+        background: #0f141f;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+      }
+
+      .viewer iframe {
+        flex: 1;
+        border: none;
+        width: 100%;
+        background: #fff;
+      }
+
+      .footer {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px 12px;
+      }
+
+      .status {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .skip-notice {
+        font-size: 12px;
+        color: var(--warn);
+        letter-spacing: 0.2px;
+      }
+
+      .status .pill {
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(9, 132, 227, 0.12);
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+
+      .status .pill.choice {
+        background: rgba(0, 184, 148, 0.16);
+        border-color: rgba(0, 184, 148, 0.5);
+      }
+
+      .choice {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .choice button {
+        min-width: 110px;
+      }
+
+      .tutorial {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 10, 18, 0.88);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        padding: 20px;
+      }
+
+      .tutorial.show {
+        display: flex;
+      }
+
+      .tutorial-card {
+        width: min(900px, 94vw);
+        background: #111826;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px 22px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 92vh;
+      }
+
+      .tutorial-card h2 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: 0.2px;
+      }
+
+      .tutorial-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .tutorial-note {
+        color: #cbd5e1;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .tutorial-note strong {
+        color: #ffffff;
+      }
+
+      .tutorial-note p,
+      .tutorial-note li {
+        color: #cbd5e1;
+      }
+
+      .tutorial-note p.intro-question {
+        margin: 16px 0;
+      }
+
+      .tutorial-note p.intro-emphasis {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(9, 132, 227, 0.16);
+        border: 1px solid rgba(9, 132, 227, 0.35);
+        color: #eaf2ff;
+        font-weight: 600;
+      }
+
+      .tutorial-note ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+
+      .tutorial-note li {
+        margin: 4px 0;
+      }
+
+      .tutorial-frame {
+        width: 100%;
+        height: min(62vh, 560px);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .tutorial-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      @media (max-width: 840px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .controls {
+          justify-content: flex-start;
+        }
+
+        main {
+          grid-template-rows: auto auto;
+          min-height: 60vh;
+        }
+
+        .viewer iframe {
+          min-height: 300px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div class="title">
+          <h1>Tree differencing 서베이</h1>
+        </div>
+        <div class="header-status status">
+          <div class="pill" id="progressText">0 / 30</div>
+          <div class="pill choice" id="choiceText">선택: -</div>
+          <div class="skip-notice" id="skipText"></div>
+        </div>
+        <div class="controls">
+          <button id="prevBtn">이전</button>
+          <button id="nextBtn" class="secondary">다음</button>
+          <button id="tutorialBtn">Introduction 보기</button>
+          <button id="exportBtn" class="primary">결과 내보내기</button>
+          <button id="resetBtn" class="warn">초기화</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="viewer">
+          <header>옵션 A</header>
+          <iframe id="viewerA" title="A Viewer"></iframe>
+        </section>
+        <section class="viewer">
+          <header>옵션 B</header>
+          <iframe id="viewerB" title="B Viewer"></iframe>
+        </section>
+      </main>
+
+      <div class="footer">
+        <div class="choice">
+          <button id="chooseA" class="primary">A (A를 더 선호)</button>
+          <button id="chooseB" class="primary">B (B를 더 선호)</button>
+          <button id="chooseE">Unclear (판단하기 어려움)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tutorial" id="tutorial">
+      <div class="tutorial-card">
+        <h2>Introduction</h2>
+        <div class="tutorial-note">
+          <p>
+            본 설문은 Abstract Syntax Tree 기반의 코드 차이 비교 기법(tree
+            differencing)에 대한 연구를 목적으로 진행됩니다.
+          </p>
+          <p>
+            설문에서는 각 소스 코드 변경에 대해 두 가지 코드 차이 시각화 결과(A,
+            B)가 제시됩니다. 참가자에게 요구되는 판단 기준은 다음과 같습니다.
+          </p>
+          <p class="intro-question">
+            <strong
+              >"버전 A와 B의 시각화 결과 중 어느 쪽이 코드 변경의 의도를
+              이해하는 데 더 도움이 되는가?"</strong
+            >
+          </p>
+          <p>각 문항마다 세 가지의 선택지가 주어집니다.</p>
+          <ul>
+            <li>A (A를 더 선호함)</li>
+            <li>B (B를 더 선호함)</li>
+            <li>Unclear (둘 중 어느 것이 더 나은지 판단하기 어려움)</li>
+          </ul>
+          <p>
+            버전 A와 B의 표기는 임의적으로 부여된 것이며, A와 B에 해당되는 tree
+            differencing 기술은 문항마다 다릅니다. 설문은 총 30문항으로 다음과
+            같이 구성되어있습니다.
+          </p>
+          <ul>
+            <li>Java (1 ~ 10)</li>
+            <li>C/C++ (11 ~ 20)</li>
+            <li>Python (21 ~ 30)</li>
+          </ul>
+          <p class="intro-emphasis">
+            아래의 시각화 도구 튜토리얼을 통해 사용법을 숙지한 뒤 설문을
+            시작해주세요.
+          </p>
+        </div>
+        <iframe
+          class="tutorial-frame"
+          src="../tutorial.html"
+          title="Diff Viewer Tutorial"
+        ></iframe>
+        <div class="tutorial-actions">
+          <button id="startSurvey" class="primary">서베이 시작</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const TOTAL = 30;
+      const PAIRS = Array.from({ length: TOTAL }, (_, idx) => idx + 1);
+      const storageKey = "diff-viewer-survey-alpha";
+      const tutorialKey = "diff-viewer-survey-alpha-tutorial";
+
+      const viewerA = document.getElementById("viewerA");
+      const viewerB = document.getElementById("viewerB");
+      const progressText = document.getElementById("progressText");
+      const choiceText = document.getElementById("choiceText");
+      const skipText = document.getElementById("skipText");
+
+      const state = {
+        index: 0,
+        answers: loadAnswers(),
+      };
+
+      function loadAnswers() {
+        try {
+          const raw = localStorage.getItem(storageKey);
+          return raw ? JSON.parse(raw) : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function saveAnswers() {
+        localStorage.setItem(storageKey, JSON.stringify(state.answers));
+      }
+
+      function currentPair() {
+        return PAIRS[state.index];
+      }
+
+      function setViewers() {
+        const pairId = currentPair();
+        viewerA.src = `./${pairId}_A.html`;
+        viewerB.src = `./${pairId}_B.html`;
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const answered = Object.values(state.answers).filter(
+          (value) => value && value !== "Skip",
+        ).length;
+        const language = getLanguageForPair(currentPair());
+        progressText.textContent = `현재 ${currentPair()}번 (${language}) · 완료 ${answered}/${TOTAL}`;
+        const choice = state.answers[currentPair()];
+        choiceText.textContent = `선택: ${choice ?? "-"}`;
+        skipText.textContent = "";
+      }
+
+      function getLanguageForPair(pairId) {
+        if (pairId <= 10) return "Java";
+        if (pairId <= 20) return "C/C++";
+        return "Python";
+      }
+
+      function updateSkipNotice() {
+        const skipped = PAIRS.filter((id) => state.answers[id] === "Skip");
+        if (skipped.length === 0) {
+          skipText.textContent = "";
+          return;
+        }
+        skipText.textContent = `Skip 문항: ${skipped.join(", ")}`;
+      }
+
+      function setAnswer(value) {
+        state.answers[currentPair()] = value;
+        saveAnswers();
+        updateProgress();
+      }
+
+      function next() {
+        if (state.index < PAIRS.length - 1) {
+          state.index += 1;
+          setViewers();
+        }
+      }
+
+      function prev() {
+        if (state.index > 0) {
+          state.index -= 1;
+          setViewers();
+        }
+      }
+
+      document.getElementById("chooseA").addEventListener("click", () => {
+        setAnswer("A");
+        next();
+      });
+
+      document.getElementById("chooseB").addEventListener("click", () => {
+        setAnswer("B");
+        next();
+      });
+
+      document.getElementById("chooseE").addEventListener("click", () => {
+        setAnswer("Unclear");
+        next();
+      });
+
+      document.getElementById("nextBtn").addEventListener("click", next);
+      document.getElementById("prevBtn").addEventListener("click", prev);
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        if (!confirm("모든 응답을 초기화할까요?")) return;
+        state.answers = {};
+        state.index = 0;
+        saveAnswers();
+        setViewers();
+      });
+
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        const missing = PAIRS.filter((id) => {
+          const value = state.answers[id];
+          return !value || value === "Skip";
+        });
+        if (missing.length > 0) {
+          alert(
+            `미완료 문항이 있어 내보낼 수 없습니다.\n미완료 문항: ${missing.join(
+              ", ",
+            )}`,
+          );
+          skipText.textContent = `미완료 문항: ${missing.join(", ")}`;
+          return;
+        }
+        const payload = {
+          updatedAt: new Date().toISOString(),
+          total: TOTAL,
+          answers: state.answers,
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "diff-survey-results.json";
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+
+      const tutorial = document.getElementById("tutorial");
+      const startSurvey = document.getElementById("startSurvey");
+      const tutorialBtn = document.getElementById("tutorialBtn");
+
+      function showTutorial() {
+        tutorial.classList.add("show");
+      }
+
+      function hideTutorial() {
+        tutorial.classList.remove("show");
+      }
+
+      startSurvey.addEventListener("click", () => {
+        hideTutorial();
+      });
+
+      tutorialBtn.addEventListener("click", () => {
+        showTutorial();
+      });
+
+      setViewers();
+
+      showTutorial();
+    </script>
+  </body>
+</html>
