@@ -1,0 +1,504 @@
+<!doctype html>
+<html>
+  <head>
+    <title>DiffInk Viewer</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style>
+      .codebox {
+        padding: 4px;
+        min-height: 0;
+        font-size: 12px;
+        background: #f7f7f7;
+        flex: 1;
+        letter-spacing: 0.05em;
+        overflow: auto;
+        scroll-behavior: smooth;
+        scroll-padding-top: 54px;
+        line-height: 1.5;
+      }
+      .page:has(#p1:target) .i1,
+      .page:has(#n1:target) .i1 {
+        display: block;
+      }
+      .page:has(#p1:target) .clear,
+      .page:has(#n1:target) .clear {
+        display: none;
+      }
+      .edit {
+        height: 110px;
+        min-width: 512px;
+        font-size: 14px;
+      }
+      .editbox {
+        line-height: 1.8;
+        padding: 4px 8px;
+        min-height: 0;
+        overflow: auto;
+        font-size: 14px;
+        background: #f7f7f7;
+        flex: 1;
+        font-weight: 500;
+      }
+      .upd {
+        background: rgba(255, 217, 50, 0.4);
+      }
+      .mov {
+        background: rgba(159, 143, 255, 0.4);
+      }
+      .page:has(#m2:target) .i2,
+      .page:has(#n2:target) .i2 {
+        display: block;
+      }
+      .page:has(#m2:target) .clear,
+      .page:has(#n2:target) .clear {
+        display: none;
+      }
+      body {
+        background: white;
+        margin: 0;
+      }
+      .page:has(#n3:target) .en3 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#m3:target) .en3 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .codebox a {
+        text-decoration: none;
+        color: inherit;
+      }
+      .page:has(#p5:target) .ep5 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .token {
+        color: #017100;
+      }
+      .editbox a,
+      .toolbar a {
+        text-decoration: none;
+        color: #0076ba;
+      }
+      .page:has(#m3:target) .i3,
+      .page:has(#n3:target) .i3 {
+        display: block;
+      }
+      .page:has(#m3:target) .clear,
+      .page:has(#n3:target) .clear {
+        display: none;
+      }
+      .page {
+        margin: 0 auto;
+        padding: 0 16px 16px 16px;
+        max-width: 100vw;
+      }
+      .del {
+        background: rgba(255, 100, 78, 0.4);
+      }
+      .ins {
+        background: rgba(97, 216, 54, 0.4);
+      }
+      .ins:hover,
+      .del:hover,
+      .mov:hover,
+      .upd:hover {
+        text-decoration-line: none;
+      }
+      .ins,
+      .del,
+      .mov,
+      .upd {
+        border-top: 0.05em solid black;
+        padding-bottom: 0.05em;
+        border-bottom: 0.05em solid black;
+        box-shadow: inset -0.05em 0 0 black;
+        padding-top: 0.05em;
+      }
+      .sec {
+        padding: 0;
+        font-weight: bold;
+        font-size: 24px;
+        margin: 12px 0;
+        line-height: 1;
+      }
+      .error {
+        color: #b51700;
+      }
+      .page:has(#n1:target) .en1 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#p4:target) .i4,
+      .page:has(#n4:target) .i4 {
+        display: block;
+      }
+      .page:has(#p4:target) .clear,
+      .page:has(#n4:target) .clear {
+        display: none;
+      }
+      .no {
+        padding-bottom: 0.15em;
+        font-weight: normal;
+        color: #878787;
+        background: #f7f7f7;
+        letter-spacing: normal;
+        padding-top: 0.15em;
+      }
+      .page:has(#p1:target) .ep1 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      pre {
+        margin: 0;
+      }
+      .grid {
+        height: 131px;
+        display: grid;
+        min-width: 512px;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .page:has(#n5:target) .en5 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#p6:target) .ep6 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .toolbar {
+        font-size: 16px;
+        padding: 0;
+        margin-bottom: 6px;
+        line-height: 1;
+      }
+      .editbox a:hover,
+      .toolbar a:hover {
+        text-decoration: underline;
+      }
+      .page:has(#p5:target) .i5,
+      .page:has(#n5:target) .i5 {
+        display: block;
+      }
+      .page:has(#p5:target) .clear,
+      .page:has(#n5:target) .clear {
+        display: none;
+      }
+      .page:has(#m2:target) .en2 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#m2:target) .em2 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#n2:target) .em2 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .panel,
+      .edit {
+        border: 1px solid #afafaf;
+        border-radius: 6px;
+        overflow: hidden;
+        min-width: 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+      }
+      .page:has(#n6:target) .en6 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#p4:target) .ep4 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#n3:target) .em3 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#p6:target) .i6,
+      .page:has(#n6:target) .i6 {
+        display: block;
+      }
+      .page:has(#p6:target) .clear,
+      .page:has(#n6:target) .clear {
+        display: none;
+      }
+      .page:has(#m3:target) .em3 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .i1,
+      .i2,
+      .i3,
+      .i4,
+      .i5,
+      .i6 {
+        display: none;
+      }
+      .page:has(#n2:target) .en2 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .page:has(#n4:target) .en4 {
+        padding-bottom: 0.05em;
+        font-weight: 900;
+        color: white;
+        background: #3f3f3f;
+        padding-top: 0.05em;
+      }
+      .panel-header {
+        align-items: center;
+        padding: 8px 10px;
+        font-weight: bold;
+        font-size: 14px;
+        border-bottom: 1px solid #afafaf;
+        line-height: 1;
+        display: flex;
+        justify-content: space-between;
+        background: #ebebeb;
+      }
+      .blue-word {
+        color: #0076ba;
+      }
+      .tutorial-help {
+        font-size: 16px;
+        margin: 8px 16px 24px 16px;
+      }
+      .tutorial-help ul {
+        margin: 4px 0 0 18px;
+        padding: 0;
+      }
+      .legend-swatch {
+        display: inline-block;
+        padding: 0 2px;
+        margin: 3px 0;
+        border: 1px solid black;
+      }
+      .legend-swatch.ins {
+        box-shadow: none;
+      }
+      .legend-swatch.del {
+        box-shadow: none;
+      }
+      .legend-swatch.mov {
+        box-shadow: none;
+      }
+      .legend-swatch.upd {
+        box-shadow: none;
+      }
+      .hint {
+        font-weight: normal;
+        color: #3f3f3f;
+        display: inline-block;
+        line-height: normal;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      function jumpVia(ViaId, FinalId) {
+        location.hash = ViaId;
+        requestAnimationFrame(() => {
+          location.hash = FinalId;
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("a[data-partner]").forEach((a) => {
+          a.addEventListener("click", (e) => {
+            const Via = a.dataset.partner;
+            const FinalId = a.getAttribute("href").slice(1);
+            if (!Via || !FinalId) return;
+            e.preventDefault();
+            jumpVia(Via, FinalId);
+          });
+        });
+      });
+    </script>
+    <div class="tutorial-help">
+      <p><strong>튜토리얼 안내</strong></p>
+      <p>
+        이 화면은 코드 차이 시각화 도구의 기본 사용법을 연습하기 위한
+        예제입니다.<br />
+        위쪽 <b>Edit</b> 영역에는 현재 편집의 설명이, 아래 두 개의 코드 영역에는
+        변경 전과 후의 코드가 표시됩니다.
+      </p>
+      <ul>
+        <li>
+          <b>Edit</b> 아래의 <span class="blue-word">Prev</span> /
+          <span class="blue-word">Next</span> 링크로 <b>Edit #1-6</b>을 순서대로
+          볼 수 있습니다.
+        </li>
+        <li>
+          편집 설명이나 코드에서 색이 칠해진 부분을 클릭하면, 관련 노드로
+          스크롤되며 강조 표시됩니다.
+        </li>
+        <li>
+          <span class="blue-word">Clear</span> 링크를 클릭하면 강조 표시가
+          제거됩니다.
+        </li>
+        <li>
+          아래 색상은 각각 다음을 의미합니다:
+          <ul>
+            <li>
+              <span class="legend-swatch ins">Insert</span> : 노드/서브트리
+              <strong>삽입</strong>
+            </li>
+            <li>
+              <span class="legend-swatch del">Delete</span> : 노드/서브트리
+              <strong>삭제</strong>
+            </li>
+            <li>
+              <span class="legend-swatch mov">Move</span> : 노드/서브트리
+              <strong>이동</strong>
+            </li>
+            <li>
+              <span class="legend-swatch upd">Update</span> : 노드의
+              <strong>텍스트 변경</strong> (변수 이름, 숫자/문자열 리터럴 등)
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="page">
+      <div class="sec">
+        <span class="clear">Edit</span>
+        <span class="i1">Edit #1</span>
+        <span class="i2">Edit #2</span>
+        <span class="i3">Edit #3</span>
+        <span class="i4">Edit #4</span>
+        <span class="i5">Edit #5</span>
+        <span class="i6">Edit #6</span>
+      </div>
+      <div class="toolbar">
+        <span class="clear"
+          ><a href="#n6">Prev</a> | <a href="#n1">Next</a> |
+          <a href="#clear">Clear</a></span
+        >
+        <span class="i1"
+          ><a href="#n6">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> |
+          <a href="#clear">Clear</a></span
+        >
+        <span class="i2"
+          ><a href="#n1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> |
+          <a href="#clear">Clear</a></span
+        >
+        <span class="i3"
+          ><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> |
+          <a href="#clear">Clear</a></span
+        >
+        <span class="i4"
+          ><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5">Next</a> |
+          <a href="#clear">Clear</a></span
+        >
+        <span class="i5"
+          ><a href="#n4">Prev</a> | <a href="#n6">Next</a> |
+          <a href="#clear">Clear</a></span
+        >
+        <span class="i6"
+          ><a href="#n5">Prev</a> | <a href="#n1">Next</a> |
+          <a href="#clear">Clear</a></span
+        >
+      </div>
+      <div class="edit">
+        <div class="editbox">
+          <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n1"> declaration</a> [2, 1] - [2, 11]
+<span style="font-weight:600">  into           </span><a href="#p1"> translation_unit</a> [1, 1] - [5, 9]
+<span class="hint">Insert subtree: 노드와 그 하위 노드들을 전체 삽입
+into: 해당 부모 노드 아래로 삽입</span></span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> expression_statement</a> [4, 3] - [4, 9]
+<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> expression_statement</a> [5, 3] - [5, 9]
+<span class="hint">Move: 노드와 그 하위 노드들을 다른 위치로 이동
+to: 이동 후의 위치</span></span><span class="i3"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n3" data-partner="m3"> identifier</a>: <span class=token>&quot;OldVar&quot;</span> [3, 8] - [3, 14]
+<span style="font-weight:600">  to     </span><a href="#m3" data-partner="n3"> identifier</a>: <span class=token>&quot;NewVar&quot;</span> [4, 8] - [4, 14]
+<span class="hint">Update: 노드의 텍스트 값을 변경
+to: 변경 후의 노드</span></span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n4"> {</a>: <span class=token>&quot;{&quot;</span> [3, 16] - [3, 17]
+<span style="font-weight:600">  from   </span><a href="#p4"> compound_statement</a> [3, 16] - [5, 2]
+<span class="hint">Delete: 노드를 삭제
+form: 삭제할 노드의 부모 노드</span></span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n5"> }</a>: <span class=token>&quot;}&quot;</span> [5, 1] - [5, 2]
+<span style="font-weight:600">  from   </span><a href="#p5"> compound_statement</a> [3, 16] - [5, 2]
+<span class="hint">Delete: 노드를 삭제
+form: 삭제할 노드의 부모 노드</span></span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> compound_statement</a> [3, 16] - [5, 2]
+<span style="font-weight:600">  from   </span><a href="#p6"> while_statement</a> [3, 1] - [5, 2]
+<span class="hint">Delete: 노드를 삭제
+form: 삭제할 노드의 부모 노드</span></span></code></pre>
+        </div>
+      </div>
+      <div class="sec">Code</div>
+      <div class="grid">
+        <div class="panel">
+          <div class="panel-header">Original C/C++ code</div>
+          <div class="codebox">
+            <pre><code><span class="no">1 </span>int x = 1; 
+<span class="no">2 </span> 
+<span class="no">3 </span><span class="ep6" id="p6">while (<span class="en3" id="n3"><a data-partner="#m3" class="upd" href="#n3">OldVar</a></span>) <span class="en6" id="n6"><span class="ep5" id="p5"><span class="ep4" id="p4"><span class="en4" id="n4"><a href="#n4" class="del">{</a></span><a href="#n6" class="del"> 
+<span class="no">4 </span>  </a><span class="en2" id="n2"><a data-partner="#m2" class="mov" href="#n2">foo();</a></span><a href="#n6" class="del"> 
+<span class="no">5 </span></a><span class="en5" id="n5"><a href="#n5" class="del">}</a></span></span></span></span></span></code></pre>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Modified C/C++ code</div>
+          <div class="codebox">
+            <pre><code><span class="no">1 </span><span class="ep1" id="p1">int x = 1; 
+<span class="no">2 </span><span class="en1" id="n1"><a href="#n1" class="ins">int y = 2;</a></span> 
+<span class="no">3 </span> 
+<span class="no">4 </span>while (<span class="em3" id="m3"><a data-partner="#n3" class="upd" href="#m3">NewVar</a></span>) 
+<span class="no">5 </span>  <span class="em2" id="m2"><a data-partner="#n2" class="mov" href="#m2">foo();</a></span></span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
