@@ -5,744 +5,452 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#n9:target) .en9 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m9:target) .en9 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m9:target) .em9 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n9:target) .em9 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n1:target) .en1 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m13:target) .en13 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m13:target) .em13 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n13:target) .em13 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m1:target) .en1 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m1:target) .em1 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n1:target) .em1 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .edit {
-    font-size: 14px;
-    min-width: 512px;
-    height: 60px;
-  }
-  .editbox {
-    overflow: auto;
-    font-size: 14px;
-    background: #f7f7f7;
-    flex: 1;
-    line-height: 1.8;
-    font-weight: 500;
-    padding: 4px 8px;
-    min-height: 0;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#m4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#m4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  .page:has(#p15:target) .i15, .page:has(#n15:target) .i15 {
-    display: block;
-  }
-  .page:has(#p15:target) .clear, .page:has(#n15:target) .clear {
-    display: none;
-  }
-  .page:has(#n15:target) .en15 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p14:target) .ep14 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .page:has(#n2:target) .en2 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m2:target) .en2 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m2:target) .em2 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n2:target) .em2 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n10:target) .en10 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m10:target) .en10 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m10:target) .em10 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n10:target) .em10 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .ins, .del, .mov, .upd {
-    padding-top: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
-    padding-bottom: 0.05em;
-    border-top:  0.05em solid black;
-    border-bottom:  0.05em solid black;
-  }
-  .error {
-    color: #b51700;
-  }
-  .page:has(#p17:target) .i17, .page:has(#n17:target) .i17 {
-    display: block;
-  }
-  .page:has(#p17:target) .clear, .page:has(#n17:target) .clear {
-    display: none;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .token {
-    color: #017100;
-  }
-  .no {
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    letter-spacing: normal;
-    color: #878787;
-  }
-  .page:has(#n3:target) .en3 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n16:target) .en16 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p16:target) .ep16 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n3:target) .em3 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p5:target) .ep5 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p18:target) .i18, .page:has(#n18:target) .i18 {
-    display: block;
-  }
-  .page:has(#p18:target) .clear, .page:has(#n18:target) .clear {
-    display: none;
-  }
-  .codebox {
-    overflow: auto;
-    scroll-behavior: smooth;
-    padding: 4px;
-    min-height: 0;
-    background: #f7f7f7;
-    font-size: 12px;
-    flex: 1;
-    scroll-padding-top: 54px;
-    letter-spacing: 0.05em;
-    line-height: 1.5;
-  }
-  .panel-header {
-    font-weight: bold;
-    padding: 8px 10px;
-    justify-content: space-between;
-    background: #ebebeb;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    line-height: 1;
-    align-items: center;
-    display: flex;
-  }
-  .page:has(#n14:target) .en14 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .grid {
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    height: calc(100vh - 186px);
-    min-height: 252px;
-    display: grid;
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .page:has(#p19:target) .i19, .page:has(#n19:target) .i19 {
-    display: block;
-  }
-  .page:has(#p19:target) .clear, .page:has(#n19:target) .clear {
-    display: none;
-  }
-  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .page:has(#p12:target) .clear, .page:has(#n12:target) .clear {
-    display: none;
-  }
-  .page:has(#n17:target) .en17 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p17:target) .ep17 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .page:has(#m9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#n4:target) .en4 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m4:target) .en4 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m4:target) .em4 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n4:target) .em4 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#m13:target) .clear, .page:has(#n13:target) .clear {
-    display: none;
-  }
-  .page:has(#p16:target) .i16, .page:has(#n16:target) .i16 {
-    display: block;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11, .i12, .i13, .i14, .i15, .i16, .i17, .i18, .i19 {
-    display: none;
-  }
-  .page:has(#n6:target) .en6 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p6:target) .ep6 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .page:has(#p16:target) .clear, .page:has(#n16:target) .clear {
-    display: none;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  .page:has(#n11:target) .en11 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m11:target) .en11 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .page:has(#n18:target) .en18 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p18:target) .ep18 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m11:target) .em11 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n11:target) .em11 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m11:target) .clear, .page:has(#n11:target) .clear {
-    display: none;
-  }
-  .page:has(#n8:target) .en8 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page {
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0 16px 8px 16px;
-  }
-  .page:has(#p12:target) .i12, .page:has(#n12:target) .i12 {
-    display: block;
-  }
-  .page:has(#m11:target) .i11, .page:has(#n11:target) .i11 {
-    display: block;
-  }
-  .page:has(#m10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#m9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .sec {
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-    font-weight: bold;
-    padding: 0;
-  }
-  .page:has(#n7:target) .en7 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m7:target) .en7 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m7:target) .em7 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n7:target) .em7 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .toolbar {
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-  }
-  .page:has(#n19:target) .en19 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p19:target) .ep19 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#n5:target) .en5 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p15:target) .ep15 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m13:target) .i13, .page:has(#n13:target) .i13 {
-    display: block;
-  }
-  .page:has(#n12:target) .en12 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#p12:target) .ep12 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m3:target) .em3 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m3:target) .en3 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#n13:target) .en13 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .panel, .edit {
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    flex-direction: column;
-    display: flex;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-  }
-  .page:has(#p8:target) .ep8 {
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .page:has(#p14:target) .i14, .page:has(#n14:target) .i14 {
-    display: block;
-  }
-  .page:has(#p14:target) .clear, .page:has(#n14:target) .clear {
-    display: none;
-  }
-</style>
-</head>
+:root {
+  --del-clr: 255 150 141;
+  --mov-clr: 191 175 255;
+  --upd-clr: 255 217 50;
+  --ins-clr: 97 216 54;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+}
+.grid {
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+}
+.panel {
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+}
+.panel-header {
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  display: flex;
+  line-height: 1;
+  align-items: center;
+  justify-content: space-between;
+}
+.codebox {
+  overflow: auto;
+  background: #f7f7f7;
+  padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
+  font-size: 12px;
+  min-height: 0;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  background: #f7f7f7;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-weight: normal;
+  letter-spacing: normal;
+  color: #878787;
+}
+.legend {
+  margin: 8px 0 12px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.legend-row {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  margin-right: 10px;
+}
+.legend-key kbd {
+  background: #fbfbfb;
+  margin-right: 4px;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+}
+.description {
+  overflow: auto;
+  width: 384px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  padding: 0px 2px;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
 <body>
 <script>
-function jumpVia(ViaId, FinalId) {
-  location.hash = ViaId;
-  requestAnimationFrame(() => {
-    location.hash = FinalId;
-  });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('a[data-partner]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const Via = a.dataset.partner;
-      const FinalId = a.getAttribute('href').slice(1);
-      if (!Via || !FinalId) return;
-      e.preventDefault();
-      jumpVia(Via, FinalId);
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
     });
   });
-});
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      unfocusEdit();
+      return;
+    }
+
+    const key = e.key.toLowerCase();
+
+    if (key === "u") {
+      unfocusEdit();
+      return;
+    }
+
+    if (key !== "n" && key !== "b") return;
+    if (editOrder.length === 0) return;
+
+    e.preventDefault();
+
+    if (activeEdit === null) {
+      editIndex = key === "n" ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += key === "n" ? 1 : -1;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  });
+});
 </script>
-  <div class="page">
-    <div class="sec">
-      <span class="clear">Edit</span>
-      <span class="i1">Edit #1</span>
-      <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
-      <span class="i7">Edit #7</span>
-      <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
-      <span class="i11">Edit #11</span>
-      <span class="i12">Edit #12</span>
-      <span class="i13">Edit #13</span>
-      <span class="i14">Edit #14</span>
-      <span class="i15">Edit #15</span>
-      <span class="i16">Edit #16</span>
-      <span class="i17">Edit #17</span>
-      <span class="i18">Edit #18</span>
-      <span class="i19">Edit #19</span>
-    </div>
-    <div class="toolbar">
-      <span class="clear"><a href="#n19">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n19">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4" data-partner="#m4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4" data-partner="#m4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7" data-partner="#m7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7" data-partner="#m7">Prev</a> | <a href="#n9" data-partner="#m9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10" data-partner="#m10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9" data-partner="#m9">Prev</a> | <a href="#n11" data-partner="#m11">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i11"><a href="#n10" data-partner="#m10">Prev</a> | <a href="#n12">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i12"><a href="#n11" data-partner="#m11">Prev</a> | <a href="#n13" data-partner="#m13">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i13"><a href="#n12">Prev</a> | <a href="#n14">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i14"><a href="#n13" data-partner="#m13">Prev</a> | <a href="#n15">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i15"><a href="#n14">Prev</a> | <a href="#n16">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i16"><a href="#n15">Prev</a> | <a href="#n17">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i17"><a href="#n16">Prev</a> | <a href="#n18">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i18"><a href="#n17">Prev</a> | <a href="#n19">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i19"><a href="#n18">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-    </div>
-    <div class="edit">
-      <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> compound_statement</a> [421, 71] - [424, 4]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> compound_statement</a> [413, 54] - [435, 2]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> declaration</a> [414, 3] - [414, 46]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> declaration</a> [414, 3] - [414, 46]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n3" data-partner="m3"> declaration</a> [415, 3] - [415, 36]
-<span style="font-weight:600">  to   </span><a href="#m3" data-partner="n3"> declaration</a> [415, 3] - [415, 36]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n4" data-partner="m4"> if_statement</a> [416, 3] - [419, 4]
-<span style="font-weight:600">  to   </span><a href="#m4" data-partner="n4"> if_statement</a> [416, 3] - [419, 4]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> comment</a>: <span class=token>&quot;// Add CxxReturnUdt option to functions that return nontrivial record types&quot;</span> [421, 3] - [421, 78]
-<span style="font-weight:600">  into   </span><a href="#p5"> compound_statement</a> [413, 54] - [435, 2]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n6"> comment</a>: <span class=token>&quot;// or methods that return record types.&quot;</span> [422, 3] - [422, 42]
-<span style="font-weight:600">  into   </span><a href="#p6"> compound_statement</a> [413, 54] - [435, 2]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n7" data-partner="m7"> if_statement</a> [421, 3] - [424, 4]
-<span style="font-weight:600">  to   </span><a href="#m7" data-partner="n7"> if_statement</a> [423, 3] - [425, 43]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n8"> comment</a>: <span class=token>&quot;// DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison.&quot;</span> [427, 3] - [427, 80]
-<span style="font-weight:600">  into   </span><a href="#p8"> compound_statement</a> [413, 54] - [435, 2]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n9" data-partner="m9"> if_statement</a> [427, 3] - [432, 4]
-<span style="font-weight:600">  to   </span><a href="#m9" data-partner="n9"> if_statement</a> [428, 3] - [433, 4]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n10" data-partner="m10"> return_statement</a> [433, 3] - [433, 13]
-<span style="font-weight:600">  to   </span><a href="#m10" data-partner="n10"> return_statement</a> [434, 3] - [434, 13]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n11" data-partner="m11"> if_statement</a> [422, 5] - [423, 43]
-<span style="font-weight:600">  to   </span><a href="#m11" data-partner="n11"> if_statement</a> [424, 5] - [425, 43]</span><span class="i12"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n12"> binary_expression</a> [424, 9] - [424, 44]
-<span style="font-weight:600">  into   </span><a href="#p12"> condition_clause</a> [424, 8] - [424, 45]</span><span class="i13"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n13" data-partner="m13"> call_expression</a> [422, 9] - [422, 33]
-<span style="font-weight:600">  to   </span><a href="#m13" data-partner="n13"> call_expression</a> [424, 9] - [424, 33]</span><span class="i14"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n14"> ||</a>: <span class=token>&quot;||&quot;</span> [424, 34] - [424, 36]
-<span style="font-weight:600">  into   </span><a href="#p14"> binary_expression</a> [424, 9] - [424, 44]</span><span class="i15"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n15"> identifier</a>: <span class=token>&quot;ClassTy&quot;</span> [424, 37] - [424, 44]
-<span style="font-weight:600">  into   </span><a href="#p15"> binary_expression</a> [424, 9] - [424, 44]</span><span class="i16"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n16"> {</a>: <span class=token>&quot;{&quot;</span> [413, 54] - [413, 55]
-<span style="font-weight:600">  from   </span><a href="#p16"> compound_statement</a> [413, 54] - [434, 2]</span><span class="i17"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n17"> comment</a>: <span class=token>&quot;// DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison.&quot;</span> [426, 3] - [426, 80]
-<span style="font-weight:600">  from   </span><a href="#p17"> compound_statement</a> [413, 54] - [434, 2]</span><span class="i18"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n18"> }</a>: <span class=token>&quot;}&quot;</span> [434, 1] - [434, 2]
-<span style="font-weight:600">  from   </span><a href="#p18"> compound_statement</a> [413, 54] - [434, 2]</span><span class="i19"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n19"> compound_statement</a> [413, 54] - [434, 2]
-<span style="font-weight:600">  from   </span><a href="#p19"> function_definition</a> [410, 1] - [434, 2]</span></code></pre>
-      </div>
-    </div>
-    <div class="sec">Code</div>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header">16_A (original)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 6 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 6 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 6 :&ensp;<b>Delete <code class="type">"compound_statement"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 6 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 6 :&ensp;<b>Insert <code class="type">"binary_expression"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 6 :&ensp;<b>Move <code class="type">"call_expression"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">16_A (original)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
 <span class="no">   2 </span>// 
 <span class="no">   3 </span>// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions. 
 <span class="no">   4 </span>// See https://llvm.org/LICENSE.txt for license information. 
@@ -1151,31 +859,31 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 407 </span>  return ((DCTy-&gt;getFlags() &amp; DINode::FlagNonTrivial) == DINode::FlagNonTrivial); 
 <span class="no"> 408 </span>} 
 <span class="no"> 409 </span> 
-<span class="no"> 410 </span><span id="p19" class="ep19">static FunctionOptions 
+<span class="no"> 410 </span>static FunctionOptions 
 <span class="no"> 411 </span>getFunctionOptions(const DISubroutineType *Ty, 
 <span class="no"> 412 </span>                   const DICompositeType *ClassTy = nullptr, 
-<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) <span id="n19" class="en19"><span id="p18" class="ep18"><span id="p17" class="ep17"><span id="p16" class="ep16"><span id="n16" class="en16"><a class="del" href="#n16">{</a></span><a class="del" href="#n19"> 
-<span class="no"> 414 </span>  </a><span id="n2" class="en2"><a data-partner="#m2" class="mov" href="#n2">FunctionOptions FO = FunctionOptions::None;</a></span><a class="del" href="#n19"> 
-<span class="no"> 415 </span>  </a><span id="n3" class="en3"><a data-partner="#m3" class="mov" href="#n3">const DIType *ReturnTy = nullptr;</a></span><a class="del" href="#n19"> 
-<span class="no"> 416 </span>  </a><span id="n4" class="en4"><a data-partner="#m4" class="mov" href="#n4">if (auto TypeArray = Ty-&gt;getTypeArray()) { 
+<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) { 
+<span class="no"> 414 </span>  FunctionOptions FO = FunctionOptions::None; 
+<span class="no"> 415 </span>  const DIType *ReturnTy = nullptr; 
+<span class="no"> 416 </span>  if (auto TypeArray = Ty-&gt;getTypeArray()) { 
 <span class="no"> 417 </span>    if (TypeArray.size()) 
 <span class="no"> 418 </span>      ReturnTy = TypeArray[0]; 
-<span class="no"> 419 </span>  }</a></span><a class="del" href="#n19"> 
+<span class="no"> 419 </span>  } 
 <span class="no"> 420 </span> 
-<span class="no"> 421 </span>  </a><span id="n7" class="en7"><a data-partner="#m7" class="mov" href="#n7">if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) </a><span id="n1" class="en1"><a data-partner="#m1" class="mov" href="#n1">{ 
-<span class="no"> 422 </span>    </a><span id="n11" class="en11"><a data-partner="#m11" class="mov" href="#n11">if (</a><span id="n13" class="en13"><a data-partner="#m13" class="mov" href="#n13">isNonTrivial(ReturnDCTy)</a></span><a data-partner="#m11" class="mov" href="#n11">) 
-<span class="no"> 423 </span>      FO |= FunctionOptions::CxxReturnUdt;</a></span><a data-partner="#m1" class="mov" href="#n1"> 
-<span class="no"> 424 </span>  }</a></span></span><a class="del" href="#n19"> 
+<span class="no"> 421 </span>  <span data-kind="ins" id="edit-1-old"></span><span data-kind="ins" id="edit-2-old"></span>if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) <span data-kind="del" id="edit-3-old"><span class="hl del" id="hl-3-14835">{ 
+<span class="no"> 422 </span>    </span><span data-kind="mov" id="edit-4-old"><span class="hl mov" id="hl-4-14841">if (</span><span data-kind="mov" id="edit-6-old"><span class="hl mov" id="hl-6-14845"><span data-kind="ins" id="edit-5-old"></span>isNonTrivial(ReturnDCTy)</span></span><span class="hl mov" id="hl-4-14869">) 
+<span class="no"> 423 </span>      FO |= FunctionOptions::CxxReturnUdt;</span></span><span class="hl del" id="hl-3-14913"> 
+<span class="no"> 424 </span>  }</span></span> 
 <span class="no"> 425 </span> 
-<span class="no"> 426 </span>  </a><span id="n17" class="en17"><a class="del" href="#n17">// DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison.</a></span><a class="del" href="#n19"> 
-<span class="no"> 427 </span>  </a><span id="n9" class="en9"><a data-partner="#m9" class="mov" href="#n9">if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
+<span class="no"> 426 </span>  // DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison. 
+<span class="no"> 427 </span>  if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
 <span class="no"> 428 </span>    FO |= FunctionOptions::Constructor; 
 <span class="no"> 429 </span> 
 <span class="no"> 430 </span>  // TODO: put the FunctionOptions::ConstructorWithVirtualBases flag. 
 <span class="no"> 431 </span> 
-<span class="no"> 432 </span>  }</a></span><a class="del" href="#n19"> 
-<span class="no"> 433 </span>  </a><span id="n10" class="en10"><a data-partner="#m10" class="mov" href="#n10">return FO;</a></span><a class="del" href="#n19"> 
-<span class="no"> 434 </span></a><span id="n18" class="en18"><a class="del" href="#n18">}</a></span></span></span></span></span></span> 
+<span class="no"> 432 </span>  } 
+<span class="no"> 433 </span>  return FO; 
+<span class="no"> 434 </span>} 
 <span class="no"> 435 </span> 
 <span class="no"> 436 </span>TypeIndex CodeViewDebug::getMemberFunctionType(const DISubprogram *SP, 
 <span class="no"> 437 </span>                                               const DICompositeType *Class) { 
@@ -3873,13 +3581,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">3129 </span>    endSymbolRecord(SConstantEnd); 
 <span class="no">3130 </span>  } 
 <span class="no">3131 </span>} 
-<span class="no">3132 </span></code></pre>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">16_A (modified)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
+<span class="no">3132 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">16_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
 <span class="no">   2 </span>// 
 <span class="no">   3 </span>// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions. 
 <span class="no">   4 </span>// See https://llvm.org/LICENSE.txt for license information. 
@@ -4291,29 +3995,29 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 410 </span>static FunctionOptions 
 <span class="no"> 411 </span>getFunctionOptions(const DISubroutineType *Ty, 
 <span class="no"> 412 </span>                   const DICompositeType *ClassTy = nullptr, 
-<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) <span id="p8" class="ep8"><span id="p6" class="ep6"><span id="p5" class="ep5"><span id="m1" class="em1"><a data-partner="#n1" class="mov" href="#m1">{ 
-<span class="no"> 414 </span>  </a><span id="m2" class="em2"><a data-partner="#n2" class="mov" href="#m2">FunctionOptions FO = FunctionOptions::None;</a></span><a data-partner="#n1" class="mov" href="#m1"> 
-<span class="no"> 415 </span>  </a><span id="m3" class="em3"><a data-partner="#n3" class="mov" href="#m3">const DIType *ReturnTy = nullptr;</a></span><a data-partner="#n1" class="mov" href="#m1"> 
-<span class="no"> 416 </span>  </a><span id="m4" class="em4"><a data-partner="#n4" class="mov" href="#m4">if (auto TypeArray = Ty-&gt;getTypeArray()) { 
+<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) { 
+<span class="no"> 414 </span>  FunctionOptions FO = FunctionOptions::None; 
+<span class="no"> 415 </span>  const DIType *ReturnTy = nullptr; 
+<span class="no"> 416 </span>  if (auto TypeArray = Ty-&gt;getTypeArray()) { 
 <span class="no"> 417 </span>    if (TypeArray.size()) 
 <span class="no"> 418 </span>      ReturnTy = TypeArray[0]; 
-<span class="no"> 419 </span>  }</a></span><a data-partner="#n1" class="mov" href="#m1"> 
+<span class="no"> 419 </span>  } 
 <span class="no"> 420 </span> 
-<span class="no"> 421 </span>  </a><span id="n5" class="en5"><a class="ins" href="#n5">// Add CxxReturnUdt option to functions that return nontrivial record types</a></span><a data-partner="#n1" class="mov" href="#m1"> 
-<span class="no"> 422 </span>  </a><span id="n6" class="en6"><a class="ins" href="#n6">// or methods that return record types.</a></span><a data-partner="#n1" class="mov" href="#m1"> 
-<span class="no"> 423 </span>  </a><span id="m7" class="em7"><a data-partner="#n7" class="mov" href="#m7">if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) 
-<span class="no"> 424 </span>    </a><span id="m11" class="em11"><a data-partner="#n11" class="mov" href="#m11">if <span id="p12" class="ep12">(</a><span id="p15" class="ep15"><span id="p14" class="ep14"><span id="n12" class="en12"><span id="m13" class="em13"><a data-partner="#n13" class="mov" href="#m13">isNonTrivial(ReturnDCTy)</a></span><a class="ins" href="#n12"> </a><span id="n14" class="en14"><a class="ins" href="#n14">||</a></span><a class="ins" href="#n12"> </a><span id="n15" class="en15"><a class="ins" href="#n15">ClassTy</a></span></span></span></span><a data-partner="#n11" class="mov" href="#m11">)</span> 
-<span class="no"> 425 </span>      FO |= FunctionOptions::CxxReturnUdt;</a></span></span><a data-partner="#n1" class="mov" href="#m1"> 
+<span class="no"> 421 </span>  <span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-14767">// Add CxxReturnUdt option to functions that return nontrivial record types</span></span> 
+<span class="no"> 422 </span>  <span data-kind="ins" id="edit-2-new"><span class="hl ins" id="hl-2-14845">// or methods that return record types.</span></span> 
+<span class="no"> 423 </span>  if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) 
+<span class="no"> 424 </span>    <span data-kind="mov" id="edit-4-new"><span class="hl mov" id="hl-4-14959"><span data-kind="del" id="edit-3-new"></span>if (</span><span data-kind="ins" id="edit-5-new"><span data-kind="mov" id="edit-6-new"><span class="hl mov" id="hl-6-14963">isNonTrivial(ReturnDCTy)</span></span><span class="hl ins" id="hl-5-14987"> || ClassTy</span></span><span class="hl mov" id="hl-4-14998">) 
+<span class="no"> 425 </span>      FO |= FunctionOptions::CxxReturnUdt;</span></span> 
 <span class="no"> 426 </span> 
-<span class="no"> 427 </span>  </a><span id="n8" class="en8"><a class="ins" href="#n8">// DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison.</a></span><a data-partner="#n1" class="mov" href="#m1"> 
-<span class="no"> 428 </span>  </a><span id="m9" class="em9"><a data-partner="#n9" class="mov" href="#m9">if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
+<span class="no"> 427 </span>  // DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison. 
+<span class="no"> 428 </span>  if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
 <span class="no"> 429 </span>    FO |= FunctionOptions::Constructor; 
 <span class="no"> 430 </span> 
 <span class="no"> 431 </span>  // TODO: put the FunctionOptions::ConstructorWithVirtualBases flag. 
 <span class="no"> 432 </span> 
-<span class="no"> 433 </span>  }</a></span><a data-partner="#n1" class="mov" href="#m1"> 
-<span class="no"> 434 </span>  </a><span id="m10" class="em10"><a data-partner="#n10" class="mov" href="#m10">return FO;</a></span><a data-partner="#n1" class="mov" href="#m1"> 
-<span class="no"> 435 </span>}</a></span></span></span></span> 
+<span class="no"> 433 </span>  } 
+<span class="no"> 434 </span>  return FO; 
+<span class="no"> 435 </span>} 
 <span class="no"> 436 </span> 
 <span class="no"> 437 </span>TypeIndex CodeViewDebug::getMemberFunctionType(const DISubprogram *SP, 
 <span class="no"> 438 </span>                                               const DICompositeType *Class) { 
@@ -7011,10 +6715,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">3130 </span>    endSymbolRecord(SConstantEnd); 
 <span class="no">3131 </span>  } 
 <span class="no">3132 </span>} 
-<span class="no">3133 </span></code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+<span class="no">3133 </span></code></pre></div>
+</div></div></div>
 </body>
 </html>

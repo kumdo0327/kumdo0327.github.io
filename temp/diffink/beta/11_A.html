@@ -5,965 +5,465 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .page:has(#p23:target) .i23, .page:has(#n23:target) .i23 {
-    display: block;
-  }
-  .page:has(#p23:target) .clear, .page:has(#n23:target) .clear {
-    display: none;
-  }
-  .page:has(#n19:target) .en19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m19:target) .en19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m19:target) .em19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n19:target) .em19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p24:target) .i24, .page:has(#n24:target) .i24 {
-    display: block;
-  }
-  .page:has(#p24:target) .clear, .page:has(#n24:target) .clear {
-    display: none;
-  }
-  .page:has(#n9:target) .en9 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p9:target) .ep9 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n2:target) .en2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m2:target) .en2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m2:target) .em2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n2:target) .em2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .page:has(#n10:target) .en10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p10:target) .ep10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n5:target) .en5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#p5:target) .ep5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .page:has(#n21:target) .en21 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p21:target) .ep21 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n3:target) .en3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .en3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .em3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n1:target) .en1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .page:has(#n11:target) .en11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p11:target) .ep11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m1:target) .em1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n1:target) .em1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n22:target) .en22 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .panel, .edit {
-    flex-direction: column;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-  }
-  .page:has(#n12:target) .en12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m12:target) .en12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m12:target) .em12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n12:target) .em12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#m6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .page:has(#m7:target) .en7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m7:target) .em7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n7:target) .em7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n4:target) .en4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p4:target) .ep4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .page:has(#n13:target) .en13 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p13:target) .ep13 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .editbox {
-    padding: 4px 8px;
-    line-height: 1.8;
-    background: #f7f7f7;
-    min-height: 0;
-    overflow: auto;
-    font-size: 14px;
-    font-weight: 500;
-    flex: 1;
-  }
-  .page:has(#m8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#m8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#n8:target) .en8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m8:target) .en8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m8:target) .em8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n8:target) .em8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .token {
-    color: #017100;
-  }
-  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .ins, .del, .mov, .upd {
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
-    padding-top: 0.05em;
-    border-bottom:  0.05em solid black;
-    padding-bottom: 0.05em;
-  }
-  .page:has(#n14:target) .en14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m14:target) .en14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m14:target) .em14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n25:target) .en25 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p25:target) .ep25 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#p11:target) .i11, .page:has(#n11:target) .i11 {
-    display: block;
-  }
-  .page:has(#p11:target) .clear, .page:has(#n11:target) .clear {
-    display: none;
-  }
-  .page:has(#n15:target) .en15 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p15:target) .ep15 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p26:target) .ep26 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m12:target) .i12, .page:has(#n12:target) .i12 {
-    display: block;
-  }
-  .page:has(#m12:target) .clear, .page:has(#n12:target) .clear {
-    display: none;
-  }
-  .page:has(#p13:target) .i13, .page:has(#n13:target) .i13 {
-    display: block;
-  }
-  .page:has(#p13:target) .clear, .page:has(#n13:target) .clear {
-    display: none;
-  }
-  .page:has(#n27:target) .en27 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n16:target) .en16 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p16:target) .ep16 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m14:target) .clear, .page:has(#n14:target) .clear {
-    display: none;
-  }
-  .page:has(#p15:target) .i15, .page:has(#n15:target) .i15 {
-    display: block;
-  }
-  .page:has(#p15:target) .clear, .page:has(#n15:target) .clear {
-    display: none;
-  }
-  .page:has(#n17:target) .en17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m17:target) .en17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p16:target) .i16, .page:has(#n16:target) .i16 {
-    display: block;
-  }
-  .page:has(#p16:target) .clear, .page:has(#n16:target) .clear {
-    display: none;
-  }
-  .page:has(#n28:target) .en28 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p28:target) .ep28 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .page:has(#m17:target) .i17, .page:has(#n17:target) .i17 {
-    display: block;
-  }
-  .page:has(#m17:target) .clear, .page:has(#n17:target) .clear {
-    display: none;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .error {
-    color: #b51700;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .no {
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    letter-spacing: normal;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-  }
-  pre {
-    margin: 0;
-  }
-  .edit {
-    font-size: 14px;
-    min-width: 512px;
-    height: 60px;
-  }
-  .codebox {
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    scroll-padding-top: 54px;
-    padding: 4px;
-    min-height: 0;
-    flex: 1;
-    font-size: 12px;
-    background: #f7f7f7;
-    line-height: 1.5;
-  }
-  .panel-header {
-    background: #ebebeb;
-    display: flex;
-    align-items: center;
-    padding: 8px 10px;
-    justify-content: space-between;
-    line-height: 1;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    font-weight: bold;
-  }
-  .page:has(#p18:target) .i18, .page:has(#n18:target) .i18 {
-    display: block;
-  }
-  .page:has(#p18:target) .clear, .page:has(#n18:target) .clear {
-    display: none;
-  }
-  .grid {
-    gap: 16px;
-    height: calc(100vh - 186px);
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-  }
-  .toolbar {
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-  }
-  .sec {
-    padding: 0;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-  }
-  .page {
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0 16px 8px 16px;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  .page:has(#p25:target) .i25, .page:has(#n25:target) .i25 {
-    display: block;
-  }
-  .page:has(#p25:target) .clear, .page:has(#n25:target) .clear {
-    display: none;
-  }
-  .page:has(#m19:target) .clear, .page:has(#n19:target) .clear {
-    display: none;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11, .i12, .i13, .i14, .i15, .i16, .i17, .i18, .i19, .i20, .i21, .i22, .i23, .i24, .i25, .i26, .i27, .i28 {
-    display: none;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#p27:target) .clear, .page:has(#n27:target) .clear {
-    display: none;
-  }
-  .page:has(#n26:target) .en26 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n14:target) .em14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n3:target) .em3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p26:target) .i26, .page:has(#n26:target) .i26 {
-    display: block;
-  }
-  .page:has(#p26:target) .clear, .page:has(#n26:target) .clear {
-    display: none;
-  }
-  .page:has(#p20:target) .clear, .page:has(#n20:target) .clear {
-    display: none;
-  }
-  .page:has(#m1:target) .en1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#p23:target) .ep23 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n7:target) .en7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p24:target) .ep24 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n24:target) .en24 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p27:target) .i27, .page:has(#n27:target) .i27 {
-    display: block;
-  }
-  .page:has(#p21:target) .i21, .page:has(#n21:target) .i21 {
-    display: block;
-  }
-  .page:has(#p21:target) .clear, .page:has(#n21:target) .clear {
-    display: none;
-  }
-  .page:has(#p27:target) .ep27 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p20:target) .i20, .page:has(#n20:target) .i20 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#n18:target) .en18 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p18:target) .ep18 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n23:target) .en23 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p28:target) .i28, .page:has(#n28:target) .i28 {
-    display: block;
-  }
-  .page:has(#p28:target) .clear, .page:has(#n28:target) .clear {
-    display: none;
-  }
-  .page:has(#p22:target) .i22, .page:has(#n22:target) .i22 {
-    display: block;
-  }
-  .page:has(#p22:target) .clear, .page:has(#n22:target) .clear {
-    display: none;
-  }
-  .page:has(#p22:target) .ep22 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m14:target) .i14, .page:has(#n14:target) .i14 {
-    display: block;
-  }
-  .page:has(#n17:target) .em17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m17:target) .em17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p20:target) .ep20 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n20:target) .en20 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m19:target) .i19, .page:has(#n19:target) .i19 {
-    display: block;
-  }
-</style>
-</head>
+:root {
+  --ins-clr: 97 216 54;
+  --del-clr: 255 150 141;
+  --mov-clr: 191 175 255;
+  --upd-clr: 255 217 50;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+}
+.grid {
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+}
+.panel {
+  border-radius: 6px;
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  line-height: 1;
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  align-items: center;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+}
+.codebox {
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+  padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
+  font-size: 12px;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
+}
+.ins, .del, .mov, .upd {
+  border-top: 1px solid #878787;
+  border-bottom: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-top: 3px solid rgb(var(--ins-clr));
+  border-bottom: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-top: 3px solid rgb(var(--del-clr));
+  border-bottom: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-top: 3px solid rgb(var(--mov-clr));
+  border-bottom: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-top: 3px solid rgb(var(--upd-clr));
+  border-bottom: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  padding-bottom: 3px;
+  background: #f7f7f7;
+  color: #878787;
+  padding-top: 3px;
+  font-weight: normal;
+  letter-spacing: normal;
+}
+.legend {
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
+  font-size: 12px;
+}
+.legend-row {
+  display: flex;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  border-radius: 6px;
+  padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  margin-right: 10px;
+}
+.legend-key kbd {
+  border-radius: 2px;
+  margin-right: 4px;
+  background: #fbfbfb;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+}
+.description {
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 0px 2px;
+  width: 384px;
+  border: 1px solid black;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
 <body>
 <script>
-function jumpVia(ViaId, FinalId) {
-  location.hash = ViaId;
-  requestAnimationFrame(() => {
-    location.hash = FinalId;
-  });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('a[data-partner]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const Via = a.dataset.partner;
-      const FinalId = a.getAttribute('href').slice(1);
-      if (!Via || !FinalId) return;
-      e.preventDefault();
-      jumpVia(Via, FinalId);
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
     });
   });
-});
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      unfocusEdit();
+      return;
+    }
+
+    const key = e.key.toLowerCase();
+
+    if (key === "u") {
+      unfocusEdit();
+      return;
+    }
+
+    if (key !== "n" && key !== "b") return;
+    if (editOrder.length === 0) return;
+
+    e.preventDefault();
+
+    if (activeEdit === null) {
+      editIndex = key === "n" ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += key === "n" ? 1 : -1;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  });
+});
 </script>
-  <div class="page">
-    <div class="sec">
-      <span class="clear">Edit</span>
-      <span class="i1">Edit #1</span>
-      <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
-      <span class="i7">Edit #7</span>
-      <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
-      <span class="i11">Edit #11</span>
-      <span class="i12">Edit #12</span>
-      <span class="i13">Edit #13</span>
-      <span class="i14">Edit #14</span>
-      <span class="i15">Edit #15</span>
-      <span class="i16">Edit #16</span>
-      <span class="i17">Edit #17</span>
-      <span class="i18">Edit #18</span>
-      <span class="i19">Edit #19</span>
-      <span class="i20">Edit #20</span>
-      <span class="i21">Edit #21</span>
-      <span class="i22">Edit #22</span>
-      <span class="i23">Edit #23</span>
-      <span class="i24">Edit #24</span>
-      <span class="i25">Edit #25</span>
-      <span class="i26">Edit #26</span>
-      <span class="i27">Edit #27</span>
-      <span class="i28">Edit #28</span>
-    </div>
-    <div class="toolbar">
-      <span class="clear"><a href="#n28">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n28">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6" data-partner="#m6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7" data-partner="#m7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n8" data-partner="#m8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7" data-partner="#m7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8" data-partner="#m8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9">Prev</a> | <a href="#n11">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i11"><a href="#n10">Prev</a> | <a href="#n12" data-partner="#m12">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i12"><a href="#n11">Prev</a> | <a href="#n13">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i13"><a href="#n12" data-partner="#m12">Prev</a> | <a href="#n14" data-partner="#m14">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i14"><a href="#n13">Prev</a> | <a href="#n15">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i15"><a href="#n14" data-partner="#m14">Prev</a> | <a href="#n16">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i16"><a href="#n15">Prev</a> | <a href="#n17" data-partner="#m17">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i17"><a href="#n16">Prev</a> | <a href="#n18">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i18"><a href="#n17" data-partner="#m17">Prev</a> | <a href="#n19" data-partner="#m19">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i19"><a href="#n18">Prev</a> | <a href="#n20">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i20"><a href="#n19" data-partner="#m19">Prev</a> | <a href="#n21">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i21"><a href="#n20">Prev</a> | <a href="#n22">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i22"><a href="#n21">Prev</a> | <a href="#n23">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i23"><a href="#n22">Prev</a> | <a href="#n24">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i24"><a href="#n23">Prev</a> | <a href="#n25">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i25"><a href="#n24">Prev</a> | <a href="#n26">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i26"><a href="#n25">Prev</a> | <a href="#n27">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i27"><a href="#n26">Prev</a> | <a href="#n28">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i28"><a href="#n27">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-    </div>
-    <div class="edit">
-      <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> compound_statement</a> [868, 14] - [871, 4]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> compound_statement</a> [849, 72] - [871, 2]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> declaration</a> [850, 3] - [850, 73]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> declaration</a> [850, 3] - [850, 73]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n3" data-partner="m3"> declaration</a> [852, 3] - [852, 32]
-<span style="font-weight:600">  to   </span><a href="#m3" data-partner="n3"> declaration</a> [852, 3] - [852, 32]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> comment</a>: <span class=token>&quot;/// Label may be used to generate DW_AT_low_pc, so put it outside&quot;</span> [853, 3] - [853, 68]
-<span style="font-weight:600">  into   </span><a href="#p4"> compound_statement</a> [849, 72] - [871, 2]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> comment</a>: <span class=token>&quot;/// if/else block.&quot;</span> [854, 3] - [854, 21]
-<span style="font-weight:600">  into   </span><a href="#p5"> compound_statement</a> [849, 72] - [871, 2]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n6" data-partner="m6"> declaration</a> [855, 3] - [855, 35]
-<span style="font-weight:600">  to   </span><a href="#m6" data-partner="n6"> declaration</a> [855, 3] - [855, 35]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n7" data-partner="m7"> if_statement</a> [856, 3] - [866, 4]
-<span style="font-weight:600">  to   </span><a href="#m7" data-partner="n7"> if_statement</a> [856, 3] - [866, 4]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n8" data-partner="m8"> if_statement</a> [868, 3] - [871, 4]
-<span style="font-weight:600">  to   </span><a href="#m8" data-partner="n8"> if_statement</a> [868, 3] - [870, 55]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n9"> if_statement</a> [869, 5] - [870, 55]
-<span style="font-weight:600">  into   </span><a href="#p9"> if_statement</a> [868, 3] - [870, 55]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n10"> if</a>: <span class=token>&quot;if&quot;</span> [869, 5] - [869, 7]
-<span style="font-weight:600">  into   </span><a href="#p10"> if_statement</a> [869, 5] - [870, 55]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n11"> condition_clause</a> [869, 8] - [869, 46]
-<span style="font-weight:600">  into   </span><a href="#p11"> if_statement</a> [869, 5] - [870, 55]</span><span class="i12"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n12" data-partner="m12"> expression_statement</a> [870, 5] - [870, 53]
-<span style="font-weight:600">  to   </span><a href="#m12" data-partner="n12"> expression_statement</a> [870, 7] - [870, 55]</span><span class="i13"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n13"> (</a>: <span class=token>&quot;(&quot;</span> [869, 8] - [869, 9]
-<span style="font-weight:600">  into   </span><a href="#p13"> condition_clause</a> [869, 8] - [869, 46]</span><span class="i14"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n14" data-partner="m14"> declaration</a> [869, 5] - [869, 46]
-<span style="font-weight:600">  to   </span><a href="#m14" data-partner="n14"> declaration</a> [869, 9] - [869, 45]</span><span class="i15"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n15"> )</a>: <span class=token>&quot;)&quot;</span> [869, 45] - [869, 46]
-<span style="font-weight:600">  into   </span><a href="#p15"> condition_clause</a> [869, 8] - [869, 46]</span><span class="i16"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n16"> placeholder_type_specifier</a> [869, 15] - [869, 19]
-<span style="font-weight:600">  into           </span><a href="#p16"> declaration</a> [869, 9] - [869, 45]</span><span class="i17"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n17" data-partner="m17"> pointer_declarator</a> [869, 20] - [869, 24]
-<span style="font-weight:600">  to   </span><a href="#m17" data-partner="n17"> pointer_declarator</a> [869, 20] - [869, 24]</span><span class="i18"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n18"> =</a>: <span class=token>&quot;=&quot;</span> [869, 25] - [869, 26]
-<span style="font-weight:600">  into   </span><a href="#p18"> declaration</a> [869, 9] - [869, 45]</span><span class="i19"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n19" data-partner="m19"> call_expression</a> [869, 27] - [869, 45]
-<span style="font-weight:600">  to   </span><a href="#m19" data-partner="n19"> call_expression</a> [869, 27] - [869, 45]</span><span class="i20"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n20"> type_identifier</a>: <span class=token>&quot;MCSymbol&quot;</span> [869, 11] - [869, 19]
-<span style="font-weight:600">  from   </span><a href="#p20"> declaration</a> [869, 5] - [869, 46]</span><span class="i21"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n21"> =</a>: <span class=token>&quot;=&quot;</span> [869, 25] - [869, 26]
-<span style="font-weight:600">  from   </span><a href="#p21"> init_declarator</a> [869, 20] - [869, 45]</span><span class="i22"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n22"> init_declarator</a> [869, 20] - [869, 45]
-<span style="font-weight:600">  from   </span><a href="#p22"> declaration</a> [869, 5] - [869, 46]</span><span class="i23"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n23"> ;</a>: <span class=token>&quot;;&quot;</span> [869, 45] - [869, 46]
-<span style="font-weight:600">  from   </span><a href="#p23"> declaration</a> [869, 5] - [869, 46]</span><span class="i24"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n24"> {</a>: <span class=token>&quot;{&quot;</span> [849, 72] - [849, 73]
-<span style="font-weight:600">  from   </span><a href="#p24"> compound_statement</a> [849, 72] - [872, 2]</span><span class="i25"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n25"> comment</a>: <span class=token>&quot;/// Label may be used to generate DW_AT_low_pc, so put it outside&quot;</span> [853, 3] - [853, 68]
-<span style="font-weight:600">  from   </span><a href="#p25"> compound_statement</a> [849, 72] - [872, 2]</span><span class="i26"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n26"> comment</a>: <span class=token>&quot;/// if/else block.&quot;</span> [854, 3] - [854, 21]
-<span style="font-weight:600">  from   </span><a href="#p26"> compound_statement</a> [849, 72] - [872, 2]</span><span class="i27"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n27"> }</a>: <span class=token>&quot;}&quot;</span> [872, 1] - [872, 2]
-<span style="font-weight:600">  from   </span><a href="#p27"> compound_statement</a> [849, 72] - [872, 2]</span><span class="i28"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n28"> compound_statement</a> [849, 72] - [872, 2]
-<span style="font-weight:600">  from   </span><a href="#p28"> function_definition</a> [849, 1] - [872, 2]</span></code></pre>
-      </div>
-    </div>
-    <div class="sec">Code</div>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header">11_A (original)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>//===- llvm/CodeGen/DwarfCompileUnit.cpp - Dwarf Compile Units ------------===// 
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 19 :&ensp;<b>Delete <code class="type">"compound_statement"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 19 :&ensp;<b>Move <code class="type">"compound_statement"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 19 :&ensp;<b>Move <code class="type">"declaration"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 19 :&ensp;<b>Move <code class="type">"declaration"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 19 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 19 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 19 :&ensp;<b>Move <code class="type">"declaration"</code></b></span>
+<span id="descr-8" style="display:none;">Edit #8 / 19 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-9" style="display:none;">Edit #9 / 19 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-10" style="display:none;">Edit #10 / 19 :&ensp;<b>Insert <code class="type">"if_statement"</code></b></span>
+<span id="descr-11" style="display:none;">Edit #11 / 19 :&ensp;<b>Move <code class="type">"declaration"</code></b></span>
+<span id="descr-12" style="display:none;">Edit #12 / 19 :&ensp;<b>Delete <code class="type">"type_identifier"</code></b></span>
+<span id="descr-13" style="display:none;">Edit #13 / 19 :&ensp;<b>Delete <code class="type">"init_declarator"</code></b></span>
+<span id="descr-14" style="display:none;">Edit #14 / 19 :&ensp;<b>Delete <code class="type">";"</code></b></span>
+<span id="descr-15" style="display:none;">Edit #15 / 19 :&ensp;<b>Insert <code class="type">"placeholder_type_specifier"</code></b></span>
+<span id="descr-16" style="display:none;">Edit #16 / 19 :&ensp;<b>Move <code class="type">"pointer_declarator"</code></b></span>
+<span id="descr-17" style="display:none;">Edit #17 / 19 :&ensp;<b>Insert <code class="type">"="</code></b></span>
+<span id="descr-18" style="display:none;">Edit #18 / 19 :&ensp;<b>Move <code class="type">"call_expression"</code></b></span>
+<span id="descr-19" style="display:none;">Edit #19 / 19 :&ensp;<b>Move <code class="type">"expression_statement"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">11_A (original)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>//===- llvm/CodeGen/DwarfCompileUnit.cpp - Dwarf Compile Units ------------===// 
 <span class="no">   2 </span>// 
 <span class="no">   3 </span>//                     The LLVM Compiler Infrastructure 
 <span class="no">   4 </span>// 
@@ -1811,14 +1311,14 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 846 </span>  } 
 <span class="no"> 847 </span>} 
 <span class="no"> 848 </span> 
-<span class="no"> 849 </span><span id="p28" class="ep28">void DwarfCompileUnit::finishEntityDefinition(const DbgEntity *Entity) <span id="n28" class="en28"><span id="p27" class="ep27"><span id="p26" class="ep26"><span id="p25" class="ep25"><span id="p24" class="ep24"><span id="n24" class="en24"><a class="del" href="#n24">{</a></span><a class="del" href="#n28"> 
-<span class="no"> 850 </span>  </a><span id="n2" class="en2"><a href="#n2" class="mov" data-partner="#m2">DbgEntity *AbsEntity = getExistingAbstractEntity(Entity-&gt;getEntity());</a></span><a class="del" href="#n28"> 
+<span class="no"> 849 </span>void DwarfCompileUnit::finishEntityDefinition(const DbgEntity *Entity) <span id="edit-1-old" data-kind="del"><span id="hl-1-32148" class="hl del">{ 
+<span class="no"> 850 </span>  </span><span id="edit-3-old" data-kind="mov"><span id="hl-3-32152" class="hl mov">DbgEntity *AbsEntity = getExistingAbstractEntity(Entity-&gt;getEntity());</span></span><span id="hl-1-32222" class="hl del"> 
 <span class="no"> 851 </span> 
-<span class="no"> 852 </span>  </a><span id="n3" class="en3"><a href="#n3" class="mov" data-partner="#m3">auto *Die = Entity-&gt;getDIE();</a></span><a class="del" href="#n28"> 
-<span class="no"> 853 </span>  </a><span id="n25" class="en25"><a class="del" href="#n25">/// Label may be used to generate DW_AT_low_pc, so put it outside</a></span><a class="del" href="#n28"> 
-<span class="no"> 854 </span>  </a><span id="n26" class="en26"><a class="del" href="#n26">/// if/else block.</a></span><a class="del" href="#n28"> 
-<span class="no"> 855 </span>  </a><span id="n6" class="en6"><a href="#n6" class="mov" data-partner="#m6">const DbgLabel *Label = nullptr;</a></span><a class="del" href="#n28"> 
-<span class="no"> 856 </span>  </a><span id="n7" class="en7"><a href="#n7" class="mov" data-partner="#m7">if (AbsEntity &amp;&amp; AbsEntity-&gt;getDIE()) { 
+<span class="no"> 852 </span>  </span><span id="edit-4-old" data-kind="mov"><span id="hl-4-32226" class="hl mov">auto *Die = Entity-&gt;getDIE();</span></span><span id="hl-1-32255" class="hl del"> 
+<span class="no"> 853 </span>  </span><span id="hl-1-32258" class="hl del"><span id="edit-6-old" data-kind="ins"></span><span id="edit-5-old" data-kind="ins"></span>/// Label may be used to generate DW_AT_low_pc, so put it outside 
+<span class="no"> 854 </span>  /// if/else block. 
+<span class="no"> 855 </span>  </span><span id="edit-7-old" data-kind="mov"><span id="hl-7-32347" class="hl mov">const DbgLabel *Label = nullptr;</span></span><span id="hl-1-32379" class="hl del"> 
+<span class="no"> 856 </span>  </span><span id="edit-8-old" data-kind="mov"><span id="hl-8-32382" class="hl mov">if (AbsEntity &amp;&amp; AbsEntity-&gt;getDIE()) { 
 <span class="no"> 857 </span>    addDIEEntry(*Die, dwarf::DW_AT_abstract_origin, *AbsEntity-&gt;getDIE()); 
 <span class="no"> 858 </span>    Label = dyn_cast&lt;const DbgLabel&gt;(Entity); 
 <span class="no"> 859 </span>  } else { 
@@ -1828,13 +1328,13 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 863 </span>      applyLabelAttributes(*Label, *Die); 
 <span class="no"> 864 </span>    else 
 <span class="no"> 865 </span>      llvm_unreachable(&quot;DbgEntity must be DbgVariable or DbgLabel.&quot;); 
-<span class="no"> 866 </span>  }</a></span><a class="del" href="#n28"> 
+<span class="no"> 866 </span>  }</span></span><span id="hl-1-32848" class="hl del"> 
 <span class="no"> 867 </span> 
-<span class="no"> 868 </span>  </a><span id="n8" class="en8"><a href="#n8" class="mov" data-partner="#m8">if (Label) </a><span id="n1" class="en1"><a href="#n1" class="mov" data-partner="#m1">{ 
-<span class="no"> 869 </span>    </a><span id="p23" class="ep23"><span id="p22" class="ep22"><span id="p20" class="ep20"><span id="n14" class="en14"><a href="#n14" class="mov" data-partner="#m14">const </a><span id="n20" class="en20"><a class="del" href="#n20">MCSymbol</a></span><a href="#n14" class="mov" data-partner="#m14"> </a><span id="n22" class="en22"><span id="p21" class="ep21"><span id="n17" class="en17"><a href="#n17" class="mov" data-partner="#m17">*Sym</a></span><a class="del" href="#n22"> </a><span id="n21" class="en21"><a class="del" href="#n21">=</a></span><a class="del" href="#n22"> </a><span id="n19" class="en19"><a href="#n19" class="mov" data-partner="#m19">Label-&gt;getSymbol()</a></span></span></span><span id="n23" class="en23"><a class="del" href="#n23">;</a></span></span></span></span></span><a href="#n1" class="mov" data-partner="#m1"> 
-<span class="no"> 870 </span>    </a><span id="n12" class="en12"><a href="#n12" class="mov" data-partner="#m12">addLabelAddress(*Die, dwarf::DW_AT_low_pc, Sym);</a></span><a href="#n1" class="mov" data-partner="#m1"> 
-<span class="no"> 871 </span>  }</a></span></span><a class="del" href="#n28"> 
-<span class="no"> 872 </span></a><span id="n27" class="en27"><a class="del" href="#n27">}</a></span></span></span></span></span></span></span> 
+<span class="no"> 868 </span>  </span><span id="edit-9-old" data-kind="mov"><span id="hl-9-32852" class="hl mov">if (Label) </span><span id="edit-2-old" data-kind="mov"><span id="hl-2-32863" class="hl mov"><span id="edit-10-old" data-kind="ins"></span>{ 
+<span class="no"> 869 </span>    </span><span id="edit-11-old" data-kind="mov"><span id="hl-11-32869" class="hl mov">const </span><span id="edit-12-old" data-kind="del"><span id="hl-12-32875" class="hl del"><span id="edit-15-old" data-kind="ins"></span>MCSymbol</span></span><span id="hl-11-32883" class="hl mov"> </span><span id="edit-13-old" data-kind="del"><span id="edit-16-old" data-kind="mov"><span id="hl-16-32884" class="hl mov">*Sym</span></span><span id="hl-13-32888" class="hl del"> </span><span id="hl-13-32889" class="hl del"><span id="edit-17-old" data-kind="ins"></span>= </span><span id="edit-18-old" data-kind="mov"><span id="hl-18-32891" class="hl mov">Label-&gt;getSymbol()</span></span></span><span id="edit-14-old" data-kind="del"><span id="hl-14-32909" class="hl del">;</span></span></span><span id="hl-2-32910" class="hl mov"> 
+<span class="no"> 870 </span>    </span><span id="edit-19-old" data-kind="mov"><span id="hl-19-32915" class="hl mov">addLabelAddress(*Die, dwarf::DW_AT_low_pc, Sym);</span></span><span id="hl-2-32963" class="hl mov"> 
+<span class="no"> 871 </span>  }</span></span></span><span id="hl-1-32967" class="hl del"> 
+<span class="no"> 872 </span>}</span></span> 
 <span class="no"> 873 </span> 
 <span class="no"> 874 </span>DbgEntity *DwarfCompileUnit::getExistingAbstractEntity(const DINode *Node) { 
 <span class="no"> 875 </span>  auto &amp;AbstractEntities = getAbstractEntities(); 
@@ -2045,13 +1545,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1080 </span>  return getCUNode()-&gt;getEmissionKind() == DICompileUnit::LineTablesOnly || 
 <span class="no">1081 </span>         (DD-&gt;useSplitDwarf() &amp;&amp; !Skeleton); 
 <span class="no">1082 </span>} 
-<span class="no">1083 </span></code></pre>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">11_A (modified)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>//===- llvm/CodeGen/DwarfCompileUnit.cpp - Dwarf Compile Units ------------===// 
+<span class="no">1083 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">11_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>//===- llvm/CodeGen/DwarfCompileUnit.cpp - Dwarf Compile Units ------------===// 
 <span class="no">   2 </span>// 
 <span class="no">   3 </span>//                     The LLVM Compiler Infrastructure 
 <span class="no">   4 </span>// 
@@ -2899,14 +2395,14 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 846 </span>  } 
 <span class="no"> 847 </span>} 
 <span class="no"> 848 </span> 
-<span class="no"> 849 </span>void DwarfCompileUnit::finishEntityDefinition(const DbgEntity *Entity) <span id="p5" class="ep5"><span id="p4" class="ep4"><span id="m1" class="em1"><a href="#m1" class="mov" data-partner="#n1">{ 
-<span class="no"> 850 </span>  </a><span id="m2" class="em2"><a href="#m2" class="mov" data-partner="#n2">DbgEntity *AbsEntity = getExistingAbstractEntity(Entity-&gt;getEntity());</a></span><a href="#m1" class="mov" data-partner="#n1"> 
+<span class="no"> 849 </span>void DwarfCompileUnit::finishEntityDefinition(const DbgEntity *Entity) <span id="edit-2-new" data-kind="mov"><span id="hl-2-32148" class="hl mov"><span id="edit-1-new" data-kind="del"></span>{ 
+<span class="no"> 850 </span>  </span><span id="edit-3-new" data-kind="mov"><span id="hl-3-32152" class="hl mov">DbgEntity *AbsEntity = getExistingAbstractEntity(Entity-&gt;getEntity());</span></span><span id="hl-2-32222" class="hl mov"> 
 <span class="no"> 851 </span> 
-<span class="no"> 852 </span>  </a><span id="m3" class="em3"><a href="#m3" class="mov" data-partner="#n3">auto *Die = Entity-&gt;getDIE();</a></span><a href="#m1" class="mov" data-partner="#n1"> 
-<span class="no"> 853 </span>  </a><span id="n4" class="en4"><a class="ins" href="#n4">/// Label may be used to generate DW_AT_low_pc, so put it outside</a></span><a href="#m1" class="mov" data-partner="#n1"> 
-<span class="no"> 854 </span>  </a><span id="n5" class="en5"><a class="ins" href="#n5">/// if/else block.</a></span><a href="#m1" class="mov" data-partner="#n1"> 
-<span class="no"> 855 </span>  </a><span id="m6" class="em6"><a href="#m6" class="mov" data-partner="#n6">const DbgLabel *Label = nullptr;</a></span><a href="#m1" class="mov" data-partner="#n1"> 
-<span class="no"> 856 </span>  </a><span id="m7" class="em7"><a href="#m7" class="mov" data-partner="#n7">if (AbsEntity &amp;&amp; AbsEntity-&gt;getDIE()) { 
+<span class="no"> 852 </span>  </span><span id="edit-4-new" data-kind="mov"><span id="hl-4-32226" class="hl mov">auto *Die = Entity-&gt;getDIE();</span></span><span id="hl-2-32255" class="hl mov"> 
+<span class="no"> 853 </span>  </span><span id="edit-5-new" data-kind="ins"><span id="hl-5-32258" class="hl ins">/// Label may be used to generate DW_AT_low_pc, so put it outside</span></span><span id="hl-2-32323" class="hl mov"> 
+<span class="no"> 854 </span>  </span><span id="edit-6-new" data-kind="ins"><span id="hl-6-32326" class="hl ins">/// if/else block.</span></span><span id="hl-2-32344" class="hl mov"> 
+<span class="no"> 855 </span>  </span><span id="edit-7-new" data-kind="mov"><span id="hl-7-32347" class="hl mov">const DbgLabel *Label = nullptr;</span></span><span id="hl-2-32379" class="hl mov"> 
+<span class="no"> 856 </span>  </span><span id="edit-8-new" data-kind="mov"><span id="hl-8-32382" class="hl mov">if (AbsEntity &amp;&amp; AbsEntity-&gt;getDIE()) { 
 <span class="no"> 857 </span>    addDIEEntry(*Die, dwarf::DW_AT_abstract_origin, *AbsEntity-&gt;getDIE()); 
 <span class="no"> 858 </span>    Label = dyn_cast&lt;const DbgLabel&gt;(Entity); 
 <span class="no"> 859 </span>  } else { 
@@ -2916,12 +2412,12 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 863 </span>      applyLabelAttributes(*Label, *Die); 
 <span class="no"> 864 </span>    else 
 <span class="no"> 865 </span>      llvm_unreachable(&quot;DbgEntity must be DbgVariable or DbgLabel.&quot;); 
-<span class="no"> 866 </span>  }</a></span><a href="#m1" class="mov" data-partner="#n1"> 
+<span class="no"> 866 </span>  }</span></span><span id="hl-2-32848" class="hl mov"> 
 <span class="no"> 867 </span> 
-<span class="no"> 868 </span>  </a><span id="p9" class="ep9"><span id="m8" class="em8"><a href="#m8" class="mov" data-partner="#n8">if (Label) 
-<span class="no"> 869 </span>    </a><span id="p11" class="ep11"><span id="p10" class="ep10"><span id="n9" class="en9"><span id="n10" class="en10"><a class="ins" href="#n10">if</a></span><a class="ins" href="#n9"> </a><span id="p15" class="ep15"><span id="p13" class="ep13"><span id="n11" class="en11"><span id="n13" class="en13"><a class="ins" href="#n13">(</a></span><span id="p18" class="ep18"><span id="p16" class="ep16"><span id="m14" class="em14"><a href="#m14" class="mov" data-partner="#n14">const </a><span id="n16" class="en16"><a class="ins" href="#n16">auto</a></span><a href="#m14" class="mov" data-partner="#n14"> </a><span id="m17" class="em17"><a href="#m17" class="mov" data-partner="#n17">*Sym</a></span><a href="#m14" class="mov" data-partner="#n14"> </a><span id="n18" class="en18"><a class="ins" href="#n18">=</a></span><a href="#m14" class="mov" data-partner="#n14"> </a><span id="m19" class="em19"><a href="#m19" class="mov" data-partner="#n19">Label-&gt;getSymbol()</a></span></span></span></span><span id="n15" class="en15"><a class="ins" href="#n15">)</a></span></span></span></span><a class="ins" href="#n9"> 
-<span class="no"> 870 </span>      </a><span id="m12" class="em12"><a href="#m12" class="mov" data-partner="#n12">addLabelAddress(*Die, dwarf::DW_AT_low_pc, Sym);</a></span></span></span></span></span></span><a href="#m1" class="mov" data-partner="#n1"> 
-<span class="no"> 871 </span>}</a></span></span></span> 
+<span class="no"> 868 </span>  </span><span id="edit-9-new" data-kind="mov"><span id="hl-9-32852" class="hl mov">if (Label) 
+<span class="no"> 869 </span>    </span><span id="edit-10-new" data-kind="ins"><span id="hl-10-32867" class="hl ins">if (</span><span id="edit-11-new" data-kind="mov"><span id="hl-11-32871" class="hl mov">const </span><span id="edit-15-new" data-kind="ins"><span id="hl-15-32877" class="hl ins"><span id="edit-13-new" data-kind="del"></span><span id="edit-14-new" data-kind="del"></span><span id="edit-12-new" data-kind="del"></span>auto</span></span><span id="hl-11-32881" class="hl mov"> </span><span id="edit-16-new" data-kind="mov"><span id="hl-16-32882" class="hl mov">*Sym</span></span><span id="hl-11-32886" class="hl mov"> </span><span id="edit-17-new" data-kind="ins"><span id="hl-17-32887" class="hl ins">=</span></span><span id="hl-11-32888" class="hl mov"> </span><span id="edit-18-new" data-kind="mov"><span id="hl-18-32889" class="hl mov">Label-&gt;getSymbol()</span></span></span><span id="hl-10-32907" class="hl ins">) 
+<span class="no"> 870 </span>      </span><span id="edit-19-new" data-kind="mov"><span id="hl-19-32915" class="hl mov">addLabelAddress(*Die, dwarf::DW_AT_low_pc, Sym);</span></span></span></span><span id="hl-2-32963" class="hl mov"> 
+<span class="no"> 871 </span>}</span></span> 
 <span class="no"> 872 </span> 
 <span class="no"> 873 </span>DbgEntity *DwarfCompileUnit::getExistingAbstractEntity(const DINode *Node) { 
 <span class="no"> 874 </span>  auto &amp;AbstractEntities = getAbstractEntities(); 
@@ -3132,10 +2628,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1079 </span>  return getCUNode()-&gt;getEmissionKind() == DICompileUnit::LineTablesOnly || 
 <span class="no">1080 </span>         (DD-&gt;useSplitDwarf() &amp;&amp; !Skeleton); 
 <span class="no">1081 </span>} 
-<span class="no">1082 </span></code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+<span class="no">1082 </span></code></pre></div>
+</div></div></div>
 </body>
 </html>

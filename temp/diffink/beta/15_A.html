@@ -3,1117 +3,474 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .page:has(#m9:target) .en9 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m9:target) .em9 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n9:target) .em9 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n24:target) .en24 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m24:target) .en24 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m24:target) .em24 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n24:target) .em24 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m16:target) .i16, .page:has(#n16:target) .i16 {
-    display: block;
-  }
-  .page:has(#m16:target) .clear, .page:has(#n16:target) .clear {
-    display: none;
-  }
-  .page:has(#p25:target) .i25, .page:has(#n25:target) .i25 {
-    display: block;
-  }
-  .page:has(#p25:target) .clear, .page:has(#n25:target) .clear {
-    display: none;
-  }
-  .page:has(#n16:target) .en16 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m16:target) .en16 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m16:target) .em16 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n16:target) .em16 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m10:target) .em10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n10:target) .em10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11, .i12, .i13, .i14, .i15, .i16, .i17, .i18, .i19, .i20, .i21, .i22, .i23, .i24, .i25, .i26 {
-    display: none;
-  }
-  .page:has(#n25:target) .en25 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p25:target) .ep25 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m17:target) .en17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m17:target) .em17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n17:target) .em17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n18:target) .en18 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m18:target) .en18 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m18:target) .em18 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n18:target) .em18 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n26:target) .en26 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#p26:target) .ep26 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n19:target) .en19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m19:target) .en19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m19:target) .em19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n19:target) .em19 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n20:target) .en20 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m20:target) .en20 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m20:target) .em20 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n20:target) .em20 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  body {
-    background: white;
-    margin: 0;
-  }
-  .page:has(#n2:target) .en2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m2:target) .en2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m2:target) .em2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n2:target) .em2 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page {
-    max-width: 100vw;
-    padding: 0 16px 8px 16px;
-    margin: 0 auto;
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .sec {
-    line-height: 1;
-    padding: 0;
-    font-size: 24px;
-    font-weight: bold;
-    margin: 12px 0;
-  }
-  .page:has(#n3:target) .en3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m3:target) .en3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#m15:target) .i15, .page:has(#n15:target) .i15 {
-    display: block;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .page:has(#m18:target) .i18, .page:has(#n18:target) .i18 {
-    display: block;
-  }
-  .ins, .del, .mov, .upd {
-    box-shadow: inset -0.05em 0 0 black;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    border-top:  0.05em solid black;
-    border-bottom:  0.05em solid black;
-  }
-  .error {
-    color: #b51700;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .page:has(#m14:target) .em14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m22:target) .clear, .page:has(#n22:target) .clear {
-    display: none;
-  }
-  .page:has(#n4:target) .en4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m4:target) .en4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .page:has(#m4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#m24:target) .i24, .page:has(#n24:target) .i24 {
-    display: block;
-  }
-  .page:has(#m24:target) .clear, .page:has(#n24:target) .clear {
-    display: none;
-  }
-  .grid {
-    gap: 16px;
-    height: calc(100vh - 186px);
-    display: grid;
-    min-height: 252px;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-  }
-  .panel-header {
-    background: #ebebeb;
-    align-items: center;
-    padding: 8px 10px;
-    justify-content: space-between;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    line-height: 1;
-    display: flex;
-    font-weight: bold;
-  }
-  .panel, .edit {
-    flex-direction: column;
-    border-radius: 6px;
-    border: 1px solid #afafaf;
-    display: flex;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-  .codebox {
-    background: #f7f7f7;
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    flex: 1;
-    letter-spacing: 0.05em;
-    scroll-padding-top: 54px;
-    overflow: auto;
-    scroll-behavior: smooth;
-    line-height: 1.5;
-  }
-  .toolbar {
-    margin-bottom: 6px;
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
-  }
-  .page:has(#m5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#m5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .codebox a {
-    text-decoration: none;
-    color: inherit;
-  }
-  .page:has(#p26:target) .clear, .page:has(#n26:target) .clear {
-    display: none;
-  }
-  .page:has(#p26:target) .i26, .page:has(#n26:target) .i26 {
-    display: block;
-  }
-  .edit {
-    min-width: 512px;
-    height: 60px;
-    font-size: 14px;
-  }
-  .editbox {
-    flex: 1;
-    background: #f7f7f7;
-    line-height: 1.8;
-    padding: 4px 8px;
-    min-height: 0;
-    overflow: auto;
-    font-size: 14px;
-    font-weight: 500;
-  }
-  .page:has(#m6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n5:target) .en5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m5:target) .en5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#m6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .page:has(#n6:target) .em6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .no {
-    color: #878787;
-    background: #f7f7f7;
-    padding-top: 0.15em;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    letter-spacing: normal;
-  }
-  .page:has(#m22:target) .i22, .page:has(#n22:target) .i22 {
-    display: block;
-  }
-  .page:has(#m13:target) .em13 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .token {
-    color: #017100;
-  }
-  .page:has(#m20:target) .clear, .page:has(#n20:target) .clear {
-    display: none;
-  }
-  .page:has(#n11:target) .en11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m11:target) .en11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#m7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .page:has(#m20:target) .i20, .page:has(#n20:target) .i20 {
-    display: block;
-  }
-  .page:has(#m5:target) .em5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n5:target) .em5 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m18:target) .clear, .page:has(#n18:target) .clear {
-    display: none;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .page:has(#m15:target) .clear, .page:has(#n15:target) .clear {
-    display: none;
-  }
-  .page:has(#n6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m6:target) .en6 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#m8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#m17:target) .i17, .page:has(#n17:target) .i17 {
-    display: block;
-  }
-  .page:has(#m17:target) .clear, .page:has(#n17:target) .clear {
-    display: none;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#m15:target) .em15 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m15:target) .en15 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n15:target) .en15 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n12:target) .en12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m12:target) .en12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#m9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .page:has(#m21:target) .en21 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m21:target) .em21 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n21:target) .em21 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m10:target) .en10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n3:target) .em3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m4:target) .em4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n7:target) .en7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m7:target) .en7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#m10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .page:has(#m19:target) .i19, .page:has(#n19:target) .i19 {
-    display: block;
-  }
-  .page:has(#m19:target) .clear, .page:has(#n19:target) .clear {
-    display: none;
-  }
-  .page:has(#m3:target) .em3 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n10:target) .en10 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n4:target) .em4 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n7:target) .em7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n13:target) .en13 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m13:target) .en13 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m11:target) .i11, .page:has(#n11:target) .i11 {
-    display: block;
-  }
-  .page:has(#m11:target) .clear, .page:has(#n11:target) .clear {
-    display: none;
-  }
-  .page:has(#m22:target) .en22 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m22:target) .em22 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n22:target) .em22 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n22:target) .en22 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n21:target) .en21 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n14:target) .em14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n8:target) .en8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m8:target) .en8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m12:target) .i12, .page:has(#n12:target) .i12 {
-    display: block;
-  }
-  .page:has(#m12:target) .clear, .page:has(#n12:target) .clear {
-    display: none;
-  }
-  .page:has(#m21:target) .i21, .page:has(#n21:target) .i21 {
-    display: block;
-  }
-  .page:has(#m21:target) .clear, .page:has(#n21:target) .clear {
-    display: none;
-  }
-  .page:has(#n13:target) .em13 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n17:target) .en17 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n8:target) .em8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m8:target) .em8 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n14:target) .en14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m14:target) .en14 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m13:target) .i13, .page:has(#n13:target) .i13 {
-    display: block;
-  }
-  .page:has(#m13:target) .clear, .page:has(#n13:target) .clear {
-    display: none;
-  }
-  .page:has(#m23:target) .en23 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m23:target) .em23 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n23:target) .em23 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m7:target) .em7 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n23:target) .en23 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n1:target) .em1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n12:target) .em12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m12:target) .em12 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m14:target) .i14, .page:has(#n14:target) .i14 {
-    display: block;
-  }
-  .page:has(#m14:target) .clear, .page:has(#n14:target) .clear {
-    display: none;
-  }
-  .page:has(#m23:target) .i23, .page:has(#n23:target) .i23 {
-    display: block;
-  }
-  .page:has(#m23:target) .clear, .page:has(#n23:target) .clear {
-    display: none;
-  }
-  .page:has(#n1:target) .en1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n15:target) .em15 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n11:target) .em11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m11:target) .em11 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m1:target) .en1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#m1:target) .em1 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-  .page:has(#n9:target) .en9 {
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-  }
-</style>
-</head>
+:root {
+  --mov-clr: 191 175 255;
+  --ins-clr: 97 216 54;
+  --upd-clr: 255 217 50;
+  --del-clr: 255 150 141;
+}
+body {
+  background: white;
+  margin: 0;
+}
+.page {
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+  margin: 0 auto;
+}
+.grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+}
+.panel {
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+  display: flex;
+  min-width: 0;
+}
+.panel-header {
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  display: flex;
+  line-height: 1;
+  justify-content: space-between;
+  align-items: center;
+  background: #ebebeb;
+}
+.codebox {
+  padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
+  font-size: 12px;
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  padding-bottom: 3px;
+  font-weight: normal;
+  padding-top: 3px;
+  color: #878787;
+  letter-spacing: normal;
+  background: #f7f7f7;
+}
+.legend {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
+}
+.legend-row {
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+.legend-title {
+  margin-right: 4px;
+  font-weight: bold;
+}
+.legend-chip {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  margin-right: 10px;
+}
+.legend-key kbd {
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+  margin-right: 4px;
+  background: #fbfbfb;
+}
+.description {
+  box-sizing: border-box;
+  width: 384px;
+  border: 1px solid black;
+  overflow: auto;
+  padding: 0px 2px;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
 <body>
 <script>
-function jumpVia(ViaId, FinalId) {
-  location.hash = ViaId;
-  requestAnimationFrame(() => {
-    location.hash = FinalId;
-  });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('a[data-partner]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const Via = a.dataset.partner;
-      const FinalId = a.getAttribute('href').slice(1);
-      if (!Via || !FinalId) return;
-      e.preventDefault();
-      jumpVia(Via, FinalId);
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
     });
   });
-});
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      unfocusEdit();
+      return;
+    }
+
+    const key = e.key.toLowerCase();
+
+    if (key === "u") {
+      unfocusEdit();
+      return;
+    }
+
+    if (key !== "n" && key !== "b") return;
+    if (editOrder.length === 0) return;
+
+    e.preventDefault();
+
+    if (activeEdit === null) {
+      editIndex = key === "n" ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += key === "n" ? 1 : -1;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  });
+});
 </script>
-  <div class="page">
-    <div class="sec">
-      <span class="clear">Edit</span>
-      <span class="i1">Edit #1</span>
-      <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
-      <span class="i7">Edit #7</span>
-      <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
-      <span class="i11">Edit #11</span>
-      <span class="i12">Edit #12</span>
-      <span class="i13">Edit #13</span>
-      <span class="i14">Edit #14</span>
-      <span class="i15">Edit #15</span>
-      <span class="i16">Edit #16</span>
-      <span class="i17">Edit #17</span>
-      <span class="i18">Edit #18</span>
-      <span class="i19">Edit #19</span>
-      <span class="i20">Edit #20</span>
-      <span class="i21">Edit #21</span>
-      <span class="i22">Edit #22</span>
-      <span class="i23">Edit #23</span>
-      <span class="i24">Edit #24</span>
-      <span class="i25">Edit #25</span>
-      <span class="i26">Edit #26</span>
-    </div>
-    <div class="toolbar">
-      <span class="clear"><a href="#n26">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n26">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4" data-partner="#m4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5" data-partner="#m5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4" data-partner="#m4">Prev</a> | <a href="#n6" data-partner="#m6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5" data-partner="#m5">Prev</a> | <a href="#n7" data-partner="#m7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6" data-partner="#m6">Prev</a> | <a href="#n8" data-partner="#m8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7" data-partner="#m7">Prev</a> | <a href="#n9" data-partner="#m9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8" data-partner="#m8">Prev</a> | <a href="#n10" data-partner="#m10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9" data-partner="#m9">Prev</a> | <a href="#n11" data-partner="#m11">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i11"><a href="#n10" data-partner="#m10">Prev</a> | <a href="#n12" data-partner="#m12">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i12"><a href="#n11" data-partner="#m11">Prev</a> | <a href="#n13" data-partner="#m13">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i13"><a href="#n12" data-partner="#m12">Prev</a> | <a href="#n14" data-partner="#m14">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i14"><a href="#n13" data-partner="#m13">Prev</a> | <a href="#n15" data-partner="#m15">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i15"><a href="#n14" data-partner="#m14">Prev</a> | <a href="#n16" data-partner="#m16">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i16"><a href="#n15" data-partner="#m15">Prev</a> | <a href="#n17" data-partner="#m17">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i17"><a href="#n16" data-partner="#m16">Prev</a> | <a href="#n18" data-partner="#m18">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i18"><a href="#n17" data-partner="#m17">Prev</a> | <a href="#n19" data-partner="#m19">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i19"><a href="#n18" data-partner="#m18">Prev</a> | <a href="#n20" data-partner="#m20">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i20"><a href="#n19" data-partner="#m19">Prev</a> | <a href="#n21" data-partner="#m21">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i21"><a href="#n20" data-partner="#m20">Prev</a> | <a href="#n22" data-partner="#m22">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i22"><a href="#n21" data-partner="#m21">Prev</a> | <a href="#n23" data-partner="#m23">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i23"><a href="#n22" data-partner="#m22">Prev</a> | <a href="#n24" data-partner="#m24">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i24"><a href="#n23" data-partner="#m23">Prev</a> | <a href="#n25">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i25"><a href="#n24" data-partner="#m24">Prev</a> | <a href="#n26">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i26"><a href="#n25">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-    </div>
-    <div class="edit">
-      <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n1" data-partner="m1"> ,</a>: <span class=token>&quot;,&quot;</span> [1493, 27] - [1493, 28]
-<span style="font-weight:600">  to   </span><a href="#m1" data-partner="n1"> ,</a>: <span class=token>&quot;,&quot;</span> [1494, 30] - [1494, 31]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> ,</a>: <span class=token>&quot;,&quot;</span> [1494, 30] - [1494, 31]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> ,</a>: <span class=token>&quot;,&quot;</span> [1495, 28] - [1495, 29]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n3" data-partner="m3"> ,</a>: <span class=token>&quot;,&quot;</span> [1495, 28] - [1495, 29]
-<span style="font-weight:600">  to   </span><a href="#m3" data-partner="n3"> ,</a>: <span class=token>&quot;,&quot;</span> [1496, 27] - [1496, 28]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n4" data-partner="m4"> ,</a>: <span class=token>&quot;,&quot;</span> [1496, 27] - [1496, 28]
-<span style="font-weight:600">  to   </span><a href="#m4" data-partner="n4"> ,</a>: <span class=token>&quot;,&quot;</span> [1497, 27] - [1497, 28]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n5" data-partner="m5"> ,</a>: <span class=token>&quot;,&quot;</span> [1497, 27] - [1497, 28]
-<span style="font-weight:600">  to   </span><a href="#m5" data-partner="n5"> ,</a>: <span class=token>&quot;,&quot;</span> [1498, 27] - [1498, 28]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n6" data-partner="m6"> ,</a>: <span class=token>&quot;,&quot;</span> [1498, 27] - [1498, 28]
-<span style="font-weight:600">  to   </span><a href="#m6" data-partner="n6"> ,</a>: <span class=token>&quot;,&quot;</span> [1499, 25] - [1499, 26]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n7" data-partner="m7"> ,</a>: <span class=token>&quot;,&quot;</span> [1499, 25] - [1499, 26]
-<span style="font-weight:600">  to   </span><a href="#m7" data-partner="n7"> ,</a>: <span class=token>&quot;,&quot;</span> [1500, 29] - [1500, 30]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n8" data-partner="m8"> ,</a>: <span class=token>&quot;,&quot;</span> [1500, 29] - [1500, 30]
-<span style="font-weight:600">  to   </span><a href="#m8" data-partner="n8"> ,</a>: <span class=token>&quot;,&quot;</span> [1501, 28] - [1501, 29]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n9" data-partner="m9"> ,</a>: <span class=token>&quot;,&quot;</span> [1501, 28] - [1501, 29]
-<span style="font-weight:600">  to   </span><a href="#m9" data-partner="n9"> ,</a>: <span class=token>&quot;,&quot;</span> [1502, 30] - [1502, 31]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n10" data-partner="m10"> ,</a>: <span class=token>&quot;,&quot;</span> [1502, 30] - [1502, 31]
-<span style="font-weight:600">  to   </span><a href="#m10" data-partner="n10"> ,</a>: <span class=token>&quot;,&quot;</span> [1503, 30] - [1503, 31]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n11" data-partner="m11"> ,</a>: <span class=token>&quot;,&quot;</span> [1503, 30] - [1503, 31]
-<span style="font-weight:600">  to   </span><a href="#m11" data-partner="n11"> ,</a>: <span class=token>&quot;,&quot;</span> [1504, 30] - [1504, 31]</span><span class="i12"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n12" data-partner="m12"> ,</a>: <span class=token>&quot;,&quot;</span> [1504, 30] - [1504, 31]
-<span style="font-weight:600">  to   </span><a href="#m12" data-partner="n12"> ,</a>: <span class=token>&quot;,&quot;</span> [1505, 30] - [1505, 31]</span><span class="i13"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n13" data-partner="m13"> ,</a>: <span class=token>&quot;,&quot;</span> [1505, 30] - [1505, 31]
-<span style="font-weight:600">  to   </span><a href="#m13" data-partner="n13"> ,</a>: <span class=token>&quot;,&quot;</span> [1506, 30] - [1506, 31]</span><span class="i14"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n14" data-partner="m14"> ,</a>: <span class=token>&quot;,&quot;</span> [1506, 30] - [1506, 31]
-<span style="font-weight:600">  to   </span><a href="#m14" data-partner="n14"> ,</a>: <span class=token>&quot;,&quot;</span> [1507, 30] - [1507, 31]</span><span class="i15"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n15" data-partner="m15"> ,</a>: <span class=token>&quot;,&quot;</span> [1507, 30] - [1507, 31]
-<span style="font-weight:600">  to   </span><a href="#m15" data-partner="n15"> ,</a>: <span class=token>&quot;,&quot;</span> [1508, 30] - [1508, 31]</span><span class="i16"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n16" data-partner="m16"> ,</a>: <span class=token>&quot;,&quot;</span> [1508, 30] - [1508, 31]
-<span style="font-weight:600">  to   </span><a href="#m16" data-partner="n16"> ,</a>: <span class=token>&quot;,&quot;</span> [1510, 27] - [1510, 28]</span><span class="i17"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n17" data-partner="m17"> ,</a>: <span class=token>&quot;,&quot;</span> [1510, 27] - [1510, 28]
-<span style="font-weight:600">  to   </span><a href="#m17" data-partner="n17"> ,</a>: <span class=token>&quot;,&quot;</span> [1511, 27] - [1511, 28]</span><span class="i18"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n18" data-partner="m18"> ,</a>: <span class=token>&quot;,&quot;</span> [1511, 27] - [1511, 28]
-<span style="font-weight:600">  to   </span><a href="#m18" data-partner="n18"> ,</a>: <span class=token>&quot;,&quot;</span> [1512, 29] - [1512, 30]</span><span class="i19"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n19" data-partner="m19"> ,</a>: <span class=token>&quot;,&quot;</span> [1512, 29] - [1512, 30]
-<span style="font-weight:600">  to   </span><a href="#m19" data-partner="n19"> ,</a>: <span class=token>&quot;,&quot;</span> [1513, 27] - [1513, 28]</span><span class="i20"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n20" data-partner="m20"> ,</a>: <span class=token>&quot;,&quot;</span> [1513, 27] - [1513, 28]
-<span style="font-weight:600">  to   </span><a href="#m20" data-partner="n20"> ,</a>: <span class=token>&quot;,&quot;</span> [1514, 27] - [1514, 28]</span><span class="i21"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n21" data-partner="m21"> ,</a>: <span class=token>&quot;,&quot;</span> [1514, 27] - [1514, 28]
-<span style="font-weight:600">  to   </span><a href="#m21" data-partner="n21"> ,</a>: <span class=token>&quot;,&quot;</span> [1515, 27] - [1515, 28]</span><span class="i22"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n22" data-partner="m22"> ,</a>: <span class=token>&quot;,&quot;</span> [1515, 27] - [1515, 28]
-<span style="font-weight:600">  to   </span><a href="#m22" data-partner="n22"> ,</a>: <span class=token>&quot;,&quot;</span> [1516, 27] - [1516, 28]</span><span class="i23"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n23" data-partner="m23"> ,</a>: <span class=token>&quot;,&quot;</span> [1516, 27] - [1516, 28]
-<span style="font-weight:600">  to   </span><a href="#m23" data-partner="n23"> ,</a>: <span class=token>&quot;,&quot;</span> [1517, 27] - [1517, 28]</span><span class="i24"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n24" data-partner="m24"> ,</a>: <span class=token>&quot;,&quot;</span> [1517, 27] - [1517, 28]
-<span style="font-weight:600">  to   </span><a href="#m24" data-partner="n24"> ,</a>: <span class=token>&quot;,&quot;</span> [1518, 27] - [1518, 28]</span><span class="i25"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n25"> ,</a>: <span class=token>&quot;,&quot;</span> [1493, 27] - [1493, 28]
-<span style="font-weight:600">  into   </span><a href="#p25"> initializer_list</a> [1492, 60] - [1520, 6]</span><span class="i26"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n26"> pointer_expression</a> [1519, 9] - [1519, 27]
-<span style="font-weight:600">  into           </span><a href="#p26"> initializer_list</a> [1492, 60] - [1520, 6]</span></code></pre>
-      </div>
-    </div>
-    <div class="sec">Code</div>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header">15_A (original)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span> 
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 26 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-8" style="display:none;">Edit #8 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-9" style="display:none;">Edit #9 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-10" style="display:none;">Edit #10 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-11" style="display:none;">Edit #11 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-12" style="display:none;">Edit #12 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-13" style="display:none;">Edit #13 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-14" style="display:none;">Edit #14 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-15" style="display:none;">Edit #15 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-16" style="display:none;">Edit #16 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-17" style="display:none;">Edit #17 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-18" style="display:none;">Edit #18 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-19" style="display:none;">Edit #19 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-20" style="display:none;">Edit #20 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-21" style="display:none;">Edit #21 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-22" style="display:none;">Edit #22 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-23" style="display:none;">Edit #23 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-24" style="display:none;">Edit #24 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-25" style="display:none;">Edit #25 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-26" style="display:none;">Edit #26 / 26 :&ensp;<b>Insert <code class="type">"pointer_expression"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">15_A (original)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span> 
 <span class="no">   2 </span>/* 
 <span class="no">   3 </span> * Copyright (C) Igor Sysoev 
 <span class="no">   4 </span> * Copyright (C) NGINX, Inc. 
@@ -2605,32 +1962,32 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1490 </span>    /* ECMAScript 5.1: null, array and regexp are objects. */ 
 <span class="no">1491 </span> 
 <span class="no">1492 </span>    static const njs_value_t  *types[NJS_VALUE_TYPE_MAX] = { 
-<span class="no">1493 </span>        &amp;njs_string_object<span class="en1" id="n1"><a href="#n1" class="mov" data-partner="#m1">,</a></span> 
-<span class="no">1494 </span>        &amp;njs_string_undefined<span class="en2" id="n2"><a href="#n2" class="mov" data-partner="#m2">,</a></span> 
-<span class="no">1495 </span>        &amp;njs_string_boolean<span class="en3" id="n3"><a href="#n3" class="mov" data-partner="#m3">,</a></span> 
-<span class="no">1496 </span>        &amp;njs_string_number<span class="en4" id="n4"><a href="#n4" class="mov" data-partner="#m4">,</a></span> 
-<span class="no">1497 </span>        &amp;njs_string_symbol<span class="en5" id="n5"><a href="#n5" class="mov" data-partner="#m5">,</a></span> 
-<span class="no">1498 </span>        &amp;njs_string_string<span class="en6" id="n6"><a href="#n6" class="mov" data-partner="#m6">,</a></span> 
-<span class="no">1499 </span>        &amp;njs_string_data<span class="en7" id="n7"><a href="#n7" class="mov" data-partner="#m7">,</a></span> 
-<span class="no">1500 </span>        &amp;njs_string_external<span class="en8" id="n8"><a href="#n8" class="mov" data-partner="#m8">,</a></span> 
-<span class="no">1501 </span>        &amp;njs_string_invalid<span class="en9" id="n9"><a href="#n9" class="mov" data-partner="#m9">,</a></span> 
-<span class="no">1502 </span>        &amp;njs_string_undefined<span class="en10" id="n10"><a href="#n10" class="mov" data-partner="#m10">,</a></span> 
-<span class="no">1503 </span>        &amp;njs_string_undefined<span class="en11" id="n11"><a href="#n11" class="mov" data-partner="#m11">,</a></span> 
-<span class="no">1504 </span>        &amp;njs_string_undefined<span class="en12" id="n12"><a href="#n12" class="mov" data-partner="#m12">,</a></span> 
-<span class="no">1505 </span>        &amp;njs_string_undefined<span class="en13" id="n13"><a href="#n13" class="mov" data-partner="#m13">,</a></span> 
-<span class="no">1506 </span>        &amp;njs_string_undefined<span class="en14" id="n14"><a href="#n14" class="mov" data-partner="#m14">,</a></span> 
-<span class="no">1507 </span>        &amp;njs_string_undefined<span class="en15" id="n15"><a href="#n15" class="mov" data-partner="#m15">,</a></span> 
-<span class="no">1508 </span>        &amp;njs_string_undefined<span class="en16" id="n16"><a href="#n16" class="mov" data-partner="#m16">,</a></span> 
+<span class="no">1493 </span>        &amp;njs_string_object<span id="edit-2-old" data-kind="mov"><span id="hl-2-45508" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>,</span></span> 
+<span class="no">1494 </span>        &amp;njs_string_undefined<span id="edit-3-old" data-kind="mov"><span id="hl-3-45539" class="hl mov">,</span></span> 
+<span class="no">1495 </span>        &amp;njs_string_boolean<span id="edit-4-old" data-kind="mov"><span id="hl-4-45568" class="hl mov">,</span></span> 
+<span class="no">1496 </span>        &amp;njs_string_number<span id="edit-5-old" data-kind="mov"><span id="hl-5-45596" class="hl mov">,</span></span> 
+<span class="no">1497 </span>        &amp;njs_string_symbol<span id="edit-6-old" data-kind="mov"><span id="hl-6-45624" class="hl mov">,</span></span> 
+<span class="no">1498 </span>        &amp;njs_string_string<span id="edit-7-old" data-kind="mov"><span id="hl-7-45652" class="hl mov">,</span></span> 
+<span class="no">1499 </span>        &amp;njs_string_data<span id="edit-8-old" data-kind="mov"><span id="hl-8-45678" class="hl mov">,</span></span> 
+<span class="no">1500 </span>        &amp;njs_string_external<span id="edit-9-old" data-kind="mov"><span id="hl-9-45708" class="hl mov">,</span></span> 
+<span class="no">1501 </span>        &amp;njs_string_invalid<span id="edit-10-old" data-kind="mov"><span id="hl-10-45737" class="hl mov">,</span></span> 
+<span class="no">1502 </span>        &amp;njs_string_undefined<span id="edit-11-old" data-kind="mov"><span id="hl-11-45768" class="hl mov">,</span></span> 
+<span class="no">1503 </span>        &amp;njs_string_undefined<span id="edit-12-old" data-kind="mov"><span id="hl-12-45799" class="hl mov">,</span></span> 
+<span class="no">1504 </span>        &amp;njs_string_undefined<span id="edit-13-old" data-kind="mov"><span id="hl-13-45830" class="hl mov">,</span></span> 
+<span class="no">1505 </span>        &amp;njs_string_undefined<span id="edit-14-old" data-kind="mov"><span id="hl-14-45861" class="hl mov">,</span></span> 
+<span class="no">1506 </span>        &amp;njs_string_undefined<span id="edit-15-old" data-kind="mov"><span id="hl-15-45892" class="hl mov">,</span></span> 
+<span class="no">1507 </span>        &amp;njs_string_undefined<span id="edit-16-old" data-kind="mov"><span id="hl-16-45923" class="hl mov">,</span></span> 
+<span class="no">1508 </span>        &amp;njs_string_undefined<span id="edit-17-old" data-kind="mov"><span id="hl-17-45954" class="hl mov">,</span></span> 
 <span class="no">1509 </span> 
-<span class="no">1510 </span>        &amp;njs_string_object<span class="en17" id="n17"><a href="#n17" class="mov" data-partner="#m17">,</a></span> 
-<span class="no">1511 </span>        &amp;njs_string_object<span class="en18" id="n18"><a href="#n18" class="mov" data-partner="#m18">,</a></span> 
-<span class="no">1512 </span>        &amp;njs_string_function<span class="en19" id="n19"><a href="#n19" class="mov" data-partner="#m19">,</a></span> 
-<span class="no">1513 </span>        &amp;njs_string_object<span class="en20" id="n20"><a href="#n20" class="mov" data-partner="#m20">,</a></span> 
-<span class="no">1514 </span>        &amp;njs_string_object<span class="en21" id="n21"><a href="#n21" class="mov" data-partner="#m21">,</a></span> 
-<span class="no">1515 </span>        &amp;njs_string_object<span class="en22" id="n22"><a href="#n22" class="mov" data-partner="#m22">,</a></span> 
-<span class="no">1516 </span>        &amp;njs_string_object<span class="en23" id="n23"><a href="#n23" class="mov" data-partner="#m23">,</a></span> 
-<span class="no">1517 </span>        &amp;njs_string_object<span class="en24" id="n24"><a href="#n24" class="mov" data-partner="#m24">,</a></span> 
-<span class="no">1518 </span>        &amp;njs_string_object, 
+<span class="no">1510 </span>        &amp;njs_string_object<span id="edit-18-old" data-kind="mov"><span id="hl-18-45983" class="hl mov">,</span></span> 
+<span class="no">1511 </span>        &amp;njs_string_object<span id="edit-19-old" data-kind="mov"><span id="hl-19-46011" class="hl mov">,</span></span> 
+<span class="no">1512 </span>        &amp;njs_string_function<span id="edit-20-old" data-kind="mov"><span id="hl-20-46041" class="hl mov">,</span></span> 
+<span class="no">1513 </span>        &amp;njs_string_object<span id="edit-21-old" data-kind="mov"><span id="hl-21-46069" class="hl mov">,</span></span> 
+<span class="no">1514 </span>        &amp;njs_string_object<span id="edit-22-old" data-kind="mov"><span id="hl-22-46097" class="hl mov">,</span></span> 
+<span class="no">1515 </span>        &amp;njs_string_object<span id="edit-23-old" data-kind="mov"><span id="hl-23-46125" class="hl mov">,</span></span> 
+<span class="no">1516 </span>        &amp;njs_string_object<span id="edit-24-old" data-kind="mov"><span id="hl-24-46153" class="hl mov">,</span></span> 
+<span class="no">1517 </span>        &amp;njs_string_object<span id="edit-25-old" data-kind="mov"><span id="hl-25-46181" class="hl mov">,</span></span> 
+<span class="no">1518 </span>        <span id="edit-26-old" data-kind="ins"></span>&amp;njs_string_object, 
 <span class="no">1519 </span>    }; 
 <span class="no">1520 </span> 
 <span class="no">1521 </span>    vm-&gt;retval = *types[value-&gt;type]; 
@@ -3187,13 +2544,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">2072 </span>        njs_error_fmt_new(vm, &amp;vm-&gt;retval, err-&gt;type, &quot;%V&quot;, &amp;err-&gt;u.message); 
 <span class="no">2073 </span>    } 
 <span class="no">2074 </span>} 
-<span class="no">2075 </span></code></pre>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">15_A (modified)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span> 
+<span class="no">2075 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">15_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span> 
 <span class="no">   2 </span>/* 
 <span class="no">   3 </span> * Copyright (C) Igor Sysoev 
 <span class="no">   4 </span> * Copyright (C) NGINX, Inc. 
@@ -4684,35 +4037,35 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1489 </span>{ 
 <span class="no">1490 </span>    /* ECMAScript 5.1: null, array and regexp are objects. */ 
 <span class="no">1491 </span> 
-<span class="no">1492 </span>    static const njs_value_t  *types[NJS_VALUE_TYPE_MAX] = <span class="ep26" id="p26"><span class="ep25" id="p25">{ 
-<span class="no">1493 </span>        &amp;njs_string_object<span class="en25" id="n25"><a href="#n25" class="ins">,</a></span> 
-<span class="no">1494 </span>        &amp;njs_string_undefined<span class="em1" id="m1"><a href="#m1" class="mov" data-partner="#n1">,</a></span> 
-<span class="no">1495 </span>        &amp;njs_string_boolean<span class="em2" id="m2"><a href="#m2" class="mov" data-partner="#n2">,</a></span> 
-<span class="no">1496 </span>        &amp;njs_string_number<span class="em3" id="m3"><a href="#m3" class="mov" data-partner="#n3">,</a></span> 
-<span class="no">1497 </span>        &amp;njs_string_symbol<span class="em4" id="m4"><a href="#m4" class="mov" data-partner="#n4">,</a></span> 
-<span class="no">1498 </span>        &amp;njs_string_string<span class="em5" id="m5"><a href="#m5" class="mov" data-partner="#n5">,</a></span> 
-<span class="no">1499 </span>        &amp;njs_string_data<span class="em6" id="m6"><a href="#m6" class="mov" data-partner="#n6">,</a></span> 
-<span class="no">1500 </span>        &amp;njs_string_external<span class="em7" id="m7"><a href="#m7" class="mov" data-partner="#n7">,</a></span> 
-<span class="no">1501 </span>        &amp;njs_string_invalid<span class="em8" id="m8"><a href="#m8" class="mov" data-partner="#n8">,</a></span> 
-<span class="no">1502 </span>        &amp;njs_string_undefined<span class="em9" id="m9"><a href="#m9" class="mov" data-partner="#n9">,</a></span> 
-<span class="no">1503 </span>        &amp;njs_string_undefined<span class="em10" id="m10"><a href="#m10" class="mov" data-partner="#n10">,</a></span> 
-<span class="no">1504 </span>        &amp;njs_string_undefined<span class="em11" id="m11"><a href="#m11" class="mov" data-partner="#n11">,</a></span> 
-<span class="no">1505 </span>        &amp;njs_string_undefined<span class="em12" id="m12"><a href="#m12" class="mov" data-partner="#n12">,</a></span> 
-<span class="no">1506 </span>        &amp;njs_string_undefined<span class="em13" id="m13"><a href="#m13" class="mov" data-partner="#n13">,</a></span> 
-<span class="no">1507 </span>        &amp;njs_string_undefined<span class="em14" id="m14"><a href="#m14" class="mov" data-partner="#n14">,</a></span> 
-<span class="no">1508 </span>        &amp;njs_string_undefined<span class="em15" id="m15"><a href="#m15" class="mov" data-partner="#n15">,</a></span> 
+<span class="no">1492 </span>    static const njs_value_t  *types[NJS_VALUE_TYPE_MAX] = { 
+<span class="no">1493 </span>        &amp;njs_string_object<span id="edit-1-new" data-kind="ins"><span id="hl-1-45508" class="hl ins">,</span></span> 
+<span class="no">1494 </span>        &amp;njs_string_undefined<span id="edit-2-new" data-kind="mov"><span id="hl-2-45539" class="hl mov">,</span></span> 
+<span class="no">1495 </span>        &amp;njs_string_boolean<span id="edit-3-new" data-kind="mov"><span id="hl-3-45568" class="hl mov">,</span></span> 
+<span class="no">1496 </span>        &amp;njs_string_number<span id="edit-4-new" data-kind="mov"><span id="hl-4-45596" class="hl mov">,</span></span> 
+<span class="no">1497 </span>        &amp;njs_string_symbol<span id="edit-5-new" data-kind="mov"><span id="hl-5-45624" class="hl mov">,</span></span> 
+<span class="no">1498 </span>        &amp;njs_string_string<span id="edit-6-new" data-kind="mov"><span id="hl-6-45652" class="hl mov">,</span></span> 
+<span class="no">1499 </span>        &amp;njs_string_data<span id="edit-7-new" data-kind="mov"><span id="hl-7-45678" class="hl mov">,</span></span> 
+<span class="no">1500 </span>        &amp;njs_string_external<span id="edit-8-new" data-kind="mov"><span id="hl-8-45708" class="hl mov">,</span></span> 
+<span class="no">1501 </span>        &amp;njs_string_invalid<span id="edit-9-new" data-kind="mov"><span id="hl-9-45737" class="hl mov">,</span></span> 
+<span class="no">1502 </span>        &amp;njs_string_undefined<span id="edit-10-new" data-kind="mov"><span id="hl-10-45768" class="hl mov">,</span></span> 
+<span class="no">1503 </span>        &amp;njs_string_undefined<span id="edit-11-new" data-kind="mov"><span id="hl-11-45799" class="hl mov">,</span></span> 
+<span class="no">1504 </span>        &amp;njs_string_undefined<span id="edit-12-new" data-kind="mov"><span id="hl-12-45830" class="hl mov">,</span></span> 
+<span class="no">1505 </span>        &amp;njs_string_undefined<span id="edit-13-new" data-kind="mov"><span id="hl-13-45861" class="hl mov">,</span></span> 
+<span class="no">1506 </span>        &amp;njs_string_undefined<span id="edit-14-new" data-kind="mov"><span id="hl-14-45892" class="hl mov">,</span></span> 
+<span class="no">1507 </span>        &amp;njs_string_undefined<span id="edit-15-new" data-kind="mov"><span id="hl-15-45923" class="hl mov">,</span></span> 
+<span class="no">1508 </span>        &amp;njs_string_undefined<span id="edit-16-new" data-kind="mov"><span id="hl-16-45954" class="hl mov">,</span></span> 
 <span class="no">1509 </span> 
-<span class="no">1510 </span>        &amp;njs_string_object<span class="em16" id="m16"><a href="#m16" class="mov" data-partner="#n16">,</a></span> 
-<span class="no">1511 </span>        &amp;njs_string_object<span class="em17" id="m17"><a href="#m17" class="mov" data-partner="#n17">,</a></span> 
-<span class="no">1512 </span>        &amp;njs_string_function<span class="em18" id="m18"><a href="#m18" class="mov" data-partner="#n18">,</a></span> 
-<span class="no">1513 </span>        &amp;njs_string_object<span class="em19" id="m19"><a href="#m19" class="mov" data-partner="#n19">,</a></span> 
-<span class="no">1514 </span>        &amp;njs_string_object<span class="em20" id="m20"><a href="#m20" class="mov" data-partner="#n20">,</a></span> 
-<span class="no">1515 </span>        &amp;njs_string_object<span class="em21" id="m21"><a href="#m21" class="mov" data-partner="#n21">,</a></span> 
-<span class="no">1516 </span>        &amp;njs_string_object<span class="em22" id="m22"><a href="#m22" class="mov" data-partner="#n22">,</a></span> 
-<span class="no">1517 </span>        &amp;njs_string_object<span class="em23" id="m23"><a href="#m23" class="mov" data-partner="#n23">,</a></span> 
-<span class="no">1518 </span>        &amp;njs_string_object<span class="em24" id="m24"><a href="#m24" class="mov" data-partner="#n24">,</a></span> 
-<span class="no">1519 </span>        <span class="en26" id="n26"><a href="#n26" class="ins">&amp;njs_string_object</a></span>, 
-<span class="no">1520 </span>    }</span></span>; 
+<span class="no">1510 </span>        &amp;njs_string_object<span id="edit-17-new" data-kind="mov"><span id="hl-17-45983" class="hl mov">,</span></span> 
+<span class="no">1511 </span>        &amp;njs_string_object<span id="edit-18-new" data-kind="mov"><span id="hl-18-46011" class="hl mov">,</span></span> 
+<span class="no">1512 </span>        &amp;njs_string_function<span id="edit-19-new" data-kind="mov"><span id="hl-19-46041" class="hl mov">,</span></span> 
+<span class="no">1513 </span>        &amp;njs_string_object<span id="edit-20-new" data-kind="mov"><span id="hl-20-46069" class="hl mov">,</span></span> 
+<span class="no">1514 </span>        &amp;njs_string_object<span id="edit-21-new" data-kind="mov"><span id="hl-21-46097" class="hl mov">,</span></span> 
+<span class="no">1515 </span>        &amp;njs_string_object<span id="edit-22-new" data-kind="mov"><span id="hl-22-46125" class="hl mov">,</span></span> 
+<span class="no">1516 </span>        &amp;njs_string_object<span id="edit-23-new" data-kind="mov"><span id="hl-23-46153" class="hl mov">,</span></span> 
+<span class="no">1517 </span>        &amp;njs_string_object<span id="edit-24-new" data-kind="mov"><span id="hl-24-46181" class="hl mov">,</span></span> 
+<span class="no">1518 </span>        &amp;njs_string_object<span id="edit-25-new" data-kind="mov"><span id="hl-25-46209" class="hl mov">,</span></span> 
+<span class="no">1519 </span>        <span id="edit-26-new" data-kind="ins"><span id="hl-26-46219" class="hl ins">&amp;njs_string_object</span></span>, 
+<span class="no">1520 </span>    }; 
 <span class="no">1521 </span> 
 <span class="no">1522 </span>    vm-&gt;retval = *types[value-&gt;type]; 
 <span class="no">1523 </span> 
@@ -5268,10 +4621,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">2073 </span>        njs_error_fmt_new(vm, &amp;vm-&gt;retval, err-&gt;type, &quot;%V&quot;, &amp;err-&gt;u.message); 
 <span class="no">2074 </span>    } 
 <span class="no">2075 </span>} 
-<span class="no">2076 </span></code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+<span class="no">2076 </span></code></pre></div>
+</div></div></div>
 </body>
 </html>

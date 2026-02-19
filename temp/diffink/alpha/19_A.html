@@ -3,354 +3,453 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
-  .page:has(#m4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .edit {
-    font-size: 14px;
-    min-width: 512px;
-    height: 60px;
-  }
-  .page:has(#m5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#m5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .i1, .i2, .i3, .i4, .i5 {
-    display: none;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  .page:has(#m2:target) .em2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n2:target) .em2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .token {
-    color: #017100;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  .page:has(#m5:target) .em5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n5:target) .em5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page {
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0 16px 8px 16px;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .sec {
-    padding: 0;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .page:has(#m1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#m1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .ins, .del, .mov, .upd {
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    padding-top: 0.05em;
-  }
-  .grid {
-    gap: 16px;
-    height: calc(100vh - 186px);
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-  }
-  .error {
-    color: #b51700;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .no {
-    padding-top: 0.15em;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    letter-spacing: normal;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p3:target) .ep3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .editbox {
-    font-weight: 500;
-    line-height: 1.8;
-    padding: 4px 8px;
-    min-height: 0;
-    overflow: auto;
-    font-size: 14px;
-    background: #f7f7f7;
-    flex: 1;
-  }
-  .panel, .edit {
-    flex-direction: column;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-  }
-  .codebox {
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    background: #f7f7f7;
-    padding: 4px;
-    min-height: 0;
-    scroll-padding-top: 54px;
-    font-size: 12px;
-    flex: 1;
-    line-height: 1.5;
-  }
-  .panel-header {
-    font-weight: bold;
-    background: #ebebeb;
-    align-items: center;
-    padding: 8px 10px;
-    justify-content: space-between;
-    display: flex;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    line-height: 1;
-  }
-  .toolbar {
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#m2:target) .en2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#p3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .page:has(#m5:target) .en5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m1:target) .en1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m1:target) .em1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n1:target) .em1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n4:target) .en4 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m4:target) .en4 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m4:target) .em4 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n4:target) .em4 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-</style>
-</head>
+:root {
+  --upd-clr: 255 217 50;
+  --ins-clr: 97 216 54;
+  --del-clr: 255 150 141;
+  --mov-clr: 191 175 255;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+}
+.grid {
+  gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+}
+.panel {
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.panel-header {
+  align-items: center;
+  justify-content: space-between;
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  display: flex;
+  line-height: 1;
+}
+.codebox {
+  line-height: 1.5;
+  padding: 2px 4px;
+  font-size: 12px;
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+  flex: 1;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
+}
+.ins, .del, .mov, .upd {
+  border-top: 1px solid #878787;
+  border-bottom: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-top: 3px solid rgb(var(--ins-clr));
+  border-bottom: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-top: 3px solid rgb(var(--del-clr));
+  border-bottom: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-top: 3px solid rgb(var(--mov-clr));
+  border-bottom: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-top: 3px solid rgb(var(--upd-clr));
+  border-bottom: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  font-weight: normal;
+  color: #878787;
+  letter-spacing: normal;
+  padding-top: 3px;
+  background: #f7f7f7;
+  padding-bottom: 3px;
+}
+.legend {
+  margin: 8px 0 12px 0;
+  line-height: 1.5;
+  font-size: 12px;
+}
+.legend-row {
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+  display: flex;
+  margin-bottom: 10px;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  margin-right: 10px;
+}
+.legend-key kbd {
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+  background: #fbfbfb;
+  margin-right: 4px;
+}
+.description {
+  padding: 0px 2px;
+  border: 1px solid black;
+  width: 384px;
+  overflow: auto;
+  box-sizing: border-box;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
 <body>
 <script>
-function jumpVia(ViaId, FinalId) {
-  location.hash = ViaId;
-  requestAnimationFrame(() => {
-    location.hash = FinalId;
-  });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('a[data-partner]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const Via = a.dataset.partner;
-      const FinalId = a.getAttribute('href').slice(1);
-      if (!Via || !FinalId) return;
-      e.preventDefault();
-      jumpVia(Via, FinalId);
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
     });
   });
-});
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      unfocusEdit();
+      return;
+    }
+
+    const key = e.key.toLowerCase();
+
+    if (key === "u") {
+      unfocusEdit();
+      return;
+    }
+
+    if (key !== "n" && key !== "b") return;
+    if (editOrder.length === 0) return;
+
+    e.preventDefault();
+
+    if (activeEdit === null) {
+      editIndex = key === "n" ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += key === "n" ? 1 : -1;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  });
+});
 </script>
-  <div class="page">
-    <div class="sec">
-      <span class="clear">Edit</span>
-      <span class="i1">Edit #1</span>
-      <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-    </div>
-    <div class="toolbar">
-      <span class="clear"><a href="#n5" data-partner="#m5">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n5" data-partner="#m5">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1" data-partner="#m1">Prev</a> | <a href="#n3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4" data-partner="#m4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3">Prev</a> | <a href="#n5" data-partner="#m5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4" data-partner="#m4">Prev</a> | <a href="#n1" data-partner="#m1">Next</a> | <a href="#clear">Clear</a></span>
-    </div>
-    <div class="edit">
-      <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n1" data-partner="m1"> identifier</a>: <span class=token>&quot;arg&quot;</span> [859, 42] - [859, 45]
-<span style="font-weight:600">  to     </span><a href="#m1" data-partner="n1"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [859, 46] - [859, 53]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n2" data-partner="m2"> identifier</a>: <span class=token>&quot;arg&quot;</span> [859, 47] - [859, 50]
-<span style="font-weight:600">  to     </span><a href="#m2" data-partner="n2"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [859, 55] - [859, 62]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert subtree </span><a href="#n3"> declaration</a> [860, 9] - [860, 36]
-<span style="font-weight:600">  into           </span><a href="#p3"> compound_statement</a> [859, 90] - [937, 6]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n4" data-partner="m4"> identifier</a>: <span class=token>&quot;arg&quot;</span> [859, 23] - [859, 26]
-<span style="font-weight:600">  to     </span><a href="#m4" data-partner="n4"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [859, 23] - [859, 30]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(255, 217, 50)"> </span> Update </span><a href="#n5" data-partner="m5"> identifier</a>: <span class=token>&quot;arg&quot;</span> [859, 53] - [859, 56]
-<span style="font-weight:600">  to     </span><a href="#m5" data-partner="n5"> identifier</a>: <span class=token>&quot;funcArg&quot;</span> [859, 65] - [859, 72]</span></code></pre>
-      </div>
-    </div>
-    <div class="sec">Code</div>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header">19_A (original)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>/* 
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 5 :&ensp;<b>Insert <code class="type">"declaration"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">19_A (original)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>/* 
 <span class="no">   2 </span> * Cppcheck - A tool for static C/C++ code analysis 
 <span class="no">   3 </span> * Copyright (C) 2007-2020 Cppcheck team. 
 <span class="no">   4 </span> * 
@@ -1208,8 +1307,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 856 </span>    } 
 <span class="no"> 857 </span> 
 <span class="no"> 858 </span>    int argNr = 1; 
-<span class="no"> 859 </span>    for (const Token *<span id="n4" class="en4"><a href="#n4" class="upd" data-partner="#m4">arg</a></span> = tokFirstArg; <span id="n1" class="en1"><a href="#n1" class="upd" data-partner="#m1">arg</a></span>; <span id="n2" class="en2"><a href="#n2" class="upd" data-partner="#m2">arg</a></span> = <span id="n5" class="en5"><a href="#n5" class="upd" data-partner="#m5">arg</a></span>-&gt;nextArgument()) { 
-<span class="no"> 860 </span>        if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
+<span class="no"> 859 </span>    for (const Token *<span id="edit-1-old" data-kind="upd"><span id="hl-1-36861" class="hl upd">arg</span></span> = tokFirstArg; <span id="edit-2-old" data-kind="upd"><span id="hl-2-36880" class="hl upd">arg</span></span>; <span id="edit-3-old" data-kind="upd"><span id="hl-3-36885" class="hl upd">arg</span></span> = <span id="edit-4-old" data-kind="upd"><span id="hl-4-36891" class="hl upd">arg</span></span>-&gt;nextArgument()) { 
+<span class="no"> 860 </span>        <span id="edit-5-old" data-kind="ins"></span>if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
 <span class="no"> 861 </span>            arg = arg-&gt;next(); 
 <span class="no"> 862 </span>            if (Token::simpleMatch(arg, &quot;( std :: nothrow )&quot;)) 
 <span class="no"> 863 </span>                arg = arg-&gt;tokAt(5); 
@@ -1364,13 +1463,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1012 </span>        } 
 <span class="no">1013 </span>    } 
 <span class="no">1014 </span>} 
-<span class="no">1015 </span></code></pre>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">19_A (modified)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>/* 
+<span class="no">1015 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">19_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>/* 
 <span class="no">   2 </span> * Cppcheck - A tool for static C/C++ code analysis 
 <span class="no">   3 </span> * Copyright (C) 2007-2020 Cppcheck team. 
 <span class="no">   4 </span> * 
@@ -2228,8 +2323,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 856 </span>    } 
 <span class="no"> 857 </span> 
 <span class="no"> 858 </span>    int argNr = 1; 
-<span class="no"> 859 </span>    for (const Token *<span id="m4" class="em4"><a href="#m4" class="upd" data-partner="#n4">funcArg</a></span> = tokFirstArg; <span id="m1" class="em1"><a href="#m1" class="upd" data-partner="#n1">funcArg</a></span>; <span id="m2" class="em2"><a href="#m2" class="upd" data-partner="#n2">funcArg</a></span> = <span id="m5" class="em5"><a href="#m5" class="upd" data-partner="#n5">funcArg</a></span>-&gt;nextArgument()) <span id="p3" class="ep3">{ 
-<span class="no"> 860 </span>        <span id="n3" class="en3"><a class="ins" href="#n3">const Token* arg = funcArg;</a></span> 
+<span class="no"> 859 </span>    for (const Token *<span id="edit-1-new" data-kind="upd"><span id="hl-1-36861" class="hl upd">funcArg</span></span> = tokFirstArg; <span id="edit-2-new" data-kind="upd"><span id="hl-2-36884" class="hl upd">funcArg</span></span>; <span id="edit-3-new" data-kind="upd"><span id="hl-3-36893" class="hl upd">funcArg</span></span> = <span id="edit-4-new" data-kind="upd"><span id="hl-4-36903" class="hl upd">funcArg</span></span>-&gt;nextArgument()) { 
+<span class="no"> 860 </span>        <span id="edit-5-new" data-kind="ins"><span id="hl-5-36938" class="hl ins">const Token* arg = funcArg;</span></span> 
 <span class="no"> 861 </span>        if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
 <span class="no"> 862 </span>            arg = arg-&gt;next(); 
 <span class="no"> 863 </span>            if (Token::simpleMatch(arg, &quot;( std :: nothrow )&quot;)) 
@@ -2306,7 +2401,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 934 </span>        } 
 <span class="no"> 935 </span>        // TODO: check each token in argument expression (could contain multiple variables) 
 <span class="no"> 936 </span>        argNr++; 
-<span class="no"> 937 </span>    }</span> 
+<span class="no"> 937 </span>    } 
 <span class="no"> 938 </span>} 
 <span class="no"> 939 </span> 
 <span class="no"> 940 </span> 
@@ -2385,10 +2480,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">1013 </span>        } 
 <span class="no">1014 </span>    } 
 <span class="no">1015 </span>} 
-<span class="no">1016 </span></code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+<span class="no">1016 </span></code></pre></div>
+</div></div></div>
 </body>
 </html>

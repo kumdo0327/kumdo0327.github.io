@@ -3,7 +3,7 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root {
   --del-clr: 255 150 141;
@@ -38,15 +38,15 @@ body {
   border-radius: 6px;
 }
 .panel-header {
+  display: flex;
+  justify-content: space-between;
   background: #ebebeb;
   border-bottom: 1px solid #b7b7b7;
+  line-height: 1;
   font-weight: bold;
   padding: 8px 10px;
   font-size: 16px;
-  display: flex;
-  line-height: 1;
   align-items: center;
-  justify-content: space-between;
 }
 .codebox {
   overflow: auto;
@@ -65,8 +65,8 @@ pre {
   box-shadow: inset -1px 0 0 #878787;
 }
 .ins, .del, .mov, .upd {
-  border-bottom: 1px solid #878787;
   border-top: 1px solid #878787;
+  border-bottom: 1px solid #878787;
 }
 .ins-focus, .del-focus, .mov-focus, .upd-focus {
   font-weight: bold;
@@ -96,28 +96,28 @@ pre {
   background: rgb(var(--upd-clr));
 }
 .ins-border {
-  border-bottom: 3px solid rgb(var(--ins-clr));
   border-top: 3px solid rgb(var(--ins-clr));
+  border-bottom: 3px solid rgb(var(--ins-clr));
 }
 .del-border {
-  border-bottom: 3px solid rgb(var(--del-clr));
   border-top: 3px solid rgb(var(--del-clr));
+  border-bottom: 3px solid rgb(var(--del-clr));
 }
 .mov-border {
-  border-bottom: 3px solid rgb(var(--mov-clr));
   border-top: 3px solid rgb(var(--mov-clr));
+  border-bottom: 3px solid rgb(var(--mov-clr));
 }
 .upd-border {
-  border-bottom: 3px solid rgb(var(--upd-clr));
   border-top: 3px solid rgb(var(--upd-clr));
+  border-bottom: 3px solid rgb(var(--upd-clr));
 }
 .no {
-  padding-top: 3px;
   background: #f7f7f7;
-  padding-bottom: 3px;
-  font-weight: normal;
   color: #878787;
   letter-spacing: normal;
+  font-weight: normal;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 .legend {
   margin: 8px 0 12px 0;
@@ -126,9 +126,9 @@ pre {
 }
 .legend-row {
   display: flex;
-  margin-bottom: 10px;
-  gap: 4px;
   flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
   align-items: center;
 }
 .legend-title {
@@ -156,18 +156,18 @@ pre {
   margin-right: 10px;
 }
 .legend-key kbd {
-  background: #fbfbfb;
   margin-right: 4px;
+  background: #fbfbfb;
   padding: 1px 5px;
   border: 2px solid #afafaf;
   border-radius: 2px;
 }
 .description {
-  width: 384px;
-  box-sizing: border-box;
   overflow: auto;
-  border: 1px solid black;
+  box-sizing: border-box;
   padding: 0px 2px;
+  width: 384px;
+  border: 1px solid black;
 }
 .type {
   color: #0076ba;
@@ -441,92 +441,22 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 2 :&ensp;<b>Insert <code class="type">","</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 2 :&ensp;<b>Insert <code class="type">"keyword_argument"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 2 :&ensp;<b>Insert <code class="type">"if_statement"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 2 :&ensp;<b>Move <code class="type">"expression_statement"</code></b></span>
 </div>
 </div>
-<div class="grid"><div class="panel"><div class="panel-header">24_A (original)</div>
-<div class="codebox"><pre><code><span class="no"> 1 </span>&quot;&quot;&quot; 
-<span class="no"> 2 </span>================================== 
-<span class="no"> 3 </span>Colormap Normalizations Symlognorm 
-<span class="no"> 4 </span>================================== 
-<span class="no"> 5 </span> 
-<span class="no"> 6 </span>Demonstration of using norm to map colormaps onto data in non-linear ways. 
-<span class="no"> 7 </span>&quot;&quot;&quot; 
-<span class="no"> 8 </span> 
-<span class="no"> 9 </span>import numpy as np 
-<span class="no">10 </span>import matplotlib.pyplot as plt 
-<span class="no">11 </span>import matplotlib.colors as colors 
-<span class="no">12 </span> 
-<span class="no">13 </span>&quot;&quot;&quot; 
-<span class="no">14 </span>SymLogNorm: two humps, one negative and one positive, The positive 
-<span class="no">15 </span>with 5-times the amplitude. Linearly, you cannot see detail in the 
-<span class="no">16 </span>negative hump.  Here we logarithmically scale the positive and 
-<span class="no">17 </span>negative data separately. 
-<span class="no">18 </span> 
-<span class="no">19 </span>Note that colorbar labels do not come out looking very good. 
-<span class="no">20 </span>&quot;&quot;&quot; 
-<span class="no">21 </span> 
-<span class="no">22 </span>N = 100 
-<span class="no">23 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
-<span class="no">24 </span>Z1 = np.exp(-X**2 - Y**2) 
-<span class="no">25 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
-<span class="no">26 </span>Z = (Z1 - Z2) * 2 
-<span class="no">27 </span> 
-<span class="no">28 </span>fig, ax = plt.subplots(2, 1) 
-<span class="no">29 </span> 
-<span class="no">30 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
-<span class="no">31 </span>                       norm=colors.SymLogNorm(linthresh=0.03, linscale=0.03, 
-<span class="no">32 </span>                                              vmin=-1.0, vmax=1.0<span data-kind="ins" id="edit-1-old"></span><span data-kind="ins" id="edit-2-old"></span>), 
-<span class="no">33 </span>                       cmap=&apos;RdBu_r&apos;) 
-<span class="no">34 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
-<span class="no">35 </span> 
-<span class="no">36 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
-<span class="no">37 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
-<span class="no">38 </span> 
-<span class="no">39 </span>plt.show() 
-<span class="no">40 </span></code></pre></div>
-</div><div class="panel"><div class="panel-header">24_A (modified)</div>
-<div class="codebox"><pre><code><span class="no"> 1 </span>&quot;&quot;&quot; 
-<span class="no"> 2 </span>================================== 
-<span class="no"> 3 </span>Colormap Normalizations Symlognorm 
-<span class="no"> 4 </span>================================== 
-<span class="no"> 5 </span> 
-<span class="no"> 6 </span>Demonstration of using norm to map colormaps onto data in non-linear ways. 
-<span class="no"> 7 </span>&quot;&quot;&quot; 
-<span class="no"> 8 </span> 
-<span class="no"> 9 </span>import numpy as np 
-<span class="no">10 </span>import matplotlib.pyplot as plt 
-<span class="no">11 </span>import matplotlib.colors as colors 
-<span class="no">12 </span> 
-<span class="no">13 </span>&quot;&quot;&quot; 
-<span class="no">14 </span>SymLogNorm: two humps, one negative and one positive, The positive 
-<span class="no">15 </span>with 5-times the amplitude. Linearly, you cannot see detail in the 
-<span class="no">16 </span>negative hump.  Here we logarithmically scale the positive and 
-<span class="no">17 </span>negative data separately. 
-<span class="no">18 </span> 
-<span class="no">19 </span>Note that colorbar labels do not come out looking very good. 
-<span class="no">20 </span>&quot;&quot;&quot; 
-<span class="no">21 </span> 
-<span class="no">22 </span>N = 100 
-<span class="no">23 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
-<span class="no">24 </span>Z1 = np.exp(-X**2 - Y**2) 
-<span class="no">25 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
-<span class="no">26 </span>Z = (Z1 - Z2) * 2 
-<span class="no">27 </span> 
-<span class="no">28 </span>fig, ax = plt.subplots(2, 1) 
-<span class="no">29 </span> 
-<span class="no">30 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
-<span class="no">31 </span>                       norm=colors.SymLogNorm(linthresh=0.03, linscale=0.03, 
-<span class="no">32 </span>                                              vmin=-1.0, vmax=1.0<span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-923">,</span></span> <span data-kind="ins" id="edit-2-new"><span class="hl ins" id="hl-2-925">base=10</span></span>), 
-<span class="no">33 </span>                       cmap=&apos;RdBu_r&apos;) 
-<span class="no">34 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
-<span class="no">35 </span> 
-<span class="no">36 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
-<span class="no">37 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
-<span class="no">38 </span> 
-<span class="no">39 </span>plt.show() 
-<span class="no">40 </span></code></pre></div>
+<div class="grid"><div class="panel"><div class="panel-header">Tutorial 3 (original)</div>
+<div class="codebox"><pre><code><span class="no">1 </span>int main() { 
+<span class="no">2 </span>    <span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-18"><span data-kind="ins" id="edit-1-old"></span>move();</span></span> 
+<span class="no">3 </span>    return 0; 
+<span class="no">4 </span>}</code></pre></div>
+</div><div class="panel"><div class="panel-header">Tutorial 3 (modified)</div>
+<div class="codebox"><pre><code><span class="no">1 </span>int main() { 
+<span class="no">2 </span>    <span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-18">if (true) { 
+<span class="no">3 </span>        </span><span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-38">move();</span></span><span class="hl ins" id="hl-1-45"> 
+<span class="no">4 </span>    }</span></span> 
+<span class="no">5 </span>    return 0; 
+<span class="no">6 </span>}</code></pre></div>
 </div></div></div>
 </body>
 </html>

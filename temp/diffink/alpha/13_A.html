@@ -5,462 +5,450 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#n6:target) .en6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#p6:target) .ep6 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p1:target) .ep1 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p9:target) .ep9 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .page:has(#n10:target) .en10 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p11:target) .i11, .page:has(#n11:target) .i11 {
-    display: block;
-  }
-  .page:has(#p11:target) .clear, .page:has(#n11:target) .clear {
-    display: none;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10, .i11 {
-    display: none;
-  }
-  .page:has(#m2:target) .em2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n2:target) .em2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#n7:target) .en7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .codebox {
-    scroll-padding-top: 54px;
-    scroll-behavior: smooth;
-    overflow: auto;
-    background: #f7f7f7;
-    padding: 4px;
-    min-height: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    letter-spacing: 0.05em;
-    flex: 1;
-  }
-  .page:has(#n11:target) .en11 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p11:target) .ep11 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .edit {
-    height: 60px;
-    min-width: 512px;
-    font-size: 14px;
-  }
-  .editbox {
-    line-height: 1.8;
-    padding: 4px 8px;
-    min-height: 0;
-    overflow: auto;
-    font-size: 14px;
-    background: #f7f7f7;
-    flex: 1;
-    font-weight: 500;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m3:target) .en3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .no {
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    letter-spacing: normal;
-    padding-top: 0.15em;
-  }
-  body {
-    background: white;
-    margin: 0;
-  }
-  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .codebox a {
-    text-decoration: none;
-    color: inherit;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .page:has(#n8:target) .en8 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p8:target) .ep8 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .ins, .del, .mov, .upd {
-    padding-bottom: 0.05em;
-    border-bottom:  0.05em solid black;
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
-    padding-top: 0.05em;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page {
-    margin: 0 auto;
-    padding: 0 16px 8px 16px;
-    max-width: 100vw;
-  }
-  .page:has(#m2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  .page:has(#m2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .sec {
-    padding: 0;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .page:has(#n4:target) .en4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .ep4 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .page:has(#n9:target) .en9 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .panel, .edit {
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-  }
-  .page:has(#p5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#p5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p5:target) .ep5 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .error {
-    color: #b51700;
-  }
-  .token {
-    color: #017100;
-  }
-  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .page:has(#n3:target) .em3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m3:target) .em3 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#m2:target) .en2 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p10:target) .ep10 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .editbox a, .toolbar a {
-    text-decoration: none;
-    color: #0076ba;
-  }
-  .page:has(#p7:target) .ep7 {
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-    padding-top: 0.05em;
-  }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .toolbar {
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-    line-height: 1;
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .grid {
-    height: calc(100vh - 186px);
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-    gap: 16px;
-  }
-  .panel-header {
-    display: flex;
-    background: #ebebeb;
-    justify-content: space-between;
-    padding: 8px 10px;
-    border-bottom: 1px solid #afafaf;
-    font-size: 14px;
-    align-items: center;
-    line-height: 1;
-    font-weight: bold;
-  }
-</style>
-</head>
+:root {
+  --mov-clr: 191 175 255;
+  --ins-clr: 97 216 54;
+  --upd-clr: 255 217 50;
+  --del-clr: 255 150 141;
+}
+body {
+  background: white;
+  margin: 0;
+}
+.page {
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+  margin: 0 auto;
+}
+.grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+}
+.panel {
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+  display: flex;
+  min-width: 0;
+}
+.panel-header {
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  display: flex;
+  line-height: 1;
+  justify-content: space-between;
+  align-items: center;
+  background: #ebebeb;
+}
+.codebox {
+  padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
+  font-size: 12px;
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  padding-top: 3px;
+  font-weight: normal;
+  padding-bottom: 3px;
+  color: #878787;
+  letter-spacing: normal;
+  background: #f7f7f7;
+}
+.legend {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
+}
+.legend-row {
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+  display: flex;
+}
+.legend-title {
+  margin-right: 4px;
+  font-weight: bold;
+}
+.legend-chip {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  margin-right: 10px;
+}
+.legend-key kbd {
+  margin-right: 4px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+  padding: 1px 5px;
+  background: #fbfbfb;
+}
+.description {
+  box-sizing: border-box;
+  width: 384px;
+  padding: 0px 2px;
+  border: 1px solid black;
+  overflow: auto;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
 <body>
 <script>
-function jumpVia(ViaId, FinalId) {
-  location.hash = ViaId;
-  requestAnimationFrame(() => {
-    location.hash = FinalId;
-  });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('a[data-partner]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const Via = a.dataset.partner;
-      const FinalId = a.getAttribute('href').slice(1);
-      if (!Via || !FinalId) return;
-      e.preventDefault();
-      jumpVia(Via, FinalId);
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
     });
   });
-});
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      unfocusEdit();
+      return;
+    }
+
+    const key = e.key.toLowerCase();
+
+    if (key === "u") {
+      unfocusEdit();
+      return;
+    }
+
+    if (key !== "n" && key !== "b") return;
+    if (editOrder.length === 0) return;
+
+    e.preventDefault();
+
+    if (activeEdit === null) {
+      editIndex = key === "n" ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += key === "n" ? 1 : -1;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  });
+});
 </script>
-  <div class="page">
-    <div class="sec">
-      <span class="clear">Edit</span>
-      <span class="i1">Edit #1</span>
-      <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
-      <span class="i7">Edit #7</span>
-      <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
-      <span class="i11">Edit #11</span>
-    </div>
-    <div class="toolbar">
-      <span class="clear"><a href="#n11">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n11">Prev</a> | <a href="#n2" data-partner="#m2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2" data-partner="#m2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9">Prev</a> | <a href="#n11">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i11"><a href="#n10">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
-    </div>
-    <div class="edit">
-      <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> binary_expression</a> [5475, 9] - [5475, 33]
-<span style="font-weight:600">  into   </span><a href="#p1"> binary_expression</a> [5475, 9] - [5475, 59]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n2" data-partner="m2"> call_expression</a> [5475, 39] - [5475, 61]
-<span style="font-weight:600">  to   </span><a href="#m2" data-partner="n2"> call_expression</a> [5475, 37] - [5475, 59]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n3" data-partner="m3"> unary_expression</a> [5475, 9] - [5475, 20]
-<span style="font-weight:600">  to   </span><a href="#m3" data-partner="n3"> unary_expression</a> [5475, 9] - [5475, 20]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> &amp;&amp;</a>: <span class=token>&quot;&amp;&amp;&quot;</span> [5475, 21] - [5475, 23]
-<span style="font-weight:600">  into   </span><a href="#p4"> binary_expression</a> [5475, 9] - [5475, 33]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n5"> identifier</a>: <span class=token>&quot;node_name&quot;</span> [5475, 24] - [5475, 33]
-<span style="font-weight:600">  into   </span><a href="#p5"> binary_expression</a> [5475, 9] - [5475, 33]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n6"> (</a>: <span class=token>&quot;(&quot;</span> [5475, 24] - [5475, 25]
-<span style="font-weight:600">  from   </span><a href="#p6"> parenthesized_expression</a> [5475, 24] - [5475, 62]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete subtree </span><a href="#n7"> unary_expression</a> [5475, 25] - [5475, 35]
-<span style="font-weight:600">  from           </span><a href="#p7"> binary_expression</a> [5475, 25] - [5475, 61]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> ||</a>: <span class=token>&quot;||&quot;</span> [5475, 36] - [5475, 38]
-<span style="font-weight:600">  from   </span><a href="#p8"> binary_expression</a> [5475, 25] - [5475, 61]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n9"> binary_expression</a> [5475, 25] - [5475, 61]
-<span style="font-weight:600">  from   </span><a href="#p9"> parenthesized_expression</a> [5475, 24] - [5475, 62]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n10"> )</a>: <span class=token>&quot;)&quot;</span> [5475, 61] - [5475, 62]
-<span style="font-weight:600">  from   </span><a href="#p10"> parenthesized_expression</a> [5475, 24] - [5475, 62]</span><span class="i11"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n11"> parenthesized_expression</a> [5475, 24] - [5475, 62]
-<span style="font-weight:600">  from   </span><a href="#p11"> binary_expression</a> [5475, 9] - [5475, 62]</span></code></pre>
-      </div>
-    </div>
-    <div class="sec">Code</div>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header">13_A (original)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>/** 
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 4 :&ensp;<b>Insert <code class="type">"binary_expression"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 4 :&ensp;<b>Move <code class="type">"unary_expression"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 4 :&ensp;<b>Delete <code class="type">"parenthesized_expression"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 4 :&ensp;<b>Move <code class="type">"call_expression"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">13_A (original)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>/** 
 <span class="no">   2 </span> * @file xpath.c 
 <span class="no">   3 </span> * @author Michal Vasko &lt;mvasko@cesnet.cz&gt; 
 <span class="no">   4 </span> * @brief YANG XPath evaluation functions 
@@ -5934,7 +5922,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">5472 </span>moveto_scnode_check(const struct lysc_node *node, const struct lysc_node *ctx_scnode, const struct lyxp_set *set, 
 <span class="no">5473 </span>        const char *node_name, const struct lys_module *moveto_mod) 
 <span class="no">5474 </span>{ 
-<span class="no">5475 </span>    if (<span class="ep11" id="p11"><span class="en3" id="n3"><a href="#n3" class="mov" data-partner="#m3">!moveto_mod</a></span> &amp;&amp; <span class="en11" id="n11"><span class="ep10" id="p10"><span class="ep9" id="p9"><span class="ep6" id="p6"><span class="en6" id="n6"><a href="#n6" class="del">(</a></span><span class="en9" id="n9"><span class="ep8" id="p8"><span class="ep7" id="p7"><span class="en7" id="n7"><a href="#n7" class="del">!node_name</a></span><a href="#n9" class="del"> </a><span class="en8" id="n8"><a href="#n8" class="del">||</a></span><a href="#n9" class="del"> </a><span class="en2" id="n2"><a href="#n2" class="mov" data-partner="#m2">strcmp(node_name, &quot;*&quot;)</a></span></span></span></span><span class="en10" id="n10"><a href="#n10" class="del">)</a></span></span></span></span></span></span>) { 
+<span class="no">5475 </span>    if (<span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-178874"><span data-kind="ins" id="edit-1-old"></span>!moveto_mod</span></span> &amp;&amp; <span data-kind="del" id="edit-3-old"><span class="hl del" id="hl-3-178889">(!node_name || </span><span data-kind="mov" id="edit-4-old"><span class="hl mov" id="hl-4-178904">strcmp(node_name, &quot;*&quot;)</span></span><span class="hl del" id="hl-3-178926">)</span></span>) { 
 <span class="no">5476 </span>        switch (set-&gt;format) { 
 <span class="no">5477 </span>        case LY_VALUE_SCHEMA: 
 <span class="no">5478 </span>        case LY_VALUE_SCHEMA_RESOLVED: 
@@ -9479,13 +9467,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">9017 </span> 
 <span class="no">9018 </span>    return path-&gt;expr; 
 <span class="no">9019 </span>} 
-<span class="no">9020 </span></code></pre>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">13_A (modified)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>/** 
+<span class="no">9020 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">13_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>/** 
 <span class="no">   2 </span> * @file xpath.c 
 <span class="no">   3 </span> * @author Michal Vasko &lt;mvasko@cesnet.cz&gt; 
 <span class="no">   4 </span> * @brief YANG XPath evaluation functions 
@@ -14959,7 +14943,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">5472 </span>moveto_scnode_check(const struct lysc_node *node, const struct lysc_node *ctx_scnode, const struct lyxp_set *set, 
 <span class="no">5473 </span>        const char *node_name, const struct lys_module *moveto_mod) 
 <span class="no">5474 </span>{ 
-<span class="no">5475 </span>    if (<span class="ep1" id="p1"><span class="ep5" id="p5"><span class="ep4" id="p4"><span class="en1" id="n1"><span class="em3" id="m3"><a href="#m3" class="mov" data-partner="#n3">!moveto_mod</a></span><a href="#n1" class="ins"> </a><span class="en4" id="n4"><a href="#n4" class="ins">&amp;&amp;</a></span><a href="#n1" class="ins"> </a><span class="en5" id="n5"><a href="#n5" class="ins">node_name</a></span></span></span></span> &amp;&amp; <span class="em2" id="m2"><a href="#m2" class="mov" data-partner="#n2">strcmp(node_name, &quot;*&quot;)</a></span></span>) { 
+<span class="no">5475 </span>    if (<span data-kind="ins" id="edit-1-new"><span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-178874">!moveto_mod</span></span><span class="hl ins" id="hl-1-178885"> &amp;&amp; node_name</span></span> &amp;&amp; <span data-kind="mov" id="edit-4-new"><span class="hl mov" id="hl-4-178902"><span data-kind="del" id="edit-3-new"></span>strcmp(node_name, &quot;*&quot;)</span></span>) { 
 <span class="no">5476 </span>        switch (set-&gt;format) { 
 <span class="no">5477 </span>        case LY_VALUE_SCHEMA: 
 <span class="no">5478 </span>        case LY_VALUE_SCHEMA_RESOLVED: 
@@ -18504,10 +18488,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">9017 </span> 
 <span class="no">9018 </span>    return path-&gt;expr; 
 <span class="no">9019 </span>} 
-<span class="no">9020 </span></code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+<span class="no">9020 </span></code></pre></div>
+</div></div></div>
 </body>
 </html>

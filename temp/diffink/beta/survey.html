@@ -1,583 +1,918 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tree Differencing Survey</title>
-    <style>
-      :root {
-        --bg: #0b0f14;
-        --panel: #121824;
-        --panel-2: #0f141f;
-        --accent: #00b894;
-        --accent-2: #0984e3;
-        --warn: #e17055;
-        --text: #f1f5f9;
-        --muted: #94a3b8;
-        --border: #253047;
-      }
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tree Differencing Survey</title>
+<style>
+:root {
+  --bg: #f3f5f8;
+  --panel: #ffffff;
+  --ink: #1c2430;
+  --muted: #5e6b7b;
+  --line: #d6dde8;
+  --brand: #1f6feb;
+  --brand-soft: #e9f2ff;
+  --ok: #0f8d54;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 240px);
+}
+.app {
+  width: 100%;
+  margin: 0;
+  padding: 20px 20px 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.title {
+  margin: 0;
+  font-size: 20px;
+}
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.progress-wrap {
+  min-width: 280px;
+  text-align: right;
+}
+.progress-text {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #e5ecf7;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4d98ff, var(--brand));
+  width: 0%;
+}
+.layout {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.layout.layout-intro {
+  grid-template-columns: minmax(0, 1fr) 480px;
+}
+.layout.layout-tutorial {
+  grid-template-columns: minmax(0, 1fr) 600px;
+}
+.layout.layout-question {
+  grid-template-columns: minmax(0, 1fr) 240px;
+}
+.viewer-panel,
+.control-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.viewer-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  min-height: 0;
+  overflow: hidden;
+}
+.control-panel {
+  padding: 14px;
+  min-height: 0;
+  overflow: auto;
+}
+.step-header {
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+#viewerRoot {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+.badge {
+  display: inline-block;
+  background: var(--brand-soft);
+  color: #0c4ca8;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.step-title {
+  margin: 8px 0 4px;
+  font-size: 22px;
+}
+.step-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.tutorial-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+.tutorial-shell {
+  height: 100%;
+  min-height: 0;
+}
+.compare {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.tabbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+  padding: 0 6px;
+}
+.compare-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+.tab-btn {
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: #e8edf5;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5868;
+  cursor: pointer;
+  transform: translateY(1px);
+}
+.tab-btn.active {
+  border-color: var(--brand);
+  background: #fff;
+  color: #0c4ca8;
+  font-weight: 700;
+}
+.viewer-stack {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+}
+.viewer-pane {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+.viewer-pane.active {
+  display: block;
+}
+.compare iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.form-section {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+.form-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.choices,
+.reason-list,
+.scale {
+  display: grid;
+  gap: 8px;
+}
+label.option {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+label.option input {
+  margin-top: 2px;
+}
+.scale {
+  grid-template-columns: repeat(5, 1fr);
+}
+.scale label.option {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+textarea {
+  width: 100%;
+  min-height: 88px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  resize: vertical;
+  font: inherit;
+  font-size: 13px;
+}
+input[type="text"] {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  font: inherit;
+  font-size: 14px;
+}
+.help {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.tutorial-guide {
+  background: #f7f9fc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+.tutorial-guide p {
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+.tutorial-guide ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #304152;
+}
+.tutorial-guide li {
+  margin: 4px 0;
+  font-size: 13px;
+}
+.error {
+  color: #bd1d1d;
+  margin-top: 8px;
+  font-size: 13px;
+  min-height: 18px;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+}
+button {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+button.primary {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.summary {
+  display: none;
+}
+.summary.active {
+  display: block;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+.kpi {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+.kpi strong {
+  display: block;
+  font-size: 18px;
+  color: var(--ok);
+}
+@media (max-width: 1200px) {
+  .app {
+    height: auto;
+    min-height: 100dvh;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .compare {
+    height: 100%;
+  }
+  .tutorial-frame {
+    height: 100%;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div>
+      <h1 class="title">Tree Differencing Survey</h1>
+      <p class="subtitle">튜토리얼 3개 + 본문항 30개 (A/B 비교 평가)</p>
+    </div>
+    <div class="progress-wrap">
+      <div id="progressText" class="progress-text"></div>
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+    </div>
+  </div>
 
-      * {
-        box-sizing: border-box;
-      }
+  <div id="surveyLayout" class="layout">
+    <section id="viewerPanel" class="viewer-panel">
+      <div class="step-header">
+        <span id="stepBadge" class="badge">준비</span>
+        <h2 id="stepTitle" class="step-title"></h2>
+        <p id="stepDesc" class="step-desc"></p>
+      </div>
+      <div id="viewerRoot"></div>
+    </section>
 
-      body {
-        margin: 0;
-        font-family:
-          "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI",
-          sans-serif;
-        background: radial-gradient(1200px 800px at 10% 10%, #141b2b, #0b0f14);
-        color: var(--text);
-      }
+    <aside class="control-panel">
+      <div id="participantSection" class="form-section">
+        <p class="form-title">이름</p>
+        <input id="participantName" type="text">
+        <p class="form-title" style="margin-top:10px;">소속</p>
+        <input id="participantAffiliation" type="text" placeholder="예: OO대학교 / OO회사">
+        <p class="form-title" style="margin-top:10px;">학위</p>
+        <input id="participantRole" type="text" placeholder="예: 박사과정 / 석사 / 학부생">
+        <p class="form-title" style="margin-top:10px;">개발 경력</p>
+        <input id="participantExperience" type="text" placeholder="예: OO회사 인턴 6개월 / OO회사 2년">
+        <p class="help">응답 저장 시 함께 기록됩니다.</p>
+      </div>
 
-      .shell {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
+      <div id="tutorialForm" class="form-section" style="display:none;">
+        <div id="tutorialGuide" class="tutorial-guide" style="display:none;"></div>
+        <label class="option" style="margin-top:20px;"><input type="checkbox" id="tutorialDone"> 튜토리얼 확인</label>
+      </div>
 
-      header {
-        padding: 8px 14px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        justify-content: space-between;
-        border-bottom: 1px solid var(--border);
-        background: linear-gradient(120deg, #111826, #0f151f);
-        position: sticky;
-        top: 0;
-        z-index: 20;
-      }
-
-      .title {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .header-status {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .title h1 {
-        margin: 0;
-        font-size: 18px;
-        letter-spacing: 0.2px;
-      }
-
-      .title span {
-        font-size: 12px;
-        color: var(--muted);
-      }
-
-      .controls {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-
-      button {
-        border: 1px solid var(--border);
-        background: var(--panel);
-        color: var(--text);
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 14px;
-        cursor: pointer;
-        transition:
-          transform 0.08s ease,
-          background 0.2s ease;
-      }
-
-      button:hover {
-        background: var(--panel-2);
-      }
-
-      button:active {
-        transform: translateY(1px);
-      }
-
-      button.primary {
-        border-color: rgba(0, 184, 148, 0.6);
-        background: rgba(0, 184, 148, 0.14);
-      }
-
-      button.secondary {
-        border-color: rgba(9, 132, 227, 0.6);
-        background: rgba(9, 132, 227, 0.14);
-      }
-
-      button.warn {
-        border-color: rgba(225, 112, 85, 0.6);
-        background: rgba(225, 112, 85, 0.16);
-      }
-
-      main {
-        flex: 1;
-        display: grid;
-        grid-template-rows: 1fr 1fr;
-        gap: 8px;
-        padding: 8px 12px 10px;
-      }
-
-      .viewer {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-      }
-
-      .viewer header {
-        position: static;
-        border-bottom: 1px solid var(--border);
-        padding: 12px 16px;
-        background: #0f141f;
-        font-weight: 700;
-        font-size: 16px;
-        letter-spacing: 0.3px;
-      }
-
-      .viewer iframe {
-        flex: 1;
-        border: none;
-        width: 100%;
-        background: #fff;
-      }
-
-      .footer {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 12px 12px;
-      }
-
-      .status {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .skip-notice {
-        font-size: 12px;
-        color: var(--warn);
-        letter-spacing: 0.2px;
-      }
-
-      .status .pill {
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: rgba(9, 132, 227, 0.12);
-        color: var(--text);
-        font-size: 15px;
-        font-weight: 600;
-        letter-spacing: 0.2px;
-      }
-
-      .status .pill.choice {
-        background: rgba(0, 184, 148, 0.16);
-        border-color: rgba(0, 184, 148, 0.5);
-      }
-
-      .choice {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-
-      .choice button {
-        min-width: 110px;
-      }
-
-      .tutorial {
-        position: fixed;
-        inset: 0;
-        background: rgba(6, 10, 18, 0.88);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 50;
-        padding: 20px;
-      }
-
-      .tutorial.show {
-        display: flex;
-      }
-
-      .tutorial-card {
-        width: min(900px, 94vw);
-        background: #111826;
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 20px 22px;
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        max-height: 92vh;
-      }
-
-      .tutorial-card h2 {
-        margin: 0;
-        font-size: 20px;
-        letter-spacing: 0.2px;
-      }
-
-      .tutorial-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.5;
-      }
-
-      .tutorial-note {
-        color: #cbd5e1;
-        font-size: 14px;
-        line-height: 1.6;
-      }
-
-      .tutorial-note strong {
-        color: #ffffff;
-      }
-
-      .tutorial-note p,
-      .tutorial-note li {
-        color: #cbd5e1;
-      }
-
-      .tutorial-note p.intro-question {
-        margin: 16px 0;
-      }
-
-      .tutorial-note p.intro-emphasis {
-        margin-top: 10px;
-        padding: 10px 12px;
-        border-radius: 10px;
-        background: rgba(9, 132, 227, 0.16);
-        border: 1px solid rgba(9, 132, 227, 0.35);
-        color: #eaf2ff;
-        font-weight: 600;
-      }
-
-      .tutorial-note ul {
-        margin: 6px 0 0;
-        padding-left: 18px;
-      }
-
-      .tutorial-note li {
-        margin: 4px 0;
-      }
-
-      .tutorial-frame {
-        width: 100%;
-        height: min(62vh, 560px);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: #fff;
-      }
-
-      .tutorial-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-
-      @media (max-width: 840px) {
-        header {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .controls {
-          justify-content: flex-start;
-        }
-
-        main {
-          grid-template-rows: auto auto;
-          min-height: 60vh;
-        }
-
-        .viewer iframe {
-          min-height: 300px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="shell">
-      <header>
-        <div class="title">
-          <h1>Tree differencing 서베이</h1>
+      <div id="questionForm" class="form-section" style="display:none;">
+        <p class="form-title">어느 결과가 더 좋았나요?</p>
+        <div class="choices">
+          <label class="option"><input type="radio" name="better" value="A"> A가 더 좋음</label>
+          <label class="option"><input type="radio" name="better" value="B"> B가 더 좋음</label>
+          <label class="option"><input type="radio" name="better" value="Unclear"> 불분명함 (unclear)</label>
         </div>
-        <div class="header-status status">
-          <div class="pill" id="progressText">0 / 30</div>
-          <div class="pill choice" id="choiceText">선택: -</div>
-          <div class="skip-notice" id="skipText"></div>
-        </div>
-        <div class="controls">
-          <button id="prevBtn">이전</button>
-          <button id="nextBtn" class="secondary">다음</button>
-          <button id="tutorialBtn">Introduction 보기</button>
-          <button id="exportBtn" class="primary">결과 내보내기</button>
-          <button id="resetBtn" class="warn">초기화</button>
-        </div>
-      </header>
+      </div>
 
-      <main>
-        <section class="viewer">
-          <header>옵션 A</header>
-          <iframe id="viewerA" title="A Viewer"></iframe>
-        </section>
-        <section class="viewer">
-          <header>옵션 B</header>
-          <iframe id="viewerB" title="B Viewer"></iframe>
-        </section>
-      </main>
+      <div id="error" class="error"></div>
 
-      <div class="footer">
-        <div class="choice">
-          <button id="chooseA" class="primary">A (A를 더 선호)</button>
-          <button id="chooseB" class="primary">B (B를 더 선호)</button>
-          <button id="chooseE">Unclear (판단하기 어려움)</button>
+      <div class="actions">
+        <button id="prevBtn" type="button">이전</button>
+        <button id="saveBtn" type="button">임시 저장</button>
+        <button id="nextBtn" class="primary" type="button">다음</button>
+      </div>
+    </aside>
+  </div>
+
+  <section id="summary" class="summary viewer-panel" style="margin-top:14px;">
+    <h2 style="margin:6px 0 8px;">설문 완료</h2>
+    <p style="margin:0;color:var(--muted);">응답 데이터를 내려받아 제출하세요.</p>
+    <div class="kpis">
+      <div class="kpi"><span>총 문항</span><strong>30</strong></div>
+      <div class="kpi"><span>응답 완료</span><strong id="doneCount">0</strong></div>
+      <div class="kpi"><span>참가자 이름</span><strong id="doneName">-</strong></div>
+    </div>
+    <div class="actions" style="justify-content:flex-start;">
+      <button id="downloadJson" class="primary" type="button">JSON 다운로드</button>
+      <button id="restart" type="button">처음부터 다시</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const META = [
+  { dataset: "d4j", id: 194 },
+  { dataset: "d4j", id: 552 },
+  { dataset: "d4j", id: 550 },
+  { dataset: "d4j", id: 668 },
+  { dataset: "d4j", id: 38 },
+  { dataset: "d4j", id: 736 },
+  { dataset: "d4j", id: 13 },
+  { dataset: "d4j", id: 706 },
+  { dataset: "d4j", id: 409 },
+  { dataset: "d4j", id: 682 },
+  { dataset: "d4c_cpp", id: 111 },
+  { dataset: "d4c_cpp", id: 141 },
+  { dataset: "d4c_c", id: 125 },
+  { dataset: "d4c_cpp", id: 147 },
+  { dataset: "d4c_c", id: 21 },
+  { dataset: "d4c_cpp", id: 142 },
+  { dataset: "d4c_cpp", id: 53 },
+  { dataset: "d4c_c", id: 113 },
+  { dataset: "d4c_cpp", id: 21 },
+  { dataset: "d4c_cpp", id: 61 },
+  { dataset: "bip", id: 185 },
+  { dataset: "bip", id: 306 },
+  { dataset: "bip", id: 548 },
+  { dataset: "bip", id: 183 },
+  { dataset: "bip", id: 45 },
+  { dataset: "bip", id: 450 },
+  { dataset: "bip", id: 272 },
+  { dataset: "bip", id: 21 },
+  { dataset: "bip", id: 195 },
+  { dataset: "bip", id: 52 }
+];
+
+const steps = [
+  { kind: "intro", label: "안내", title: "설문 시작", desc: "참가자 기본 정보를 입력하고 진행하세요." },
+  { kind: "tutorial", index: 1, file: "tutorial_1.html", label: "튜토리얼", title: "튜토리얼 1/3", desc: "뷰어 조작법과 기초 편집 액션" },
+  { kind: "tutorial", index: 2, file: "tutorial_2.html", label: "튜토리얼", title: "튜토리얼 2/3", desc: "Move/Update 편집 액션" },
+  { kind: "tutorial", index: 3, file: "tutorial_3.html", label: "튜토리얼", title: "튜토리얼 3/3", desc: "중첩된 편집 정보 구분하기" },
+  ...Array.from({ length: 30 }, (_, i) => ({
+    kind: "question",
+    q: i + 1,
+    label: "문항",
+    title: `문항 ${i + 1}/30`,
+    desc: ""
+  }))
+];
+
+const TUTORIAL_GUIDES = {
+  1: {
+    title: "튜토리얼 1: Insert/Delete 편집 액션 예제",
+    bullets: [
+      "코드 뷰어는 왼쪽의 원본 코드가 어떻게 변경되어 오른쪽의 수정된 코드가 되었는지를 보여줍니다.",
+      "하이라이트된 영역을 클릭하면 해당 영역의 편집 정보를 확인할 수 있습니다.",
+      "n / b 키로 편집 정보를 하나씩 순서대로 확인할 수 있습니다.",
+      "예시) \"선언문\"을 삭제함 - Edit #1 : Delete \"declaration\"",
+      "예시) \"표현문\"을 새로 추가함 - Edit #2 : Insert \"expression_statement\""
+    ]
+  },
+  2: {
+    title: "튜토리얼 2: Move/Update 편집 액션 예제",
+    bullets: [
+      "Update 액션은 단순 텍스트 값이 변경된 경우에 사용됩니다.",
+      "Move 액션은 코드의 위치가 변경된 경우에 사용됩니다.",
+      "이 예제에서는 (1) printf 안의 문자열이 변경되고 (2) move 함수 호출이 if-문의 첫 번째 실행문으로 이동합니다.",
+    ]
+  },
+  3: {
+    title: "튜토리얼 3: 복합 예제",
+    bullets: [
+      "코드 변경에서는 편집 액션들이 중첩되어 발생할 수 있습니다.",
+      "이 예제에서는 (1) if-문이 새로 삽입되고 (2) move 함수 호출이 새로운 if-문의 첫 번째 실행문으로 이동합니다.",
+    ]
+  }
+};
+
+const state = {
+  step: 0,
+  participantName: "",
+  participantAffiliation: "",
+  participantRole: "",
+  participantExperience: "",
+  tutorialDone: {},
+  answers: {},
+  viewerTabs: {}
+};
+
+const els = {
+  progressText: document.getElementById("progressText"),
+  progressFill: document.getElementById("progressFill"),
+  stepBadge: document.getElementById("stepBadge"),
+  stepTitle: document.getElementById("stepTitle"),
+  stepDesc: document.getElementById("stepDesc"),
+  viewerPanel: document.getElementById("viewerPanel"),
+  viewerRoot: document.getElementById("viewerRoot"),
+  tutorialForm: document.getElementById("tutorialForm"),
+  questionForm: document.getElementById("questionForm"),
+  tutorialGuide: document.getElementById("tutorialGuide"),
+  participantSection: document.getElementById("participantSection"),
+  participantName: document.getElementById("participantName"),
+  participantAffiliation: document.getElementById("participantAffiliation"),
+  participantRole: document.getElementById("participantRole"),
+  participantExperience: document.getElementById("participantExperience"),
+  tutorialDone: document.getElementById("tutorialDone"),
+  error: document.getElementById("error"),
+  prevBtn: document.getElementById("prevBtn"),
+  saveBtn: document.getElementById("saveBtn"),
+  nextBtn: document.getElementById("nextBtn"),
+  surveyLayout: document.getElementById("surveyLayout"),
+  summary: document.getElementById("summary"),
+  doneCount: document.getElementById("doneCount"),
+  doneName: document.getElementById("doneName"),
+  downloadJson: document.getElementById("downloadJson"),
+  restart: document.getElementById("restart")
+};
+
+const STORAGE_KEY = "tree_diff_survey";
+
+function escapeHtml(v) {
+  return String(v)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed === "object" && parsed) {
+      Object.assign(state, parsed);
+      if (!state.participantName && parsed.participantId) {
+        state.participantName = parsed.participantId;
+      }
+      if (!state.participantAffiliation && parsed.participantAffiliation) {
+        state.participantAffiliation = parsed.participantAffiliation;
+      }
+      if (!state.participantRole && parsed.participantRole) {
+        state.participantRole = parsed.participantRole;
+      }
+      if (!state.participantExperience && parsed.participantExperience) {
+        state.participantExperience = parsed.participantExperience;
+      }
+    }
+  } catch (_) {
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function getChecked(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : "";
+}
+
+function setRadio(name, value) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+    el.checked = el.value === value;
+  });
+}
+
+function renderIntro() {
+  els.viewerPanel.onclick = null;
+  els.viewerRoot.innerHTML = `
+    <div style="padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff;line-height:1.6;">
+      <p style="margin:0 0 10px;">이 설문은 튜토리얼(3개) 후 본문항(30개)으로 구성됩니다. (1-10번: <i>Java</i>, 11-20번: <i>Python</i>, 21-30번: <i>C/C++</i>)</p>
+      <p style="margin:0 0 10px;"><strong>평가 기준: 어떤 코드 비교 기법이 가장 이해하기 쉬운 코드 변경 정보를 제공하는가?</strong></p>
+      <p style="margin:0 0 5px;">각 문항에서 <b>Option A</b> 또는 <b>Option B</b> 중 하나를 선택하고, 무엇이 더 좋은지 불분명하다면 <b>"불분명함"</b>을 선택하세요.</p>
+      <p style="margin:0;">&nbsp;* A/B에 해당하는 코드 비교 기법은 문항마다 무작위로 배치되어 있습니다.</p>
+    </div>
+  `;
+  els.tutorialForm.style.display = "none";
+  els.questionForm.style.display = "none";
+}
+
+function renderTutorial(step) {
+  els.viewerRoot.innerHTML = `<div class="tutorial-shell"><iframe tabindex="-1" class="tutorial-frame" src="${escapeHtml(step.file)}"></iframe></div>`;
+  const tutorialFrame = els.viewerRoot.querySelector(".tutorial-frame");
+  const focusTutorialFrame = () => {
+    if (!tutorialFrame) return;
+    tutorialFrame.focus();
+    try {
+      tutorialFrame.contentWindow.focus();
+    } catch (_) {
+    }
+  };
+  tutorialFrame?.addEventListener("load", focusTutorialFrame, { once: true });
+  els.viewerPanel.onclick = (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.closest(".tab-btn")) return;
+    focusTutorialFrame();
+  };
+  requestAnimationFrame(focusTutorialFrame);
+  els.tutorialForm.style.display = "block";
+  els.questionForm.style.display = "none";
+  const guide = TUTORIAL_GUIDES[step.index];
+  if (guide) {
+    els.tutorialGuide.style.display = "block";
+    els.tutorialGuide.innerHTML = `
+      <p><strong>${escapeHtml(guide.title)}</strong></p>
+      <ul>${guide.bullets.map((text) => `<li>${escapeHtml(text)}</li>`).join("")}</ul>
+    `;
+  } else {
+    els.tutorialGuide.style.display = "none";
+    els.tutorialGuide.innerHTML = "";
+  }
+  els.tutorialDone.checked = Boolean(state.tutorialDone[step.index]);
+}
+
+function renderQuestion(step) {
+  const q = step.q;
+  const answer = state.answers[q] || {};
+  const activeTab = state.viewerTabs[q] || "A";
+  const focusViewer = (tab) => {
+    const pane = els.viewerRoot.querySelector(`.viewer-pane[data-pane="${tab}"]`);
+    const iframe = pane ? pane.querySelector("iframe") : null;
+    if (!iframe) return;
+    iframe.focus();
+    try {
+      iframe.contentWindow.focus();
+    } catch (_) {
+    }
+  };
+  els.viewerRoot.innerHTML = `
+    <div class="compare">
+      <div class="tabbar">
+        <button type="button" class="tab-btn ${activeTab === "A" ? "active" : ""}" data-tab="A">Option A</button>
+        <button type="button" class="tab-btn ${activeTab === "B" ? "active" : ""}" data-tab="B">Option B</button>
+      </div>
+      <div class="compare-item">
+        <div class="viewer-stack">
+          <div class="viewer-pane ${activeTab === "A" ? "active" : ""}" data-pane="A">
+            <iframe tabindex="-1" title="q${q}-A" src="${q}_A.html"></iframe>
+          </div>
+          <div class="viewer-pane ${activeTab === "B" ? "active" : ""}" data-pane="B">
+            <iframe tabindex="-1" title="q${q}-B" src="${q}_B.html"></iframe>
+          </div>
         </div>
       </div>
     </div>
+  `;
+  els.tutorialForm.style.display = "none";
+  els.tutorialGuide.style.display = "none";
+  els.questionForm.style.display = "block";
 
-    <div class="tutorial" id="tutorial">
-      <div class="tutorial-card">
-        <h2>Introduction</h2>
-        <div class="tutorial-note">
-          <p>
-            본 설문은 Abstract Syntax Tree 기반의 코드 차이 비교 기법(tree
-            differencing)에 대한 연구를 목적으로 진행됩니다.
-          </p>
-          <p>
-            설문에서는 각 소스 코드 변경에 대해 두 가지 코드 차이 시각화 결과(A,
-            B)가 제시됩니다. 참가자에게 요구되는 판단 기준은 다음과 같습니다.
-          </p>
-          <p class="intro-question">
-            <strong
-              >"어느 쪽이 개발자가 만든 코드 변경의 의도를 이해하는 데 더 도움이
-              되는가?"</strong
-            >
-          </p>
-          <p>각 문항마다 세 가지의 선택지가 주어집니다.</p>
-          <ul>
-            <li>A (A를 더 선호함)</li>
-            <li>B (B를 더 선호함)</li>
-            <li>Unclear (둘 중 어느 것이 더 나은지 판단하기 어려움)</li>
-          </ul>
-          <p>
-            버전 A와 B의 표기는 임의적으로 부여된 것이며, A와 B에 해당되는 tree
-            differencing 기술은 문항마다 다릅니다.
-          </p>
-          <p>설문은 총 30문항으로 다음과 같이 구성되어있습니다.</p>
-          <ul>
-            <li>Java (1 ~ 10)</li>
-            <li>C/C++ (11 ~ 20)</li>
-            <li>Python (21 ~ 30)</li>
-          </ul>
-          <p class="intro-emphasis">
-            아래의 시각화 도구 튜토리얼을 통해 사용법을 숙지한 뒤 설문을
-            시작해주세요.
-          </p>
-        </div>
-        <iframe
-          class="tutorial-frame"
-          src="./tutorial.html"
-          title="Diff Viewer Tutorial"
-        ></iframe>
-        <div class="tutorial-actions">
-          <button id="startSurvey" class="primary">서베이 시작</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      const TOTAL = 30;
-      const PAIRS = Array.from({ length: TOTAL }, (_, idx) => idx + 1);
-      const storageKey = "diff-viewer-survey-alpha";
-      const tutorialKey = "diff-viewer-survey-alpha-tutorial";
-
-      const viewerA = document.getElementById("viewerA");
-      const viewerB = document.getElementById("viewerB");
-      const progressText = document.getElementById("progressText");
-      const choiceText = document.getElementById("choiceText");
-      const skipText = document.getElementById("skipText");
-
-      const state = {
-        index: 0,
-        answers: loadAnswers(),
-      };
-
-      let isChoosing = false;
-
-      function loadAnswers() {
-        try {
-          const raw = localStorage.getItem(storageKey);
-          return raw ? JSON.parse(raw) : {};
-        } catch (error) {
-          return {};
-        }
-      }
-
-      function saveAnswers() {
-        localStorage.setItem(storageKey, JSON.stringify(state.answers));
-      }
-
-      function currentPair() {
-        return PAIRS[state.index];
-      }
-
-      function setViewers() {
-        const pairId = currentPair();
-        viewerA.src = `./${pairId}_A.html`;
-        viewerB.src = `./${pairId}_B.html`;
-        updateProgress();
-        setTimeout(() => {
-          isChoosing = false;
-        }, 500);
-      }
-
-      function updateProgress() {
-        const answered = Object.values(state.answers).filter(
-          (value) => value && value !== "Skip",
-        ).length;
-        const language = getLanguageForPair(currentPair());
-        progressText.textContent = `현재 ${currentPair()}번 (${language}) · 완료 ${answered}/${TOTAL}`;
-        const choice = state.answers[currentPair()];
-        choiceText.textContent = `선택: ${choice ?? "-"}`;
-        skipText.textContent = "";
-      }
-
-      function getLanguageForPair(pairId) {
-        if (pairId <= 10) return "Java";
-        if (pairId <= 20) return "C/C++";
-        return "Python";
-      }
-
-      function updateSkipNotice() {
-        const skipped = PAIRS.filter((id) => state.answers[id] === "Skip");
-        if (skipped.length === 0) {
-          skipText.textContent = "";
-          return;
-        }
-        skipText.textContent = `Skip 문항: ${skipped.join(", ")}`;
-      }
-
-      function setAnswer(value) {
-        state.answers[currentPair()] = value;
-        saveAnswers();
-        updateProgress();
-      }
-
-      function next() {
-        if (state.index < PAIRS.length - 1) {
-          state.index += 1;
-          setViewers();
-        }
-      }
-
-      function prev() {
-        if (state.index > 0) {
-          state.index -= 1;
-          setViewers();
-        }
-      }
-
-      function handleChoice(value) {
-        if (isChoosing) return;
-        isChoosing = true;
-        setAnswer(value);
-        next();
-      }
-
-      document.getElementById("chooseA").addEventListener("click", () => {
-        handleChoice("A");
+  els.viewerRoot.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const tab = btn.dataset.tab;
+      state.viewerTabs[q] = tab;
+      saveState();
+      els.viewerRoot.querySelectorAll(".tab-btn").forEach((el) => {
+        el.classList.toggle("active", el.dataset.tab === tab);
       });
-
-      document.getElementById("chooseB").addEventListener("click", () => {
-        handleChoice("B");
+      els.viewerRoot.querySelectorAll(".viewer-pane").forEach((el) => {
+        el.classList.toggle("active", el.dataset.pane === tab);
       });
+      requestAnimationFrame(() => focusViewer(tab));
+    });
+  });
 
-      document.getElementById("chooseE").addEventListener("click", () => {
-        handleChoice("Unclear");
-      });
+  els.viewerPanel.onclick = (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.closest(".tab-btn")) return;
+    const tab = state.viewerTabs[q] || activeTab;
+    focusViewer(tab);
+  };
 
-      document.getElementById("nextBtn").addEventListener("click", next);
-      document.getElementById("prevBtn").addEventListener("click", prev);
+  const activePane = els.viewerRoot.querySelector(`.viewer-pane[data-pane="${activeTab}"]`);
+  const activeFrame = activePane ? activePane.querySelector("iframe") : null;
+  activeFrame?.addEventListener("load", () => focusViewer(activeTab), { once: true });
+  requestAnimationFrame(() => focusViewer(activeTab));
 
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        if (!confirm("모든 응답을 초기화할까요?")) return;
-        state.answers = {};
-        state.index = 0;
-        saveAnswers();
-        setViewers();
-      });
+  setRadio("better", answer.better || "");
+}
 
-      document.getElementById("exportBtn").addEventListener("click", () => {
-        const missing = PAIRS.filter((id) => {
-          const value = state.answers[id];
-          return !value || value === "Skip";
-        });
-        if (missing.length > 0) {
-          alert(
-            `미완료 문항이 있어 내보낼 수 없습니다.\n미완료 문항: ${missing.join(
-              ", ",
-            )}`,
-          );
-          skipText.textContent = `미완료 문항: ${missing.join(", ")}`;
-          return;
-        }
-        const payload = {
-          updatedAt: new Date().toISOString(),
-          total: TOTAL,
-          answers: state.answers,
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "diff-survey-results.json";
-        link.click();
-        URL.revokeObjectURL(url);
-      });
+function clearError() {
+  els.error.textContent = "";
+}
 
-      const tutorial = document.getElementById("tutorial");
-      const startSurvey = document.getElementById("startSurvey");
-      const tutorialBtn = document.getElementById("tutorialBtn");
+function setError(msg) {
+  els.error.textContent = msg;
+}
 
-      function showTutorial() {
-        tutorial.classList.add("show");
-      }
+function persistCurrentStep() {
+  const step = steps[state.step];
+  if (step.kind === "intro") {
+    state.participantName = els.participantName.value.trim();
+    state.participantAffiliation = els.participantAffiliation.value.trim();
+    state.participantRole = els.participantRole.value.trim();
+    state.participantExperience = els.participantExperience.value.trim();
+  }
 
-      function hideTutorial() {
-        tutorial.classList.remove("show");
-      }
+  if (step.kind === "tutorial") {
+    state.tutorialDone[step.index] = els.tutorialDone.checked;
+  }
 
-      startSurvey.addEventListener("click", () => {
-        hideTutorial();
-      });
+  if (step.kind === "question") {
+    state.answers[step.q] = {
+      better: getChecked("better"),
+      dataset: META[step.q - 1]?.dataset || "",
+      itemId: META[step.q - 1]?.id || ""
+    };
+  }
 
-      tutorialBtn.addEventListener("click", () => {
-        showTutorial();
-      });
+  saveState();
+}
 
-      setViewers();
+function validateCurrentStep() {
+  const step = steps[state.step];
+  if (step.kind === "intro" && !state.participantName) {
+    return "참가자 이름을 입력하세요.";
+  }
+  if (step.kind === "intro" && !state.participantAffiliation) {
+    return "소속을 입력하세요.";
+  }
+  if (step.kind === "intro" && !state.participantRole) {
+    return "학위를 입력하세요.";
+  }
+  if (step.kind === "intro" && !state.participantExperience) {
+    return "개발 경력을 입력하세요.";
+  }
 
-      showTutorial();
-    </script>
-  </body>
+  if (step.kind === "tutorial" && !state.tutorialDone[step.index]) {
+    return "튜토리얼 확인 체크 후 진행하세요.";
+  }
+
+  if (step.kind === "question") {
+    const ans = state.answers[step.q] || {};
+    if (!ans.better) return "A/B/Unclear 중 하나를 선택하세요.";
+  }
+
+  return "";
+}
+
+function updateProgress() {
+  const current = state.step + 1;
+  const total = steps.length;
+  const pct = Math.max(0, Math.min(100, (current / total) * 100));
+  els.progressText.textContent = `${current} / ${total}`;
+  els.progressFill.style.width = `${pct}%`;
+}
+
+function getQuestionLanguage(q) {
+  if (q >= 1 && q <= 10) return "Java";
+  if (q >= 11 && q <= 20) return "Python";
+  return "C/C++";
+}
+
+function render() {
+  const step = steps[state.step];
+  els.surveyLayout.classList.remove("layout-intro", "layout-tutorial", "layout-question");
+  els.surveyLayout.classList.add(`layout-${step.kind}`);
+  els.stepBadge.style.display = step.kind === "question" ? "none" : "inline-block";
+  els.stepBadge.textContent = step.label;
+  els.stepTitle.textContent = step.title;
+  els.stepDesc.textContent = step.kind === "question" ? `언어: ${getQuestionLanguage(step.q)}` : step.desc;
+  els.participantSection.style.display = step.kind === "intro" ? "block" : "none";
+  els.participantName.value = state.participantName;
+  els.participantAffiliation.value = state.participantAffiliation;
+  els.participantRole.value = state.participantRole;
+  els.participantExperience.value = state.participantExperience;
+  clearError();
+
+  if (step.kind === "intro") renderIntro();
+  if (step.kind === "tutorial") renderTutorial(step);
+  if (step.kind === "question") renderQuestion(step);
+
+  els.prevBtn.disabled = state.step === 0;
+  els.nextBtn.textContent = state.step === steps.length - 1 ? "완료" : "다음";
+  updateProgress();
+}
+
+function buildAnswers() {
+  return Array.from({ length: 30 }, (_, i) => {
+    const q = i + 1;
+    const ans = state.answers[q] || {};
+    return {
+      question: q,
+      dataset: ans.dataset || META[i]?.dataset || "",
+      item_id: ans.itemId || META[i]?.id || "",
+      better: ans.better || ""
+    };
+  });
+}
+
+function download(name, type, text) {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showSummary() {
+  persistCurrentStep();
+  const answers = buildAnswers();
+  const done = answers.filter((r) => r.better).length;
+  els.doneCount.textContent = String(done);
+  els.doneName.textContent = state.participantName || "-";
+  els.surveyLayout.style.display = "none";
+  els.summary.classList.add("active");
+}
+
+els.prevBtn.addEventListener("click", () => {
+  persistCurrentStep();
+  if (state.step > 0) state.step -= 1;
+  render();
+});
+
+els.saveBtn.addEventListener("click", () => {
+  persistCurrentStep();
+  clearError();
+  els.error.style.color = "var(--ok)";
+  els.error.textContent = "임시 저장되었습니다.";
+  setTimeout(() => {
+    els.error.style.color = "#bd1d1d";
+    clearError();
+  }, 1200);
+});
+
+els.nextBtn.addEventListener("click", () => {
+  persistCurrentStep();
+  const err = validateCurrentStep();
+  if (err) {
+    setError(err);
+    return;
+  }
+  clearError();
+
+  if (state.step === steps.length - 1) {
+    showSummary();
+    return;
+  }
+
+  state.step += 1;
+  render();
+});
+
+els.downloadJson.addEventListener("click", () => {
+  const payload = {
+    participant: {
+      name: state.participantName,
+      affiliation: state.participantAffiliation,
+      role: state.participantRole,
+      experience: state.participantExperience
+    },
+    submittedAt: new Date().toISOString(),
+    tutorialDone: state.tutorialDone,
+    answers: buildAnswers()
+  };
+  const name = `${state.participantName || "participant"}_survey(beta).json`;
+  download(name, "application/json", JSON.stringify(payload, null, 2));
+});
+
+els.restart.addEventListener("click", () => {
+  if (!window.confirm("저장된 진행 상태를 지우고 처음부터 시작할까요?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state.step = 0;
+  state.participantName = "";
+  state.participantAffiliation = "";
+  state.participantRole = "";
+  state.participantExperience = "";
+  state.tutorialDone = {};
+  state.answers = {};
+  els.summary.classList.remove("active");
+  els.surveyLayout.style.display = "grid";
+  render();
+});
+
+loadState();
+render();
+</script>
+</body>
 </html>

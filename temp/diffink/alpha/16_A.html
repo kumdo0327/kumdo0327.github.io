@@ -3,441 +3,462 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .page:has(#p4:target) .i4, .page:has(#n4:target) .i4 {
-    display: block;
-  }
-  .error {
-    color: #b51700;
-  }
-  .toolbar {
-    line-height: 1;
-    font-size: 16px;
-    padding: 0;
-    margin-bottom: 6px;
-  }
-  .ins, .del, .mov, .upd {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    box-shadow: inset -0.05em 0 0 black;
-    border-top:  0.05em solid black;
-    border-bottom:  0.05em solid black;
-  }
-  .grid {
-    gap: 16px;
-    height: calc(100vh - 186px);
-    display: grid;
-    min-width: 512px;
-    grid-template-columns: 1fr 1fr;
-    min-height: 252px;
-  }
-  .ins:hover, .del:hover, .mov:hover, .upd:hover {
-    text-decoration-line: none;
-  }
-  .ins {
-    background: rgba(97, 216, 54, 0.4);
-  }
-  .del {
-    background: rgba(255, 100, 78, 0.4);
-  }
-  .panel, .edit {
-    flex-direction: column;
-    border: 1px solid #afafaf;
-    border-radius: 6px;
-    overflow: hidden;
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-  }
-  .upd {
-    background: rgba(255, 217, 50, 0.4);
-  }
-  .page:has(#p4:target) .clear, .page:has(#n4:target) .clear {
-    display: none;
-  }
-  .page:has(#p7:target) .ep7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .panel-header {
-    font-weight: bold;
-    background: #ebebeb;
-    align-items: center;
-    padding: 8px 10px;
-    justify-content: space-between;
-    display: flex;
-    font-size: 14px;
-    border-bottom: 1px solid #afafaf;
-    line-height: 1;
-  }
-  .page:has(#m5:target) .i5, .page:has(#n5:target) .i5 {
-    display: block;
-  }
-  .page:has(#m5:target) .clear, .page:has(#n5:target) .clear {
-    display: none;
-  }
-  .codebox {
-    letter-spacing: 0.05em;
-    overflow: auto;
-    scroll-behavior: smooth;
-    background: #f7f7f7;
-    padding: 4px;
-    min-height: 0;
-    scroll-padding-top: 54px;
-    font-size: 12px;
-    flex: 1;
-    line-height: 1.5;
-  }
-  .edit {
-    font-size: 14px;
-    min-width: 512px;
-    height: 60px;
-  }
-  .editbox {
-    font-weight: 500;
-    line-height: 1.8;
-    padding: 4px 8px;
-    min-height: 0;
-    overflow: auto;
-    font-size: 14px;
-    background: #f7f7f7;
-    flex: 1;
-  }
-  .page:has(#n8:target) .en8 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p8:target) .ep8 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p7:target) .i7, .page:has(#n7:target) .i7 {
-    display: block;
-  }
-  .page:has(#p7:target) .clear, .page:has(#n7:target) .clear {
-    display: none;
-  }
-  .page:has(#m3:target) .em3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n3:target) .em3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p8:target) .i8, .page:has(#n8:target) .i8 {
-    display: block;
-  }
-  .page:has(#p8:target) .clear, .page:has(#n8:target) .clear {
-    display: none;
-  }
-  .page:has(#n9:target) .en9 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p9:target) .ep9 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p9:target) .i9, .page:has(#n9:target) .i9 {
-    display: block;
-  }
-  .page:has(#p9:target) .clear, .page:has(#n9:target) .clear {
-    display: none;
-  }
-  .page:has(#n4:target) .en4 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p4:target) .ep4 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n10:target) .en10 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p10:target) .ep10 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n1:target) .en1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p1:target) .ep1 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m5:target) .en5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#m5:target) .em5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n5:target) .em5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p1:target) .i1, .page:has(#n1:target) .i1 {
-    display: block;
-  }
-  .page:has(#p1:target) .clear, .page:has(#n1:target) .clear {
-    display: none;
-  }
-  .mov {
-    background: rgba(159, 143, 255, 0.4);
-  }
-  .page:has(#n7:target) .en7 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p2:target) .ep2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p10:target) .clear, .page:has(#n10:target) .clear {
-    display: none;
-  }
-  .page:has(#p6:target) .ep6 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p6:target) .i6, .page:has(#n6:target) .i6 {
-    display: block;
-  }
-  .page:has(#p6:target) .clear, .page:has(#n6:target) .clear {
-    display: none;
-  }
-  .page:has(#m3:target) .clear, .page:has(#n3:target) .clear {
-    display: none;
-  }
-  .page:has(#p2:target) .i2, .page:has(#n2:target) .i2 {
-    display: block;
-  }
-  body {
-    margin: 0;
-    background: white;
-  }
-  .page:has(#n5:target) .en5 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#n2:target) .en2 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .codebox a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .page:has(#p2:target) .clear, .page:has(#n2:target) .clear {
-    display: none;
-  }
-  .page:has(#m3:target) .en3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .editbox a, .toolbar a {
-    color: #0076ba;
-    text-decoration: none;
-  }
-  .page:has(#n3:target) .en3 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .editbox a:hover, .toolbar a:hover {
-    text-decoration: underline;
-  }
-  .page:has(#m3:target) .i3, .page:has(#n3:target) .i3 {
-    display: block;
-  }
-  .page {
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0 16px 8px 16px;
-  }
-  pre {
-    margin: 0;
-  }
-  .page:has(#n6:target) .en6 {
-    padding-top: 0.05em;
-    padding-bottom: 0.05em;
-    font-weight: 900;
-    color: white;
-    background: #3f3f3f;
-  }
-  .page:has(#p10:target) .i10, .page:has(#n10:target) .i10 {
-    display: block;
-  }
-  .no {
-    padding-top: 0.15em;
-    padding-bottom: 0.15em;
-    font-weight: normal;
-    color: #878787;
-    background: #f7f7f7;
-    letter-spacing: normal;
-  }
-  .sec {
-    padding: 0;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 12px 0;
-    line-height: 1;
-  }
-  .i1, .i2, .i3, .i4, .i5, .i6, .i7, .i8, .i9, .i10 {
-    display: none;
-  }
-  .token {
-    color: #017100;
-  }
-  .bold {
-    font-weight: bold;
-  }
-</style>
-</head>
+:root {
+  --mov-clr: 191 175 255;
+  --ins-clr: 97 216 54;
+  --del-clr: 255 150 141;
+  --upd-clr: 255 217 50;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  margin: 0 auto;
+  max-width: 100vw;
+  padding: 0 20px 8px 20px;
+}
+.grid {
+  min-height: 216px;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  display: grid;
+  gap: 20px;
+  height: calc(100vh - 108px);
+}
+.panel {
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  display: flex;
+}
+.panel-header {
+  justify-content: space-between;
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  display: flex;
+  line-height: 1;
+  align-items: center;
+}
+.codebox {
+  font-size: 12px;
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+  flex: 1;
+  line-height: 1.5;
+  padding: 2px 4px;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  color: #878787;
+  background: #f7f7f7;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-weight: normal;
+  letter-spacing: normal;
+}
+.legend {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
+}
+.legend-row {
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  margin-right: 10px;
+}
+.legend-key kbd {
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+  background: #fbfbfb;
+  margin-right: 4px;
+  padding: 1px 5px;
+}
+.description {
+  border: 1px solid black;
+  width: 384px;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 0px 2px;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
 <body>
 <script>
-function jumpVia(ViaId, FinalId) {
-  location.hash = ViaId;
-  requestAnimationFrame(() => {
-    location.hash = FinalId;
-  });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('a[data-partner]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const Via = a.dataset.partner;
-      const FinalId = a.getAttribute('href').slice(1);
-      if (!Via || !FinalId) return;
-      e.preventDefault();
-      jumpVia(Via, FinalId);
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
     });
   });
-});
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      unfocusEdit();
+      return;
+    }
+
+    const key = e.key.toLowerCase();
+
+    if (key === "u") {
+      unfocusEdit();
+      return;
+    }
+
+    if (key !== "n" && key !== "b") return;
+    if (editOrder.length === 0) return;
+
+    e.preventDefault();
+
+    if (activeEdit === null) {
+      editIndex = key === "n" ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += key === "n" ? 1 : -1;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  });
+});
 </script>
-  <div class="page">
-    <div class="sec">
-      <span class="clear">Edit</span>
-      <span class="i1">Edit #1</span>
-      <span class="i2">Edit #2</span>
-      <span class="i3">Edit #3</span>
-      <span class="i4">Edit #4</span>
-      <span class="i5">Edit #5</span>
-      <span class="i6">Edit #6</span>
-      <span class="i7">Edit #7</span>
-      <span class="i8">Edit #8</span>
-      <span class="i9">Edit #9</span>
-      <span class="i10">Edit #10</span>
-    </div>
-    <div class="toolbar">
-      <span class="clear"><a href="#n10">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i1"><a href="#n10">Prev</a> | <a href="#n2">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i2"><a href="#n1">Prev</a> | <a href="#n3" data-partner="#m3">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i3"><a href="#n2">Prev</a> | <a href="#n4">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i4"><a href="#n3" data-partner="#m3">Prev</a> | <a href="#n5" data-partner="#m5">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i5"><a href="#n4">Prev</a> | <a href="#n6">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i6"><a href="#n5" data-partner="#m5">Prev</a> | <a href="#n7">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i7"><a href="#n6">Prev</a> | <a href="#n8">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i8"><a href="#n7">Prev</a> | <a href="#n9">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i9"><a href="#n8">Prev</a> | <a href="#n10">Next</a> | <a href="#clear">Clear</a></span>
-      <span class="i10"><a href="#n9">Prev</a> | <a href="#n1">Next</a> | <a href="#clear">Clear</a></span>
-    </div>
-    <div class="edit">
-      <div class="editbox">
-        <pre><code><span class="i1"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n1"> comment</a>: <span class=token>&quot;// Add CxxReturnUdt option to functions that return nontrivial record types&quot;</span> [421, 3] - [421, 78]
-<span style="font-weight:600">  into   </span><a href="#p1"> compound_statement</a> [413, 54] - [435, 2]</span><span class="i2"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n2"> comment</a>: <span class=token>&quot;// or methods that return record types.&quot;</span> [422, 3] - [422, 42]
-<span style="font-weight:600">  into   </span><a href="#p2"> compound_statement</a> [413, 54] - [435, 2]</span><span class="i3"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n3" data-partner="m3"> if_statement</a> [422, 5] - [423, 43]
-<span style="font-weight:600">  to   </span><a href="#m3" data-partner="n3"> if_statement</a> [424, 5] - [425, 43]</span><span class="i4"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n4"> binary_expression</a> [424, 9] - [424, 44]
-<span style="font-weight:600">  into   </span><a href="#p4"> condition_clause</a> [424, 8] - [424, 45]</span><span class="i5"><span style="font-weight:600"><span style="background: rgb(159, 143, 255)"> </span> Move </span><a href="#n5" data-partner="m5"> call_expression</a> [422, 9] - [422, 33]
-<span style="font-weight:600">  to   </span><a href="#m5" data-partner="n5"> call_expression</a> [424, 9] - [424, 33]</span><span class="i6"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n6"> ||</a>: <span class=token>&quot;||&quot;</span> [424, 34] - [424, 36]
-<span style="font-weight:600">  into   </span><a href="#p6"> binary_expression</a> [424, 9] - [424, 44]</span><span class="i7"><span style="font-weight:600"><span style="background: rgb(97, 216, 54)"> </span> Insert </span><a href="#n7"> identifier</a>: <span class=token>&quot;ClassTy&quot;</span> [424, 37] - [424, 44]
-<span style="font-weight:600">  into   </span><a href="#p7"> binary_expression</a> [424, 9] - [424, 44]</span><span class="i8"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n8"> {</a>: <span class=token>&quot;{&quot;</span> [421, 71] - [421, 72]
-<span style="font-weight:600">  from   </span><a href="#p8"> compound_statement</a> [421, 71] - [424, 4]</span><span class="i9"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n9"> }</a>: <span class=token>&quot;}&quot;</span> [424, 3] - [424, 4]
-<span style="font-weight:600">  from   </span><a href="#p9"> compound_statement</a> [421, 71] - [424, 4]</span><span class="i10"><span style="font-weight:600"><span style="background: rgb(255, 100, 78)"> </span> Delete </span><a href="#n10"> compound_statement</a> [421, 71] - [424, 4]
-<span style="font-weight:600">  from   </span><a href="#p10"> if_statement</a> [421, 3] - [424, 4]</span></code></pre>
-      </div>
-    </div>
-    <div class="sec">Code</div>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header">16_A (original)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 14 :&ensp;<b>Delete <code class="type">"compound_statement"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 14 :&ensp;<b>Move <code class="type">"compound_statement"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 14 :&ensp;<b>Move <code class="type">"declaration"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 14 :&ensp;<b>Move <code class="type">"declaration"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 14 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 14 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 14 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-8" style="display:none;">Edit #8 / 14 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-9" style="display:none;">Edit #9 / 14 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-10" style="display:none;">Edit #10 / 14 :&ensp;<b>Insert <code class="type">"binary_expression"</code></b></span>
+<span id="descr-11" style="display:none;">Edit #11 / 14 :&ensp;<b>Move <code class="type">"call_expression"</code></b></span>
+<span id="descr-12" style="display:none;">Edit #12 / 14 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-13" style="display:none;">Edit #13 / 14 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-14" style="display:none;">Edit #14 / 14 :&ensp;<b>Move <code class="type">"return_statement"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">16_A (original)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
 <span class="no">   2 </span>// 
 <span class="no">   3 </span>// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions. 
 <span class="no">   4 </span>// See https://llvm.org/LICENSE.txt for license information. 
@@ -849,28 +870,28 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 410 </span>static FunctionOptions 
 <span class="no"> 411 </span>getFunctionOptions(const DISubroutineType *Ty, 
 <span class="no"> 412 </span>                   const DICompositeType *ClassTy = nullptr, 
-<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) { 
-<span class="no"> 414 </span>  FunctionOptions FO = FunctionOptions::None; 
-<span class="no"> 415 </span>  const DIType *ReturnTy = nullptr; 
-<span class="no"> 416 </span>  if (auto TypeArray = Ty-&gt;getTypeArray()) { 
+<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) <span id="edit-1-old" data-kind="del"><span id="hl-1-14574" class="hl del">{ 
+<span class="no"> 414 </span>  </span><span id="edit-3-old" data-kind="mov"><span id="hl-3-14578" class="hl mov">FunctionOptions FO = FunctionOptions::None;</span></span><span id="hl-1-14621" class="hl del"> 
+<span class="no"> 415 </span>  </span><span id="edit-4-old" data-kind="mov"><span id="hl-4-14624" class="hl mov">const DIType *ReturnTy = nullptr;</span></span><span id="hl-1-14657" class="hl del"> 
+<span class="no"> 416 </span>  </span><span id="edit-5-old" data-kind="mov"><span id="hl-5-14660" class="hl mov">if (auto TypeArray = Ty-&gt;getTypeArray()) { 
 <span class="no"> 417 </span>    if (TypeArray.size()) 
 <span class="no"> 418 </span>      ReturnTy = TypeArray[0]; 
-<span class="no"> 419 </span>  } 
+<span class="no"> 419 </span>  }</span></span><span id="hl-1-14763" class="hl del"> 
 <span class="no"> 420 </span> 
-<span class="no"> 421 </span>  <span id="p10" class="ep10">if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) <span id="n10" class="en10"><span id="p9" class="ep9"><span id="p8" class="ep8"><span id="n8" class="en8"><a class="del" href="#n8">{</a></span><a class="del" href="#n10"> 
-<span class="no"> 422 </span>    </a><span id="n3" class="en3"><a data-partner="#m3" class="mov" href="#n3">if (</a><span id="n5" class="en5"><a data-partner="#m5" class="mov" href="#n5">isNonTrivial(ReturnDCTy)</a></span><a data-partner="#m3" class="mov" href="#n3">) 
-<span class="no"> 423 </span>      FO |= FunctionOptions::CxxReturnUdt;</a></span><a class="del" href="#n10"> 
-<span class="no"> 424 </span>  </a><span id="n9" class="en9"><a class="del" href="#n9">}</a></span></span></span></span></span> 
+<span class="no"> 421 </span>  </span><span id="edit-8-old" data-kind="mov"><span id="hl-8-14767" class="hl mov"><span id="edit-6-old" data-kind="ins"></span><span id="edit-7-old" data-kind="ins"></span>if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) </span><span id="edit-2-old" data-kind="mov"><span id="hl-2-14835" class="hl mov">{ 
+<span class="no"> 422 </span>    </span><span id="edit-9-old" data-kind="mov"><span id="hl-9-14841" class="hl mov">if (</span><span id="edit-11-old" data-kind="mov"><span id="hl-11-14845" class="hl mov"><span id="edit-10-old" data-kind="ins"></span>isNonTrivial(ReturnDCTy)</span></span><span id="hl-9-14869" class="hl mov">) 
+<span class="no"> 423 </span>      FO |= FunctionOptions::CxxReturnUdt;</span></span><span id="hl-2-14913" class="hl mov"> 
+<span class="no"> 424 </span>  }</span></span></span><span id="hl-1-14917" class="hl del"> 
 <span class="no"> 425 </span> 
-<span class="no"> 426 </span>  // DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison. 
-<span class="no"> 427 </span>  if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
+<span class="no"> 426 </span>  </span><span id="hl-1-14921" class="hl del"><span id="edit-12-old" data-kind="ins"></span>// DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison. 
+<span class="no"> 427 </span>  </span><span id="edit-13-old" data-kind="mov"><span id="hl-13-15001" class="hl mov">if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
 <span class="no"> 428 </span>    FO |= FunctionOptions::Constructor; 
 <span class="no"> 429 </span> 
 <span class="no"> 430 </span>  // TODO: put the FunctionOptions::ConstructorWithVirtualBases flag. 
 <span class="no"> 431 </span> 
-<span class="no"> 432 </span>  } 
-<span class="no"> 433 </span>  return FO; 
-<span class="no"> 434 </span>} 
+<span class="no"> 432 </span>  }</span></span><span id="hl-1-15188" class="hl del"> 
+<span class="no"> 433 </span>  </span><span id="edit-14-old" data-kind="mov"><span id="hl-14-15191" class="hl mov">return FO;</span></span><span id="hl-1-15201" class="hl del"> 
+<span class="no"> 434 </span>}</span></span> 
 <span class="no"> 435 </span> 
 <span class="no"> 436 </span>TypeIndex CodeViewDebug::getMemberFunctionType(const DISubprogram *SP, 
 <span class="no"> 437 </span>                                               const DICompositeType *Class) { 
@@ -3568,13 +3589,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">3129 </span>    endSymbolRecord(SConstantEnd); 
 <span class="no">3130 </span>  } 
 <span class="no">3131 </span>} 
-<span class="no">3132 </span></code></pre>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">16_A (modified)</div>
-        <div class="codebox">
-          <pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
+<span class="no">3132 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">16_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">   1 </span>//===- llvm/lib/CodeGen/AsmPrinter/CodeViewDebug.cpp ----------------------===// 
 <span class="no">   2 </span>// 
 <span class="no">   3 </span>// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions. 
 <span class="no">   4 </span>// See https://llvm.org/LICENSE.txt for license information. 
@@ -3986,28 +4003,28 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no"> 410 </span>static FunctionOptions 
 <span class="no"> 411 </span>getFunctionOptions(const DISubroutineType *Ty, 
 <span class="no"> 412 </span>                   const DICompositeType *ClassTy = nullptr, 
-<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) <span id="p2" class="ep2"><span id="p1" class="ep1">{ 
-<span class="no"> 414 </span>  FunctionOptions FO = FunctionOptions::None; 
-<span class="no"> 415 </span>  const DIType *ReturnTy = nullptr; 
-<span class="no"> 416 </span>  if (auto TypeArray = Ty-&gt;getTypeArray()) { 
+<span class="no"> 413 </span>                   StringRef SPName = StringRef(&quot;&quot;)) <span id="edit-2-new" data-kind="mov"><span id="hl-2-14574" class="hl mov"><span id="edit-1-new" data-kind="del"></span>{ 
+<span class="no"> 414 </span>  </span><span id="edit-3-new" data-kind="mov"><span id="hl-3-14578" class="hl mov">FunctionOptions FO = FunctionOptions::None;</span></span><span id="hl-2-14621" class="hl mov"> 
+<span class="no"> 415 </span>  </span><span id="edit-4-new" data-kind="mov"><span id="hl-4-14624" class="hl mov">const DIType *ReturnTy = nullptr;</span></span><span id="hl-2-14657" class="hl mov"> 
+<span class="no"> 416 </span>  </span><span id="edit-5-new" data-kind="mov"><span id="hl-5-14660" class="hl mov">if (auto TypeArray = Ty-&gt;getTypeArray()) { 
 <span class="no"> 417 </span>    if (TypeArray.size()) 
 <span class="no"> 418 </span>      ReturnTy = TypeArray[0]; 
-<span class="no"> 419 </span>  } 
+<span class="no"> 419 </span>  }</span></span><span id="hl-2-14763" class="hl mov"> 
 <span class="no"> 420 </span> 
-<span class="no"> 421 </span>  <span id="n1" class="en1"><a class="ins" href="#n1">// Add CxxReturnUdt option to functions that return nontrivial record types</a></span> 
-<span class="no"> 422 </span>  <span id="n2" class="en2"><a class="ins" href="#n2">// or methods that return record types.</a></span> 
-<span class="no"> 423 </span>  if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) 
-<span class="no"> 424 </span>    <span id="m3" class="em3"><a data-partner="#n3" class="mov" href="#m3">if <span id="p4" class="ep4">(</a><span id="p7" class="ep7"><span id="p6" class="ep6"><span id="n4" class="en4"><span id="m5" class="em5"><a data-partner="#n5" class="mov" href="#m5">isNonTrivial(ReturnDCTy)</a></span><a class="ins" href="#n4"> </a><span id="n6" class="en6"><a class="ins" href="#n6">||</a></span><a class="ins" href="#n4"> </a><span id="n7" class="en7"><a class="ins" href="#n7">ClassTy</a></span></span></span></span><a data-partner="#n3" class="mov" href="#m3">)</span> 
-<span class="no"> 425 </span>      FO |= FunctionOptions::CxxReturnUdt;</a></span> 
+<span class="no"> 421 </span>  </span><span id="edit-6-new" data-kind="ins"><span id="hl-6-14767" class="hl ins">// Add CxxReturnUdt option to functions that return nontrivial record types</span></span><span id="hl-2-14842" class="hl mov"> 
+<span class="no"> 422 </span>  </span><span id="edit-7-new" data-kind="ins"><span id="hl-7-14845" class="hl ins">// or methods that return record types.</span></span><span id="hl-2-14884" class="hl mov"> 
+<span class="no"> 423 </span>  </span><span id="edit-8-new" data-kind="mov"><span id="hl-8-14887" class="hl mov">if (auto *ReturnDCTy = dyn_cast_or_null&lt;DICompositeType&gt;(ReturnTy)) 
+<span class="no"> 424 </span>    </span><span id="edit-9-new" data-kind="mov"><span id="hl-9-14959" class="hl mov">if (</span><span id="edit-10-new" data-kind="ins"><span id="edit-11-new" data-kind="mov"><span id="hl-11-14963" class="hl mov">isNonTrivial(ReturnDCTy)</span></span><span id="hl-10-14987" class="hl ins"> || ClassTy</span></span><span id="hl-9-14998" class="hl mov">) 
+<span class="no"> 425 </span>      FO |= FunctionOptions::CxxReturnUdt;</span></span></span><span id="hl-2-15042" class="hl mov"> 
 <span class="no"> 426 </span> 
-<span class="no"> 427 </span>  // DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison. 
-<span class="no"> 428 </span>  if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
+<span class="no"> 427 </span>  </span><span id="edit-12-new" data-kind="ins"><span id="hl-12-15046" class="hl ins">// DISubroutineType is unnamed. Use DISubprogram&apos;s i.e. SPName in comparison.</span></span><span id="hl-2-15123" class="hl mov"> 
+<span class="no"> 428 </span>  </span><span id="edit-13-new" data-kind="mov"><span id="hl-13-15126" class="hl mov">if (ClassTy &amp;&amp; isNonTrivial(ClassTy) &amp;&amp; SPName == ClassTy-&gt;getName()) { 
 <span class="no"> 429 </span>    FO |= FunctionOptions::Constructor; 
 <span class="no"> 430 </span> 
 <span class="no"> 431 </span>  // TODO: put the FunctionOptions::ConstructorWithVirtualBases flag. 
 <span class="no"> 432 </span> 
-<span class="no"> 433 </span>  } 
-<span class="no"> 434 </span>  return FO; 
+<span class="no"> 433 </span>  }</span></span><span id="hl-2-15313" class="hl mov"> 
+<span class="no"> 434 </span>  </span><span id="edit-14-new" data-kind="mov"><span id="hl-14-15316" class="hl mov">return FO;</span></span><span id="hl-2-15326" class="hl mov"> 
 <span class="no"> 435 </span>}</span></span> 
 <span class="no"> 436 </span> 
 <span class="no"> 437 </span>TypeIndex CodeViewDebug::getMemberFunctionType(const DISubprogram *SP, 
@@ -6706,10 +6723,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <span class="no">3130 </span>    endSymbolRecord(SConstantEnd); 
 <span class="no">3131 </span>  } 
 <span class="no">3132 </span>} 
-<span class="no">3133 </span></code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+<span class="no">3133 </span></code></pre></div>
+</div></div></div>
 </body>
 </html>
