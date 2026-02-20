@@ -3,57 +3,57 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root {
+  --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
   --mov-clr: 191 175 255;
-  --ins-clr: 97 216 54;
   --upd-clr: 255 217 50;
 }
 body {
-  background: white;
   margin: 0;
+  background: white;
 }
 .page {
-  padding: 0 20px 8px 20px;
   max-width: 100vw;
   margin: 0 auto;
+  padding: 0 20px 8px 20px;
 }
 .grid {
-  min-width: 1024px;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   height: calc(100vh - 108px);
-  min-height: 216px;
   display: grid;
+  min-height: 216px;
+  min-width: 1024px;
 }
 .panel {
-  min-width: 0;
   box-sizing: border-box;
-  overflow: hidden;
+  display: flex;
   flex-direction: column;
+  overflow: hidden;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
-  display: flex;
+  min-width: 0;
 }
 .panel-header {
   background: #ebebeb;
+  align-items: center;
+  justify-content: space-between;
   padding: 8px 10px;
   border-bottom: 1px solid #b7b7b7;
   font-weight: bold;
   font-size: 16px;
   line-height: 1;
-  align-items: center;
   display: flex;
-  justify-content: space-between;
 }
 .codebox {
-  background: #f7f7f7;
-  font-size: 12px;
-  flex: 1;
-  line-height: 1.5;
   padding: 2px 4px;
+  flex: 1;
+  background: #f7f7f7;
+  line-height: 1.5;
+  font-size: 12px;
   min-height: 0;
   overflow: auto;
 }
@@ -112,28 +112,28 @@ pre {
   border-top: 3px solid rgb(var(--upd-clr));
 }
 .no {
+  padding-top: 3px;
+  font-weight: normal;
+  padding-bottom: 3px;
   background: #f7f7f7;
   color: #878787;
-  padding-bottom: 3px;
-  padding-top: 3px;
   letter-spacing: normal;
-  font-weight: normal;
 }
 .legend {
   font-size: 12px;
-  line-height: 1.5;
   margin: 8px 0 12px 0;
+  line-height: 1.5;
 }
 .legend-row {
-  align-items: center;
-  gap: 4px;
   margin-bottom: 10px;
-  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
   display: flex;
+  flex-wrap: wrap;
 }
 .legend-title {
-  margin-right: 4px;
   font-weight: bold;
+  margin-right: 4px;
 }
 .legend-chip {
   border: 1px solid #bfbfbf;
@@ -153,6 +153,7 @@ pre {
   background: rgb(var(--upd-clr) / 0.7);
 }
 .legend-shortcuts .legend-key {
+  cursor: pointer;
   margin-right: 10px;
 }
 .legend-key kbd {
@@ -163,11 +164,11 @@ pre {
   padding: 1px 5px;
 }
 .description {
-  box-sizing: border-box;
   width: 384px;
+  box-sizing: border-box;
   border: 1px solid black;
-  padding: 0px 2px;
   overflow: auto;
+  padding: 0px 2px;
 }
 .type {
   color: #0076ba;
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,14 +463,38 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 2 :&ensp;<b>Insert <code class="type">"pointer_expression"</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 2 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 26 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-8" style="display:none;">Edit #8 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-9" style="display:none;">Edit #9 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-10" style="display:none;">Edit #10 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-11" style="display:none;">Edit #11 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-12" style="display:none;">Edit #12 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-13" style="display:none;">Edit #13 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-14" style="display:none;">Edit #14 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-15" style="display:none;">Edit #15 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-16" style="display:none;">Edit #16 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-17" style="display:none;">Edit #17 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-18" style="display:none;">Edit #18 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-19" style="display:none;">Edit #19 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-20" style="display:none;">Edit #20 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-21" style="display:none;">Edit #21 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-22" style="display:none;">Edit #22 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-23" style="display:none;">Edit #23 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-24" style="display:none;">Edit #24 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-25" style="display:none;">Edit #25 / 26 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-26" style="display:none;">Edit #26 / 26 :&ensp;<b>Insert <code class="type">"pointer_expression"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">15_A (original)</div>
@@ -1938,33 +1990,33 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">1490 </span>    /* ECMAScript 5.1: null, array and regexp are objects. */ 
 <span class="no">1491 </span> 
 <span class="no">1492 </span>    static const njs_value_t  *types[NJS_VALUE_TYPE_MAX] = { 
-<span class="no">1493 </span>        &amp;njs_string_object, 
-<span class="no">1494 </span>        &amp;njs_string_undefined, 
-<span class="no">1495 </span>        &amp;njs_string_boolean, 
-<span class="no">1496 </span>        &amp;njs_string_number, 
-<span class="no">1497 </span>        &amp;njs_string_symbol, 
-<span class="no">1498 </span>        &amp;njs_string_string, 
-<span class="no">1499 </span>        &amp;njs_string_data, 
-<span class="no">1500 </span>        &amp;njs_string_external, 
-<span class="no">1501 </span>        &amp;njs_string_invalid, 
-<span class="no">1502 </span>        &amp;njs_string_undefined, 
-<span class="no">1503 </span>        &amp;njs_string_undefined, 
-<span class="no">1504 </span>        &amp;njs_string_undefined, 
-<span class="no">1505 </span>        &amp;njs_string_undefined, 
-<span class="no">1506 </span>        &amp;njs_string_undefined, 
-<span class="no">1507 </span>        &amp;njs_string_undefined, 
-<span class="no">1508 </span>        &amp;njs_string_undefined, 
+<span class="no">1493 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-45508"><span data-kind="ins" id="edit-1-old"></span>,</span></span> 
+<span class="no">1494 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-3-old"><span class="hl mov" id="hl-3-45539">,</span></span> 
+<span class="no">1495 </span>        &amp;njs_string_boolean<span data-kind="mov" id="edit-4-old"><span class="hl mov" id="hl-4-45568">,</span></span> 
+<span class="no">1496 </span>        &amp;njs_string_number<span data-kind="mov" id="edit-5-old"><span class="hl mov" id="hl-5-45596">,</span></span> 
+<span class="no">1497 </span>        &amp;njs_string_symbol<span data-kind="mov" id="edit-6-old"><span class="hl mov" id="hl-6-45624">,</span></span> 
+<span class="no">1498 </span>        &amp;njs_string_string<span data-kind="mov" id="edit-7-old"><span class="hl mov" id="hl-7-45652">,</span></span> 
+<span class="no">1499 </span>        &amp;njs_string_data<span data-kind="mov" id="edit-8-old"><span class="hl mov" id="hl-8-45678">,</span></span> 
+<span class="no">1500 </span>        &amp;njs_string_external<span data-kind="mov" id="edit-9-old"><span class="hl mov" id="hl-9-45708">,</span></span> 
+<span class="no">1501 </span>        &amp;njs_string_invalid<span data-kind="mov" id="edit-10-old"><span class="hl mov" id="hl-10-45737">,</span></span> 
+<span class="no">1502 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-11-old"><span class="hl mov" id="hl-11-45768">,</span></span> 
+<span class="no">1503 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-12-old"><span class="hl mov" id="hl-12-45799">,</span></span> 
+<span class="no">1504 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-13-old"><span class="hl mov" id="hl-13-45830">,</span></span> 
+<span class="no">1505 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-14-old"><span class="hl mov" id="hl-14-45861">,</span></span> 
+<span class="no">1506 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-15-old"><span class="hl mov" id="hl-15-45892">,</span></span> 
+<span class="no">1507 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-16-old"><span class="hl mov" id="hl-16-45923">,</span></span> 
+<span class="no">1508 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-17-old"><span class="hl mov" id="hl-17-45954">,</span></span> 
 <span class="no">1509 </span> 
-<span class="no">1510 </span>        &amp;njs_string_object, 
-<span class="no">1511 </span>        &amp;njs_string_object, 
-<span class="no">1512 </span>        &amp;njs_string_function, 
-<span class="no">1513 </span>        &amp;njs_string_object, 
-<span class="no">1514 </span>        &amp;njs_string_object, 
-<span class="no">1515 </span>        &amp;njs_string_object, 
-<span class="no">1516 </span>        &amp;njs_string_object, 
-<span class="no">1517 </span>        &amp;njs_string_object, 
-<span class="no">1518 </span>        &amp;njs_string_object, 
-<span class="no">1519 </span>    <span data-kind="ins" id="edit-1-old"></span><span data-kind="ins" id="edit-2-old"></span>}; 
+<span class="no">1510 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-18-old"><span class="hl mov" id="hl-18-45983">,</span></span> 
+<span class="no">1511 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-19-old"><span class="hl mov" id="hl-19-46011">,</span></span> 
+<span class="no">1512 </span>        &amp;njs_string_function<span data-kind="mov" id="edit-20-old"><span class="hl mov" id="hl-20-46041">,</span></span> 
+<span class="no">1513 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-21-old"><span class="hl mov" id="hl-21-46069">,</span></span> 
+<span class="no">1514 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-22-old"><span class="hl mov" id="hl-22-46097">,</span></span> 
+<span class="no">1515 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-23-old"><span class="hl mov" id="hl-23-46125">,</span></span> 
+<span class="no">1516 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-24-old"><span class="hl mov" id="hl-24-46153">,</span></span> 
+<span class="no">1517 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-25-old"><span class="hl mov" id="hl-25-46181">,</span></span> 
+<span class="no">1518 </span>        <span data-kind="ins" id="edit-26-old"></span>&amp;njs_string_object, 
+<span class="no">1519 </span>    }; 
 <span class="no">1520 </span> 
 <span class="no">1521 </span>    vm-&gt;retval = *types[value-&gt;type]; 
 <span class="no">1522 </span> 
@@ -4014,33 +4066,33 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">1490 </span>    /* ECMAScript 5.1: null, array and regexp are objects. */ 
 <span class="no">1491 </span> 
 <span class="no">1492 </span>    static const njs_value_t  *types[NJS_VALUE_TYPE_MAX] = { 
-<span class="no">1493 </span>        &amp;njs_string_object, 
-<span class="no">1494 </span>        &amp;njs_string_undefined, 
-<span class="no">1495 </span>        &amp;njs_string_boolean, 
-<span class="no">1496 </span>        &amp;njs_string_number, 
-<span class="no">1497 </span>        &amp;njs_string_symbol, 
-<span class="no">1498 </span>        &amp;njs_string_string, 
-<span class="no">1499 </span>        &amp;njs_string_data, 
-<span class="no">1500 </span>        &amp;njs_string_external, 
-<span class="no">1501 </span>        &amp;njs_string_invalid, 
-<span class="no">1502 </span>        &amp;njs_string_undefined, 
-<span class="no">1503 </span>        &amp;njs_string_undefined, 
-<span class="no">1504 </span>        &amp;njs_string_undefined, 
-<span class="no">1505 </span>        &amp;njs_string_undefined, 
-<span class="no">1506 </span>        &amp;njs_string_undefined, 
-<span class="no">1507 </span>        &amp;njs_string_undefined, 
-<span class="no">1508 </span>        &amp;njs_string_undefined, 
+<span class="no">1493 </span>        &amp;njs_string_object<span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-45508">,</span></span> 
+<span class="no">1494 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-45539">,</span></span> 
+<span class="no">1495 </span>        &amp;njs_string_boolean<span data-kind="mov" id="edit-3-new"><span class="hl mov" id="hl-3-45568">,</span></span> 
+<span class="no">1496 </span>        &amp;njs_string_number<span data-kind="mov" id="edit-4-new"><span class="hl mov" id="hl-4-45596">,</span></span> 
+<span class="no">1497 </span>        &amp;njs_string_symbol<span data-kind="mov" id="edit-5-new"><span class="hl mov" id="hl-5-45624">,</span></span> 
+<span class="no">1498 </span>        &amp;njs_string_string<span data-kind="mov" id="edit-6-new"><span class="hl mov" id="hl-6-45652">,</span></span> 
+<span class="no">1499 </span>        &amp;njs_string_data<span data-kind="mov" id="edit-7-new"><span class="hl mov" id="hl-7-45678">,</span></span> 
+<span class="no">1500 </span>        &amp;njs_string_external<span data-kind="mov" id="edit-8-new"><span class="hl mov" id="hl-8-45708">,</span></span> 
+<span class="no">1501 </span>        &amp;njs_string_invalid<span data-kind="mov" id="edit-9-new"><span class="hl mov" id="hl-9-45737">,</span></span> 
+<span class="no">1502 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-10-new"><span class="hl mov" id="hl-10-45768">,</span></span> 
+<span class="no">1503 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-11-new"><span class="hl mov" id="hl-11-45799">,</span></span> 
+<span class="no">1504 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-12-new"><span class="hl mov" id="hl-12-45830">,</span></span> 
+<span class="no">1505 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-13-new"><span class="hl mov" id="hl-13-45861">,</span></span> 
+<span class="no">1506 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-14-new"><span class="hl mov" id="hl-14-45892">,</span></span> 
+<span class="no">1507 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-15-new"><span class="hl mov" id="hl-15-45923">,</span></span> 
+<span class="no">1508 </span>        &amp;njs_string_undefined<span data-kind="mov" id="edit-16-new"><span class="hl mov" id="hl-16-45954">,</span></span> 
 <span class="no">1509 </span> 
-<span class="no">1510 </span>        &amp;njs_string_object, 
-<span class="no">1511 </span>        &amp;njs_string_object, 
-<span class="no">1512 </span>        &amp;njs_string_function, 
-<span class="no">1513 </span>        &amp;njs_string_object, 
-<span class="no">1514 </span>        &amp;njs_string_object, 
-<span class="no">1515 </span>        &amp;njs_string_object, 
-<span class="no">1516 </span>        &amp;njs_string_object, 
-<span class="no">1517 </span>        &amp;njs_string_object, 
-<span class="no">1518 </span>        &amp;njs_string_object, 
-<span class="no">1519 </span>        <span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-46219">&amp;njs_string_object</span></span><span data-kind="ins" id="edit-2-new"><span class="hl ins" id="hl-2-46237">,</span></span> 
+<span class="no">1510 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-17-new"><span class="hl mov" id="hl-17-45983">,</span></span> 
+<span class="no">1511 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-18-new"><span class="hl mov" id="hl-18-46011">,</span></span> 
+<span class="no">1512 </span>        &amp;njs_string_function<span data-kind="mov" id="edit-19-new"><span class="hl mov" id="hl-19-46041">,</span></span> 
+<span class="no">1513 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-20-new"><span class="hl mov" id="hl-20-46069">,</span></span> 
+<span class="no">1514 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-21-new"><span class="hl mov" id="hl-21-46097">,</span></span> 
+<span class="no">1515 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-22-new"><span class="hl mov" id="hl-22-46125">,</span></span> 
+<span class="no">1516 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-23-new"><span class="hl mov" id="hl-23-46153">,</span></span> 
+<span class="no">1517 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-24-new"><span class="hl mov" id="hl-24-46181">,</span></span> 
+<span class="no">1518 </span>        &amp;njs_string_object<span data-kind="mov" id="edit-25-new"><span class="hl mov" id="hl-25-46209">,</span></span> 
+<span class="no">1519 </span>        <span data-kind="ins" id="edit-26-new"><span class="hl ins" id="hl-26-46219">&amp;njs_string_object</span></span>, 
 <span class="no">1520 </span>    }; 
 <span class="no">1521 </span> 
 <span class="no">1522 </span>    vm-&gt;retval = *types[value-&gt;type]; 

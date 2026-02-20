@@ -3,13 +3,13 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
 :root {
+  --del-clr: 255 150 141;
   --mov-clr: 191 175 255;
   --ins-clr: 97 216 54;
   --upd-clr: 255 217 50;
-  --del-clr: 255 150 141;
 }
 body {
   background: white;
@@ -21,52 +21,52 @@ body {
   margin: 0 auto;
 }
 .grid {
+  min-width: 1024px;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   height: calc(100vh - 108px);
   min-height: 216px;
   display: grid;
-  min-width: 1024px;
 }
 .panel {
+  min-width: 0;
   box-sizing: border-box;
   overflow: hidden;
   flex-direction: column;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
   display: flex;
-  min-width: 0;
 }
 .panel-header {
   justify-content: space-between;
   background: #ebebeb;
   border-bottom: 1px solid #b7b7b7;
+  line-height: 1;
   font-weight: bold;
   padding: 8px 10px;
-  line-height: 1;
   font-size: 16px;
-  display: flex;
   align-items: center;
+  display: flex;
 }
 .codebox {
+  background: #f7f7f7;
   padding: 2px 4px;
   flex: 1;
   line-height: 1.5;
   font-size: 12px;
   min-height: 0;
   overflow: auto;
-  background: #f7f7f7;
 }
 pre {
   margin: 0;
 }
 .hl {
-  cursor: pointer;
   box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
 }
 .ins, .del, .mov, .upd {
-  border-top: 1px solid #878787;
   border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
 }
 .ins-focus, .del-focus, .mov-focus, .upd-focus {
   font-weight: bold;
@@ -96,28 +96,28 @@ pre {
   background: rgb(var(--upd-clr));
 }
 .ins-border {
-  border-top: 3px solid rgb(var(--ins-clr));
   border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
 }
 .del-border {
-  border-top: 3px solid rgb(var(--del-clr));
   border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
 }
 .mov-border {
-  border-top: 3px solid rgb(var(--mov-clr));
   border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
 }
 .upd-border {
-  border-top: 3px solid rgb(var(--upd-clr));
   border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
 }
 .no {
-  padding-bottom: 3px;
-  font-weight: normal;
-  color: #878787;
-  padding-top: 3px;
-  letter-spacing: normal;
   background: #f7f7f7;
+  padding-top: 3px;
+  font-weight: normal;
+  padding-bottom: 3px;
+  color: #878787;
+  letter-spacing: normal;
 }
 .legend {
   font-size: 12px;
@@ -125,11 +125,11 @@ pre {
   margin: 8px 0 12px 0;
 }
 .legend-row {
+  margin-bottom: 10px;
   gap: 4px;
   align-items: center;
-  flex-wrap: wrap;
   display: flex;
-  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 .legend-title {
   margin-right: 4px;
@@ -154,19 +154,20 @@ pre {
 }
 .legend-shortcuts .legend-key {
   margin-right: 10px;
+  cursor: pointer;
 }
 .legend-key kbd {
+  background: #fbfbfb;
   margin-right: 4px;
   border: 2px solid #afafaf;
   border-radius: 2px;
   padding: 1px 5px;
-  background: #fbfbfb;
 }
 .description {
   box-sizing: border-box;
-  padding: 0px 2px;
-  border: 1px solid black;
   overflow: auto;
+  border: 1px solid black;
+  padding: 0px 2px;
   width: 384px;
 }
 .type {
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,14 +463,16 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 2 :&ensp;<b>Insert <code class="type">","</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 2 :&ensp;<b>Insert <code class="type">"string_literal"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 4 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 4 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 4 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 4 :&ensp;<b>Insert <code class="type">"string_literal"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">10_A (original)</div>
@@ -663,7 +693,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">215 </span>    private static final String[] formatAsInlineTags = { 
 <span class="no">216 </span>            &quot;title&quot;, &quot;a&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;pre&quot;, &quot;address&quot;, &quot;li&quot;, &quot;th&quot;, &quot;td&quot;, &quot;script&quot;, &quot;style&quot; 
 <span class="no">217 </span>    }; 
-<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = {&quot;pre&quot;, &quot;plaintext&quot;, &quot;title&quot;<span data-kind="ins" id="edit-1-old"></span><span data-kind="ins" id="edit-2-old"></span>}; 
+<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = {&quot;pre&quot;<span id="edit-2-old" data-kind="mov"><span id="hl-2-7095" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>,</span></span> &quot;plaintext&quot;<span id="edit-3-old" data-kind="mov"><span id="hl-3-7108" class="hl mov">,</span></span> <span id="edit-4-old" data-kind="ins"></span>&quot;title&quot;}; 
 <span class="no">219 </span> 
 <span class="no">220 </span>    static { 
 <span class="no">221 </span>        // creates 
@@ -927,7 +957,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">215 </span>    private static final String[] formatAsInlineTags = { 
 <span class="no">216 </span>            &quot;title&quot;, &quot;a&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;pre&quot;, &quot;address&quot;, &quot;li&quot;, &quot;th&quot;, &quot;td&quot;, &quot;script&quot;, &quot;style&quot; 
 <span class="no">217 </span>    }; 
-<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = {&quot;pre&quot;, &quot;plaintext&quot;, &quot;title&quot;<span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-7117">,</span></span> <span data-kind="ins" id="edit-2-new"><span class="hl ins" id="hl-2-7119">&quot;textarea&quot;</span></span>}; 
+<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = {&quot;pre&quot;<span id="edit-1-new" data-kind="ins"><span id="hl-1-7095" class="hl ins">,</span></span> &quot;plaintext&quot;<span id="edit-2-new" data-kind="mov"><span id="hl-2-7108" class="hl mov">,</span></span> &quot;title&quot;<span id="edit-3-new" data-kind="mov"><span id="hl-3-7117" class="hl mov">,</span></span> <span id="edit-4-new" data-kind="ins"><span id="hl-4-7119" class="hl ins">&quot;textarea&quot;</span></span>}; 
 <span class="no">219 </span> 
 <span class="no">220 </span>    static { 
 <span class="no">221 </span>        // creates 

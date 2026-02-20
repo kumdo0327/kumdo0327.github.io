@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorial 4</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  color: #1c2430;
+  background: #fff;
+}
+.page {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+  padding: 12px;
+}
+.notice {
+  border: 1px solid #d6dde8;
+  border-radius: 10px;
+  background: #f7f9fc;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.compare {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.tabbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  border-bottom: 1px solid #d6dde8;
+  margin-bottom: 8px;
+  padding: 0 6px;
+}
+.tab-btn {
+  border: 1px solid #d6dde8;
+  border-bottom: 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: #e8edf5;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5868;
+  cursor: pointer;
+  transform: translateY(1px);
+}
+.tab-btn.active {
+  border-color: #1f6feb;
+  background: #fff;
+  color: #0c4ca8;
+  font-weight: 700;
+}
+.compare-item {
+  border: 1px solid #d6dde8;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.viewer-stack {
+  position: relative;
+  height: 100%;
+}
+.viewer-pane {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+.viewer-pane.active {
+  display: block;
+}
+.viewer-pane iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="notice">
+    본문항과 동일하게 Option A/B를 탭으로 전환해 비교하는 예제입니다.
+    투표는 오른쪽 패널에서 진행하세요.
+  </div>
+
+  <div class="compare">
+    <div class="tabbar">
+      <button type="button" class="tab-btn active" data-tab="A">Option A</button>
+      <button type="button" class="tab-btn" data-tab="B">Option B</button>
+    </div>
+
+    <div class="compare-item">
+      <div class="viewer-stack">
+        <div class="viewer-pane active" data-pane="A">
+          <iframe tabindex="-1" title="tutorial-4-A" src="tutorial_4A.html"></iframe>
+        </div>
+        <div class="viewer-pane" data-pane="B">
+          <iframe tabindex="-1" title="tutorial-4-B" src="tutorial_4B.html"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const tabButtons = document.querySelectorAll('.tab-btn');
+const panes = document.querySelectorAll('.viewer-pane');
+const compareItem = document.querySelector('.compare-item');
+let activeTab = 'A';
+
+function focusViewer(tab) {
+  const pane = document.querySelector(`.viewer-pane[data-pane=\"${tab}\"]`);
+  const iframe = pane ? pane.querySelector('iframe') : null;
+  if (!iframe) return;
+  iframe.focus();
+  try {
+    iframe.contentWindow.focus();
+  } catch (_) {
+  }
+}
+
+function setTab(tab) {
+  activeTab = tab;
+  tabButtons.forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  panes.forEach((pane) => {
+    pane.classList.toggle('active', pane.dataset.pane === tab);
+  });
+  requestAnimationFrame(() => focusViewer(tab));
+}
+
+tabButtons.forEach((btn) => {
+  btn.addEventListener('click', () => setTab(btn.dataset.tab));
+});
+
+compareItem?.addEventListener('click', (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+  if (target.closest('.tab-btn')) return;
+  focusViewer(activeTab);
+});
+
+const initialFrame = document.querySelector('.viewer-pane.active iframe');
+initialFrame?.addEventListener('load', () => focusViewer(activeTab), { once: true });
+requestAnimationFrame(() => focusViewer(activeTab));
+</script>
+</body>
+</html>

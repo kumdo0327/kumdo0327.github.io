@@ -3,66 +3,66 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root {
-  --mov-clr: 191 175 255;
   --upd-clr: 255 217 50;
   --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
+  --mov-clr: 191 175 255;
 }
 body {
-  margin: 0;
   background: white;
+  margin: 0;
 }
 .page {
+  padding: 0 20px 8px 20px;
   max-width: 100vw;
   margin: 0 auto;
-  padding: 0 20px 8px 20px;
 }
 .grid {
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
   height: calc(100vh - 108px);
   min-height: 216px;
   display: grid;
   min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 .panel {
   box-sizing: border-box;
   border: 1px solid #b7b7b7;
-  flex-direction: column;
-  overflow: hidden;
   border-radius: 6px;
   display: flex;
   min-width: 0;
+  overflow: hidden;
+  flex-direction: column;
 }
 .panel-header {
+  padding: 8px 10px;
+  border-bottom: 1px solid #b7b7b7;
+  display: flex;
+  font-weight: bold;
+  font-size: 16px;
   align-items: center;
   justify-content: space-between;
   background: #ebebeb;
-  border-bottom: 1px solid #b7b7b7;
-  font-weight: bold;
-  padding: 8px 10px;
   line-height: 1;
-  display: flex;
-  font-size: 16px;
 }
 .codebox {
-  font-size: 12px;
-  flex: 1;
   line-height: 1.5;
   padding: 2px 4px;
   min-height: 0;
   overflow: auto;
   background: #f7f7f7;
+  flex: 1;
+  font-size: 12px;
 }
 pre {
   margin: 0;
 }
 .hl {
-  box-shadow: inset -1px 0 0 #878787;
   cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
 }
 .ins, .del, .mov, .upd {
   border-bottom: 1px solid #878787;
@@ -113,32 +113,32 @@ pre {
 }
 .no {
   letter-spacing: normal;
-  font-weight: normal;
-  padding-bottom: 3px;
   padding-top: 3px;
-  color: #878787;
+  padding-bottom: 3px;
   background: #f7f7f7;
+  font-weight: normal;
+  color: #878787;
 }
 .legend {
   line-height: 1.5;
-  margin: 8px 0 12px 0;
   font-size: 12px;
+  margin: 8px 0 12px 0;
 }
 .legend-row {
   flex-wrap: wrap;
-  gap: 4px;
-  align-items: center;
-  display: flex;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .legend-title {
-  margin-right: 4px;
   font-weight: bold;
+  margin-right: 4px;
 }
 .legend-chip {
+  padding: 1px 6px;
   border-radius: 6px;
   border: 1px solid #bfbfbf;
-  padding: 1px 6px;
 }
 .legend-ins {
   background: rgb(var(--ins-clr) / 0.7);
@@ -153,21 +153,22 @@ pre {
   background: rgb(var(--upd-clr) / 0.7);
 }
 .legend-shortcuts .legend-key {
+  cursor: pointer;
   margin-right: 10px;
 }
 .legend-key kbd {
-  margin-right: 4px;
   padding: 1px 5px;
-  border-radius: 2px;
   border: 2px solid #afafaf;
+  border-radius: 2px;
   background: #fbfbfb;
+  margin-right: 4px;
 }
 .description {
-  box-sizing: border-box;
-  width: 384px;
   padding: 0px 2px;
-  overflow: auto;
   border: 1px solid black;
+  width: 384px;
+  overflow: auto;
+  box-sizing: border-box;
 }
 .type {
   color: #0076ba;
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,15 +463,16 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 3 :&ensp;<b>Delete <code class="type">"compound_statement"</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 3 :&ensp;<b>Move <code class="type">"compound_statement"</code></b></span>
-<span id="descr-3" style="display:none;">Edit #3 / 3 :&ensp;<b>Move <code class="type">"return_statement"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 4 :&ensp;<b>Delete <code class="type">"if_statement"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 4 :&ensp;<b>Move <code class="type">"expression_statement"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 4 :&ensp;<b>Move <code class="type">"if_statement"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 4 :&ensp;<b>Move <code class="type">"expression_statement"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">20_A (original)</div>
@@ -3449,15 +3478,15 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">3000 </span> 
 <span class="no">3001 </span>template &lt;typename Char&gt; 
 <span class="no">3002 </span>inline typename basic_context&lt;Char&gt;::format_arg 
-<span class="no">3003 </span>  basic_context&lt;Char&gt;::get_arg(basic_string_view&lt;Char&gt; name) <span id="edit-1-old" data-kind="del"><span id="hl-1-88419" class="hl del">{ 
-<span class="no">3004 </span>  if (this-&gt;check_no_auto_index()) </span><span id="edit-2-old" data-kind="mov"><span id="hl-2-88456" class="hl mov">{ 
-<span class="no">3005 </span>    map_.init(this-&gt;args()); 
-<span class="no">3006 </span>    if (const format_arg *arg = map_.find(name)) 
-<span class="no">3007 </span>      return *arg; 
-<span class="no">3008 </span>    this-&gt;on_error(&quot;argument not found&quot;); 
-<span class="no">3009 </span>  }</span></span><span id="hl-1-88600" class="hl del"> 
-<span class="no">3010 </span>  </span><span id="edit-3-old" data-kind="mov"><span id="hl-3-88603" class="hl mov">return format_arg();</span></span><span id="hl-1-88623" class="hl del"> 
-<span class="no">3011 </span>}</span></span> 
+<span class="no">3003 </span>  basic_context&lt;Char&gt;::get_arg(basic_string_view&lt;Char&gt; name) { 
+<span class="no">3004 </span>  <span data-kind="del" id="edit-1-old"><span class="hl del" id="hl-1-88423">if (this-&gt;check_no_auto_index()) { 
+<span class="no">3005 </span>    </span><span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-88462">map_.init(this-&gt;args());</span></span><span class="hl del" id="hl-1-88486"> 
+<span class="no">3006 </span>    </span><span data-kind="mov" id="edit-3-old"><span class="hl mov" id="hl-3-88491">if (const format_arg *arg = map_.find(name)) 
+<span class="no">3007 </span>      return *arg;</span></span><span class="hl del" id="hl-1-88554"> 
+<span class="no">3008 </span>    </span><span data-kind="mov" id="edit-4-old"><span class="hl mov" id="hl-4-88559">this-&gt;on_error(&quot;argument not found&quot;);</span></span><span class="hl del" id="hl-1-88596"> 
+<span class="no">3009 </span>  }</span></span> 
+<span class="no">3010 </span>  return format_arg(); 
+<span class="no">3011 </span>} 
 <span class="no">3012 </span> 
 <span class="no">3013 </span>/** Formats arguments and writes the output to the buffer. */ 
 <span class="no">3014 </span>template &lt;typename ArgFormatter, typename Char, typename Context&gt; 
@@ -6698,13 +6727,13 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">3000 </span> 
 <span class="no">3001 </span>template &lt;typename Char&gt; 
 <span class="no">3002 </span>inline typename basic_context&lt;Char&gt;::format_arg 
-<span class="no">3003 </span>  basic_context&lt;Char&gt;::get_arg(basic_string_view&lt;Char&gt; name) <span id="edit-2-new" data-kind="mov"><span id="hl-2-88419" class="hl mov"><span id="edit-1-new" data-kind="del"></span>{ 
-<span class="no">3004 </span>  map_.init(this-&gt;args()); 
-<span class="no">3005 </span>  if (const format_arg *arg = map_.find(name)) 
-<span class="no">3006 </span>    return *arg; 
-<span class="no">3007 </span>  this-&gt;on_error(&quot;argument not found&quot;); 
-<span class="no">3008 </span>  </span><span id="edit-3-new" data-kind="mov"><span id="hl-3-88554" class="hl mov">return format_arg();</span></span><span id="hl-2-88574" class="hl mov"> 
-<span class="no">3009 </span>}</span></span> 
+<span class="no">3003 </span>  basic_context&lt;Char&gt;::get_arg(basic_string_view&lt;Char&gt; name) { 
+<span class="no">3004 </span>  <span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-88423"><span data-kind="del" id="edit-1-new"></span>map_.init(this-&gt;args());</span></span> 
+<span class="no">3005 </span>  <span data-kind="mov" id="edit-3-new"><span class="hl mov" id="hl-3-88450">if (const format_arg *arg = map_.find(name)) 
+<span class="no">3006 </span>    return *arg;</span></span> 
+<span class="no">3007 </span>  <span data-kind="mov" id="edit-4-new"><span class="hl mov" id="hl-4-88514">this-&gt;on_error(&quot;argument not found&quot;);</span></span> 
+<span class="no">3008 </span>  return format_arg(); 
+<span class="no">3009 </span>} 
 <span class="no">3010 </span> 
 <span class="no">3011 </span>/** Formats arguments and writes the output to the buffer. */ 
 <span class="no">3012 </span>template &lt;typename ArgFormatter, typename Char, typename Context&gt; 

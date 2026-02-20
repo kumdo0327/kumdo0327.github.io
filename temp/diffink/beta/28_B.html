@@ -3,66 +3,66 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
 :root {
-  --mov-clr: 191 175 255;
   --ins-clr: 97 216 54;
-  --upd-clr: 255 217 50;
   --del-clr: 255 150 141;
+  --upd-clr: 255 217 50;
+  --mov-clr: 191 175 255;
 }
 body {
-  background: white;
   margin: 0;
+  background: white;
 }
 .page {
+  margin: 0 auto;
   padding: 0 20px 8px 20px;
   max-width: 100vw;
-  margin: 0 auto;
 }
 .grid {
-  grid-template-columns: 1fr 1fr;
   gap: 20px;
-  height: calc(100vh - 108px);
   min-height: 216px;
   display: grid;
   min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  height: calc(100vh - 108px);
 }
 .panel {
-  box-sizing: border-box;
-  overflow: hidden;
   flex-direction: column;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
   display: flex;
   min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .panel-header {
+  line-height: 1;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
   border-bottom: 1px solid #b7b7b7;
   font-weight: bold;
-  padding: 8px 10px;
-  font-size: 16px;
-  display: flex;
-  line-height: 1;
-  justify-content: space-between;
-  align-items: center;
   background: #ebebeb;
+  font-size: 16px;
+  align-items: center;
 }
 .codebox {
-  padding: 2px 4px;
-  flex: 1;
   line-height: 1.5;
-  font-size: 12px;
+  padding: 2px 4px;
   min-height: 0;
   overflow: auto;
   background: #f7f7f7;
+  font-size: 12px;
+  flex: 1;
 }
 pre {
   margin: 0;
 }
 .hl {
-  box-shadow: inset -1px 0 0 #878787;
   cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
 }
 .ins, .del, .mov, .upd {
   border-bottom: 1px solid #878787;
@@ -113,32 +113,32 @@ pre {
 }
 .no {
   padding-top: 3px;
-  font-weight: normal;
   padding-bottom: 3px;
-  color: #878787;
-  letter-spacing: normal;
+  font-weight: normal;
   background: #f7f7f7;
+  letter-spacing: normal;
+  color: #878787;
 }
 .legend {
+  margin: 8px 0 12px 0;
   font-size: 12px;
   line-height: 1.5;
-  margin: 8px 0 12px 0;
 }
 .legend-row {
-  margin-bottom: 10px;
   gap: 4px;
+  margin-bottom: 10px;
+  display: flex;
   align-items: center;
   flex-wrap: wrap;
-  display: flex;
 }
 .legend-title {
-  margin-right: 4px;
   font-weight: bold;
+  margin-right: 4px;
 }
 .legend-chip {
+  padding: 1px 6px;
   border: 1px solid #bfbfbf;
   border-radius: 6px;
-  padding: 1px 6px;
 }
 .legend-ins {
   background: rgb(var(--ins-clr) / 0.7);
@@ -153,21 +153,22 @@ pre {
   background: rgb(var(--upd-clr) / 0.7);
 }
 .legend-shortcuts .legend-key {
+  cursor: pointer;
   margin-right: 10px;
 }
 .legend-key kbd {
-  margin-right: 4px;
   border: 2px solid #afafaf;
   border-radius: 2px;
-  padding: 1px 5px;
   background: #fbfbfb;
+  margin-right: 4px;
+  padding: 1px 5px;
 }
 .description {
-  box-sizing: border-box;
-  padding: 0px 2px;
-  border: 1px solid black;
-  overflow: auto;
   width: 384px;
+  overflow: auto;
+  padding: 0px 2px;
+  box-sizing: border-box;
+  border: 1px solid black;
 }
 .type {
   color: #0076ba;
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,16 +463,17 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 4 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 4 :&ensp;<b>Update <code class="type">"comment"</code></b></span>
-<span id="descr-3" style="display:none;">Edit #3 / 4 :&ensp;<b>Insert <code class="type">","</code></b></span>
-<span id="descr-4" style="display:none;">Edit #4 / 4 :&ensp;<b>Insert <code class="type">"string"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 5 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 5 :&ensp;<b>Update <code class="type">"comment"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 5 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 5 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 5 :&ensp;<b>Insert <code class="type">"string"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">28_B (original)</div>
@@ -692,8 +721,8 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">242 </span> 
 <span class="no">243 </span>        # The fields for ARM CPUs do not always include &apos;vendor_id&apos; or &apos;model name&apos;, 
 <span class="no">244 </span>        # and sometimes includes both &apos;processor&apos; and &apos;Processor&apos;. 
-<span class="no">245 </span>        <span data-kind="upd" id="edit-2-old"><span class="hl upd" id="hl-2-8767"><span data-kind="ins" id="edit-1-old"></span># Always use &apos;processor&apos; count for ARM systems</span></span> 
-<span class="no">246 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith((&apos;armv&apos;, &apos;aarch&apos;<span data-kind="ins" id="edit-3-old"></span><span data-kind="ins" id="edit-4-old"></span>)): 
+<span class="no">245 </span>        <span id="edit-2-old" data-kind="upd"><span id="hl-2-8767" class="hl upd"><span id="edit-1-old" data-kind="ins"></span># Always use &apos;processor&apos; count for ARM systems</span></span> 
+<span class="no">246 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith((&apos;armv&apos;<span id="edit-4-old" data-kind="mov"><span id="hl-4-8891" class="hl mov"><span id="edit-3-old" data-kind="ins"></span>,</span></span> <span id="edit-5-old" data-kind="ins"></span>&apos;aarch&apos;)): 
 <span class="no">247 </span>            i = processor_occurence 
 <span class="no">248 </span> 
 <span class="no">249 </span>        # FIXME 
@@ -1499,9 +1528,9 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">242 </span> 
 <span class="no">243 </span>        # The fields for ARM CPUs do not always include &apos;vendor_id&apos; or &apos;model name&apos;, 
 <span class="no">244 </span>        # and sometimes includes both &apos;processor&apos; and &apos;Processor&apos;. 
-<span class="no">245 </span>        <span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-8767"># The fields for Power CPUs include &apos;processor&apos; and &apos;cpu&apos;.</span></span> 
-<span class="no">246 </span>        <span data-kind="upd" id="edit-2-new"><span class="hl upd" id="hl-2-8834"># Always use &apos;processor&apos; count for ARM and Power systems</span></span> 
-<span class="no">247 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith((&apos;armv&apos;, &apos;aarch&apos;<span data-kind="ins" id="edit-3-new"><span class="hl ins" id="hl-3-8977">,</span></span> <span data-kind="ins" id="edit-4-new"><span class="hl ins" id="hl-4-8979">&apos;ppc&apos;</span></span>)): 
+<span class="no">245 </span>        <span id="edit-1-new" data-kind="ins"><span id="hl-1-8767" class="hl ins"># The fields for Power CPUs include &apos;processor&apos; and &apos;cpu&apos;.</span></span> 
+<span class="no">246 </span>        <span id="edit-2-new" data-kind="upd"><span id="hl-2-8834" class="hl upd"># Always use &apos;processor&apos; count for ARM and Power systems</span></span> 
+<span class="no">247 </span>        if collected_facts.get(&apos;ansible_architecture&apos;, &apos;&apos;).startswith((&apos;armv&apos;<span id="edit-3-new" data-kind="ins"><span id="hl-3-8968" class="hl ins">,</span></span> &apos;aarch&apos;<span id="edit-4-new" data-kind="mov"><span id="hl-4-8977" class="hl mov">,</span></span> <span id="edit-5-new" data-kind="ins"><span id="hl-5-8979" class="hl ins">&apos;ppc&apos;</span></span>)): 
 <span class="no">248 </span>            i = processor_occurence 
 <span class="no">249 </span> 
 <span class="no">250 </span>        # FIXME 

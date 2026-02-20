@@ -6,56 +6,56 @@
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
 :root {
-  --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
   --mov-clr: 191 175 255;
   --upd-clr: 255 217 50;
+  --ins-clr: 97 216 54;
 }
 body {
   margin: 0;
   background: white;
 }
 .page {
-  max-width: 100vw;
-  padding: 0 20px 8px 20px;
   margin: 0 auto;
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
 }
 .grid {
-  gap: 20px;
-  height: calc(100vh - 108px);
-  grid-template-columns: 1fr 1fr;
-  min-height: 216px;
-  min-width: 1024px;
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-width: 1024px;
+  gap: 20px;
+  min-height: 216px;
+  height: calc(100vh - 108px);
 }
 .panel {
-  flex-direction: column;
   display: flex;
   overflow: hidden;
-  border: 1px solid #b7b7b7;
-  border-radius: 6px;
   min-width: 0;
   box-sizing: border-box;
+  border-radius: 6px;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
 }
 .panel-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid #b7b7b7;
   font-weight: bold;
-  background: #ebebeb;
   font-size: 16px;
-  padding: 8px 10px;
+  background: #ebebeb;
   line-height: 1;
+  justify-content: space-between;
+  padding: 8px 10px;
+  align-items: center;
 }
 .codebox {
-  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 2px 4px;
   line-height: 1.5;
+  flex: 1;
   background: #f7f7f7;
   font-size: 12px;
-  min-height: 0;
-  padding: 2px 4px;
-  overflow: auto;
 }
 pre {
   margin: 0;
@@ -112,24 +112,24 @@ pre {
   border-bottom: 3px solid rgb(var(--upd-clr));
 }
 .no {
-  font-weight: normal;
-  background: #f7f7f7;
   padding-bottom: 3px;
+  background: #f7f7f7;
   color: #878787;
   letter-spacing: normal;
+  font-weight: normal;
   padding-top: 3px;
 }
 .legend {
-  line-height: 1.5;
   margin: 8px 0 12px 0;
+  line-height: 1.5;
   font-size: 12px;
 }
 .legend-row {
+  display: flex;
+  margin-bottom: 10px;
   gap: 4px;
   align-items: center;
-  display: flex;
   flex-wrap: wrap;
-  margin-bottom: 10px;
 }
 .legend-title {
   font-weight: bold;
@@ -154,20 +154,21 @@ pre {
 }
 .legend-shortcuts .legend-key {
   margin-right: 10px;
+  cursor: pointer;
 }
 .legend-key kbd {
-  background: #fbfbfb;
-  border: 2px solid #afafaf;
   border-radius: 2px;
-  padding: 1px 5px;
+  background: #fbfbfb;
   margin-right: 4px;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
 }
 .description {
-  box-sizing: border-box;
-  border: 1px solid black;
   overflow: auto;
+  box-sizing: border-box;
   padding: 0px 2px;
   width: 384px;
+  border: 1px solid black;
 }
 .type {
   color: #0076ba;
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,9 +463,9 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>

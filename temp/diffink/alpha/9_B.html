@@ -6,9 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root {
+  --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
   --mov-clr: 191 175 255;
-  --ins-clr: 97 216 54;
   --upd-clr: 255 217 50;
 }
 body {
@@ -21,40 +21,40 @@ body {
   margin: 0 auto;
 }
 .grid {
-  min-width: 1024px;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  height: calc(100vh - 108px);
   min-height: 216px;
   display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  height: calc(100vh - 108px);
+  gap: 20px;
 }
 .panel {
-  min-width: 0;
   box-sizing: border-box;
   overflow: hidden;
-  flex-direction: column;
+  display: flex;
+  min-width: 0;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
-  display: flex;
+  flex-direction: column;
 }
 .panel-header {
-  justify-content: space-between;
-  background: #ebebeb;
   border-bottom: 1px solid #b7b7b7;
-  line-height: 1;
   font-weight: bold;
-  padding: 8px 10px;
   font-size: 16px;
+  line-height: 1;
   align-items: center;
   display: flex;
+  justify-content: space-between;
+  background: #ebebeb;
+  padding: 8px 10px;
 }
 .codebox {
-  background: #f7f7f7;
   padding: 2px 4px;
-  flex: 1;
-  line-height: 1.5;
-  font-size: 12px;
   min-height: 0;
+  line-height: 1.5;
+  background: #f7f7f7;
+  font-size: 12px;
+  flex: 1;
   overflow: auto;
 }
 pre {
@@ -112,9 +112,9 @@ pre {
   border-top: 3px solid rgb(var(--upd-clr));
 }
 .no {
-  background: #f7f7f7;
   padding-top: 3px;
   font-weight: normal;
+  background: #f7f7f7;
   padding-bottom: 3px;
   color: #878787;
   letter-spacing: normal;
@@ -126,10 +126,10 @@ pre {
 }
 .legend-row {
   margin-bottom: 10px;
-  gap: 4px;
-  align-items: center;
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
+  gap: 4px;
 }
 .legend-title {
   margin-right: 4px;
@@ -153,21 +153,22 @@ pre {
   background: rgb(var(--upd-clr) / 0.7);
 }
 .legend-shortcuts .legend-key {
+  cursor: pointer;
   margin-right: 10px;
 }
 .legend-key kbd {
-  background: #fbfbfb;
   margin-right: 4px;
+  background: #fbfbfb;
   border: 2px solid #afafaf;
   border-radius: 2px;
   padding: 1px 5px;
 }
 .description {
-  box-sizing: border-box;
   width: 384px;
+  box-sizing: border-box;
   border: 1px solid black;
-  padding: 0px 2px;
   overflow: auto;
+  padding: 0px 2px;
 }
 .type {
   color: #0076ba;
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,9 +463,9 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
@@ -743,7 +771,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">294 </span>     * @return true if the entry represents a unix symlink, false otherwise. 
 <span class="no">295 </span>     */ 
 <span class="no">296 </span>    public boolean isUnixSymlink() { 
-<span class="no">297 </span>        return (getUnixMode() &amp; <span id="edit-2-old" data-kind="mov"><span id="hl-2-10118" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>UnixStat.LINK_FLAG</span></span>) == <span id="edit-3-old" data-kind="del"><span id="hl-3-10141" class="hl del">UnixStat.LINK_FLAG</span></span>; 
+<span class="no">297 </span>        return (getUnixMode() &amp; <span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-10118"><span data-kind="ins" id="edit-1-old"></span>UnixStat.LINK_FLAG</span></span>) == <span data-kind="del" id="edit-3-old"><span class="hl del" id="hl-3-10141">UnixStat.LINK_FLAG</span></span>; 
 <span class="no">298 </span>    } 
 <span class="no">299 </span> 
 <span class="no">300 </span>    /** 
@@ -1605,7 +1633,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">294 </span>     * @return true if the entry represents a unix symlink, false otherwise. 
 <span class="no">295 </span>     */ 
 <span class="no">296 </span>    public boolean isUnixSymlink() { 
-<span class="no">297 </span>        return (getUnixMode() &amp; <span id="edit-1-new" data-kind="ins"><span id="hl-1-10118" class="hl ins">UnixStat.FILE_TYPE_FLAG</span></span>) == <span id="edit-2-new" data-kind="mov"><span id="hl-2-10146" class="hl mov"><span id="edit-3-new" data-kind="del"></span>UnixStat.LINK_FLAG</span></span>; 
+<span class="no">297 </span>        return (getUnixMode() &amp; <span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-10118">UnixStat.FILE_TYPE_FLAG</span></span>) == <span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-10146"><span data-kind="del" id="edit-3-new"></span>UnixStat.LINK_FLAG</span></span>; 
 <span class="no">298 </span>    } 
 <span class="no">299 </span> 
 <span class="no">300 </span>    /** 

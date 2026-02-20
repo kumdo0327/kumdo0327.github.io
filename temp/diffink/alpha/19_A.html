@@ -6,56 +6,56 @@
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
 :root {
-  --upd-clr: 255 217 50;
-  --ins-clr: 97 216 54;
-  --del-clr: 255 150 141;
   --mov-clr: 191 175 255;
+  --ins-clr: 97 216 54;
+  --upd-clr: 255 217 50;
+  --del-clr: 255 150 141;
 }
 body {
-  margin: 0;
   background: white;
+  margin: 0;
 }
 .page {
-  margin: 0 auto;
   padding: 0 20px 8px 20px;
   max-width: 100vw;
+  margin: 0 auto;
 }
 .grid {
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
   height: calc(100vh - 108px);
   min-height: 216px;
   display: grid;
   min-width: 1024px;
-  grid-template-columns: 1fr 1fr;
 }
 .panel {
-  flex-direction: column;
+  box-sizing: border-box;
   overflow: hidden;
+  flex-direction: column;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
   display: flex;
   min-width: 0;
-  box-sizing: border-box;
 }
 .panel-header {
-  align-items: center;
-  justify-content: space-between;
-  background: #ebebeb;
   border-bottom: 1px solid #b7b7b7;
   font-weight: bold;
   padding: 8px 10px;
   font-size: 16px;
   display: flex;
   line-height: 1;
+  justify-content: space-between;
+  align-items: center;
+  background: #ebebeb;
 }
 .codebox {
-  line-height: 1.5;
   padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
   font-size: 12px;
   min-height: 0;
   overflow: auto;
   background: #f7f7f7;
-  flex: 1;
 }
 pre {
   margin: 0;
@@ -65,8 +65,8 @@ pre {
   cursor: pointer;
 }
 .ins, .del, .mov, .upd {
-  border-top: 1px solid #878787;
   border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
 }
 .ins-focus, .del-focus, .mov-focus, .upd-focus {
   font-weight: bold;
@@ -96,49 +96,49 @@ pre {
   background: rgb(var(--upd-clr));
 }
 .ins-border {
-  border-top: 3px solid rgb(var(--ins-clr));
   border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
 }
 .del-border {
-  border-top: 3px solid rgb(var(--del-clr));
   border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
 }
 .mov-border {
-  border-top: 3px solid rgb(var(--mov-clr));
   border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
 }
 .upd-border {
-  border-top: 3px solid rgb(var(--upd-clr));
   border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
 }
 .no {
+  padding-bottom: 3px;
   font-weight: normal;
   color: #878787;
   letter-spacing: normal;
   padding-top: 3px;
   background: #f7f7f7;
-  padding-bottom: 3px;
 }
 .legend {
-  margin: 8px 0 12px 0;
-  line-height: 1.5;
   font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
 }
 .legend-row {
   gap: 4px;
-  align-items: center;
   flex-wrap: wrap;
-  display: flex;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 .legend-title {
-  font-weight: bold;
   margin-right: 4px;
+  font-weight: bold;
 }
 .legend-chip {
-  padding: 1px 6px;
   border: 1px solid #bfbfbf;
   border-radius: 6px;
+  padding: 1px 6px;
 }
 .legend-ins {
   background: rgb(var(--ins-clr) / 0.7);
@@ -154,20 +154,21 @@ pre {
 }
 .legend-shortcuts .legend-key {
   margin-right: 10px;
+  cursor: pointer;
 }
 .legend-key kbd {
-  padding: 1px 5px;
+  margin-right: 4px;
   border: 2px solid #afafaf;
   border-radius: 2px;
+  padding: 1px 5px;
   background: #fbfbfb;
-  margin-right: 4px;
 }
 .description {
+  box-sizing: border-box;
   padding: 0px 2px;
   border: 1px solid black;
-  width: 384px;
   overflow: auto;
-  box-sizing: border-box;
+  width: 384px;
 }
 .type {
   color: #0076ba;
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,17 +463,18 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
-<span id="descr-3" style="display:none;">Edit #3 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
-<span id="descr-4" style="display:none;">Edit #4 / 5 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
-<span id="descr-5" style="display:none;">Edit #5 / 5 :&ensp;<b>Insert <code class="type">"declaration"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 6 :&ensp;<b>Insert <code class="type">"declaration"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 6 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 6 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 6 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 6 :&ensp;<b>Move <code class="type">"declaration"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 6 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">19_A (original)</div>
@@ -1307,8 +1336,8 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no"> 856 </span>    } 
 <span class="no"> 857 </span> 
 <span class="no"> 858 </span>    int argNr = 1; 
-<span class="no"> 859 </span>    for (const Token *<span id="edit-1-old" data-kind="upd"><span id="hl-1-36861" class="hl upd">arg</span></span> = tokFirstArg; <span id="edit-2-old" data-kind="upd"><span id="hl-2-36880" class="hl upd">arg</span></span>; <span id="edit-3-old" data-kind="upd"><span id="hl-3-36885" class="hl upd">arg</span></span> = <span id="edit-4-old" data-kind="upd"><span id="hl-4-36891" class="hl upd">arg</span></span>-&gt;nextArgument()) { 
-<span class="no"> 860 </span>        <span id="edit-5-old" data-kind="ins"></span>if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
+<span class="no"> 859 </span>    for (<span id="edit-5-old" data-kind="mov"><span id="hl-5-36848" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>const Token *arg = </span><span id="edit-6-old" data-kind="upd"><span id="hl-6-36867" class="hl upd">tokFirstArg</span></span><span id="hl-5-36878" class="hl mov">;</span></span> <span id="edit-2-old" data-kind="upd"><span id="hl-2-36880" class="hl upd">arg</span></span>; <span id="edit-3-old" data-kind="upd"><span id="hl-3-36885" class="hl upd">arg</span></span> = <span id="edit-4-old" data-kind="upd"><span id="hl-4-36891" class="hl upd">arg</span></span>-&gt;nextArgument()) { 
+<span class="no"> 860 </span>        if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
 <span class="no"> 861 </span>            arg = arg-&gt;next(); 
 <span class="no"> 862 </span>            if (Token::simpleMatch(arg, &quot;( std :: nothrow )&quot;)) 
 <span class="no"> 863 </span>                arg = arg-&gt;tokAt(5); 
@@ -2323,8 +2352,8 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no"> 856 </span>    } 
 <span class="no"> 857 </span> 
 <span class="no"> 858 </span>    int argNr = 1; 
-<span class="no"> 859 </span>    for (const Token *<span id="edit-1-new" data-kind="upd"><span id="hl-1-36861" class="hl upd">funcArg</span></span> = tokFirstArg; <span id="edit-2-new" data-kind="upd"><span id="hl-2-36884" class="hl upd">funcArg</span></span>; <span id="edit-3-new" data-kind="upd"><span id="hl-3-36893" class="hl upd">funcArg</span></span> = <span id="edit-4-new" data-kind="upd"><span id="hl-4-36903" class="hl upd">funcArg</span></span>-&gt;nextArgument()) { 
-<span class="no"> 860 </span>        <span id="edit-5-new" data-kind="ins"><span id="hl-5-36938" class="hl ins">const Token* arg = funcArg;</span></span> 
+<span class="no"> 859 </span>    for (<span id="edit-1-new" data-kind="ins"><span id="hl-1-36848" class="hl ins">const Token *funcArg = tokFirstArg;</span></span> <span id="edit-2-new" data-kind="upd"><span id="hl-2-36884" class="hl upd">funcArg</span></span>; <span id="edit-3-new" data-kind="upd"><span id="hl-3-36893" class="hl upd">funcArg</span></span> = <span id="edit-4-new" data-kind="upd"><span id="hl-4-36903" class="hl upd">funcArg</span></span>-&gt;nextArgument()) { 
+<span class="no"> 860 </span>        <span id="edit-5-new" data-kind="mov"><span id="hl-5-36938" class="hl mov">const Token* arg = </span><span id="edit-6-new" data-kind="upd"><span id="hl-6-36957" class="hl upd">funcArg</span></span><span id="hl-5-36964" class="hl mov">;</span></span> 
 <span class="no"> 861 </span>        if (mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == &quot;new&quot;) { 
 <span class="no"> 862 </span>            arg = arg-&gt;next(); 
 <span class="no"> 863 </span>            if (Token::simpleMatch(arg, &quot;( std :: nothrow )&quot;)) 

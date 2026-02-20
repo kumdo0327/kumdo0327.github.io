@@ -3,59 +3,59 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
 :root {
-  --mov-clr: 191 175 255;
   --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
   --upd-clr: 255 217 50;
+  --mov-clr: 191 175 255;
 }
 body {
   margin: 0;
   background: white;
 }
 .page {
-  max-width: 100vw;
   margin: 0 auto;
   padding: 0 20px 8px 20px;
+  max-width: 100vw;
 }
 .grid {
   gap: 20px;
-  height: calc(100vh - 108px);
   min-height: 216px;
   display: grid;
   min-width: 1024px;
   grid-template-columns: 1fr 1fr;
+  height: calc(100vh - 108px);
 }
 .panel {
-  overflow: hidden;
   flex-direction: column;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
   display: flex;
   min-width: 0;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .panel-header {
-  justify-content: space-between;
-  background: #ebebeb;
+  padding: 8px 10px;
   border-bottom: 1px solid #b7b7b7;
   font-weight: bold;
-  padding: 8px 10px;
   font-size: 16px;
-  display: flex;
   line-height: 1;
+  justify-content: space-between;
+  background: #ebebeb;
   align-items: center;
+  display: flex;
 }
 .codebox {
-  flex: 1;
+  line-height: 1.5;
   padding: 2px 4px;
-  font-size: 12px;
   min-height: 0;
   overflow: auto;
   background: #f7f7f7;
-  line-height: 1.5;
+  font-size: 12px;
+  flex: 1;
 }
 pre {
   margin: 0;
@@ -65,8 +65,8 @@ pre {
   box-shadow: inset -1px 0 0 #878787;
 }
 .ins, .del, .mov, .upd {
-  border-top: 1px solid #878787;
   border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
 }
 .ins-focus, .del-focus, .mov-focus, .upd-focus {
   font-weight: bold;
@@ -96,49 +96,49 @@ pre {
   background: rgb(var(--upd-clr));
 }
 .ins-border {
-  border-top: 3px solid rgb(var(--ins-clr));
   border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
 }
 .del-border {
-  border-top: 3px solid rgb(var(--del-clr));
   border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
 }
 .mov-border {
-  border-top: 3px solid rgb(var(--mov-clr));
   border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
 }
 .upd-border {
-  border-top: 3px solid rgb(var(--upd-clr));
   border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
 }
 .no {
-  font-weight: normal;
-  letter-spacing: normal;
-  padding-top: 3px;
   padding-bottom: 3px;
+  padding-top: 3px;
+  font-weight: normal;
   background: #f7f7f7;
+  letter-spacing: normal;
   color: #878787;
 }
 .legend {
-  line-height: 1.5;
   margin: 8px 0 12px 0;
   font-size: 12px;
+  line-height: 1.5;
 }
 .legend-row {
   gap: 4px;
-  margin-bottom: 10px;
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 10px;
 }
 .legend-title {
   font-weight: bold;
   margin-right: 4px;
 }
 .legend-chip {
-  border-radius: 6px;
   padding: 1px 6px;
   border: 1px solid #bfbfbf;
+  border-radius: 6px;
 }
 .legend-ins {
   background: rgb(var(--ins-clr) / 0.7);
@@ -153,21 +153,22 @@ pre {
   background: rgb(var(--upd-clr) / 0.7);
 }
 .legend-shortcuts .legend-key {
+  cursor: pointer;
   margin-right: 10px;
 }
 .legend-key kbd {
-  padding: 1px 5px;
   border: 2px solid #afafaf;
   border-radius: 2px;
   background: #fbfbfb;
   margin-right: 4px;
+  padding: 1px 5px;
 }
 .description {
   padding: 0px 2px;
   border: 1px solid black;
-  width: 384px;
   overflow: auto;
   box-sizing: border-box;
+  width: 384px;
 }
 .type {
   color: #0076ba;
@@ -376,6 +377,36 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollOne(document.getElementById(`edit-${n}-new`));
   }
 
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
   document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
     edit.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -392,35 +423,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      unfocusEdit();
-      return;
-    }
+    if (e.key === "Escape") return runShortcut("unfocus");
 
     const key = e.key.toLowerCase();
-
-    if (key === "u") {
-      unfocusEdit();
-      return;
-    }
-
+    if (key === "u") return runShortcut("unfocus");
     if (key !== "n" && key !== "b") return;
-    if (editOrder.length === 0) return;
 
     e.preventDefault();
-
-    if (activeEdit === null) {
-      editIndex = key === "n" ? 0 : editOrder.length - 1;
-    } else {
-      editIndex += key === "n" ? 1 : -1;
-      if (editIndex < 0) editIndex = editOrder.length - 1;
-      if (editIndex >= editOrder.length) editIndex = 0;
-    }
-
-    const n = editOrder[editIndex];
-    focusEdit(n);
-    scrollBothToMargin(n);
+    runShortcut(key === "n" ? "next" : "back");
   });
 });
 </script>
@@ -435,15 +463,19 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="legend-row legend-shortcuts">
   <span class="legend-title">Shortcuts</span>
-  <span class="legend-key"><kbd>n</kbd><U>N</U>ext</span>
-  <span class="legend-key"><kbd>b</kbd><U>B</U>ack</span>
-  <span class="legend-key"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 3 :&ensp;<b>Delete <code class="type">"parenthesized_expression"</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 3 :&ensp;<b>Move <code class="type">"method_invocation"</code></b></span>
-<span id="descr-3" style="display:none;">Edit #3 / 3 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 7 :&ensp;<b>Delete <code class="type">"parenthesized_expression"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 7 :&ensp;<b>Move <code class="type">"parenthesized_expression"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 7 :&ensp;<b>Move <code class="type">"method_invocation"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 7 :&ensp;<b>Insert <code class="type">"&&"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 7 :&ensp;<b>Update <code class="type">"identifier"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 7 :&ensp;<b>Delete <code class="type">"!="</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 7 :&ensp;<b>Delete <code class="type">"null_literal"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">5_B (original)</div>
@@ -1078,7 +1110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">629 </span>        } 
 <span class="no">630 </span> 
 <span class="no">631 </span>        // if the Option has a value 
-<span class="no">632 </span>        if (option.hasArg() &amp;&amp; <span id="edit-1-old" data-kind="del"><span id="hl-1-19066" class="hl del">(</span><span id="edit-2-old" data-kind="mov"><span id="hl-2-19067" class="hl mov">option.</span><span id="edit-3-old" data-kind="upd"><span id="hl-3-19074" class="hl upd">getArgName</span></span><span id="hl-2-19084" class="hl mov">()</span></span><span id="hl-1-19086" class="hl del"> != null)</span></span>) 
+<span class="no">632 </span>        if <span data-kind="del" id="edit-1-old"><span class="hl del" id="hl-1-19046">(</span><span data-kind="mov" id="edit-3-old"><span class="hl mov" id="hl-3-19047">option.hasArg()</span></span><span class="hl del" id="hl-1-19062"> </span><span class="hl del" id="hl-1-19063"><span data-kind="ins" id="edit-4-old"></span>&amp;&amp; </span><span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-19066">(option.</span><span data-kind="upd" id="edit-5-old"><span class="hl upd" id="hl-5-19074">getArgName</span></span><span class="hl mov" id="hl-2-19084">() </span><span data-kind="del" id="edit-6-old"><span class="hl del" id="hl-6-19087">!=</span></span><span class="hl mov" id="hl-2-19089"> </span><span data-kind="del" id="edit-7-old"><span class="hl del" id="hl-7-19090">null</span></span><span class="hl mov" id="hl-2-19094">)</span></span><span class="hl del" id="hl-1-19095">)</span></span> 
 <span class="no">633 </span>        { 
 <span class="no">634 </span>            buff.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
 <span class="no">635 </span>        } 
@@ -2071,7 +2103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <span class="no">629 </span>        } 
 <span class="no">630 </span> 
 <span class="no">631 </span>        // if the Option has a value 
-<span class="no">632 </span>        if (option.hasArg() &amp;&amp; <span id="edit-2-new" data-kind="mov"><span id="hl-2-19066" class="hl mov"><span id="edit-1-new" data-kind="del"></span>option.</span><span id="edit-3-new" data-kind="upd"><span id="hl-3-19073" class="hl upd">hasArgName</span></span><span id="hl-2-19083" class="hl mov">()</span></span>) 
+<span class="no">632 </span>        if <span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-19046"><span data-kind="del" id="edit-1-new"></span>(</span><span data-kind="mov" id="edit-3-new"><span class="hl mov" id="hl-3-19047">option.hasArg()</span></span><span class="hl mov" id="hl-2-19062"> </span><span data-kind="ins" id="edit-4-new"><span class="hl ins" id="hl-4-19063">&amp;&amp;</span></span><span class="hl mov" id="hl-2-19065"> option.</span><span data-kind="upd" id="edit-5-new"><span class="hl upd" id="hl-5-19073">hasArgName</span></span><span class="hl mov" id="hl-2-19083">()</span><span class="hl mov" id="hl-2-19085"><span data-kind="del" id="edit-6-new"></span><span data-kind="del" id="edit-7-new"></span>)</span></span> 
 <span class="no">633 </span>        { 
 <span class="no">634 </span>            buff.append(&quot; &lt;&quot;).append(option.getArgName()).append(&quot;&gt;&quot;); 
 <span class="no">635 </span>        } 
