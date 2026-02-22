@@ -34,7 +34,7 @@ Integrated M.S. & Ph.D. Student,
 
 ## Talks
 - "PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns"  
-  Paper presentation at OOPSLA 2025. Singapore. October 16 2025
+  Paper presentation at [OOPSLA 2025](https://2025.splashcon.org/track/OOPSLA). Singapore. October 16 2025
 
 ## Teaching experiences
 - Teaching Assistant, Data Structure (COSE213), Korea University, Fall 2024
