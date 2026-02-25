@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+:root {
+  --del-clr: 255 150 141;
+  --mov-clr: 191 175 255;
+  --upd-clr: 255 217 50;
+  --ins-clr: 97 216 54;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+}
+.grid {
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+}
+.panel {
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  line-height: 1;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  align-items: center;
+}
+.codebox {
+  overflow: auto;
+  background: #f7f7f7;
+  padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
+  font-size: 12px;
+  min-height: 0;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  background: #f7f7f7;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-weight: normal;
+  letter-spacing: normal;
+  color: #878787;
+}
+.legend {
+  margin: 8px 0 12px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.legend-row {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.legend-key kbd {
+  background: #fbfbfb;
+  margin-right: 4px;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+}
+.description {
+  overflow: auto;
+  width: 384px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  padding: 0px 2px;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
+
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
+    });
+  });
+
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return runShortcut("unfocus");
+
+    const key = e.key.toLowerCase();
+    if (key === "u") return runShortcut("unfocus");
+    if (key !== "n" && key !== "b") return;
+
+    e.preventDefault();
+    runShortcut(key === "n" ? "next" : "back");
+  });
+});
+</script>
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 13 :&ensp;<b>Insert <code class="type">"subscript"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 13 :&ensp;<b>Insert <code class="type">"expression_statement"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 13 :&ensp;<b>Move <code class="type">"subscript"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 13 :&ensp;<b>Update <code class="type">"string_content"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 13 :&ensp;<b>Update <code class="type">"string_content"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 13 :&ensp;<b>Update <code class="type">"string_content"</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 13 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-8" style="display:none;">Edit #8 / 13 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-9" style="display:none;">Edit #9 / 13 :&ensp;<b>Insert <code class="type">"string"</code></b></span>
+<span id="descr-10" style="display:none;">Edit #10 / 13 :&ensp;<b>Insert <code class="type">"subscript"</code></b></span>
+<span id="descr-11" style="display:none;">Edit #11 / 13 :&ensp;<b>Insert <code class="type">"block"</code></b></span>
+<span id="descr-12" style="display:none;">Edit #12 / 13 :&ensp;<b>Move <code class="type">"subscript"</code></b></span>
+<span id="descr-13" style="display:none;">Edit #13 / 13 :&ensp;<b>Move <code class="type">"block"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">41_A (original)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span># -*- coding: utf-8 -*- 
+<span class="no">  2 </span># 
+<span class="no">  3 </span># Copyright 2015-2015 Spotify AB 
+<span class="no">  4 </span># 
+<span class="no">  5 </span># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); 
+<span class="no">  6 </span># you may not use this file except in compliance with the License. 
+<span class="no">  7 </span># You may obtain a copy of the License at 
+<span class="no">  8 </span># 
+<span class="no">  9 </span># http://www.apache.org/licenses/LICENSE-2.0 
+<span class="no"> 10 </span># 
+<span class="no"> 11 </span># Unless required by applicable law or agreed to in writing, software 
+<span class="no"> 12 </span># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+<span class="no"> 13 </span># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class="no"> 14 </span># See the License for the specific language governing permissions and 
+<span class="no"> 15 </span># limitations under the License. 
+<span class="no"> 16 </span># 
+<span class="no"> 17 </span>&quot;&quot;&quot; 
+<span class="no"> 18 </span>This module provide the function :py:func:`summary` that is used for printing 
+<span class="no"> 19 </span>an `execution summary 
+<span class="no"> 20 </span>&lt;https://github.com/spotify/luigi/blob/master/examples/execution_summary_example.py&gt;`_ 
+<span class="no"> 21 </span>at the end of luigi invocations. 
+<span class="no"> 22 </span>&quot;&quot;&quot; 
+<span class="no"> 23 </span> 
+<span class="no"> 24 </span>import textwrap 
+<span class="no"> 25 </span>import collections 
+<span class="no"> 26 </span>import functools 
+<span class="no"> 27 </span> 
+<span class="no"> 28 </span>import luigi 
+<span class="no"> 29 </span> 
+<span class="no"> 30 </span> 
+<span class="no"> 31 </span>class execution_summary(luigi.Config): 
+<span class="no"> 32 </span>    summary_length = luigi.IntParameter(default=5) 
+<span class="no"> 33 </span> 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span>def _partition_tasks(worker): 
+<span class="no"> 36 </span>    &quot;&quot;&quot; 
+<span class="no"> 37 </span>    Takes a worker and sorts out tasks based on their status. 
+<span class="no"> 38 </span>    Still_pending_not_ext is only used to get upstream_failure, upstream_missing_dependency and run_by_other_worker 
+<span class="no"> 39 </span>    &quot;&quot;&quot; 
+<span class="no"> 40 </span>    task_history = worker._add_task_history 
+<span class="no"> 41 </span>    pending_tasks = {task for(task, status, ext) in task_history if status == &apos;PENDING&apos;} 
+<span class="no"> 42 </span>    set_tasks = {} 
+<span class="no"> 43 </span>    set_tasks[&quot;completed&quot;] = {task for (task, status, ext) in task_history if status == &apos;DONE&apos; and task in pending_tasks} 
+<span class="no"> 44 </span>    set_tasks[&quot;already_done&quot;] = {task for (task, status, ext) in task_history 
+<span class="no"> 45 </span>                                 if status == &apos;DONE&apos; and task not in pending_tasks and task not in set_tasks[&quot;completed&quot;]} 
+<span class="no"> 46 </span>    <span id="edit-3-old" data-kind="mov"><span id="hl-3-1696" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>set_tasks[&quot;failed&quot;]</span></span> = {task for (task, status, ext) in task_history if status == &apos;FAILED&apos;} 
+<span class="no"> 47 </span>    <span id="edit-2-old" data-kind="ins"></span>set_tasks[&quot;scheduling_error&quot;] = {task for(task, status, ext) in task_history if status == &apos;UNKNOWN&apos;} 
+<span class="no"> 48 </span>    set_tasks[&quot;still_pending_ext&quot;] = {task for (task, status, ext) in task_history 
+<span class="no"> 49 </span>                                      if status == &apos;PENDING&apos; and task not in set_tasks[&quot;<span id="edit-4-old" data-kind="upd"><span id="hl-4-2063" class="hl upd">failed</span></span>&quot;] and task not in set_tasks[&quot;completed&quot;] and not ext} 
+<span class="no"> 50 </span>    set_tasks[&quot;still_pending_not_ext&quot;] = {task for (task, status, ext) in task_history 
+<span class="no"> 51 </span>                                          if status == &apos;PENDING&apos; and task not in set_tasks[&quot;<span id="edit-5-old" data-kind="upd"><span id="hl-5-2303" class="hl upd">failed</span></span>&quot;] and task not in set_tasks[&quot;completed&quot;] and ext} 
+<span class="no"> 52 </span>    set_tasks[&quot;run_by_other_worker&quot;] = set() 
+<span class="no"> 53 </span>    set_tasks[&quot;upstream_failure&quot;] = set() 
+<span class="no"> 54 </span>    set_tasks[&quot;upstream_missing_dependency&quot;] = set() 
+<span class="no"> 55 </span>    set_tasks[&quot;upstream_run_by_other_worker&quot;] = set() 
+<span class="no"> 56 </span>    set_tasks[&quot;upstream_scheduling_error&quot;] = set() 
+<span class="no"> 57 </span>    set_tasks[&quot;not_run&quot;] = set() 
+<span class="no"> 58 </span>    return set_tasks 
+<span class="no"> 59 </span> 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>def _root_task(worker): 
+<span class="no"> 62 </span>    &quot;&quot;&quot; 
+<span class="no"> 63 </span>    Return the first task scheduled by the worker, corresponding to the root task 
+<span class="no"> 64 </span>    &quot;&quot;&quot; 
+<span class="no"> 65 </span>    return worker._add_task_history[0][0] 
+<span class="no"> 66 </span> 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>def _populate_unknown_statuses(set_tasks): 
+<span class="no"> 69 </span>    &quot;&quot;&quot; 
+<span class="no"> 70 </span>    Add the &quot;upstream_*&quot; and &quot;not_run&quot; statuses my mutating set_tasks. 
+<span class="no"> 71 </span>    &quot;&quot;&quot; 
+<span class="no"> 72 </span>    visited = set() 
+<span class="no"> 73 </span>    for task in set_tasks[&quot;still_pending_not_ext&quot;]: 
+<span class="no"> 74 </span>        _depth_first_search(set_tasks, task, visited) 
+<span class="no"> 75 </span> 
+<span class="no"> 76 </span> 
+<span class="no"> 77 </span>def _depth_first_search(set_tasks, current_task, visited): 
+<span class="no"> 78 </span>    &quot;&quot;&quot; 
+<span class="no"> 79 </span>    This dfs checks why tasks are still pending. 
+<span class="no"> 80 </span>    &quot;&quot;&quot; 
+<span class="no"> 81 </span>    visited.add(current_task) 
+<span class="no"> 82 </span>    if current_task in set_tasks[&quot;still_pending_not_ext&quot;]: 
+<span class="no"> 83 </span>        upstream_failure = False 
+<span class="no"> 84 </span>        upstream_missing_dependency = False 
+<span class="no"> 85 </span>        upstream_run_by_other_worker = False 
+<span class="no"> 86 </span>        upstream_scheduling_error = False 
+<span class="no"> 87 </span>        for task in current_task._requires(): 
+<span class="no"> 88 </span>            if task not in visited: 
+<span class="no"> 89 </span>                _depth_first_search(set_tasks, task, visited) 
+<span class="no"> 90 </span>            if task in set_tasks[&quot;<span id="edit-6-old" data-kind="upd"><span id="hl-6-3640" class="hl upd">failed</span></span>&quot;] or task in set_tasks[&quot;upstream_failure&quot;]: 
+<span class="no"> 91 </span>                set_tasks[&quot;upstream_failure&quot;].add(current_task) 
+<span class="no"> 92 </span>                upstream_failure = True 
+<span class="no"> 93 </span>            if task in set_tasks[&quot;still_pending_ext&quot;] or task in set_tasks[&quot;upstream_missing_dependency&quot;]: 
+<span class="no"> 94 </span>                set_tasks[&quot;upstream_missing_dependency&quot;].add(current_task) 
+<span class="no"> 95 </span>                upstream_missing_dependency = True 
+<span class="no"> 96 </span>            if task in set_tasks[&quot;run_by_other_worker&quot;] or task in set_tasks[&quot;upstream_run_by_other_worker&quot;]: 
+<span class="no"> 97 </span>                set_tasks[&quot;upstream_run_by_other_worker&quot;].add(current_task) 
+<span class="no"> 98 </span>                upstream_run_by_other_worker = True 
+<span class="no"> 99 </span>            if task in set_tasks[&quot;scheduling_error&quot;]: 
+<span class="no">100 </span>                set_tasks[&quot;upstream_scheduling_error&quot;].add(current_task) 
+<span class="no">101 </span>                upstream_scheduling_error = True 
+<span class="no">102 </span>        if not upstream_failure and not upstream_missing_dependency and \ 
+<span class="no">103 </span>                not upstream_run_by_other_worker and not upstream_scheduling_error and \ 
+<span class="no">104 </span>                current_task not in set_tasks[&quot;run_by_other_worker&quot;]: 
+<span class="no">105 </span>            set_tasks[&quot;not_run&quot;].add(current_task) 
+<span class="no">106 </span> 
+<span class="no">107 </span> 
+<span class="no">108 </span>def _get_str(task_dict, extra_indent): 
+<span class="no">109 </span>    &quot;&quot;&quot; 
+<span class="no">110 </span>    This returns a string for each status 
+<span class="no">111 </span>    &quot;&quot;&quot; 
+<span class="no">112 </span>    summary_length = execution_summary().summary_length 
+<span class="no">113 </span> 
+<span class="no">114 </span>    lines = [] 
+<span class="no">115 </span>    task_names = sorted(task_dict.keys()) 
+<span class="no">116 </span>    for task_family in task_names: 
+<span class="no">117 </span>        tasks = task_dict[task_family] 
+<span class="no">118 </span>        tasks = sorted(tasks, key=lambda x: str(x)) 
+<span class="no">119 </span>        prefix_size = 8 if extra_indent else 4 
+<span class="no">120 </span>        prefix = &apos; &apos; * prefix_size 
+<span class="no">121 </span> 
+<span class="no">122 </span>        line = None 
+<span class="no">123 </span> 
+<span class="no">124 </span>        if summary_length &gt; 0 and len(lines) &gt;= summary_length: 
+<span class="no">125 </span>            line = prefix + &quot;...&quot; 
+<span class="no">126 </span>            lines.append(line) 
+<span class="no">127 </span>            break 
+<span class="no">128 </span>        if len(tasks[0].get_params()) == 0: 
+<span class="no">129 </span>            line = prefix + &apos;- {0} {1}()&apos;.format(len(tasks), str(task_family)) 
+<span class="no">130 </span>        elif _get_len_of_params(tasks[0]) &gt; 60 or len(str(tasks[0])) &gt; 200 or \ 
+<span class="no">131 </span>                (len(tasks) == 2 and len(tasks[0].get_params()) &gt; 1 and (_get_len_of_params(tasks[0]) &gt; 40 or len(str(tasks[0])) &gt; 100)): 
+<span class="no">132 </span>            &quot;&quot;&quot; 
+<span class="no">133 </span>            This is to make sure that there is no really long task in the output 
+<span class="no">134 </span>            &quot;&quot;&quot; 
+<span class="no">135 </span>            line = prefix + &apos;- {0} {1}(...)&apos;.format(len(tasks), task_family) 
+<span class="no">136 </span>        elif len((tasks[0].get_params())) == 1: 
+<span class="no">137 </span>            attributes = {getattr(task, tasks[0].get_params()[0][0]) for task in tasks} 
+<span class="no">138 </span>            param_class = tasks[0].get_params()[0][1] 
+<span class="no">139 </span>            first, last = _ranging_attributes(attributes, param_class) 
+<span class="no">140 </span>            if first is not None and last is not None and len(attributes) &gt; 3: 
+<span class="no">141 </span>                param_str = &apos;{0}...{1}&apos;.format(param_class.serialize(first), param_class.serialize(last)) 
+<span class="no">142 </span>            else: 
+<span class="no">143 </span>                param_str = &apos;{0}&apos;.format(_get_str_one_parameter(tasks)) 
+<span class="no">144 </span>            line = prefix + &apos;- {0} {1}({2}={3})&apos;.format(len(tasks), task_family, tasks[0].get_params()[0][0], param_str) 
+<span class="no">145 </span>        else: 
+<span class="no">146 </span>            ranging = False 
+<span class="no">147 </span>            params = _get_set_of_params(tasks) 
+<span class="no">148 </span>            unique_param_keys = list(_get_unique_param_keys(params)) 
+<span class="no">149 </span>            if len(unique_param_keys) == 1: 
+<span class="no">150 </span>                unique_param, = unique_param_keys 
+<span class="no">151 </span>                attributes = params[unique_param] 
+<span class="no">152 </span>                param_class = unique_param[1] 
+<span class="no">153 </span>                first, last = _ranging_attributes(attributes, param_class) 
+<span class="no">154 </span>                if first is not None and last is not None and len(attributes) &gt; 2: 
+<span class="no">155 </span>                    ranging = True 
+<span class="no">156 </span>                    line = prefix + &apos;- {0} {1}({2}&apos;.format(len(tasks), task_family, _get_str_ranging_multiple_parameters(first, last, tasks, unique_param)) 
+<span class="no">157 </span>            if not ranging: 
+<span class="no">158 </span>                if len(tasks) == 1: 
+<span class="no">159 </span>                    line = prefix + &apos;- {0} {1}&apos;.format(len(tasks), tasks[0]) 
+<span class="no">160 </span>                if len(tasks) == 2: 
+<span class="no">161 </span>                    line = prefix + &apos;- {0} {1} and {2}&apos;.format(len(tasks), tasks[0], tasks[1]) 
+<span class="no">162 </span>                if len(tasks) &gt; 2: 
+<span class="no">163 </span>                    line = prefix + &apos;- {0} {1} ...&apos;.format(len(tasks), tasks[0]) 
+<span class="no">164 </span>        lines.append(line) 
+<span class="no">165 </span>    return &apos;\n&apos;.join(lines) 
+<span class="no">166 </span> 
+<span class="no">167 </span> 
+<span class="no">168 </span>def _get_len_of_params(task): 
+<span class="no">169 </span>    return sum(len(param[0]) for param in task.get_params()) 
+<span class="no">170 </span> 
+<span class="no">171 </span> 
+<span class="no">172 </span>def _get_str_ranging_multiple_parameters(first, last, tasks, unique_param): 
+<span class="no">173 </span>    row = &apos;&apos; 
+<span class="no">174 </span>    str_unique_param = &apos;{0}...{1}&apos;.format(unique_param[1].serialize(first), unique_param[1].serialize(last)) 
+<span class="no">175 </span>    for param in tasks[0].get_params(): 
+<span class="no">176 </span>        row += &apos;{0}=&apos;.format(param[0]) 
+<span class="no">177 </span>        if param[0] == unique_param[0]: 
+<span class="no">178 </span>            row += &apos;{0}&apos;.format(str_unique_param) 
+<span class="no">179 </span>        else: 
+<span class="no">180 </span>            row += &apos;{0}&apos;.format(param[1].serialize(getattr(tasks[0], param[0]))) 
+<span class="no">181 </span>        if param != tasks[0].get_params()[-1]: 
+<span class="no">182 </span>            row += &quot;, &quot; 
+<span class="no">183 </span>    row += &apos;)&apos; 
+<span class="no">184 </span>    return row 
+<span class="no">185 </span> 
+<span class="no">186 </span> 
+<span class="no">187 </span>def _get_set_of_params(tasks): 
+<span class="no">188 </span>    params = {} 
+<span class="no">189 </span>    for param in tasks[0].get_params(): 
+<span class="no">190 </span>        params[param] = {getattr(task, param[0]) for task in tasks} 
+<span class="no">191 </span>    return params 
+<span class="no">192 </span> 
+<span class="no">193 </span> 
+<span class="no">194 </span>def _get_unique_param_keys(params): 
+<span class="no">195 </span>    for param_key, param_values in params.items(): 
+<span class="no">196 </span>        if len(param_values) &gt; 1: 
+<span class="no">197 </span>            yield param_key 
+<span class="no">198 </span> 
+<span class="no">199 </span> 
+<span class="no">200 </span>def _ranging_attributes(attributes, param_class): 
+<span class="no">201 </span>    &quot;&quot;&quot; 
+<span class="no">202 </span>    Checks if there is a continuous range 
+<span class="no">203 </span>    &quot;&quot;&quot; 
+<span class="no">204 </span>    next_attributes = {param_class.next_in_enumeration(attribute) for attribute in attributes} 
+<span class="no">205 </span>    in_first = attributes.difference(next_attributes) 
+<span class="no">206 </span>    in_second = next_attributes.difference(attributes) 
+<span class="no">207 </span>    if len(in_first) == 1 and len(in_second) == 1: 
+<span class="no">208 </span>        for x in attributes: 
+<span class="no">209 </span>            if {param_class.next_in_enumeration(x)} == in_second: 
+<span class="no">210 </span>                return next(iter(in_first)), x 
+<span class="no">211 </span>    return None, None 
+<span class="no">212 </span> 
+<span class="no">213 </span> 
+<span class="no">214 </span>def _get_str_one_parameter(tasks): 
+<span class="no">215 </span>    row = &apos;&apos; 
+<span class="no">216 </span>    count = 0 
+<span class="no">217 </span>    for task in tasks: 
+<span class="no">218 </span>        if (len(row) &gt;= 30 and count &gt; 2 and count != len(tasks) - 1) or len(row) &gt; 200: 
+<span class="no">219 </span>            row += &apos;...&apos; 
+<span class="no">220 </span>            break 
+<span class="no">221 </span>        param = task.get_params()[0] 
+<span class="no">222 </span>        row += &apos;{0}&apos;.format(param[1].serialize(getattr(task, param[0]))) 
+<span class="no">223 </span>        if count &lt; len(tasks) - 1: 
+<span class="no">224 </span>            row += &apos;,&apos; 
+<span class="no">225 </span>        count += 1 
+<span class="no">226 </span>    return row 
+<span class="no">227 </span> 
+<span class="no">228 </span> 
+<span class="no">229 </span>def _serialize_first_param(task): 
+<span class="no">230 </span>    return task.get_params()[0][1].serialize(getattr(task, task.get_params()[0][0])) 
+<span class="no">231 </span> 
+<span class="no">232 </span> 
+<span class="no">233 </span>def _get_number_of_tasks_for(status, group_tasks): 
+<span class="no">234 </span>    if status == &quot;still_pending&quot;: 
+<span class="no">235 </span>        return (_get_number_of_tasks(group_tasks[&quot;still_pending_ext&quot;]) + 
+<span class="no">236 </span>                _get_number_of_tasks(group_tasks[&quot;still_pending_not_ext&quot;])) 
+<span class="no">237 </span>    return _get_number_of_tasks(group_tasks[status]) 
+<span class="no">238 </span> 
+<span class="no">239 </span> 
+<span class="no">240 </span>def _get_number_of_tasks(task_dict): 
+<span class="no">241 </span>    return sum(len(tasks) for tasks in task_dict.values()) 
+<span class="no">242 </span> 
+<span class="no">243 </span> 
+<span class="no">244 </span>def _get_comments(group_tasks): 
+<span class="no">245 </span>    &quot;&quot;&quot; 
+<span class="no">246 </span>    Get the human readable comments and quantities for the task types. 
+<span class="no">247 </span>    &quot;&quot;&quot; 
+<span class="no">248 </span>    comments = {} 
+<span class="no">249 </span>    for status, human in _COMMENTS: 
+<span class="no">250 </span>        num_tasks = _get_number_of_tasks_for(status, group_tasks) 
+<span class="no">251 </span>        if num_tasks: 
+<span class="no">252 </span>            space = &quot;    &quot; if status in _PENDING_SUB_STATUSES else &quot;&quot; 
+<span class="no">253 </span>            comments[status] = &apos;{space}* {num_tasks} {human}:\n&apos;.format( 
+<span class="no">254 </span>                space=space, 
+<span class="no">255 </span>                num_tasks=num_tasks, 
+<span class="no">256 </span>                human=human) 
+<span class="no">257 </span>    return comments 
+<span class="no">258 </span> 
+<span class="no">259 </span> 
+<span class="no">260 </span># Oredered in the sense that they&apos;ll be printed in this order 
+<span class="no">261 </span>_ORDERED_STATUSES = ( 
+<span class="no">262 </span>    &quot;already_done&quot;<span id="edit-8-old" data-kind="mov"><span id="hl-8-10711" class="hl mov"><span id="edit-7-old" data-kind="ins"></span>,</span></span> 
+<span class="no">263 </span>    <span id="edit-9-old" data-kind="ins"></span>&quot;completed&quot;, 
+<span class="no">264 </span>    &quot;failed&quot;, 
+<span class="no">265 </span>    &quot;scheduling_error&quot;, 
+<span class="no">266 </span>    &quot;still_pending&quot;, 
+<span class="no">267 </span>    &quot;still_pending_ext&quot;, 
+<span class="no">268 </span>    &quot;run_by_other_worker&quot;, 
+<span class="no">269 </span>    &quot;upstream_failure&quot;, 
+<span class="no">270 </span>    &quot;upstream_missing_dependency&quot;, 
+<span class="no">271 </span>    &quot;upstream_run_by_other_worker&quot;, 
+<span class="no">272 </span>    &quot;upstream_scheduling_error&quot;, 
+<span class="no">273 </span>    &quot;not_run&quot;, 
+<span class="no">274 </span>) 
+<span class="no">275 </span>_PENDING_SUB_STATUSES = set(_ORDERED_STATUSES[_ORDERED_STATUSES.index(&quot;still_pending_ext&quot;):]) 
+<span class="no">276 </span>_COMMENTS = set(( 
+<span class="no">277 </span>    (&quot;already_done&quot;, &apos;present dependencies were encountered&apos;), 
+<span class="no">278 </span>    (&quot;completed&quot;, &apos;ran successfully&apos;), 
+<span class="no">279 </span>    (&quot;failed&quot;, &apos;failed&apos;), 
+<span class="no">280 </span>    (&quot;scheduling_error&quot;, &apos;failed scheduling&apos;), 
+<span class="no">281 </span>    (&quot;still_pending&quot;, &apos;were left pending, among these&apos;), 
+<span class="no">282 </span>    (&quot;still_pending_ext&quot;, &apos;were missing external dependencies&apos;), 
+<span class="no">283 </span>    (&quot;run_by_other_worker&quot;, &apos;were being run by another worker&apos;), 
+<span class="no">284 </span>    (&quot;upstream_failure&quot;, &apos;had failed dependencies&apos;), 
+<span class="no">285 </span>    (&quot;upstream_missing_dependency&quot;, &apos;had missing external dependencies&apos;), 
+<span class="no">286 </span>    (&quot;upstream_run_by_other_worker&quot;, &apos;had dependencies that were being run by other worker&apos;), 
+<span class="no">287 </span>    (&quot;upstream_scheduling_error&quot;, &apos;had dependencies whose scheduling failed&apos;), 
+<span class="no">288 </span>    (&quot;not_run&quot;, &apos;was not granted run permission by the scheduler&apos;), 
+<span class="no">289 </span>)) 
+<span class="no">290 </span> 
+<span class="no">291 </span> 
+<span class="no">292 </span>def _get_run_by_other_worker(worker): 
+<span class="no">293 </span>    &quot;&quot;&quot; 
+<span class="no">294 </span>    This returns a set of the tasks that are being run by other worker 
+<span class="no">295 </span>    &quot;&quot;&quot; 
+<span class="no">296 </span>    task_sets = _get_external_workers(worker).values() 
+<span class="no">297 </span>    return functools.reduce(lambda a, b: a | b, task_sets, set()) 
+<span class="no">298 </span> 
+<span class="no">299 </span> 
+<span class="no">300 </span>def _get_external_workers(worker): 
+<span class="no">301 </span>    &quot;&quot;&quot; 
+<span class="no">302 </span>    This returns a dict with a set of tasks for all of the other workers 
+<span class="no">303 </span>    &quot;&quot;&quot; 
+<span class="no">304 </span>    worker_that_blocked_task = collections.defaultdict(set) 
+<span class="no">305 </span>    get_work_response_history = worker._get_work_response_history 
+<span class="no">306 </span>    for get_work_response in get_work_response_history: 
+<span class="no">307 </span>        if get_work_response[&apos;task_id&apos;] is None: 
+<span class="no">308 </span>            for running_task in get_work_response[&apos;running_tasks&apos;]: 
+<span class="no">309 </span>                other_worker_id = running_task[&apos;worker&apos;] 
+<span class="no">310 </span>                other_task_id = running_task[&apos;task_id&apos;] 
+<span class="no">311 </span>                other_task = worker._scheduled_tasks.get(other_task_id) 
+<span class="no">312 </span>                if other_worker_id == worker._id or not other_task: 
+<span class="no">313 </span>                    continue 
+<span class="no">314 </span>                worker_that_blocked_task[other_worker_id].add(other_task) 
+<span class="no">315 </span>    return worker_that_blocked_task 
+<span class="no">316 </span> 
+<span class="no">317 </span> 
+<span class="no">318 </span>def _group_tasks_by_name_and_status(task_dict): 
+<span class="no">319 </span>    &quot;&quot;&quot; 
+<span class="no">320 </span>    Takes a dictionary with sets of tasks grouped by their status and 
+<span class="no">321 </span>    returns a dictionary with dictionaries with an array of tasks grouped by 
+<span class="no">322 </span>    their status and task name 
+<span class="no">323 </span>    &quot;&quot;&quot; 
+<span class="no">324 </span>    group_status = {} 
+<span class="no">325 </span>    for task in task_dict: 
+<span class="no">326 </span>        if task.task_family not in group_status: 
+<span class="no">327 </span>            group_status[task.task_family] = [] 
+<span class="no">328 </span>        group_status[task.task_family].append(task) 
+<span class="no">329 </span>    return group_status 
+<span class="no">330 </span> 
+<span class="no">331 </span> 
+<span class="no">332 </span>def _summary_dict(worker): 
+<span class="no">333 </span>    set_tasks = _partition_tasks(worker) 
+<span class="no">334 </span>    set_tasks[&quot;run_by_other_worker&quot;] = _get_run_by_other_worker(worker) 
+<span class="no">335 </span>    _populate_unknown_statuses(set_tasks) 
+<span class="no">336 </span>    return set_tasks 
+<span class="no">337 </span> 
+<span class="no">338 </span> 
+<span class="no">339 </span>def _summary_format(set_tasks, worker): 
+<span class="no">340 </span>    group_tasks = {} 
+<span class="no">341 </span>    for status, task_dict in set_tasks.items(): 
+<span class="no">342 </span>        group_tasks[status] = _group_tasks_by_name_and_status(task_dict) 
+<span class="no">343 </span>    comments = _get_comments(group_tasks) 
+<span class="no">344 </span>    num_all_tasks = sum([len(set_tasks[&quot;already_done&quot;]), 
+<span class="no">345 </span>                         len(set_tasks[&quot;completed&quot;]), len(set_tasks[&quot;failed&quot;]), 
+<span class="no">346 </span>                         len(set_tasks[&quot;scheduling_error&quot;]), 
+<span class="no">347 </span>                         len(set_tasks[&quot;still_pending_ext&quot;]), 
+<span class="no">348 </span>                         len(set_tasks[&quot;still_pending_not_ext&quot;])]) 
+<span class="no">349 </span>    str_output = &apos;&apos; 
+<span class="no">350 </span>    str_output += &apos;Scheduled {0} tasks of which:\n&apos;.format(num_all_tasks) 
+<span class="no">351 </span>    for status in _ORDERED_STATUSES: 
+<span class="no">352 </span>        if status not in comments: 
+<span class="no">353 </span>            continue 
+<span class="no">354 </span>        str_output += &apos;{0}&apos;.format(comments[status]) 
+<span class="no">355 </span>        if status != &apos;still_pending&apos;: 
+<span class="no">356 </span>            str_output += &apos;{0}\n&apos;.format(_get_str(group_tasks[status], status in _PENDING_SUB_STATUSES)) 
+<span class="no">357 </span>    ext_workers = _get_external_workers(worker) 
+<span class="no">358 </span>    group_tasks_ext_workers = {} 
+<span class="no">359 </span>    for ext_worker, task_dict in ext_workers.items(): 
+<span class="no">360 </span>        group_tasks_ext_workers[ext_worker] = _group_tasks_by_name_and_status(task_dict) 
+<span class="no">361 </span>    if len(ext_workers) &gt; 0: 
+<span class="no">362 </span>        str_output += &quot;\nThe other workers were:\n&quot; 
+<span class="no">363 </span>        count = 0 
+<span class="no">364 </span>        for ext_worker, task_dict in ext_workers.items(): 
+<span class="no">365 </span>            if count &gt; 3 and count &lt; len(ext_workers) - 1: 
+<span class="no">366 </span>                str_output += &quot;    and {0} other workers&quot;.format(len(ext_workers) - count) 
+<span class="no">367 </span>                break 
+<span class="no">368 </span>            str_output += &quot;    - {0} ran {1} tasks\n&quot;.format(ext_worker, len(task_dict)) 
+<span class="no">369 </span>            count += 1 
+<span class="no">370 </span>        str_output += &apos;\n&apos; 
+<span class="no">371 </span>    if num_all_tasks == sum([len(set_tasks[&quot;already_done&quot;]), 
+<span class="no">372 </span>                             len(set_tasks[&quot;scheduling_error&quot;]), 
+<span class="no">373 </span>                             len(set_tasks[&quot;still_pending_ext&quot;]), 
+<span class="no">374 </span>                             len(set_tasks[&quot;still_pending_not_ext&quot;])]): 
+<span class="no">375 </span>        if len(ext_workers) == 0: 
+<span class="no">376 </span>            str_output += &apos;\n&apos; 
+<span class="no">377 </span>        str_output += &apos;Did not run any tasks&apos; 
+<span class="no">378 </span>    smiley = &quot;&quot; 
+<span class="no">379 </span>    reason = &quot;&quot; 
+<span class="no">380 </span>    if <span id="edit-12-old" data-kind="mov"><span id="hl-12-15609" class="hl mov"><span id="edit-10-old" data-kind="ins"></span>set_tasks[&quot;failed&quot;]</span></span>: 
+<span class="no">381 </span>        <span id="edit-13-old" data-kind="mov"><span id="hl-13-15638" class="hl mov"><span id="edit-11-old" data-kind="ins"></span>smiley = &quot;:(&quot; 
+<span class="no">382 </span>        reason = &quot;there were failed tasks&quot; 
+<span class="no">383 </span>        if set_tasks[&quot;scheduling_error&quot;]: 
+<span class="no">384 </span>            reason += &quot; and tasks whose scheduling failed&quot;</span></span> 
+<span class="no">385 </span>    elif set_tasks[&quot;scheduling_error&quot;]: 
+<span class="no">386 </span>        smiley = &quot;:(&quot; 
+<span class="no">387 </span>        reason = &quot;there were tasks whose scheduling failed&quot; 
+<span class="no">388 </span>    elif set_tasks[&quot;not_run&quot;]: 
+<span class="no">389 </span>        smiley = &quot;:|&quot; 
+<span class="no">390 </span>        reason = &quot;there were tasks that were not granted run permission by the scheduler&quot; 
+<span class="no">391 </span>    elif set_tasks[&quot;still_pending_ext&quot;]: 
+<span class="no">392 </span>        smiley = &quot;:|&quot; 
+<span class="no">393 </span>        reason = &quot;there were missing external dependencies&quot; 
+<span class="no">394 </span>    else: 
+<span class="no">395 </span>        smiley = &quot;:)&quot; 
+<span class="no">396 </span>        reason = &quot;there were no failed tasks or missing external dependencies&quot; 
+<span class="no">397 </span>    str_output += &quot;\nThis progress looks {0} because {1}&quot;.format(smiley, reason) 
+<span class="no">398 </span>    if num_all_tasks == 0: 
+<span class="no">399 </span>        str_output = &apos;Did not schedule any tasks&apos; 
+<span class="no">400 </span>    return str_output 
+<span class="no">401 </span> 
+<span class="no">402 </span> 
+<span class="no">403 </span>def _summary_wrap(str_output): 
+<span class="no">404 </span>    return textwrap.dedent(&quot;&quot;&quot; 
+<span class="no">405 </span>    ===== Luigi Execution Summary ===== 
+<span class="no">406 </span> 
+<span class="no">407 </span>    {str_output} 
+<span class="no">408 </span> 
+<span class="no">409 </span>    ===== Luigi Execution Summary ===== 
+<span class="no">410 </span>    &quot;&quot;&quot;).format(str_output=str_output) 
+<span class="no">411 </span> 
+<span class="no">412 </span> 
+<span class="no">413 </span>def summary(worker): 
+<span class="no">414 </span>    &quot;&quot;&quot; 
+<span class="no">415 </span>    Given a worker, return a human readable summary of what the worker have 
+<span class="no">416 </span>    done. 
+<span class="no">417 </span>    &quot;&quot;&quot; 
+<span class="no">418 </span>    return _summary_wrap(_summary_format(_summary_dict(worker), worker)) 
+<span class="no">419 </span># 5 
+<span class="no">420 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">41_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span># -*- coding: utf-8 -*- 
+<span class="no">  2 </span># 
+<span class="no">  3 </span># Copyright 2015-2015 Spotify AB 
+<span class="no">  4 </span># 
+<span class="no">  5 </span># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); 
+<span class="no">  6 </span># you may not use this file except in compliance with the License. 
+<span class="no">  7 </span># You may obtain a copy of the License at 
+<span class="no">  8 </span># 
+<span class="no">  9 </span># http://www.apache.org/licenses/LICENSE-2.0 
+<span class="no"> 10 </span># 
+<span class="no"> 11 </span># Unless required by applicable law or agreed to in writing, software 
+<span class="no"> 12 </span># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+<span class="no"> 13 </span># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class="no"> 14 </span># See the License for the specific language governing permissions and 
+<span class="no"> 15 </span># limitations under the License. 
+<span class="no"> 16 </span># 
+<span class="no"> 17 </span>&quot;&quot;&quot; 
+<span class="no"> 18 </span>This module provide the function :py:func:`summary` that is used for printing 
+<span class="no"> 19 </span>an `execution summary 
+<span class="no"> 20 </span>&lt;https://github.com/spotify/luigi/blob/master/examples/execution_summary_example.py&gt;`_ 
+<span class="no"> 21 </span>at the end of luigi invocations. 
+<span class="no"> 22 </span>&quot;&quot;&quot; 
+<span class="no"> 23 </span> 
+<span class="no"> 24 </span>import textwrap 
+<span class="no"> 25 </span>import collections 
+<span class="no"> 26 </span>import functools 
+<span class="no"> 27 </span> 
+<span class="no"> 28 </span>import luigi 
+<span class="no"> 29 </span> 
+<span class="no"> 30 </span> 
+<span class="no"> 31 </span>class execution_summary(luigi.Config): 
+<span class="no"> 32 </span>    summary_length = luigi.IntParameter(default=5) 
+<span class="no"> 33 </span> 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span>def _partition_tasks(worker): 
+<span class="no"> 36 </span>    &quot;&quot;&quot; 
+<span class="no"> 37 </span>    Takes a worker and sorts out tasks based on their status. 
+<span class="no"> 38 </span>    Still_pending_not_ext is only used to get upstream_failure, upstream_missing_dependency and run_by_other_worker 
+<span class="no"> 39 </span>    &quot;&quot;&quot; 
+<span class="no"> 40 </span>    task_history = worker._add_task_history 
+<span class="no"> 41 </span>    pending_tasks = {task for(task, status, ext) in task_history if status == &apos;PENDING&apos;} 
+<span class="no"> 42 </span>    set_tasks = {} 
+<span class="no"> 43 </span>    set_tasks[&quot;completed&quot;] = {task for (task, status, ext) in task_history if status == &apos;DONE&apos; and task in pending_tasks} 
+<span class="no"> 44 </span>    set_tasks[&quot;already_done&quot;] = {task for (task, status, ext) in task_history 
+<span class="no"> 45 </span>                                 if status == &apos;DONE&apos; and task not in pending_tasks and task not in set_tasks[&quot;completed&quot;]} 
+<span class="no"> 46 </span>    <span id="edit-1-new" data-kind="ins"><span id="hl-1-1696" class="hl ins">set_tasks[&quot;ever_failed&quot;]</span></span> = {task for (task, status, ext) in task_history if status == &apos;FAILED&apos;} 
+<span class="no"> 47 </span>    <span id="edit-2-new" data-kind="ins"><span id="edit-3-new" data-kind="mov"><span id="hl-3-1796" class="hl mov">set_tasks[&quot;failed&quot;]</span></span><span id="hl-2-1815" class="hl ins"> = set_tasks[&quot;ever_failed&quot;] - set_tasks[&quot;completed&quot;]</span></span> 
+<span class="no"> 48 </span>    set_tasks[&quot;scheduling_error&quot;] = {task for(task, status, ext) in task_history if status == &apos;UNKNOWN&apos;} 
+<span class="no"> 49 </span>    set_tasks[&quot;still_pending_ext&quot;] = {task for (task, status, ext) in task_history 
+<span class="no"> 50 </span>                                      if status == &apos;PENDING&apos; and task not in set_tasks[&quot;<span id="edit-4-new" data-kind="upd"><span id="hl-4-2144" class="hl upd">ever_failed</span></span>&quot;] and task not in set_tasks[&quot;completed&quot;] and not ext} 
+<span class="no"> 51 </span>    set_tasks[&quot;still_pending_not_ext&quot;] = {task for (task, status, ext) in task_history 
+<span class="no"> 52 </span>                                          if status == &apos;PENDING&apos; and task not in set_tasks[&quot;<span id="edit-5-new" data-kind="upd"><span id="hl-5-2389" class="hl upd">ever_failed</span></span>&quot;] and task not in set_tasks[&quot;completed&quot;] and ext} 
+<span class="no"> 53 </span>    set_tasks[&quot;run_by_other_worker&quot;] = set() 
+<span class="no"> 54 </span>    set_tasks[&quot;upstream_failure&quot;] = set() 
+<span class="no"> 55 </span>    set_tasks[&quot;upstream_missing_dependency&quot;] = set() 
+<span class="no"> 56 </span>    set_tasks[&quot;upstream_run_by_other_worker&quot;] = set() 
+<span class="no"> 57 </span>    set_tasks[&quot;upstream_scheduling_error&quot;] = set() 
+<span class="no"> 58 </span>    set_tasks[&quot;not_run&quot;] = set() 
+<span class="no"> 59 </span>    return set_tasks 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span> 
+<span class="no"> 62 </span>def _root_task(worker): 
+<span class="no"> 63 </span>    &quot;&quot;&quot; 
+<span class="no"> 64 </span>    Return the first task scheduled by the worker, corresponding to the root task 
+<span class="no"> 65 </span>    &quot;&quot;&quot; 
+<span class="no"> 66 </span>    return worker._add_task_history[0][0] 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span> 
+<span class="no"> 69 </span>def _populate_unknown_statuses(set_tasks): 
+<span class="no"> 70 </span>    &quot;&quot;&quot; 
+<span class="no"> 71 </span>    Add the &quot;upstream_*&quot; and &quot;not_run&quot; statuses my mutating set_tasks. 
+<span class="no"> 72 </span>    &quot;&quot;&quot; 
+<span class="no"> 73 </span>    visited = set() 
+<span class="no"> 74 </span>    for task in set_tasks[&quot;still_pending_not_ext&quot;]: 
+<span class="no"> 75 </span>        _depth_first_search(set_tasks, task, visited) 
+<span class="no"> 76 </span> 
+<span class="no"> 77 </span> 
+<span class="no"> 78 </span>def _depth_first_search(set_tasks, current_task, visited): 
+<span class="no"> 79 </span>    &quot;&quot;&quot; 
+<span class="no"> 80 </span>    This dfs checks why tasks are still pending. 
+<span class="no"> 81 </span>    &quot;&quot;&quot; 
+<span class="no"> 82 </span>    visited.add(current_task) 
+<span class="no"> 83 </span>    if current_task in set_tasks[&quot;still_pending_not_ext&quot;]: 
+<span class="no"> 84 </span>        upstream_failure = False 
+<span class="no"> 85 </span>        upstream_missing_dependency = False 
+<span class="no"> 86 </span>        upstream_run_by_other_worker = False 
+<span class="no"> 87 </span>        upstream_scheduling_error = False 
+<span class="no"> 88 </span>        for task in current_task._requires(): 
+<span class="no"> 89 </span>            if task not in visited: 
+<span class="no"> 90 </span>                _depth_first_search(set_tasks, task, visited) 
+<span class="no"> 91 </span>            if task in set_tasks[&quot;<span id="edit-6-new" data-kind="upd"><span id="hl-6-3731" class="hl upd">ever_failed</span></span>&quot;] or task in set_tasks[&quot;upstream_failure&quot;]: 
+<span class="no"> 92 </span>                set_tasks[&quot;upstream_failure&quot;].add(current_task) 
+<span class="no"> 93 </span>                upstream_failure = True 
+<span class="no"> 94 </span>            if task in set_tasks[&quot;still_pending_ext&quot;] or task in set_tasks[&quot;upstream_missing_dependency&quot;]: 
+<span class="no"> 95 </span>                set_tasks[&quot;upstream_missing_dependency&quot;].add(current_task) 
+<span class="no"> 96 </span>                upstream_missing_dependency = True 
+<span class="no"> 97 </span>            if task in set_tasks[&quot;run_by_other_worker&quot;] or task in set_tasks[&quot;upstream_run_by_other_worker&quot;]: 
+<span class="no"> 98 </span>                set_tasks[&quot;upstream_run_by_other_worker&quot;].add(current_task) 
+<span class="no"> 99 </span>                upstream_run_by_other_worker = True 
+<span class="no">100 </span>            if task in set_tasks[&quot;scheduling_error&quot;]: 
+<span class="no">101 </span>                set_tasks[&quot;upstream_scheduling_error&quot;].add(current_task) 
+<span class="no">102 </span>                upstream_scheduling_error = True 
+<span class="no">103 </span>        if not upstream_failure and not upstream_missing_dependency and \ 
+<span class="no">104 </span>                not upstream_run_by_other_worker and not upstream_scheduling_error and \ 
+<span class="no">105 </span>                current_task not in set_tasks[&quot;run_by_other_worker&quot;]: 
+<span class="no">106 </span>            set_tasks[&quot;not_run&quot;].add(current_task) 
+<span class="no">107 </span> 
+<span class="no">108 </span> 
+<span class="no">109 </span>def _get_str(task_dict, extra_indent): 
+<span class="no">110 </span>    &quot;&quot;&quot; 
+<span class="no">111 </span>    This returns a string for each status 
+<span class="no">112 </span>    &quot;&quot;&quot; 
+<span class="no">113 </span>    summary_length = execution_summary().summary_length 
+<span class="no">114 </span> 
+<span class="no">115 </span>    lines = [] 
+<span class="no">116 </span>    task_names = sorted(task_dict.keys()) 
+<span class="no">117 </span>    for task_family in task_names: 
+<span class="no">118 </span>        tasks = task_dict[task_family] 
+<span class="no">119 </span>        tasks = sorted(tasks, key=lambda x: str(x)) 
+<span class="no">120 </span>        prefix_size = 8 if extra_indent else 4 
+<span class="no">121 </span>        prefix = &apos; &apos; * prefix_size 
+<span class="no">122 </span> 
+<span class="no">123 </span>        line = None 
+<span class="no">124 </span> 
+<span class="no">125 </span>        if summary_length &gt; 0 and len(lines) &gt;= summary_length: 
+<span class="no">126 </span>            line = prefix + &quot;...&quot; 
+<span class="no">127 </span>            lines.append(line) 
+<span class="no">128 </span>            break 
+<span class="no">129 </span>        if len(tasks[0].get_params()) == 0: 
+<span class="no">130 </span>            line = prefix + &apos;- {0} {1}()&apos;.format(len(tasks), str(task_family)) 
+<span class="no">131 </span>        elif _get_len_of_params(tasks[0]) &gt; 60 or len(str(tasks[0])) &gt; 200 or \ 
+<span class="no">132 </span>                (len(tasks) == 2 and len(tasks[0].get_params()) &gt; 1 and (_get_len_of_params(tasks[0]) &gt; 40 or len(str(tasks[0])) &gt; 100)): 
+<span class="no">133 </span>            &quot;&quot;&quot; 
+<span class="no">134 </span>            This is to make sure that there is no really long task in the output 
+<span class="no">135 </span>            &quot;&quot;&quot; 
+<span class="no">136 </span>            line = prefix + &apos;- {0} {1}(...)&apos;.format(len(tasks), task_family) 
+<span class="no">137 </span>        elif len((tasks[0].get_params())) == 1: 
+<span class="no">138 </span>            attributes = {getattr(task, tasks[0].get_params()[0][0]) for task in tasks} 
+<span class="no">139 </span>            param_class = tasks[0].get_params()[0][1] 
+<span class="no">140 </span>            first, last = _ranging_attributes(attributes, param_class) 
+<span class="no">141 </span>            if first is not None and last is not None and len(attributes) &gt; 3: 
+<span class="no">142 </span>                param_str = &apos;{0}...{1}&apos;.format(param_class.serialize(first), param_class.serialize(last)) 
+<span class="no">143 </span>            else: 
+<span class="no">144 </span>                param_str = &apos;{0}&apos;.format(_get_str_one_parameter(tasks)) 
+<span class="no">145 </span>            line = prefix + &apos;- {0} {1}({2}={3})&apos;.format(len(tasks), task_family, tasks[0].get_params()[0][0], param_str) 
+<span class="no">146 </span>        else: 
+<span class="no">147 </span>            ranging = False 
+<span class="no">148 </span>            params = _get_set_of_params(tasks) 
+<span class="no">149 </span>            unique_param_keys = list(_get_unique_param_keys(params)) 
+<span class="no">150 </span>            if len(unique_param_keys) == 1: 
+<span class="no">151 </span>                unique_param, = unique_param_keys 
+<span class="no">152 </span>                attributes = params[unique_param] 
+<span class="no">153 </span>                param_class = unique_param[1] 
+<span class="no">154 </span>                first, last = _ranging_attributes(attributes, param_class) 
+<span class="no">155 </span>                if first is not None and last is not None and len(attributes) &gt; 2: 
+<span class="no">156 </span>                    ranging = True 
+<span class="no">157 </span>                    line = prefix + &apos;- {0} {1}({2}&apos;.format(len(tasks), task_family, _get_str_ranging_multiple_parameters(first, last, tasks, unique_param)) 
+<span class="no">158 </span>            if not ranging: 
+<span class="no">159 </span>                if len(tasks) == 1: 
+<span class="no">160 </span>                    line = prefix + &apos;- {0} {1}&apos;.format(len(tasks), tasks[0]) 
+<span class="no">161 </span>                if len(tasks) == 2: 
+<span class="no">162 </span>                    line = prefix + &apos;- {0} {1} and {2}&apos;.format(len(tasks), tasks[0], tasks[1]) 
+<span class="no">163 </span>                if len(tasks) &gt; 2: 
+<span class="no">164 </span>                    line = prefix + &apos;- {0} {1} ...&apos;.format(len(tasks), tasks[0]) 
+<span class="no">165 </span>        lines.append(line) 
+<span class="no">166 </span>    return &apos;\n&apos;.join(lines) 
+<span class="no">167 </span> 
+<span class="no">168 </span> 
+<span class="no">169 </span>def _get_len_of_params(task): 
+<span class="no">170 </span>    return sum(len(param[0]) for param in task.get_params()) 
+<span class="no">171 </span> 
+<span class="no">172 </span> 
+<span class="no">173 </span>def _get_str_ranging_multiple_parameters(first, last, tasks, unique_param): 
+<span class="no">174 </span>    row = &apos;&apos; 
+<span class="no">175 </span>    str_unique_param = &apos;{0}...{1}&apos;.format(unique_param[1].serialize(first), unique_param[1].serialize(last)) 
+<span class="no">176 </span>    for param in tasks[0].get_params(): 
+<span class="no">177 </span>        row += &apos;{0}=&apos;.format(param[0]) 
+<span class="no">178 </span>        if param[0] == unique_param[0]: 
+<span class="no">179 </span>            row += &apos;{0}&apos;.format(str_unique_param) 
+<span class="no">180 </span>        else: 
+<span class="no">181 </span>            row += &apos;{0}&apos;.format(param[1].serialize(getattr(tasks[0], param[0]))) 
+<span class="no">182 </span>        if param != tasks[0].get_params()[-1]: 
+<span class="no">183 </span>            row += &quot;, &quot; 
+<span class="no">184 </span>    row += &apos;)&apos; 
+<span class="no">185 </span>    return row 
+<span class="no">186 </span> 
+<span class="no">187 </span> 
+<span class="no">188 </span>def _get_set_of_params(tasks): 
+<span class="no">189 </span>    params = {} 
+<span class="no">190 </span>    for param in tasks[0].get_params(): 
+<span class="no">191 </span>        params[param] = {getattr(task, param[0]) for task in tasks} 
+<span class="no">192 </span>    return params 
+<span class="no">193 </span> 
+<span class="no">194 </span> 
+<span class="no">195 </span>def _get_unique_param_keys(params): 
+<span class="no">196 </span>    for param_key, param_values in params.items(): 
+<span class="no">197 </span>        if len(param_values) &gt; 1: 
+<span class="no">198 </span>            yield param_key 
+<span class="no">199 </span> 
+<span class="no">200 </span> 
+<span class="no">201 </span>def _ranging_attributes(attributes, param_class): 
+<span class="no">202 </span>    &quot;&quot;&quot; 
+<span class="no">203 </span>    Checks if there is a continuous range 
+<span class="no">204 </span>    &quot;&quot;&quot; 
+<span class="no">205 </span>    next_attributes = {param_class.next_in_enumeration(attribute) for attribute in attributes} 
+<span class="no">206 </span>    in_first = attributes.difference(next_attributes) 
+<span class="no">207 </span>    in_second = next_attributes.difference(attributes) 
+<span class="no">208 </span>    if len(in_first) == 1 and len(in_second) == 1: 
+<span class="no">209 </span>        for x in attributes: 
+<span class="no">210 </span>            if {param_class.next_in_enumeration(x)} == in_second: 
+<span class="no">211 </span>                return next(iter(in_first)), x 
+<span class="no">212 </span>    return None, None 
+<span class="no">213 </span> 
+<span class="no">214 </span> 
+<span class="no">215 </span>def _get_str_one_parameter(tasks): 
+<span class="no">216 </span>    row = &apos;&apos; 
+<span class="no">217 </span>    count = 0 
+<span class="no">218 </span>    for task in tasks: 
+<span class="no">219 </span>        if (len(row) &gt;= 30 and count &gt; 2 and count != len(tasks) - 1) or len(row) &gt; 200: 
+<span class="no">220 </span>            row += &apos;...&apos; 
+<span class="no">221 </span>            break 
+<span class="no">222 </span>        param = task.get_params()[0] 
+<span class="no">223 </span>        row += &apos;{0}&apos;.format(param[1].serialize(getattr(task, param[0]))) 
+<span class="no">224 </span>        if count &lt; len(tasks) - 1: 
+<span class="no">225 </span>            row += &apos;,&apos; 
+<span class="no">226 </span>        count += 1 
+<span class="no">227 </span>    return row 
+<span class="no">228 </span> 
+<span class="no">229 </span> 
+<span class="no">230 </span>def _serialize_first_param(task): 
+<span class="no">231 </span>    return task.get_params()[0][1].serialize(getattr(task, task.get_params()[0][0])) 
+<span class="no">232 </span> 
+<span class="no">233 </span> 
+<span class="no">234 </span>def _get_number_of_tasks_for(status, group_tasks): 
+<span class="no">235 </span>    if status == &quot;still_pending&quot;: 
+<span class="no">236 </span>        return (_get_number_of_tasks(group_tasks[&quot;still_pending_ext&quot;]) + 
+<span class="no">237 </span>                _get_number_of_tasks(group_tasks[&quot;still_pending_not_ext&quot;])) 
+<span class="no">238 </span>    return _get_number_of_tasks(group_tasks[status]) 
+<span class="no">239 </span> 
+<span class="no">240 </span> 
+<span class="no">241 </span>def _get_number_of_tasks(task_dict): 
+<span class="no">242 </span>    return sum(len(tasks) for tasks in task_dict.values()) 
+<span class="no">243 </span> 
+<span class="no">244 </span> 
+<span class="no">245 </span>def _get_comments(group_tasks): 
+<span class="no">246 </span>    &quot;&quot;&quot; 
+<span class="no">247 </span>    Get the human readable comments and quantities for the task types. 
+<span class="no">248 </span>    &quot;&quot;&quot; 
+<span class="no">249 </span>    comments = {} 
+<span class="no">250 </span>    for status, human in _COMMENTS: 
+<span class="no">251 </span>        num_tasks = _get_number_of_tasks_for(status, group_tasks) 
+<span class="no">252 </span>        if num_tasks: 
+<span class="no">253 </span>            space = &quot;    &quot; if status in _PENDING_SUB_STATUSES else &quot;&quot; 
+<span class="no">254 </span>            comments[status] = &apos;{space}* {num_tasks} {human}:\n&apos;.format( 
+<span class="no">255 </span>                space=space, 
+<span class="no">256 </span>                num_tasks=num_tasks, 
+<span class="no">257 </span>                human=human) 
+<span class="no">258 </span>    return comments 
+<span class="no">259 </span> 
+<span class="no">260 </span> 
+<span class="no">261 </span># Oredered in the sense that they&apos;ll be printed in this order 
+<span class="no">262 </span>_ORDERED_STATUSES = ( 
+<span class="no">263 </span>    &quot;already_done&quot;<span id="edit-7-new" data-kind="ins"><span id="hl-7-10807" class="hl ins">,</span></span> 
+<span class="no">264 </span>    &quot;completed&quot;<span id="edit-8-new" data-kind="mov"><span id="hl-8-10824" class="hl mov">,</span></span> 
+<span class="no">265 </span>    <span id="edit-9-new" data-kind="ins"><span id="hl-9-10830" class="hl ins">&quot;ever_failed&quot;</span></span>, 
+<span class="no">266 </span>    &quot;failed&quot;, 
+<span class="no">267 </span>    &quot;scheduling_error&quot;, 
+<span class="no">268 </span>    &quot;still_pending&quot;, 
+<span class="no">269 </span>    &quot;still_pending_ext&quot;, 
+<span class="no">270 </span>    &quot;run_by_other_worker&quot;, 
+<span class="no">271 </span>    &quot;upstream_failure&quot;, 
+<span class="no">272 </span>    &quot;upstream_missing_dependency&quot;, 
+<span class="no">273 </span>    &quot;upstream_run_by_other_worker&quot;, 
+<span class="no">274 </span>    &quot;upstream_scheduling_error&quot;, 
+<span class="no">275 </span>    &quot;not_run&quot;, 
+<span class="no">276 </span>) 
+<span class="no">277 </span>_PENDING_SUB_STATUSES = set(_ORDERED_STATUSES[_ORDERED_STATUSES.index(&quot;still_pending_ext&quot;):]) 
+<span class="no">278 </span>_COMMENTS = set(( 
+<span class="no">279 </span>    (&quot;already_done&quot;, &apos;present dependencies were encountered&apos;), 
+<span class="no">280 </span>    (&quot;completed&quot;, &apos;ran successfully&apos;), 
+<span class="no">281 </span>    (&quot;failed&quot;, &apos;failed&apos;), 
+<span class="no">282 </span>    (&quot;scheduling_error&quot;, &apos;failed scheduling&apos;), 
+<span class="no">283 </span>    (&quot;still_pending&quot;, &apos;were left pending, among these&apos;), 
+<span class="no">284 </span>    (&quot;still_pending_ext&quot;, &apos;were missing external dependencies&apos;), 
+<span class="no">285 </span>    (&quot;run_by_other_worker&quot;, &apos;were being run by another worker&apos;), 
+<span class="no">286 </span>    (&quot;upstream_failure&quot;, &apos;had failed dependencies&apos;), 
+<span class="no">287 </span>    (&quot;upstream_missing_dependency&quot;, &apos;had missing external dependencies&apos;), 
+<span class="no">288 </span>    (&quot;upstream_run_by_other_worker&quot;, &apos;had dependencies that were being run by other worker&apos;), 
+<span class="no">289 </span>    (&quot;upstream_scheduling_error&quot;, &apos;had dependencies whose scheduling failed&apos;), 
+<span class="no">290 </span>    (&quot;not_run&quot;, &apos;was not granted run permission by the scheduler&apos;), 
+<span class="no">291 </span>)) 
+<span class="no">292 </span> 
+<span class="no">293 </span> 
+<span class="no">294 </span>def _get_run_by_other_worker(worker): 
+<span class="no">295 </span>    &quot;&quot;&quot; 
+<span class="no">296 </span>    This returns a set of the tasks that are being run by other worker 
+<span class="no">297 </span>    &quot;&quot;&quot; 
+<span class="no">298 </span>    task_sets = _get_external_workers(worker).values() 
+<span class="no">299 </span>    return functools.reduce(lambda a, b: a | b, task_sets, set()) 
+<span class="no">300 </span> 
+<span class="no">301 </span> 
+<span class="no">302 </span>def _get_external_workers(worker): 
+<span class="no">303 </span>    &quot;&quot;&quot; 
+<span class="no">304 </span>    This returns a dict with a set of tasks for all of the other workers 
+<span class="no">305 </span>    &quot;&quot;&quot; 
+<span class="no">306 </span>    worker_that_blocked_task = collections.defaultdict(set) 
+<span class="no">307 </span>    get_work_response_history = worker._get_work_response_history 
+<span class="no">308 </span>    for get_work_response in get_work_response_history: 
+<span class="no">309 </span>        if get_work_response[&apos;task_id&apos;] is None: 
+<span class="no">310 </span>            for running_task in get_work_response[&apos;running_tasks&apos;]: 
+<span class="no">311 </span>                other_worker_id = running_task[&apos;worker&apos;] 
+<span class="no">312 </span>                other_task_id = running_task[&apos;task_id&apos;] 
+<span class="no">313 </span>                other_task = worker._scheduled_tasks.get(other_task_id) 
+<span class="no">314 </span>                if other_worker_id == worker._id or not other_task: 
+<span class="no">315 </span>                    continue 
+<span class="no">316 </span>                worker_that_blocked_task[other_worker_id].add(other_task) 
+<span class="no">317 </span>    return worker_that_blocked_task 
+<span class="no">318 </span> 
+<span class="no">319 </span> 
+<span class="no">320 </span>def _group_tasks_by_name_and_status(task_dict): 
+<span class="no">321 </span>    &quot;&quot;&quot; 
+<span class="no">322 </span>    Takes a dictionary with sets of tasks grouped by their status and 
+<span class="no">323 </span>    returns a dictionary with dictionaries with an array of tasks grouped by 
+<span class="no">324 </span>    their status and task name 
+<span class="no">325 </span>    &quot;&quot;&quot; 
+<span class="no">326 </span>    group_status = {} 
+<span class="no">327 </span>    for task in task_dict: 
+<span class="no">328 </span>        if task.task_family not in group_status: 
+<span class="no">329 </span>            group_status[task.task_family] = [] 
+<span class="no">330 </span>        group_status[task.task_family].append(task) 
+<span class="no">331 </span>    return group_status 
+<span class="no">332 </span> 
+<span class="no">333 </span> 
+<span class="no">334 </span>def _summary_dict(worker): 
+<span class="no">335 </span>    set_tasks = _partition_tasks(worker) 
+<span class="no">336 </span>    set_tasks[&quot;run_by_other_worker&quot;] = _get_run_by_other_worker(worker) 
+<span class="no">337 </span>    _populate_unknown_statuses(set_tasks) 
+<span class="no">338 </span>    return set_tasks 
+<span class="no">339 </span> 
+<span class="no">340 </span> 
+<span class="no">341 </span>def _summary_format(set_tasks, worker): 
+<span class="no">342 </span>    group_tasks = {} 
+<span class="no">343 </span>    for status, task_dict in set_tasks.items(): 
+<span class="no">344 </span>        group_tasks[status] = _group_tasks_by_name_and_status(task_dict) 
+<span class="no">345 </span>    comments = _get_comments(group_tasks) 
+<span class="no">346 </span>    num_all_tasks = sum([len(set_tasks[&quot;already_done&quot;]), 
+<span class="no">347 </span>                         len(set_tasks[&quot;completed&quot;]), len(set_tasks[&quot;failed&quot;]), 
+<span class="no">348 </span>                         len(set_tasks[&quot;scheduling_error&quot;]), 
+<span class="no">349 </span>                         len(set_tasks[&quot;still_pending_ext&quot;]), 
+<span class="no">350 </span>                         len(set_tasks[&quot;still_pending_not_ext&quot;])]) 
+<span class="no">351 </span>    str_output = &apos;&apos; 
+<span class="no">352 </span>    str_output += &apos;Scheduled {0} tasks of which:\n&apos;.format(num_all_tasks) 
+<span class="no">353 </span>    for status in _ORDERED_STATUSES: 
+<span class="no">354 </span>        if status not in comments: 
+<span class="no">355 </span>            continue 
+<span class="no">356 </span>        str_output += &apos;{0}&apos;.format(comments[status]) 
+<span class="no">357 </span>        if status != &apos;still_pending&apos;: 
+<span class="no">358 </span>            str_output += &apos;{0}\n&apos;.format(_get_str(group_tasks[status], status in _PENDING_SUB_STATUSES)) 
+<span class="no">359 </span>    ext_workers = _get_external_workers(worker) 
+<span class="no">360 </span>    group_tasks_ext_workers = {} 
+<span class="no">361 </span>    for ext_worker, task_dict in ext_workers.items(): 
+<span class="no">362 </span>        group_tasks_ext_workers[ext_worker] = _group_tasks_by_name_and_status(task_dict) 
+<span class="no">363 </span>    if len(ext_workers) &gt; 0: 
+<span class="no">364 </span>        str_output += &quot;\nThe other workers were:\n&quot; 
+<span class="no">365 </span>        count = 0 
+<span class="no">366 </span>        for ext_worker, task_dict in ext_workers.items(): 
+<span class="no">367 </span>            if count &gt; 3 and count &lt; len(ext_workers) - 1: 
+<span class="no">368 </span>                str_output += &quot;    and {0} other workers&quot;.format(len(ext_workers) - count) 
+<span class="no">369 </span>                break 
+<span class="no">370 </span>            str_output += &quot;    - {0} ran {1} tasks\n&quot;.format(ext_worker, len(task_dict)) 
+<span class="no">371 </span>            count += 1 
+<span class="no">372 </span>        str_output += &apos;\n&apos; 
+<span class="no">373 </span>    if num_all_tasks == sum([len(set_tasks[&quot;already_done&quot;]), 
+<span class="no">374 </span>                             len(set_tasks[&quot;scheduling_error&quot;]), 
+<span class="no">375 </span>                             len(set_tasks[&quot;still_pending_ext&quot;]), 
+<span class="no">376 </span>                             len(set_tasks[&quot;still_pending_not_ext&quot;])]): 
+<span class="no">377 </span>        if len(ext_workers) == 0: 
+<span class="no">378 </span>            str_output += &apos;\n&apos; 
+<span class="no">379 </span>        str_output += &apos;Did not run any tasks&apos; 
+<span class="no">380 </span>    smiley = &quot;&quot; 
+<span class="no">381 </span>    reason = &quot;&quot; 
+<span class="no">382 </span>    if <span id="edit-10-new" data-kind="ins"><span id="hl-10-15724" class="hl ins">set_tasks[&quot;ever_failed&quot;]</span></span>: 
+<span class="no">383 </span>        <span id="edit-11-new" data-kind="ins"><span id="hl-11-15758" class="hl ins">if not </span><span id="edit-12-new" data-kind="mov"><span id="hl-12-15765" class="hl mov">set_tasks[&quot;failed&quot;]</span></span><span id="hl-11-15784" class="hl ins">: 
+<span class="no">384 </span>            smiley = &quot;:)&quot; 
+<span class="no">385 </span>            reason = &quot;there were failed tasks but they all suceeded in a retry&quot; 
+<span class="no">386 </span>        else: 
+<span class="no">387 </span>            </span><span id="edit-13-new" data-kind="mov"><span id="hl-13-15918" class="hl mov">smiley = &quot;:(&quot; 
+<span class="no">388 </span>            reason = &quot;there were failed tasks&quot; 
+<span class="no">389 </span>            if set_tasks[&quot;scheduling_error&quot;]: 
+<span class="no">390 </span>                reason += &quot; and tasks whose scheduling failed&quot;</span></span></span> 
+<span class="no">391 </span>    elif set_tasks[&quot;scheduling_error&quot;]: 
+<span class="no">392 </span>        smiley = &quot;:(&quot; 
+<span class="no">393 </span>        reason = &quot;there were tasks whose scheduling failed&quot; 
+<span class="no">394 </span>    elif set_tasks[&quot;not_run&quot;]: 
+<span class="no">395 </span>        smiley = &quot;:|&quot; 
+<span class="no">396 </span>        reason = &quot;there were tasks that were not granted run permission by the scheduler&quot; 
+<span class="no">397 </span>    elif set_tasks[&quot;still_pending_ext&quot;]: 
+<span class="no">398 </span>        smiley = &quot;:|&quot; 
+<span class="no">399 </span>        reason = &quot;there were missing external dependencies&quot; 
+<span class="no">400 </span>    else: 
+<span class="no">401 </span>        smiley = &quot;:)&quot; 
+<span class="no">402 </span>        reason = &quot;there were no failed tasks or missing external dependencies&quot; 
+<span class="no">403 </span>    str_output += &quot;\nThis progress looks {0} because {1}&quot;.format(smiley, reason) 
+<span class="no">404 </span>    if num_all_tasks == 0: 
+<span class="no">405 </span>        str_output = &apos;Did not schedule any tasks&apos; 
+<span class="no">406 </span>    return str_output 
+<span class="no">407 </span> 
+<span class="no">408 </span> 
+<span class="no">409 </span>def _summary_wrap(str_output): 
+<span class="no">410 </span>    return textwrap.dedent(&quot;&quot;&quot; 
+<span class="no">411 </span>    ===== Luigi Execution Summary ===== 
+<span class="no">412 </span> 
+<span class="no">413 </span>    {str_output} 
+<span class="no">414 </span> 
+<span class="no">415 </span>    ===== Luigi Execution Summary ===== 
+<span class="no">416 </span>    &quot;&quot;&quot;).format(str_output=str_output) 
+<span class="no">417 </span> 
+<span class="no">418 </span> 
+<span class="no">419 </span>def summary(worker): 
+<span class="no">420 </span>    &quot;&quot;&quot; 
+<span class="no">421 </span>    Given a worker, return a human readable summary of what the worker have 
+<span class="no">422 </span>    done. 
+<span class="no">423 </span>    &quot;&quot;&quot; 
+<span class="no">424 </span>    return _summary_wrap(_summary_format(_summary_dict(worker), worker)) 
+<span class="no">425 </span># 5 
+<span class="no">426 </span></code></pre></div>
+</div></div></div>
+</body>
+</html>

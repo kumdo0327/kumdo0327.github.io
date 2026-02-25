@@ -6,56 +6,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root {
+  --mov-clr: 191 175 255;
   --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
   --upd-clr: 255 217 50;
-  --mov-clr: 191 175 255;
 }
 body {
   margin: 0;
   background: white;
 }
 .page {
+  max-width: 100vw;
   margin: 0 auto;
   padding: 0 20px 8px 20px;
-  max-width: 100vw;
 }
 .grid {
   gap: 20px;
+  height: calc(100vh - 108px);
   min-height: 216px;
   display: grid;
   min-width: 1024px;
   grid-template-columns: 1fr 1fr;
-  height: calc(100vh - 108px);
 }
 .panel {
+  overflow: hidden;
   flex-direction: column;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
   display: flex;
   min-width: 0;
   box-sizing: border-box;
-  overflow: hidden;
 }
 .panel-header {
   font-weight: bold;
   padding: 8px 10px;
   font-size: 16px;
   display: flex;
-  justify-content: space-between;
   line-height: 1;
+  justify-content: space-between;
+  align-items: center;
   background: #ebebeb;
   border-bottom: 1px solid #b7b7b7;
-  align-items: center;
 }
 .codebox {
+  flex: 1;
   padding: 2px 4px;
   font-size: 12px;
   min-height: 0;
   overflow: auto;
   background: #f7f7f7;
   line-height: 1.5;
-  flex: 1;
 }
 pre {
   margin: 0;
@@ -65,8 +65,8 @@ pre {
   box-shadow: inset -1px 0 0 #878787;
 }
 .ins, .del, .mov, .upd {
-  border-bottom: 1px solid #878787;
   border-top: 1px solid #878787;
+  border-bottom: 1px solid #878787;
 }
 .ins-focus, .del-focus, .mov-focus, .upd-focus {
   font-weight: bold;
@@ -96,49 +96,49 @@ pre {
   background: rgb(var(--upd-clr));
 }
 .ins-border {
-  border-bottom: 3px solid rgb(var(--ins-clr));
   border-top: 3px solid rgb(var(--ins-clr));
+  border-bottom: 3px solid rgb(var(--ins-clr));
 }
 .del-border {
-  border-bottom: 3px solid rgb(var(--del-clr));
   border-top: 3px solid rgb(var(--del-clr));
+  border-bottom: 3px solid rgb(var(--del-clr));
 }
 .mov-border {
-  border-bottom: 3px solid rgb(var(--mov-clr));
   border-top: 3px solid rgb(var(--mov-clr));
+  border-bottom: 3px solid rgb(var(--mov-clr));
 }
 .upd-border {
-  border-bottom: 3px solid rgb(var(--upd-clr));
   border-top: 3px solid rgb(var(--upd-clr));
+  border-bottom: 3px solid rgb(var(--upd-clr));
 }
 .no {
   font-weight: normal;
-  color: #878787;
   padding-bottom: 3px;
+  color: #878787;
+  letter-spacing: normal;
   background: #f7f7f7;
   padding-top: 3px;
-  letter-spacing: normal;
 }
 .legend {
+  line-height: 1.5;
   margin: 8px 0 12px 0;
   font-size: 12px;
-  line-height: 1.5;
 }
 .legend-row {
   gap: 4px;
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  flex-wrap: wrap;
 }
 .legend-title {
   font-weight: bold;
   margin-right: 4px;
 }
 .legend-chip {
+  border-radius: 6px;
   padding: 1px 6px;
   border: 1px solid #bfbfbf;
-  border-radius: 6px;
 }
 .legend-ins {
   background: rgb(var(--ins-clr) / 0.7);
@@ -157,18 +157,18 @@ pre {
   margin-right: 10px;
 }
 .legend-key kbd {
+  padding: 1px 5px;
   border: 2px solid #afafaf;
   border-radius: 2px;
-  background: #fbfbfb;
   margin-right: 4px;
-  padding: 1px 5px;
+  background: #fbfbfb;
 }
 .description {
-  border: 1px solid black;
-  overflow: auto;
-  box-sizing: border-box;
-  width: 384px;
   padding: 0px 2px;
+  border: 1px solid black;
+  box-sizing: border-box;
+  overflow: auto;
+  width: 384px;
 }
 .type {
   color: #0076ba;
@@ -469,92 +469,1851 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 2 :&ensp;<b>Insert <code class="type">","</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 2 :&ensp;<b>Insert <code class="type">"keyword_argument"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 5 :&ensp;<b>Insert <code class="type">"comment"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 5 :&ensp;<b>Insert <code class="type">"return_statement"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 5 :&ensp;<b>Update <code class="type">"comment"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 5 :&ensp;<b>Delete <code class="type">"field_expression"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 5 :&ensp;<b>Insert <code class="type">"call_expression"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">24_B (original)</div>
-<div class="codebox"><pre><code><span class="no"> 1 </span>&quot;&quot;&quot; 
-<span class="no"> 2 </span>================================== 
-<span class="no"> 3 </span>Colormap Normalizations Symlognorm 
-<span class="no"> 4 </span>================================== 
-<span class="no"> 5 </span> 
-<span class="no"> 6 </span>Demonstration of using norm to map colormaps onto data in non-linear ways. 
-<span class="no"> 7 </span>&quot;&quot;&quot; 
-<span class="no"> 8 </span> 
-<span class="no"> 9 </span>import numpy as np 
-<span class="no">10 </span>import matplotlib.pyplot as plt 
-<span class="no">11 </span>import matplotlib.colors as colors 
-<span class="no">12 </span> 
-<span class="no">13 </span>&quot;&quot;&quot; 
-<span class="no">14 </span>SymLogNorm: two humps, one negative and one positive, The positive 
-<span class="no">15 </span>with 5-times the amplitude. Linearly, you cannot see detail in the 
-<span class="no">16 </span>negative hump.  Here we logarithmically scale the positive and 
-<span class="no">17 </span>negative data separately. 
-<span class="no">18 </span> 
-<span class="no">19 </span>Note that colorbar labels do not come out looking very good. 
-<span class="no">20 </span>&quot;&quot;&quot; 
-<span class="no">21 </span> 
-<span class="no">22 </span>N = 100 
-<span class="no">23 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
-<span class="no">24 </span>Z1 = np.exp(-X**2 - Y**2) 
-<span class="no">25 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
-<span class="no">26 </span>Z = (Z1 - Z2) * 2 
-<span class="no">27 </span> 
-<span class="no">28 </span>fig, ax = plt.subplots(2, 1) 
-<span class="no">29 </span> 
-<span class="no">30 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
-<span class="no">31 </span>                       norm=colors.SymLogNorm(linthresh=0.03, linscale=0.03, 
-<span class="no">32 </span>                                              vmin=-1.0, vmax=1.0<span data-kind="ins" id="edit-1-old"></span><span data-kind="ins" id="edit-2-old"></span>), 
-<span class="no">33 </span>                       cmap=&apos;RdBu_r&apos;) 
-<span class="no">34 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
-<span class="no">35 </span> 
-<span class="no">36 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
-<span class="no">37 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
-<span class="no">38 </span> 
-<span class="no">39 </span>plt.show() 
-<span class="no">40 </span></code></pre></div>
+<div class="codebox"><pre><code><span class="no">  1 </span>/** 
+<span class="no">  2 </span> * @file plugins_types.c 
+<span class="no">  3 </span> * @author Radek Krejci &lt;rkrejci@cesnet.cz&gt; 
+<span class="no">  4 </span> * @brief Built-in types plugins and interface for user types plugins. 
+<span class="no">  5 </span> * 
+<span class="no">  6 </span> * Copyright (c) 2019 CESNET, z.s.p.o. 
+<span class="no">  7 </span> * 
+<span class="no">  8 </span> * This source code is licensed under BSD 3-Clause License (the &quot;License&quot;). 
+<span class="no">  9 </span> * You may not use this file except in compliance with the License. 
+<span class="no"> 10 </span> * You may obtain a copy of the License at 
+<span class="no"> 11 </span> * 
+<span class="no"> 12 </span> *     https://opensource.org/licenses/BSD-3-Clause 
+<span class="no"> 13 </span> */ 
+<span class="no"> 14 </span> 
+<span class="no"> 15 </span>#define _GNU_SOURCE /* asprintf, strdup */ 
+<span class="no"> 16 </span> 
+<span class="no"> 17 </span>#include &quot;plugins_types.h&quot; 
+<span class="no"> 18 </span> 
+<span class="no"> 19 </span>#include &lt;ctype.h&gt; 
+<span class="no"> 20 </span>#include &lt;inttypes.h&gt; 
+<span class="no"> 21 </span>#include &lt;stdio.h&gt; 
+<span class="no"> 22 </span>#include &lt;stdlib.h&gt; 
+<span class="no"> 23 </span>#include &lt;string.h&gt; 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>#include &quot;common.h&quot; 
+<span class="no"> 26 </span>#include &quot;compat.h&quot; 
+<span class="no"> 27 </span>#include &quot;context.h&quot; 
+<span class="no"> 28 </span>#include &quot;dict.h&quot; 
+<span class="no"> 29 </span>#include &quot;path.h&quot; 
+<span class="no"> 30 </span>#include &quot;schema_compile.h&quot; 
+<span class="no"> 31 </span>#include &quot;set.h&quot; 
+<span class="no"> 32 </span>#include &quot;tree.h&quot; 
+<span class="no"> 33 </span>#include &quot;tree_data.h&quot; 
+<span class="no"> 34 </span>#include &quot;tree_data_internal.h&quot; 
+<span class="no"> 35 </span>#include &quot;tree_schema.h&quot; 
+<span class="no"> 36 </span>#include &quot;tree_schema_internal.h&quot; 
+<span class="no"> 37 </span>#include &quot;xml.h&quot; 
+<span class="no"> 38 </span>#include &quot;xpath.h&quot; 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>/** 
+<span class="no"> 41 </span> * @brief Find import prefix in imports. 
+<span class="no"> 42 </span> */ 
+<span class="no"> 43 </span>static const struct lys_module * 
+<span class="no"> 44 </span>ly_schema_resolve_prefix(const struct ly_ctx *UNUSED(ctx), const char *prefix, size_t prefix_len, const void *prefix_data) 
+<span class="no"> 45 </span>{ 
+<span class="no"> 46 </span>    const struct lysp_module *prefix_mod = prefix_data; 
+<span class="no"> 47 </span>    struct lys_module *m = NULL; 
+<span class="no"> 48 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no"> 49 </span>    const char *local_prefix; 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>    local_prefix = prefix_mod-&gt;is_submod ? ((struct lysp_submodule *)prefix_mod)-&gt;prefix : prefix_mod-&gt;mod-&gt;prefix; 
+<span class="no"> 52 </span>    if (!prefix_len || !ly_strncmp(local_prefix, prefix, prefix_len)) { 
+<span class="no"> 53 </span>        /* it is the prefix of the module itself */ 
+<span class="no"> 54 </span>        m = prefix_mod-&gt;mod; 
+<span class="no"> 55 </span>    } 
+<span class="no"> 56 </span> 
+<span class="no"> 57 </span>    /* search in imports */ 
+<span class="no"> 58 </span>    if (!m) { 
+<span class="no"> 59 </span>        LY_ARRAY_FOR(prefix_mod-&gt;imports, u) { 
+<span class="no"> 60 </span>            if (!ly_strncmp(prefix_mod-&gt;imports[u].prefix, prefix, prefix_len)) { 
+<span class="no"> 61 </span>                m = prefix_mod-&gt;imports[u].module; 
+<span class="no"> 62 </span>                break; 
+<span class="no"> 63 </span>            } 
+<span class="no"> 64 </span>        } 
+<span class="no"> 65 </span>    } 
+<span class="no"> 66 </span> 
+<span class="no"> 67 </span>    return m; 
+<span class="no"> 68 </span>} 
+<span class="no"> 69 </span> 
+<span class="no"> 70 </span>/** 
+<span class="no"> 71 </span> * @brief Find resolved module for a prefix in prefix - module pairs. 
+<span class="no"> 72 </span> */ 
+<span class="no"> 73 </span>static const struct lys_module * 
+<span class="no"> 74 </span>ly_schema_resolved_resolve_prefix(const struct ly_ctx *UNUSED(ctx), const char *prefix, size_t prefix_len, 
+<span class="no"> 75 </span>        const void *prefix_data) 
+<span class="no"> 76 </span>{ 
+<span class="no"> 77 </span>    const struct lysc_prefix *prefixes = prefix_data; 
+<span class="no"> 78 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no"> 79 </span> 
+<span class="no"> 80 </span>    LY_ARRAY_FOR(prefixes, u) { 
+<span class="no"> 81 </span>        if (!ly_strncmp(prefixes[u].prefix, prefix, prefix_len)) { 
+<span class="no"> 82 </span>            return prefixes[u].mod; 
+<span class="no"> 83 </span>        } 
+<span class="no"> 84 </span>    } 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span>    return NULL; 
+<span class="no"> 87 </span>} 
+<span class="no"> 88 </span> 
+<span class="no"> 89 </span>/** 
+<span class="no"> 90 </span> * @brief Find XML namespace prefix in XML namespaces, which are then mapped to modules. 
+<span class="no"> 91 </span> */ 
+<span class="no"> 92 </span>static const struct lys_module * 
+<span class="no"> 93 </span>ly_xml_resolve_prefix(const struct ly_ctx *ctx, const char *prefix, size_t prefix_len, const void *prefix_data) 
+<span class="no"> 94 </span>{ 
+<span class="no"> 95 </span>    const struct lys_module *mod; 
+<span class="no"> 96 </span>    const struct lyxml_ns *ns; 
+<span class="no"> 97 </span>    const struct ly_set *ns_set = prefix_data; 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>    ns = lyxml_ns_get(ns_set, prefix, prefix_len); 
+<span class="no">100 </span>    if (!ns) { 
+<span class="no">101 </span>        return NULL; 
+<span class="no">102 </span>    } 
+<span class="no">103 </span> 
+<span class="no">104 </span>    mod = ly_ctx_get_module_implemented_ns(ctx, ns-&gt;uri); 
+<span class="no">105 </span>    if (!mod) { 
+<span class="no">106 </span>        /* for YIN extension prefix resolution */ 
+<span class="no">107 </span>        mod = ly_ctx_get_module_latest_ns(ctx, ns-&gt;uri); 
+<span class="no">108 </span>    } 
+<span class="no">109 </span>    return mod; 
+<span class="no">110 </span>} 
+<span class="no">111 </span> 
+<span class="no">112 </span>/** 
+<span class="no">113 </span> * @brief Find module name. 
+<span class="no">114 </span> */ 
+<span class="no">115 </span>static const struct lys_module * 
+<span class="no">116 </span>ly_json_resolve_prefix(const struct ly_ctx *ctx, const char *prefix, size_t prefix_len, const void *UNUSED(prefix_data)) 
+<span class="no">117 </span>{ 
+<span class="no">118 </span>    return ly_ctx_get_module_implemented2(ctx, prefix, prefix_len); 
+<span class="no">119 </span>} 
+<span class="no">120 </span> 
+<span class="no">121 </span>const struct lys_module * 
+<span class="no">122 </span>ly_resolve_prefix(const struct ly_ctx *ctx, const void *prefix, size_t prefix_len, LY_VALUE_FORMAT format, 
+<span class="no">123 </span>        const void *prefix_data) 
+<span class="no">124 </span>{ 
+<span class="no">125 </span>    const struct lys_module *mod = NULL; 
+<span class="no">126 </span> 
+<span class="no">127 </span>    LY_CHECK_ARG_RET(ctx, prefix, prefix_len, NULL); 
+<span class="no">128 </span> 
+<span class="no">129 </span>    switch (format) { 
+<span class="no">130 </span>    case LY_VALUE_SCHEMA: 
+<span class="no">131 </span>        mod = ly_schema_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">132 </span>        break; 
+<span class="no">133 </span>    case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">134 </span>        mod = ly_schema_resolved_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">135 </span>        break; 
+<span class="no">136 </span>    case LY_VALUE_XML: 
+<span class="no">137 </span>        mod = ly_xml_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">138 </span>        break; 
+<span class="no">139 </span>    case LY_VALUE_CANON: 
+<span class="no">140 </span>    case LY_VALUE_JSON: 
+<span class="no">141 </span>    case LY_VALUE_LYB: 
+<span class="no">142 </span>        mod = ly_json_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">143 </span>        break; 
+<span class="no">144 </span>    } 
+<span class="no">145 </span> 
+<span class="no">146 </span>    return mod; 
+<span class="no">147 </span>} 
+<span class="no">148 </span> 
+<span class="no">149 </span>LIBYANG_API_DEF const struct lys_module * 
+<span class="no">150 </span>lyplg_type_identity_module(const struct ly_ctx *ctx, const struct lysc_node *ctx_node, 
+<span class="no">151 </span>        const char *prefix, size_t prefix_len, LY_VALUE_FORMAT format, const void *prefix_data) 
+<span class="no">152 </span>{ 
+<span class="no">153 </span>    if (prefix_len) { 
+<span class="no">154 </span>        return ly_resolve_prefix(ctx, prefix, prefix_len, format, prefix_data); 
+<span class="no">155 </span>    } else { 
+<span class="no">156 </span>        switch (format) { 
+<span class="no">157 </span>        case LY_VALUE_SCHEMA: 
+<span class="no">158 </span>        <span id="edit-1-old" data-kind="ins"></span><span id="edit-2-old" data-kind="ins"></span>case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">159 </span>            <span id="edit-3-old" data-kind="upd"><span id="hl-3-4564" class="hl upd">/* use context node module, handles augments */</span></span> 
+<span class="no">160 </span>            return <span id="edit-4-old" data-kind="del"><span id="hl-4-4631" class="hl del"><span id="edit-5-old" data-kind="ins"></span>ctx_node-&gt;module</span></span>; 
+<span class="no">161 </span>        case LY_VALUE_CANON: 
+<span class="no">162 </span>        case LY_VALUE_JSON: 
+<span class="no">163 </span>        case LY_VALUE_LYB: 
+<span class="no">164 </span>            /* use context node module (as specified) */ 
+<span class="no">165 </span>            return ctx_node-&gt;module; 
+<span class="no">166 </span>        case LY_VALUE_XML: 
+<span class="no">167 </span>            /* use the default namespace */ 
+<span class="no">168 </span>            return ly_xml_resolve_prefix(ctx, NULL, 0, prefix_data); 
+<span class="no">169 </span>        } 
+<span class="no">170 </span>    } 
+<span class="no">171 </span> 
+<span class="no">172 </span>    return NULL; 
+<span class="no">173 </span>} 
+<span class="no">174 </span> 
+<span class="no">175 </span>/** 
+<span class="no">176 </span> * @brief Find module in import prefixes. 
+<span class="no">177 </span> */ 
+<span class="no">178 </span>static const char * 
+<span class="no">179 </span>ly_schema_get_prefix(const struct lys_module *mod, void *prefix_data) 
+<span class="no">180 </span>{ 
+<span class="no">181 </span>    const struct lysp_module *pmod = prefix_data; 
+<span class="no">182 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">183 </span> 
+<span class="no">184 </span>    if (pmod-&gt;mod == mod) { 
+<span class="no">185 </span>        if (pmod-&gt;is_submod) { 
+<span class="no">186 </span>            return ((struct lysp_submodule *)pmod)-&gt;prefix; 
+<span class="no">187 </span>        } else { 
+<span class="no">188 </span>            return pmod-&gt;mod-&gt;prefix; 
+<span class="no">189 </span>        } 
+<span class="no">190 </span>    } 
+<span class="no">191 </span> 
+<span class="no">192 </span>    LY_ARRAY_FOR(pmod-&gt;imports, u) { 
+<span class="no">193 </span>        if (pmod-&gt;imports[u].module == mod) { 
+<span class="no">194 </span>            /* match */ 
+<span class="no">195 </span>            return pmod-&gt;imports[u].prefix; 
+<span class="no">196 </span>        } 
+<span class="no">197 </span>    } 
+<span class="no">198 </span> 
+<span class="no">199 </span>    return NULL; 
+<span class="no">200 </span>} 
+<span class="no">201 </span> 
+<span class="no">202 </span>/** 
+<span class="no">203 </span> * @brief Find prefix in prefix - module pairs. 
+<span class="no">204 </span> */ 
+<span class="no">205 </span>static const char * 
+<span class="no">206 </span>ly_schema_resolved_get_prefix(const struct lys_module *mod, void *prefix_data) 
+<span class="no">207 </span>{ 
+<span class="no">208 </span>    struct lysc_prefix *prefixes = prefix_data; 
+<span class="no">209 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">210 </span> 
+<span class="no">211 </span>    LY_ARRAY_FOR(prefixes, u) { 
+<span class="no">212 </span>        if (prefixes[u].mod == mod) { 
+<span class="no">213 </span>            return prefixes[u].prefix; 
+<span class="no">214 </span>        } 
+<span class="no">215 </span>    } 
+<span class="no">216 </span> 
+<span class="no">217 </span>    return NULL; 
+<span class="no">218 </span>} 
+<span class="no">219 </span> 
+<span class="no">220 </span>/** 
+<span class="no">221 </span> * @brief Simply return module local prefix. Also, store the module in a set. 
+<span class="no">222 </span> */ 
+<span class="no">223 </span>static const char * 
+<span class="no">224 </span>ly_xml_get_prefix(const struct lys_module *mod, void *prefix_data) 
+<span class="no">225 </span>{ 
+<span class="no">226 </span>    struct ly_set *ns_list = prefix_data; 
+<span class="no">227 </span> 
+<span class="no">228 </span>    LY_CHECK_RET(ly_set_add(ns_list, (void *)mod, 0, NULL), NULL); 
+<span class="no">229 </span>    return mod-&gt;prefix; 
+<span class="no">230 </span>} 
+<span class="no">231 </span> 
+<span class="no">232 </span>/** 
+<span class="no">233 </span> * @brief Simply return module name. 
+<span class="no">234 </span> */ 
+<span class="no">235 </span>static const char * 
+<span class="no">236 </span>ly_json_get_prefix(const struct lys_module *mod, void *UNUSED(prefix_data)) 
+<span class="no">237 </span>{ 
+<span class="no">238 </span>    return mod-&gt;name; 
+<span class="no">239 </span>} 
+<span class="no">240 </span> 
+<span class="no">241 </span>const char * 
+<span class="no">242 </span>ly_get_prefix(const struct lys_module *mod, LY_VALUE_FORMAT format, void *prefix_data) 
+<span class="no">243 </span>{ 
+<span class="no">244 </span>    const char *prefix = NULL; 
+<span class="no">245 </span> 
+<span class="no">246 </span>    switch (format) { 
+<span class="no">247 </span>    case LY_VALUE_SCHEMA: 
+<span class="no">248 </span>        prefix = ly_schema_get_prefix(mod, prefix_data); 
+<span class="no">249 </span>        break; 
+<span class="no">250 </span>    case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">251 </span>        prefix = ly_schema_resolved_get_prefix(mod, prefix_data); 
+<span class="no">252 </span>        break; 
+<span class="no">253 </span>    case LY_VALUE_XML: 
+<span class="no">254 </span>        prefix = ly_xml_get_prefix(mod, prefix_data); 
+<span class="no">255 </span>        break; 
+<span class="no">256 </span>    case LY_VALUE_CANON: 
+<span class="no">257 </span>    case LY_VALUE_JSON: 
+<span class="no">258 </span>    case LY_VALUE_LYB: 
+<span class="no">259 </span>        prefix = ly_json_get_prefix(mod, prefix_data); 
+<span class="no">260 </span>        break; 
+<span class="no">261 </span>    } 
+<span class="no">262 </span> 
+<span class="no">263 </span>    return prefix; 
+<span class="no">264 </span>} 
+<span class="no">265 </span> 
+<span class="no">266 </span>LIBYANG_API_DEF const char * 
+<span class="no">267 </span>lyplg_type_get_prefix(const struct lys_module *mod, LY_VALUE_FORMAT format, void *prefix_data) 
+<span class="no">268 </span>{ 
+<span class="no">269 </span>    return ly_get_prefix(mod, format, prefix_data); 
+<span class="no">270 </span>} 
+<span class="no">271 </span> 
+<span class="no">272 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">273 </span>lyplg_type_compare_simple(const struct lyd_value *val1, const struct lyd_value *val2) 
+<span class="no">274 </span>{ 
+<span class="no">275 </span>    if (val1-&gt;realtype != val2-&gt;realtype) { 
+<span class="no">276 </span>        return LY_ENOT; 
+<span class="no">277 </span>    } 
+<span class="no">278 </span> 
+<span class="no">279 </span>    if (val1-&gt;_canonical == val2-&gt;_canonical) { 
+<span class="no">280 </span>        return LY_SUCCESS; 
+<span class="no">281 </span>    } 
+<span class="no">282 </span> 
+<span class="no">283 </span>    return LY_ENOT; 
+<span class="no">284 </span>} 
+<span class="no">285 </span> 
+<span class="no">286 </span>LIBYANG_API_DEF const void * 
+<span class="no">287 </span>lyplg_type_print_simple(const struct ly_ctx *UNUSED(ctx), const struct lyd_value *value, LY_VALUE_FORMAT UNUSED(format), 
+<span class="no">288 </span>        void *UNUSED(prefix_data), ly_bool *dynamic, size_t *value_len) 
+<span class="no">289 </span>{ 
+<span class="no">290 </span>    if (dynamic) { 
+<span class="no">291 </span>        *dynamic = 0; 
+<span class="no">292 </span>    } 
+<span class="no">293 </span>    if (value_len) { 
+<span class="no">294 </span>        *value_len = ly_strlen(value-&gt;_canonical); 
+<span class="no">295 </span>    } 
+<span class="no">296 </span>    return value-&gt;_canonical; 
+<span class="no">297 </span>} 
+<span class="no">298 </span> 
+<span class="no">299 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">300 </span>lyplg_type_dup_simple(const struct ly_ctx *ctx, const struct lyd_value *original, struct lyd_value *dup) 
+<span class="no">301 </span>{ 
+<span class="no">302 </span>    memset(dup, 0, sizeof *dup); 
+<span class="no">303 </span>    LY_CHECK_RET(lydict_insert(ctx, original-&gt;_canonical, 0, &amp;dup-&gt;_canonical)); 
+<span class="no">304 </span>    memcpy(dup-&gt;fixed_mem, original-&gt;fixed_mem, sizeof dup-&gt;fixed_mem); 
+<span class="no">305 </span>    dup-&gt;realtype = original-&gt;realtype; 
+<span class="no">306 </span>    return LY_SUCCESS; 
+<span class="no">307 </span>} 
+<span class="no">308 </span> 
+<span class="no">309 </span>LIBYANG_API_DEF void 
+<span class="no">310 </span>lyplg_type_free_simple(const struct ly_ctx *ctx, struct lyd_value *value) 
+<span class="no">311 </span>{ 
+<span class="no">312 </span>    lydict_remove(ctx, value-&gt;_canonical); 
+<span class="no">313 </span>    value-&gt;_canonical = NULL; 
+<span class="no">314 </span>} 
+<span class="no">315 </span> 
+<span class="no">316 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">317 </span>lyplg_type_parse_int(const char *datatype, int base, int64_t min, int64_t max, const char *value, size_t value_len, 
+<span class="no">318 </span>        int64_t *ret, struct ly_err_item **err) 
+<span class="no">319 </span>{ 
+<span class="no">320 </span>    LY_CHECK_ARG_RET(NULL, err, datatype, LY_EINVAL); 
+<span class="no">321 </span> 
+<span class="no">322 </span>    *err = NULL; 
+<span class="no">323 </span> 
+<span class="no">324 </span>    /* consume leading whitespaces */ 
+<span class="no">325 </span>    for ( ; value_len &amp;&amp; isspace(*value); ++value, --value_len) {} 
+<span class="no">326 </span> 
+<span class="no">327 </span>    if (!value || !value_len || !value[0]) { 
+<span class="no">328 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid empty %s value.&quot;, datatype); 
+<span class="no">329 </span>    } 
+<span class="no">330 </span> 
+<span class="no">331 </span>    switch (ly_parse_int(value, value_len, min, max, base, ret)) { 
+<span class="no">332 </span>    case LY_EDENIED: 
+<span class="no">333 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Value is out of %s&apos;s min/max bounds.&quot;, datatype); 
+<span class="no">334 </span>    case LY_SUCCESS: 
+<span class="no">335 </span>        return LY_SUCCESS; 
+<span class="no">336 </span>    default: 
+<span class="no">337 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid %s value \&quot;%.*s\&quot;.&quot;, datatype, (int)value_len, value); 
+<span class="no">338 </span>    } 
+<span class="no">339 </span>} 
+<span class="no">340 </span> 
+<span class="no">341 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">342 </span>lyplg_type_parse_uint(const char *datatype, int base, uint64_t max, const char *value, size_t value_len, uint64_t *ret, 
+<span class="no">343 </span>        struct ly_err_item **err) 
+<span class="no">344 </span>{ 
+<span class="no">345 </span>    LY_CHECK_ARG_RET(NULL, err, datatype, LY_EINVAL); 
+<span class="no">346 </span> 
+<span class="no">347 </span>    *err = NULL; 
+<span class="no">348 </span> 
+<span class="no">349 </span>    /* consume leading whitespaces */ 
+<span class="no">350 </span>    for ( ; value_len &amp;&amp; isspace(*value); ++value, --value_len) {} 
+<span class="no">351 </span> 
+<span class="no">352 </span>    if (!value || !value_len || !value[0]) { 
+<span class="no">353 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid empty %s value.&quot;, datatype); 
+<span class="no">354 </span>    } 
+<span class="no">355 </span> 
+<span class="no">356 </span>    *err = NULL; 
+<span class="no">357 </span>    switch (ly_parse_uint(value, value_len, max, base, ret)) { 
+<span class="no">358 </span>    case LY_EDENIED: 
+<span class="no">359 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">360 </span>                &quot;Value \&quot;%.*s\&quot; is out of %s&apos;s min/max bounds.&quot;, (int)value_len, value, datatype); 
+<span class="no">361 </span>    case LY_SUCCESS: 
+<span class="no">362 </span>        return LY_SUCCESS; 
+<span class="no">363 </span>    default: 
+<span class="no">364 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">365 </span>                &quot;Invalid %s value \&quot;%.*s\&quot;.&quot;, datatype, (int)value_len, value); 
+<span class="no">366 </span>    } 
+<span class="no">367 </span>} 
+<span class="no">368 </span> 
+<span class="no">369 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">370 </span>lyplg_type_parse_dec64(uint8_t fraction_digits, const char *value, size_t value_len, int64_t *ret, struct ly_err_item **err) 
+<span class="no">371 </span>{ 
+<span class="no">372 </span>    LY_ERR ret_val; 
+<span class="no">373 </span>    char *valcopy = NULL; 
+<span class="no">374 </span>    size_t fraction = 0, size, len = 0, trailing_zeros; 
+<span class="no">375 </span>    int64_t d; 
+<span class="no">376 </span> 
+<span class="no">377 </span>    *err = NULL; 
+<span class="no">378 </span> 
+<span class="no">379 </span>    /* consume leading whitespaces */ 
+<span class="no">380 </span>    for ( ; value_len &amp;&amp; isspace(*value); ++value, --value_len) {} 
+<span class="no">381 </span> 
+<span class="no">382 </span>    /* parse value */ 
+<span class="no">383 </span>    if (!value_len) { 
+<span class="no">384 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid empty decimal64 value.&quot;); 
+<span class="no">385 </span>    } else if (!isdigit(value[len]) &amp;&amp; (value[len] != &apos;-&apos;) &amp;&amp; (value[len] != &apos;+&apos;)) { 
+<span class="no">386 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid %zu. character of decimal64 value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">387 </span>                len + 1, (int)value_len, value); 
+<span class="no">388 </span>    } 
+<span class="no">389 </span> 
+<span class="no">390 </span>    if ((value[len] == &apos;-&apos;) || (value[len] == &apos;+&apos;)) { 
+<span class="no">391 </span>        ++len; 
+<span class="no">392 </span>    } 
+<span class="no">393 </span> 
+<span class="no">394 </span>    while (len &lt; value_len &amp;&amp; isdigit(value[len])) { 
+<span class="no">395 </span>        ++len; 
+<span class="no">396 </span>    } 
+<span class="no">397 </span> 
+<span class="no">398 </span>    trailing_zeros = 0; 
+<span class="no">399 </span>    if ((len &lt; value_len) &amp;&amp; ((value[len] != &apos;.&apos;) || !isdigit(value[len + 1]))) { 
+<span class="no">400 </span>        goto decimal; 
+<span class="no">401 </span>    } 
+<span class="no">402 </span>    fraction = len; 
+<span class="no">403 </span>    ++len; 
+<span class="no">404 </span>    while (len &lt; value_len &amp;&amp; isdigit(value[len])) { 
+<span class="no">405 </span>        if (value[len] == &apos;0&apos;) { 
+<span class="no">406 </span>            ++trailing_zeros; 
+<span class="no">407 </span>        } else { 
+<span class="no">408 </span>            trailing_zeros = 0; 
+<span class="no">409 </span>        } 
+<span class="no">410 </span>        ++len; 
+<span class="no">411 </span>    } 
+<span class="no">412 </span>    len = len - trailing_zeros; 
+<span class="no">413 </span> 
+<span class="no">414 </span>decimal: 
+<span class="no">415 </span>    if (fraction &amp;&amp; (len - 1 - fraction &gt; fraction_digits)) { 
+<span class="no">416 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">417 </span>                &quot;Value \&quot;%.*s\&quot; of decimal64 type exceeds defined number (%u) of fraction digits.&quot;, 
+<span class="no">418 </span>                (int)len, value, fraction_digits); 
+<span class="no">419 </span>    } 
+<span class="no">420 </span>    if (fraction) { 
+<span class="no">421 </span>        size = len + (fraction_digits - (len - 1 - fraction)); 
+<span class="no">422 </span>    } else { 
+<span class="no">423 </span>        size = len + fraction_digits + 1; 
+<span class="no">424 </span>    } 
+<span class="no">425 </span> 
+<span class="no">426 </span>    if (len + trailing_zeros &lt; value_len) { 
+<span class="no">427 </span>        /* consume trailing whitespaces to check that there is nothing after it */ 
+<span class="no">428 </span>        uint64_t u; 
+<span class="no">429 </span>        for (u = len + trailing_zeros; u &lt; value_len &amp;&amp; isspace(value[u]); ++u) {} 
+<span class="no">430 </span>        if (u != value_len) { 
+<span class="no">431 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">432 </span>                    &quot;Invalid %&quot; PRIu64 &quot;. character of decimal64 value \&quot;%.*s\&quot;.&quot;, u + 1, (int)value_len, value); 
+<span class="no">433 </span>        } 
+<span class="no">434 </span>    } 
+<span class="no">435 </span> 
+<span class="no">436 </span>    /* prepare value string without decimal point to easily parse using standard functions */ 
+<span class="no">437 </span>    valcopy = malloc(size * sizeof *valcopy); 
+<span class="no">438 </span>    if (!valcopy) { 
+<span class="no">439 </span>        return ly_err_new(err, LY_EMEM, 0, NULL, NULL, LY_EMEM_MSG); 
+<span class="no">440 </span>    } 
+<span class="no">441 </span> 
+<span class="no">442 </span>    valcopy[size - 1] = &apos;\0&apos;; 
+<span class="no">443 </span>    if (fraction) { 
+<span class="no">444 </span>        memcpy(&amp;valcopy[0], &amp;value[0], fraction); 
+<span class="no">445 </span>        memcpy(&amp;valcopy[fraction], &amp;value[fraction + 1], len - 1 - (fraction)); 
+<span class="no">446 </span>        /* add trailing zero characters */ 
+<span class="no">447 </span>        memset(&amp;valcopy[len - 1], &apos;0&apos;, fraction_digits - (len - 1 - fraction)); 
+<span class="no">448 </span>    } else { 
+<span class="no">449 </span>        memcpy(&amp;valcopy[0], &amp;value[0], len); 
+<span class="no">450 </span>        /* add trailing zero characters */ 
+<span class="no">451 </span>        memset(&amp;valcopy[len], &apos;0&apos;, fraction_digits); 
+<span class="no">452 </span>    } 
+<span class="no">453 </span> 
+<span class="no">454 </span>    ret_val = lyplg_type_parse_int(&quot;decimal64&quot;, LY_BASE_DEC, INT64_C(-9223372036854775807) - INT64_C(1), 
+<span class="no">455 </span>            INT64_C(9223372036854775807), valcopy, size - 1, &amp;d, err); 
+<span class="no">456 </span>    if (!ret_val &amp;&amp; ret) { 
+<span class="no">457 </span>        *ret = d; 
+<span class="no">458 </span>    } 
+<span class="no">459 </span>    free(valcopy); 
+<span class="no">460 </span> 
+<span class="no">461 </span>    return ret_val; 
+<span class="no">462 </span>} 
+<span class="no">463 </span> 
+<span class="no">464 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">465 </span>lyplg_type_validate_patterns(struct lysc_pattern **patterns, const char *str, size_t str_len, struct ly_err_item **err) 
+<span class="no">466 </span>{ 
+<span class="no">467 </span>    int rc, match_opts; 
+<span class="no">468 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">469 </span>    pcre2_match_data *match_data = NULL; 
+<span class="no">470 </span> 
+<span class="no">471 </span>    LY_CHECK_ARG_RET(NULL, str, err, LY_EINVAL); 
+<span class="no">472 </span> 
+<span class="no">473 </span>    *err = NULL; 
+<span class="no">474 </span> 
+<span class="no">475 </span>    LY_ARRAY_FOR(patterns, u) { 
+<span class="no">476 </span>        /* match_data needs to be allocated each time because of possible multi-threaded evaluation */ 
+<span class="no">477 </span>        match_data = pcre2_match_data_create_from_pattern(patterns[u]-&gt;code, NULL); 
+<span class="no">478 </span>        if (!match_data) { 
+<span class="no">479 </span>            return ly_err_new(err, LY_EMEM, 0, NULL, NULL, LY_EMEM_MSG); 
+<span class="no">480 </span>        } 
+<span class="no">481 </span> 
+<span class="no">482 </span>        match_opts = PCRE2_ANCHORED; 
+<span class="no">483 </span>#ifdef PCRE2_ENDANCHORED 
+<span class="no">484 </span>        /* PCRE2_ENDANCHORED was added in PCRE2 version 10.30 */ 
+<span class="no">485 </span>        match_opts |= PCRE2_ENDANCHORED; 
+<span class="no">486 </span>#endif 
+<span class="no">487 </span>        rc = pcre2_match(patterns[u]-&gt;code, (PCRE2_SPTR)str, str_len, 0, match_opts, match_data, NULL); 
+<span class="no">488 </span>        pcre2_match_data_free(match_data); 
+<span class="no">489 </span> 
+<span class="no">490 </span>        if ((rc != PCRE2_ERROR_NOMATCH) &amp;&amp; (rc &lt; 0)) { 
+<span class="no">491 </span>            PCRE2_UCHAR pcre2_errmsg[LY_PCRE2_MSG_LIMIT] = {0}; 
+<span class="no">492 </span>            pcre2_get_error_message(rc, pcre2_errmsg, LY_PCRE2_MSG_LIMIT); 
+<span class="no">493 </span> 
+<span class="no">494 </span>            return ly_err_new(err, LY_ESYS, 0, NULL, NULL, &quot;%s&quot;, (const char *)pcre2_errmsg); 
+<span class="no">495 </span>        } else if (((rc == PCRE2_ERROR_NOMATCH) &amp;&amp; !patterns[u]-&gt;inverted) || 
+<span class="no">496 </span>                ((rc != PCRE2_ERROR_NOMATCH) &amp;&amp; patterns[u]-&gt;inverted)) { 
+<span class="no">497 </span>            char *eapptag = patterns[u]-&gt;eapptag ? strdup(patterns[u]-&gt;eapptag) : NULL; 
+<span class="no">498 </span> 
+<span class="no">499 </span>            if (patterns[u]-&gt;emsg) { 
+<span class="no">500 </span>                return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, patterns[u]-&gt;emsg); 
+<span class="no">501 </span>            } else { 
+<span class="no">502 </span>                const char *inverted = patterns[u]-&gt;inverted ? &quot;inverted &quot; : &quot;&quot;; 
+<span class="no">503 </span>                return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, 
+<span class="no">504 </span>                        LY_ERRMSG_NOPATTERN, (int)str_len, str, inverted, patterns[u]-&gt;expr); 
+<span class="no">505 </span>            } 
+<span class="no">506 </span>        } 
+<span class="no">507 </span>    } 
+<span class="no">508 </span>    return LY_SUCCESS; 
+<span class="no">509 </span>} 
+<span class="no">510 </span> 
+<span class="no">511 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">512 </span>lyplg_type_validate_range(LY_DATA_TYPE basetype, struct lysc_range *range, int64_t value, const char *strval, 
+<span class="no">513 </span>        size_t strval_len, struct ly_err_item **err) 
+<span class="no">514 </span>{ 
+<span class="no">515 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">516 </span>    ly_bool is_length; /* length or range */ 
+<span class="no">517 </span> 
+<span class="no">518 </span>    *err = NULL; 
+<span class="no">519 </span>    is_length = (basetype == LY_TYPE_BINARY || basetype == LY_TYPE_STRING) ? 1 : 0; 
+<span class="no">520 </span> 
+<span class="no">521 </span>    LY_ARRAY_FOR(range-&gt;parts, u) { 
+<span class="no">522 </span>        if (basetype &lt; LY_TYPE_DEC64) { 
+<span class="no">523 </span>            /* unsigned */ 
+<span class="no">524 </span>            if ((uint64_t)value &lt; range-&gt;parts[u].min_u64) { 
+<span class="no">525 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">526 </span>                if (range-&gt;emsg) { 
+<span class="no">527 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">528 </span>                } else { 
+<span class="no">529 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, 
+<span class="no">530 </span>                            is_length ? LY_ERRMSG_NOLENGTH : LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">531 </span>                } 
+<span class="no">532 </span>            } else if ((uint64_t)value &lt;= range-&gt;parts[u].max_u64) { 
+<span class="no">533 </span>                /* inside the range */ 
+<span class="no">534 </span>                return LY_SUCCESS; 
+<span class="no">535 </span>            } else if (u == LY_ARRAY_COUNT(range-&gt;parts) - 1) { 
+<span class="no">536 </span>                /* we have the last range part, so the value is out of bounds */ 
+<span class="no">537 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">538 </span>                if (range-&gt;emsg) { 
+<span class="no">539 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">540 </span>                } else { 
+<span class="no">541 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, 
+<span class="no">542 </span>                            is_length ? LY_ERRMSG_NOLENGTH : LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">543 </span>                } 
+<span class="no">544 </span>            } 
+<span class="no">545 </span>        } else { 
+<span class="no">546 </span>            /* signed */ 
+<span class="no">547 </span>            if (value &lt; range-&gt;parts[u].min_64) { 
+<span class="no">548 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">549 </span>                if (range-&gt;emsg) { 
+<span class="no">550 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">551 </span>                } else { 
+<span class="no">552 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">553 </span>                } 
+<span class="no">554 </span>            } else if (value &lt;= range-&gt;parts[u].max_64) { 
+<span class="no">555 </span>                /* inside the range */ 
+<span class="no">556 </span>                return LY_SUCCESS; 
+<span class="no">557 </span>            } else if (u == LY_ARRAY_COUNT(range-&gt;parts) - 1) { 
+<span class="no">558 </span>                /* we have the last range part, so the value is out of bounds */ 
+<span class="no">559 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">560 </span>                if (range-&gt;emsg) { 
+<span class="no">561 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">562 </span>                } else { 
+<span class="no">563 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">564 </span>                } 
+<span class="no">565 </span>            } 
+<span class="no">566 </span>        } 
+<span class="no">567 </span>    } 
+<span class="no">568 </span> 
+<span class="no">569 </span>    return LY_SUCCESS; 
+<span class="no">570 </span>} 
+<span class="no">571 </span> 
+<span class="no">572 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">573 </span>lyplg_type_prefix_data_new(const struct ly_ctx *ctx, const void *value, size_t value_len, LY_VALUE_FORMAT format, 
+<span class="no">574 </span>        const void *prefix_data, LY_VALUE_FORMAT *format_p, void **prefix_data_p) 
+<span class="no">575 </span>{ 
+<span class="no">576 </span>    LY_CHECK_ARG_RET(ctx, value, format_p, prefix_data_p, LY_EINVAL); 
+<span class="no">577 </span> 
+<span class="no">578 </span>    *prefix_data_p = NULL; 
+<span class="no">579 </span>    return ly_store_prefix_data(ctx, value, value_len, format, prefix_data, format_p, (void **)prefix_data_p); 
+<span class="no">580 </span>} 
+<span class="no">581 </span> 
+<span class="no">582 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">583 </span>lyplg_type_prefix_data_dup(const struct ly_ctx *ctx, LY_VALUE_FORMAT format, const void *orig, void **dup) 
+<span class="no">584 </span>{ 
+<span class="no">585 </span>    LY_CHECK_ARG_RET(NULL, dup, LY_EINVAL); 
+<span class="no">586 </span> 
+<span class="no">587 </span>    *dup = NULL; 
+<span class="no">588 </span>    if (!orig) { 
+<span class="no">589 </span>        return LY_SUCCESS; 
+<span class="no">590 </span>    } 
+<span class="no">591 </span> 
+<span class="no">592 </span>    return ly_dup_prefix_data(ctx, format, orig, (void **)dup); 
+<span class="no">593 </span>} 
+<span class="no">594 </span> 
+<span class="no">595 </span>LIBYANG_API_DEF void 
+<span class="no">596 </span>lyplg_type_prefix_data_free(LY_VALUE_FORMAT format, void *prefix_data) 
+<span class="no">597 </span>{ 
+<span class="no">598 </span>    ly_free_prefix_data(format, prefix_data); 
+<span class="no">599 </span>} 
+<span class="no">600 </span> 
+<span class="no">601 </span>static int 
+<span class="no">602 </span>type_get_hints_base(uint32_t hints) 
+<span class="no">603 </span>{ 
+<span class="no">604 </span>    /* set allowed base */ 
+<span class="no">605 </span>    switch (hints &amp; (LYD_VALHINT_DECNUM | LYD_VALHINT_OCTNUM | LYD_VALHINT_HEXNUM)) { 
+<span class="no">606 </span>    case LYD_VALHINT_DECNUM: 
+<span class="no">607 </span>        return LY_BASE_DEC; 
+<span class="no">608 </span>    case LYD_VALHINT_OCTNUM: 
+<span class="no">609 </span>        return LY_BASE_OCT; 
+<span class="no">610 </span>    case LYD_VALHINT_HEXNUM: 
+<span class="no">611 </span>        return LY_BASE_HEX; 
+<span class="no">612 </span>    default: 
+<span class="no">613 </span>        /* generic base - decimal by default, hexa if prexed by 0x/0X and octal otherwise if prefixed by 0 */ 
+<span class="no">614 </span>        return 0; 
+<span class="no">615 </span>    } 
+<span class="no">616 </span>} 
+<span class="no">617 </span> 
+<span class="no">618 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">619 </span>lyplg_type_check_hints(uint32_t hints, const char *value, size_t value_len, LY_DATA_TYPE type, int *base, 
+<span class="no">620 </span>        struct ly_err_item **err) 
+<span class="no">621 </span>{ 
+<span class="no">622 </span>    LY_CHECK_ARG_RET(NULL, value || !value_len, err, LY_EINVAL); 
+<span class="no">623 </span> 
+<span class="no">624 </span>    *err = NULL; 
+<span class="no">625 </span>    if (!value) { 
+<span class="no">626 </span>        value = &quot;&quot;; 
+<span class="no">627 </span>    } 
+<span class="no">628 </span> 
+<span class="no">629 </span>    switch (type) { 
+<span class="no">630 </span>    case LY_TYPE_UINT8: 
+<span class="no">631 </span>    case LY_TYPE_UINT16: 
+<span class="no">632 </span>    case LY_TYPE_UINT32: 
+<span class="no">633 </span>    case LY_TYPE_INT8: 
+<span class="no">634 </span>    case LY_TYPE_INT16: 
+<span class="no">635 </span>    case LY_TYPE_INT32: 
+<span class="no">636 </span>        LY_CHECK_ARG_RET(NULL, base, LY_EINVAL); 
+<span class="no">637 </span> 
+<span class="no">638 </span>        if (!(hints &amp; (LYD_VALHINT_DECNUM | LYD_VALHINT_OCTNUM | LYD_VALHINT_HEXNUM))) { 
+<span class="no">639 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-number-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">640 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">641 </span>        } 
+<span class="no">642 </span>        *base = type_get_hints_base(hints); 
+<span class="no">643 </span>        break; 
+<span class="no">644 </span>    case LY_TYPE_UINT64: 
+<span class="no">645 </span>    case LY_TYPE_INT64: 
+<span class="no">646 </span>        LY_CHECK_ARG_RET(NULL, base, LY_EINVAL); 
+<span class="no">647 </span> 
+<span class="no">648 </span>        if (!(hints &amp; LYD_VALHINT_NUM64)) { 
+<span class="no">649 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-num64-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">650 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">651 </span>        } 
+<span class="no">652 </span>        *base = type_get_hints_base(hints); 
+<span class="no">653 </span>        break; 
+<span class="no">654 </span>    case LY_TYPE_STRING: 
+<span class="no">655 </span>    case LY_TYPE_DEC64: 
+<span class="no">656 </span>    case LY_TYPE_ENUM: 
+<span class="no">657 </span>    case LY_TYPE_BITS: 
+<span class="no">658 </span>    case LY_TYPE_BINARY: 
+<span class="no">659 </span>    case LY_TYPE_IDENT: 
+<span class="no">660 </span>    case LY_TYPE_INST: 
+<span class="no">661 </span>        if (!(hints &amp; LYD_VALHINT_STRING)) { 
+<span class="no">662 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-string-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">663 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">664 </span>        } 
+<span class="no">665 </span>        break; 
+<span class="no">666 </span>    case LY_TYPE_BOOL: 
+<span class="no">667 </span>        if (!(hints &amp; LYD_VALHINT_BOOLEAN)) { 
+<span class="no">668 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-boolean-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">669 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">670 </span>        } 
+<span class="no">671 </span>        break; 
+<span class="no">672 </span>    case LY_TYPE_EMPTY: 
+<span class="no">673 </span>        if (!(hints &amp; LYD_VALHINT_EMPTY)) { 
+<span class="no">674 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-empty-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">675 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">676 </span>        } 
+<span class="no">677 </span>        break; 
+<span class="no">678 </span>    case LY_TYPE_UNKNOWN: 
+<span class="no">679 </span>    case LY_TYPE_LEAFREF: 
+<span class="no">680 </span>    case LY_TYPE_UNION: 
+<span class="no">681 </span>        LOGINT_RET(NULL); 
+<span class="no">682 </span>    } 
+<span class="no">683 </span> 
+<span class="no">684 </span>    return LY_SUCCESS; 
+<span class="no">685 </span>} 
+<span class="no">686 </span> 
+<span class="no">687 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">688 </span>lyplg_type_check_status(const struct lysc_node *ctx_node, uint16_t val_flags, LY_VALUE_FORMAT format, void *prefix_data, 
+<span class="no">689 </span>        const char *val_name, struct ly_err_item **err) 
+<span class="no">690 </span>{ 
+<span class="no">691 </span>    LY_ERR ret; 
+<span class="no">692 </span>    const struct lys_module *mod2; 
+<span class="no">693 </span>    uint16_t flg1, flg2; 
+<span class="no">694 </span> 
+<span class="no">695 </span>    if (format != LY_VALUE_SCHEMA) { 
+<span class="no">696 </span>        /* nothing/unable to check */ 
+<span class="no">697 </span>        return LY_SUCCESS; 
+<span class="no">698 </span>    } 
+<span class="no">699 </span> 
+<span class="no">700 </span>    mod2 = ((struct lysp_module *)prefix_data)-&gt;mod; 
+<span class="no">701 </span> 
+<span class="no">702 </span>    if (mod2 == ctx_node-&gt;module) { 
+<span class="no">703 </span>        /* use flags of the context node since the definition is local */ 
+<span class="no">704 </span>        flg1 = (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) ? (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">705 </span>    } else { 
+<span class="no">706 </span>        /* definition is foreign (deviation, refine), always current */ 
+<span class="no">707 </span>        flg1 = LYS_STATUS_CURR; 
+<span class="no">708 </span>    } 
+<span class="no">709 </span>    flg2 = (val_flags &amp; LYS_STATUS_MASK) ? (val_flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">710 </span> 
+<span class="no">711 </span>    if ((flg1 &lt; flg2) &amp;&amp; (ctx_node-&gt;module == mod2)) { 
+<span class="no">712 </span>        ret = ly_err_new(err, LY_EVALID, LYVE_REFERENCE, NULL, NULL, 
+<span class="no">713 </span>                &quot;A %s definition \&quot;%s\&quot; is not allowed to reference %s value \&quot;%s\&quot;.&quot;, 
+<span class="no">714 </span>                flg1 == LYS_STATUS_CURR ? &quot;current&quot; : &quot;deprecated&quot;, ctx_node-&gt;name, 
+<span class="no">715 </span>                flg2 == LYS_STATUS_OBSLT ? &quot;obsolete&quot; : &quot;deprecated&quot;, val_name); 
+<span class="no">716 </span>        return ret; 
+<span class="no">717 </span>    } 
+<span class="no">718 </span> 
+<span class="no">719 </span>    return LY_SUCCESS; 
+<span class="no">720 </span>} 
+<span class="no">721 </span> 
+<span class="no">722 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">723 </span>lyplg_type_lypath_check_status(const struct lysc_node *ctx_node, const struct ly_path *path, LY_VALUE_FORMAT format, 
+<span class="no">724 </span>        void *prefix_data, struct ly_err_item **err) 
+<span class="no">725 </span>{ 
+<span class="no">726 </span>    LY_ERR ret; 
+<span class="no">727 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">728 </span>    const struct lys_module *val_mod; 
+<span class="no">729 </span>    const struct lysc_node *node; 
+<span class="no">730 </span>    uint16_t flg1, flg2; 
+<span class="no">731 </span> 
+<span class="no">732 </span>    if (format != LY_VALUE_SCHEMA) { 
+<span class="no">733 </span>        /* nothing to check */ 
+<span class="no">734 </span>        return LY_SUCCESS; 
+<span class="no">735 </span>    } 
+<span class="no">736 </span> 
+<span class="no">737 </span>    val_mod = ((struct lysp_module *)prefix_data)-&gt;mod; 
+<span class="no">738 </span>    if (val_mod == ctx_node-&gt;module) { 
+<span class="no">739 </span>        /* use flags of the context node since the definition is local */ 
+<span class="no">740 </span>        flg1 = (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) ? (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">741 </span>    } else { 
+<span class="no">742 </span>        /* definition is foreign (deviation, refine), always current */ 
+<span class="no">743 </span>        flg1 = LYS_STATUS_CURR; 
+<span class="no">744 </span>    } 
+<span class="no">745 </span> 
+<span class="no">746 </span>    LY_ARRAY_FOR(path, u) { 
+<span class="no">747 </span>        node = path[u].node; 
+<span class="no">748 </span> 
+<span class="no">749 </span>        flg2 = (node-&gt;flags &amp; LYS_STATUS_MASK) ? (node-&gt;flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">750 </span>        if ((flg1 &lt; flg2) &amp;&amp; (val_mod == node-&gt;module)) { 
+<span class="no">751 </span>            ret = ly_err_new(err, LY_EVALID, LYVE_REFERENCE, NULL, NULL, 
+<span class="no">752 </span>                    &quot;A %s definition \&quot;%s\&quot; is not allowed to reference %s value \&quot;%s\&quot;.&quot;, 
+<span class="no">753 </span>                    flg1 == LYS_STATUS_CURR ? &quot;current&quot; : &quot;deprecated&quot;, ctx_node-&gt;name, 
+<span class="no">754 </span>                    flg2 == LYS_STATUS_OBSLT ? &quot;obsolete&quot; : &quot;deprecated&quot;, node-&gt;name); 
+<span class="no">755 </span>            return ret; 
+<span class="no">756 </span>        } 
+<span class="no">757 </span>    } 
+<span class="no">758 </span> 
+<span class="no">759 </span>    return LY_SUCCESS; 
+<span class="no">760 </span>} 
+<span class="no">761 </span> 
+<span class="no">762 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">763 </span>lyplg_type_lypath_new(const struct ly_ctx *ctx, const char *value, size_t value_len, uint32_t options, 
+<span class="no">764 </span>        LY_VALUE_FORMAT format, void *prefix_data, const struct lysc_node *ctx_node, struct lys_glob_unres *unres, 
+<span class="no">765 </span>        struct ly_path **path, struct ly_err_item **err) 
+<span class="no">766 </span>{ 
+<span class="no">767 </span>    LY_ERR ret = LY_SUCCESS; 
+<span class="no">768 </span>    struct lyxp_expr *exp = NULL; 
+<span class="no">769 </span>    uint32_t prefix_opt = 0; 
+<span class="no">770 </span> 
+<span class="no">771 </span>    LY_CHECK_ARG_RET(ctx, ctx, value, ctx_node, path, err, LY_EINVAL); 
+<span class="no">772 </span> 
+<span class="no">773 </span>    *path = NULL; 
+<span class="no">774 </span>    *err = NULL; 
+<span class="no">775 </span> 
+<span class="no">776 </span>    switch (format) { 
+<span class="no">777 </span>    case LY_VALUE_SCHEMA: 
+<span class="no">778 </span>    case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">779 </span>    case LY_VALUE_XML: 
+<span class="no">780 </span>        prefix_opt = LY_PATH_PREFIX_MANDATORY; 
+<span class="no">781 </span>        break; 
+<span class="no">782 </span>    case LY_VALUE_CANON: 
+<span class="no">783 </span>    case LY_VALUE_LYB: 
+<span class="no">784 </span>    case LY_VALUE_JSON: 
+<span class="no">785 </span>        prefix_opt = LY_PATH_PREFIX_STRICT_INHERIT; 
+<span class="no">786 </span>        break; 
+<span class="no">787 </span>    } 
+<span class="no">788 </span> 
+<span class="no">789 </span>    /* parse the value */ 
+<span class="no">790 </span>    ret = ly_path_parse(ctx, ctx_node, value, value_len, 0, LY_PATH_BEGIN_ABSOLUTE, prefix_opt, LY_PATH_PRED_SIMPLE, &amp;exp); 
+<span class="no">791 </span>    if (ret) { 
+<span class="no">792 </span>        ret = ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">793 </span>                &quot;Invalid instance-identifier \&quot;%.*s\&quot; value - syntax error.&quot;, (int)value_len, value); 
+<span class="no">794 </span>        goto cleanup; 
+<span class="no">795 </span>    } 
+<span class="no">796 </span> 
+<span class="no">797 </span>    if (options &amp; LYPLG_TYPE_STORE_IMPLEMENT) { 
+<span class="no">798 </span>        /* implement all prefixes */ 
+<span class="no">799 </span>        LY_CHECK_GOTO(ret = lys_compile_expr_implement(ctx, exp, format, prefix_data, 1, unres, NULL), cleanup); 
+<span class="no">800 </span>    } 
+<span class="no">801 </span> 
+<span class="no">802 </span>    /* resolve it on schema tree */ 
+<span class="no">803 </span>    ret = ly_path_compile(ctx, NULL, ctx_node, NULL, exp, (ctx_node-&gt;flags &amp; LYS_IS_OUTPUT) ? 
+<span class="no">804 </span>            LY_PATH_OPER_OUTPUT : LY_PATH_OPER_INPUT, LY_PATH_TARGET_SINGLE, 1, format, prefix_data, path); 
+<span class="no">805 </span>    if (ret) { 
+<span class="no">806 </span>        ret = ly_err_new(err, ret, LYVE_DATA, NULL, NULL, 
+<span class="no">807 </span>                &quot;Invalid instance-identifier \&quot;%.*s\&quot; value - semantic error.&quot;, (int)value_len, value); 
+<span class="no">808 </span>        goto cleanup; 
+<span class="no">809 </span>    } 
+<span class="no">810 </span> 
+<span class="no">811 </span>cleanup: 
+<span class="no">812 </span>    lyxp_expr_free(ctx, exp); 
+<span class="no">813 </span>    if (ret) { 
+<span class="no">814 </span>        ly_path_free(ctx, *path); 
+<span class="no">815 </span>        *path = NULL; 
+<span class="no">816 </span>    } 
+<span class="no">817 </span> 
+<span class="no">818 </span>    return ret; 
+<span class="no">819 </span>} 
+<span class="no">820 </span> 
+<span class="no">821 </span>LIBYANG_API_DEF void 
+<span class="no">822 </span>lyplg_type_lypath_free(const struct ly_ctx *ctx, struct ly_path *path) 
+<span class="no">823 </span>{ 
+<span class="no">824 </span>    ly_path_free(ctx, path); 
+<span class="no">825 </span>} 
+<span class="no">826 </span> 
+<span class="no">827 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">828 </span>lyplg_type_make_implemented(struct lys_module *mod, const char **features, struct lys_glob_unres *unres) 
+<span class="no">829 </span>{ 
+<span class="no">830 </span>    if (mod-&gt;implemented) { 
+<span class="no">831 </span>        return LY_SUCCESS; 
+<span class="no">832 </span>    } 
+<span class="no">833 </span> 
+<span class="no">834 </span>    LY_CHECK_RET(lys_implement(mod, features, unres)); 
+<span class="no">835 </span>    LY_CHECK_RET(lys_compile(mod, &amp;unres-&gt;ds_unres)); 
+<span class="no">836 </span> 
+<span class="no">837 </span>    return LY_SUCCESS; 
+<span class="no">838 </span>} 
+<span class="no">839 </span> 
+<span class="no">840 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">841 </span>lyplg_type_identity_isderived(const struct lysc_ident *base, const struct lysc_ident *der) 
+<span class="no">842 </span>{ 
+<span class="no">843 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">844 </span> 
+<span class="no">845 </span>    LY_ARRAY_FOR(base-&gt;derived, u) { 
+<span class="no">846 </span>        if (der == base-&gt;derived[u]) { 
+<span class="no">847 </span>            return LY_SUCCESS; 
+<span class="no">848 </span>        } 
+<span class="no">849 </span>        if (!lyplg_type_identity_isderived(base-&gt;derived[u], der)) { 
+<span class="no">850 </span>            return LY_SUCCESS; 
+<span class="no">851 </span>        } 
+<span class="no">852 </span>    } 
+<span class="no">853 </span>    return LY_ENOTFOUND; 
+<span class="no">854 </span>} 
+<span class="no">855 </span> 
+<span class="no">856 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">857 </span>lyplg_type_resolve_leafref(const struct lysc_type_leafref *lref, const struct lyd_node *node, struct lyd_value *value, 
+<span class="no">858 </span>        const struct lyd_node *tree, struct lyd_node **target, char **errmsg) 
+<span class="no">859 </span>{ 
+<span class="no">860 </span>    LY_ERR ret; 
+<span class="no">861 </span>    struct lyxp_set set = {0}; 
+<span class="no">862 </span>    const char *val_str; 
+<span class="no">863 </span>    uint32_t i; 
+<span class="no">864 </span>    int rc; 
+<span class="no">865 </span> 
+<span class="no">866 </span>    LY_CHECK_ARG_RET(NULL, lref, node, value, errmsg, LY_EINVAL); 
+<span class="no">867 </span> 
+<span class="no">868 </span>    /* find all target data instances */ 
+<span class="no">869 </span>    ret = lyxp_eval(LYD_CTX(node), lref-&gt;path, node-&gt;schema-&gt;module, LY_VALUE_SCHEMA_RESOLVED, lref-&gt;prefixes, 
+<span class="no">870 </span>            node, tree, NULL, &amp;set, LYXP_IGNORE_WHEN); 
+<span class="no">871 </span>    if (ret) { 
+<span class="no">872 </span>        ret = LY_ENOTFOUND; 
+<span class="no">873 </span>        val_str = lref-&gt;plugin-&gt;print(LYD_CTX(node), value, LY_VALUE_CANON, NULL, NULL, NULL); 
+<span class="no">874 </span>        if (asprintf(errmsg, &quot;Invalid leafref value \&quot;%s\&quot; - XPath evaluation error.&quot;, val_str) == -1) { 
+<span class="no">875 </span>            *errmsg = NULL; 
+<span class="no">876 </span>            ret = LY_EMEM; 
+<span class="no">877 </span>        } 
+<span class="no">878 </span>        goto error; 
+<span class="no">879 </span>    } 
+<span class="no">880 </span> 
+<span class="no">881 </span>    /* check whether any matches */ 
+<span class="no">882 </span>    for (i = 0; i &lt; set.used; ++i) { 
+<span class="no">883 </span>        if (set.val.nodes[i].type != LYXP_NODE_ELEM) { 
+<span class="no">884 </span>            continue; 
+<span class="no">885 </span>        } 
+<span class="no">886 </span> 
+<span class="no">887 </span>        if (!lref-&gt;plugin-&gt;compare(&amp;((struct lyd_node_term *)set.val.nodes[i].node)-&gt;value, value)) { 
+<span class="no">888 </span>            break; 
+<span class="no">889 </span>        } 
+<span class="no">890 </span>    } 
+<span class="no">891 </span>    if (i == set.used) { 
+<span class="no">892 </span>        ret = LY_ENOTFOUND; 
+<span class="no">893 </span>        val_str = lref-&gt;plugin-&gt;print(LYD_CTX(node), value, LY_VALUE_CANON, NULL, NULL, NULL); 
+<span class="no">894 </span>        if (set.used) { 
+<span class="no">895 </span>            rc = asprintf(errmsg, LY_ERRMSG_NOLREF_VAL, val_str, lref-&gt;path-&gt;expr); 
+<span class="no">896 </span>        } else { 
+<span class="no">897 </span>            rc = asprintf(errmsg, LY_ERRMSG_NOLREF_INST, val_str, lref-&gt;path-&gt;expr); 
+<span class="no">898 </span>        } 
+<span class="no">899 </span>        if (rc == -1) { 
+<span class="no">900 </span>            *errmsg = NULL; 
+<span class="no">901 </span>            ret = LY_EMEM; 
+<span class="no">902 </span>        } 
+<span class="no">903 </span>        goto error; 
+<span class="no">904 </span>    } 
+<span class="no">905 </span> 
+<span class="no">906 </span>    if (target) { 
+<span class="no">907 </span>        *target = set.val.nodes[i].node; 
+<span class="no">908 </span>    } 
+<span class="no">909 </span> 
+<span class="no">910 </span>    lyxp_set_free_content(&amp;set); 
+<span class="no">911 </span>    return LY_SUCCESS; 
+<span class="no">912 </span> 
+<span class="no">913 </span>error: 
+<span class="no">914 </span>    lyxp_set_free_content(&amp;set); 
+<span class="no">915 </span>    return ret; 
+<span class="no">916 </span>} 
+<span class="no">917 </span></code></pre></div>
 </div><div class="panel"><div class="panel-header">24_B (modified)</div>
-<div class="codebox"><pre><code><span class="no"> 1 </span>&quot;&quot;&quot; 
-<span class="no"> 2 </span>================================== 
-<span class="no"> 3 </span>Colormap Normalizations Symlognorm 
-<span class="no"> 4 </span>================================== 
-<span class="no"> 5 </span> 
-<span class="no"> 6 </span>Demonstration of using norm to map colormaps onto data in non-linear ways. 
-<span class="no"> 7 </span>&quot;&quot;&quot; 
-<span class="no"> 8 </span> 
-<span class="no"> 9 </span>import numpy as np 
-<span class="no">10 </span>import matplotlib.pyplot as plt 
-<span class="no">11 </span>import matplotlib.colors as colors 
-<span class="no">12 </span> 
-<span class="no">13 </span>&quot;&quot;&quot; 
-<span class="no">14 </span>SymLogNorm: two humps, one negative and one positive, The positive 
-<span class="no">15 </span>with 5-times the amplitude. Linearly, you cannot see detail in the 
-<span class="no">16 </span>negative hump.  Here we logarithmically scale the positive and 
-<span class="no">17 </span>negative data separately. 
-<span class="no">18 </span> 
-<span class="no">19 </span>Note that colorbar labels do not come out looking very good. 
-<span class="no">20 </span>&quot;&quot;&quot; 
-<span class="no">21 </span> 
-<span class="no">22 </span>N = 100 
-<span class="no">23 </span>X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)] 
-<span class="no">24 </span>Z1 = np.exp(-X**2 - Y**2) 
-<span class="no">25 </span>Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2) 
-<span class="no">26 </span>Z = (Z1 - Z2) * 2 
-<span class="no">27 </span> 
-<span class="no">28 </span>fig, ax = plt.subplots(2, 1) 
-<span class="no">29 </span> 
-<span class="no">30 </span>pcm = ax[0].pcolormesh(X, Y, Z, 
-<span class="no">31 </span>                       norm=colors.SymLogNorm(linthresh=0.03, linscale=0.03, 
-<span class="no">32 </span>                                              vmin=-1.0, vmax=1.0<span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-923">,</span></span> <span data-kind="ins" id="edit-2-new"><span class="hl ins" id="hl-2-925">base=10</span></span>), 
-<span class="no">33 </span>                       cmap=&apos;RdBu_r&apos;) 
-<span class="no">34 </span>fig.colorbar(pcm, ax=ax[0], extend=&apos;both&apos;) 
-<span class="no">35 </span> 
-<span class="no">36 </span>pcm = ax[1].pcolormesh(X, Y, Z, cmap=&apos;RdBu_r&apos;, vmin=-np.max(Z)) 
-<span class="no">37 </span>fig.colorbar(pcm, ax=ax[1], extend=&apos;both&apos;) 
-<span class="no">38 </span> 
-<span class="no">39 </span>plt.show() 
-<span class="no">40 </span></code></pre></div>
+<div class="codebox"><pre><code><span class="no">  1 </span>/** 
+<span class="no">  2 </span> * @file plugins_types.c 
+<span class="no">  3 </span> * @author Radek Krejci &lt;rkrejci@cesnet.cz&gt; 
+<span class="no">  4 </span> * @brief Built-in types plugins and interface for user types plugins. 
+<span class="no">  5 </span> * 
+<span class="no">  6 </span> * Copyright (c) 2019 CESNET, z.s.p.o. 
+<span class="no">  7 </span> * 
+<span class="no">  8 </span> * This source code is licensed under BSD 3-Clause License (the &quot;License&quot;). 
+<span class="no">  9 </span> * You may not use this file except in compliance with the License. 
+<span class="no"> 10 </span> * You may obtain a copy of the License at 
+<span class="no"> 11 </span> * 
+<span class="no"> 12 </span> *     https://opensource.org/licenses/BSD-3-Clause 
+<span class="no"> 13 </span> */ 
+<span class="no"> 14 </span> 
+<span class="no"> 15 </span>#define _GNU_SOURCE /* asprintf, strdup */ 
+<span class="no"> 16 </span> 
+<span class="no"> 17 </span>#include &quot;plugins_types.h&quot; 
+<span class="no"> 18 </span> 
+<span class="no"> 19 </span>#include &lt;ctype.h&gt; 
+<span class="no"> 20 </span>#include &lt;inttypes.h&gt; 
+<span class="no"> 21 </span>#include &lt;stdio.h&gt; 
+<span class="no"> 22 </span>#include &lt;stdlib.h&gt; 
+<span class="no"> 23 </span>#include &lt;string.h&gt; 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>#include &quot;common.h&quot; 
+<span class="no"> 26 </span>#include &quot;compat.h&quot; 
+<span class="no"> 27 </span>#include &quot;context.h&quot; 
+<span class="no"> 28 </span>#include &quot;dict.h&quot; 
+<span class="no"> 29 </span>#include &quot;path.h&quot; 
+<span class="no"> 30 </span>#include &quot;schema_compile.h&quot; 
+<span class="no"> 31 </span>#include &quot;set.h&quot; 
+<span class="no"> 32 </span>#include &quot;tree.h&quot; 
+<span class="no"> 33 </span>#include &quot;tree_data.h&quot; 
+<span class="no"> 34 </span>#include &quot;tree_data_internal.h&quot; 
+<span class="no"> 35 </span>#include &quot;tree_schema.h&quot; 
+<span class="no"> 36 </span>#include &quot;tree_schema_internal.h&quot; 
+<span class="no"> 37 </span>#include &quot;xml.h&quot; 
+<span class="no"> 38 </span>#include &quot;xpath.h&quot; 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>/** 
+<span class="no"> 41 </span> * @brief Find import prefix in imports. 
+<span class="no"> 42 </span> */ 
+<span class="no"> 43 </span>static const struct lys_module * 
+<span class="no"> 44 </span>ly_schema_resolve_prefix(const struct ly_ctx *UNUSED(ctx), const char *prefix, size_t prefix_len, const void *prefix_data) 
+<span class="no"> 45 </span>{ 
+<span class="no"> 46 </span>    const struct lysp_module *prefix_mod = prefix_data; 
+<span class="no"> 47 </span>    struct lys_module *m = NULL; 
+<span class="no"> 48 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no"> 49 </span>    const char *local_prefix; 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>    local_prefix = prefix_mod-&gt;is_submod ? ((struct lysp_submodule *)prefix_mod)-&gt;prefix : prefix_mod-&gt;mod-&gt;prefix; 
+<span class="no"> 52 </span>    if (!prefix_len || !ly_strncmp(local_prefix, prefix, prefix_len)) { 
+<span class="no"> 53 </span>        /* it is the prefix of the module itself */ 
+<span class="no"> 54 </span>        m = prefix_mod-&gt;mod; 
+<span class="no"> 55 </span>    } 
+<span class="no"> 56 </span> 
+<span class="no"> 57 </span>    /* search in imports */ 
+<span class="no"> 58 </span>    if (!m) { 
+<span class="no"> 59 </span>        LY_ARRAY_FOR(prefix_mod-&gt;imports, u) { 
+<span class="no"> 60 </span>            if (!ly_strncmp(prefix_mod-&gt;imports[u].prefix, prefix, prefix_len)) { 
+<span class="no"> 61 </span>                m = prefix_mod-&gt;imports[u].module; 
+<span class="no"> 62 </span>                break; 
+<span class="no"> 63 </span>            } 
+<span class="no"> 64 </span>        } 
+<span class="no"> 65 </span>    } 
+<span class="no"> 66 </span> 
+<span class="no"> 67 </span>    return m; 
+<span class="no"> 68 </span>} 
+<span class="no"> 69 </span> 
+<span class="no"> 70 </span>/** 
+<span class="no"> 71 </span> * @brief Find resolved module for a prefix in prefix - module pairs. 
+<span class="no"> 72 </span> */ 
+<span class="no"> 73 </span>static const struct lys_module * 
+<span class="no"> 74 </span>ly_schema_resolved_resolve_prefix(const struct ly_ctx *UNUSED(ctx), const char *prefix, size_t prefix_len, 
+<span class="no"> 75 </span>        const void *prefix_data) 
+<span class="no"> 76 </span>{ 
+<span class="no"> 77 </span>    const struct lysc_prefix *prefixes = prefix_data; 
+<span class="no"> 78 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no"> 79 </span> 
+<span class="no"> 80 </span>    LY_ARRAY_FOR(prefixes, u) { 
+<span class="no"> 81 </span>        if (!ly_strncmp(prefixes[u].prefix, prefix, prefix_len)) { 
+<span class="no"> 82 </span>            return prefixes[u].mod; 
+<span class="no"> 83 </span>        } 
+<span class="no"> 84 </span>    } 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span>    return NULL; 
+<span class="no"> 87 </span>} 
+<span class="no"> 88 </span> 
+<span class="no"> 89 </span>/** 
+<span class="no"> 90 </span> * @brief Find XML namespace prefix in XML namespaces, which are then mapped to modules. 
+<span class="no"> 91 </span> */ 
+<span class="no"> 92 </span>static const struct lys_module * 
+<span class="no"> 93 </span>ly_xml_resolve_prefix(const struct ly_ctx *ctx, const char *prefix, size_t prefix_len, const void *prefix_data) 
+<span class="no"> 94 </span>{ 
+<span class="no"> 95 </span>    const struct lys_module *mod; 
+<span class="no"> 96 </span>    const struct lyxml_ns *ns; 
+<span class="no"> 97 </span>    const struct ly_set *ns_set = prefix_data; 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>    ns = lyxml_ns_get(ns_set, prefix, prefix_len); 
+<span class="no">100 </span>    if (!ns) { 
+<span class="no">101 </span>        return NULL; 
+<span class="no">102 </span>    } 
+<span class="no">103 </span> 
+<span class="no">104 </span>    mod = ly_ctx_get_module_implemented_ns(ctx, ns-&gt;uri); 
+<span class="no">105 </span>    if (!mod) { 
+<span class="no">106 </span>        /* for YIN extension prefix resolution */ 
+<span class="no">107 </span>        mod = ly_ctx_get_module_latest_ns(ctx, ns-&gt;uri); 
+<span class="no">108 </span>    } 
+<span class="no">109 </span>    return mod; 
+<span class="no">110 </span>} 
+<span class="no">111 </span> 
+<span class="no">112 </span>/** 
+<span class="no">113 </span> * @brief Find module name. 
+<span class="no">114 </span> */ 
+<span class="no">115 </span>static const struct lys_module * 
+<span class="no">116 </span>ly_json_resolve_prefix(const struct ly_ctx *ctx, const char *prefix, size_t prefix_len, const void *UNUSED(prefix_data)) 
+<span class="no">117 </span>{ 
+<span class="no">118 </span>    return ly_ctx_get_module_implemented2(ctx, prefix, prefix_len); 
+<span class="no">119 </span>} 
+<span class="no">120 </span> 
+<span class="no">121 </span>const struct lys_module * 
+<span class="no">122 </span>ly_resolve_prefix(const struct ly_ctx *ctx, const void *prefix, size_t prefix_len, LY_VALUE_FORMAT format, 
+<span class="no">123 </span>        const void *prefix_data) 
+<span class="no">124 </span>{ 
+<span class="no">125 </span>    const struct lys_module *mod = NULL; 
+<span class="no">126 </span> 
+<span class="no">127 </span>    LY_CHECK_ARG_RET(ctx, prefix, prefix_len, NULL); 
+<span class="no">128 </span> 
+<span class="no">129 </span>    switch (format) { 
+<span class="no">130 </span>    case LY_VALUE_SCHEMA: 
+<span class="no">131 </span>        mod = ly_schema_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">132 </span>        break; 
+<span class="no">133 </span>    case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">134 </span>        mod = ly_schema_resolved_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">135 </span>        break; 
+<span class="no">136 </span>    case LY_VALUE_XML: 
+<span class="no">137 </span>        mod = ly_xml_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">138 </span>        break; 
+<span class="no">139 </span>    case LY_VALUE_CANON: 
+<span class="no">140 </span>    case LY_VALUE_JSON: 
+<span class="no">141 </span>    case LY_VALUE_LYB: 
+<span class="no">142 </span>        mod = ly_json_resolve_prefix(ctx, prefix, prefix_len, prefix_data); 
+<span class="no">143 </span>        break; 
+<span class="no">144 </span>    } 
+<span class="no">145 </span> 
+<span class="no">146 </span>    return mod; 
+<span class="no">147 </span>} 
+<span class="no">148 </span> 
+<span class="no">149 </span>LIBYANG_API_DEF const struct lys_module * 
+<span class="no">150 </span>lyplg_type_identity_module(const struct ly_ctx *ctx, const struct lysc_node *ctx_node, 
+<span class="no">151 </span>        const char *prefix, size_t prefix_len, LY_VALUE_FORMAT format, const void *prefix_data) 
+<span class="no">152 </span>{ 
+<span class="no">153 </span>    if (prefix_len) { 
+<span class="no">154 </span>        return ly_resolve_prefix(ctx, prefix, prefix_len, format, prefix_data); 
+<span class="no">155 </span>    } else { 
+<span class="no">156 </span>        switch (format) { 
+<span class="no">157 </span>        case LY_VALUE_SCHEMA: 
+<span class="no">158 </span>            <span id="edit-1-new" data-kind="ins"><span id="hl-1-4525" class="hl ins">/* use local module */</span></span> 
+<span class="no">159 </span>            <span id="edit-2-new" data-kind="ins"><span id="hl-2-4560" class="hl ins">return ly_schema_resolve_prefix(ctx, prefix, prefix_len, prefix_data);</span></span> 
+<span class="no">160 </span>        case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">161 </span>            <span id="edit-3-new" data-kind="upd"><span id="hl-3-4682" class="hl upd">/* use local module */</span></span> 
+<span class="no">162 </span>            return <span id="edit-5-new" data-kind="ins"><span id="hl-5-4724" class="hl ins"><span id="edit-4-new" data-kind="del"></span>ly_schema_resolved_resolve_prefix(ctx, prefix, prefix_len, prefix_data)</span></span>; 
+<span class="no">163 </span>        case LY_VALUE_CANON: 
+<span class="no">164 </span>        case LY_VALUE_JSON: 
+<span class="no">165 </span>        case LY_VALUE_LYB: 
+<span class="no">166 </span>            /* use context node module (as specified) */ 
+<span class="no">167 </span>            return ctx_node-&gt;module; 
+<span class="no">168 </span>        case LY_VALUE_XML: 
+<span class="no">169 </span>            /* use the default namespace */ 
+<span class="no">170 </span>            return ly_xml_resolve_prefix(ctx, NULL, 0, prefix_data); 
+<span class="no">171 </span>        } 
+<span class="no">172 </span>    } 
+<span class="no">173 </span> 
+<span class="no">174 </span>    return NULL; 
+<span class="no">175 </span>} 
+<span class="no">176 </span> 
+<span class="no">177 </span>/** 
+<span class="no">178 </span> * @brief Find module in import prefixes. 
+<span class="no">179 </span> */ 
+<span class="no">180 </span>static const char * 
+<span class="no">181 </span>ly_schema_get_prefix(const struct lys_module *mod, void *prefix_data) 
+<span class="no">182 </span>{ 
+<span class="no">183 </span>    const struct lysp_module *pmod = prefix_data; 
+<span class="no">184 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">185 </span> 
+<span class="no">186 </span>    if (pmod-&gt;mod == mod) { 
+<span class="no">187 </span>        if (pmod-&gt;is_submod) { 
+<span class="no">188 </span>            return ((struct lysp_submodule *)pmod)-&gt;prefix; 
+<span class="no">189 </span>        } else { 
+<span class="no">190 </span>            return pmod-&gt;mod-&gt;prefix; 
+<span class="no">191 </span>        } 
+<span class="no">192 </span>    } 
+<span class="no">193 </span> 
+<span class="no">194 </span>    LY_ARRAY_FOR(pmod-&gt;imports, u) { 
+<span class="no">195 </span>        if (pmod-&gt;imports[u].module == mod) { 
+<span class="no">196 </span>            /* match */ 
+<span class="no">197 </span>            return pmod-&gt;imports[u].prefix; 
+<span class="no">198 </span>        } 
+<span class="no">199 </span>    } 
+<span class="no">200 </span> 
+<span class="no">201 </span>    return NULL; 
+<span class="no">202 </span>} 
+<span class="no">203 </span> 
+<span class="no">204 </span>/** 
+<span class="no">205 </span> * @brief Find prefix in prefix - module pairs. 
+<span class="no">206 </span> */ 
+<span class="no">207 </span>static const char * 
+<span class="no">208 </span>ly_schema_resolved_get_prefix(const struct lys_module *mod, void *prefix_data) 
+<span class="no">209 </span>{ 
+<span class="no">210 </span>    struct lysc_prefix *prefixes = prefix_data; 
+<span class="no">211 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">212 </span> 
+<span class="no">213 </span>    LY_ARRAY_FOR(prefixes, u) { 
+<span class="no">214 </span>        if (prefixes[u].mod == mod) { 
+<span class="no">215 </span>            return prefixes[u].prefix; 
+<span class="no">216 </span>        } 
+<span class="no">217 </span>    } 
+<span class="no">218 </span> 
+<span class="no">219 </span>    return NULL; 
+<span class="no">220 </span>} 
+<span class="no">221 </span> 
+<span class="no">222 </span>/** 
+<span class="no">223 </span> * @brief Simply return module local prefix. Also, store the module in a set. 
+<span class="no">224 </span> */ 
+<span class="no">225 </span>static const char * 
+<span class="no">226 </span>ly_xml_get_prefix(const struct lys_module *mod, void *prefix_data) 
+<span class="no">227 </span>{ 
+<span class="no">228 </span>    struct ly_set *ns_list = prefix_data; 
+<span class="no">229 </span> 
+<span class="no">230 </span>    LY_CHECK_RET(ly_set_add(ns_list, (void *)mod, 0, NULL), NULL); 
+<span class="no">231 </span>    return mod-&gt;prefix; 
+<span class="no">232 </span>} 
+<span class="no">233 </span> 
+<span class="no">234 </span>/** 
+<span class="no">235 </span> * @brief Simply return module name. 
+<span class="no">236 </span> */ 
+<span class="no">237 </span>static const char * 
+<span class="no">238 </span>ly_json_get_prefix(const struct lys_module *mod, void *UNUSED(prefix_data)) 
+<span class="no">239 </span>{ 
+<span class="no">240 </span>    return mod-&gt;name; 
+<span class="no">241 </span>} 
+<span class="no">242 </span> 
+<span class="no">243 </span>const char * 
+<span class="no">244 </span>ly_get_prefix(const struct lys_module *mod, LY_VALUE_FORMAT format, void *prefix_data) 
+<span class="no">245 </span>{ 
+<span class="no">246 </span>    const char *prefix = NULL; 
+<span class="no">247 </span> 
+<span class="no">248 </span>    switch (format) { 
+<span class="no">249 </span>    case LY_VALUE_SCHEMA: 
+<span class="no">250 </span>        prefix = ly_schema_get_prefix(mod, prefix_data); 
+<span class="no">251 </span>        break; 
+<span class="no">252 </span>    case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">253 </span>        prefix = ly_schema_resolved_get_prefix(mod, prefix_data); 
+<span class="no">254 </span>        break; 
+<span class="no">255 </span>    case LY_VALUE_XML: 
+<span class="no">256 </span>        prefix = ly_xml_get_prefix(mod, prefix_data); 
+<span class="no">257 </span>        break; 
+<span class="no">258 </span>    case LY_VALUE_CANON: 
+<span class="no">259 </span>    case LY_VALUE_JSON: 
+<span class="no">260 </span>    case LY_VALUE_LYB: 
+<span class="no">261 </span>        prefix = ly_json_get_prefix(mod, prefix_data); 
+<span class="no">262 </span>        break; 
+<span class="no">263 </span>    } 
+<span class="no">264 </span> 
+<span class="no">265 </span>    return prefix; 
+<span class="no">266 </span>} 
+<span class="no">267 </span> 
+<span class="no">268 </span>LIBYANG_API_DEF const char * 
+<span class="no">269 </span>lyplg_type_get_prefix(const struct lys_module *mod, LY_VALUE_FORMAT format, void *prefix_data) 
+<span class="no">270 </span>{ 
+<span class="no">271 </span>    return ly_get_prefix(mod, format, prefix_data); 
+<span class="no">272 </span>} 
+<span class="no">273 </span> 
+<span class="no">274 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">275 </span>lyplg_type_compare_simple(const struct lyd_value *val1, const struct lyd_value *val2) 
+<span class="no">276 </span>{ 
+<span class="no">277 </span>    if (val1-&gt;realtype != val2-&gt;realtype) { 
+<span class="no">278 </span>        return LY_ENOT; 
+<span class="no">279 </span>    } 
+<span class="no">280 </span> 
+<span class="no">281 </span>    if (val1-&gt;_canonical == val2-&gt;_canonical) { 
+<span class="no">282 </span>        return LY_SUCCESS; 
+<span class="no">283 </span>    } 
+<span class="no">284 </span> 
+<span class="no">285 </span>    return LY_ENOT; 
+<span class="no">286 </span>} 
+<span class="no">287 </span> 
+<span class="no">288 </span>LIBYANG_API_DEF const void * 
+<span class="no">289 </span>lyplg_type_print_simple(const struct ly_ctx *UNUSED(ctx), const struct lyd_value *value, LY_VALUE_FORMAT UNUSED(format), 
+<span class="no">290 </span>        void *UNUSED(prefix_data), ly_bool *dynamic, size_t *value_len) 
+<span class="no">291 </span>{ 
+<span class="no">292 </span>    if (dynamic) { 
+<span class="no">293 </span>        *dynamic = 0; 
+<span class="no">294 </span>    } 
+<span class="no">295 </span>    if (value_len) { 
+<span class="no">296 </span>        *value_len = ly_strlen(value-&gt;_canonical); 
+<span class="no">297 </span>    } 
+<span class="no">298 </span>    return value-&gt;_canonical; 
+<span class="no">299 </span>} 
+<span class="no">300 </span> 
+<span class="no">301 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">302 </span>lyplg_type_dup_simple(const struct ly_ctx *ctx, const struct lyd_value *original, struct lyd_value *dup) 
+<span class="no">303 </span>{ 
+<span class="no">304 </span>    memset(dup, 0, sizeof *dup); 
+<span class="no">305 </span>    LY_CHECK_RET(lydict_insert(ctx, original-&gt;_canonical, 0, &amp;dup-&gt;_canonical)); 
+<span class="no">306 </span>    memcpy(dup-&gt;fixed_mem, original-&gt;fixed_mem, sizeof dup-&gt;fixed_mem); 
+<span class="no">307 </span>    dup-&gt;realtype = original-&gt;realtype; 
+<span class="no">308 </span>    return LY_SUCCESS; 
+<span class="no">309 </span>} 
+<span class="no">310 </span> 
+<span class="no">311 </span>LIBYANG_API_DEF void 
+<span class="no">312 </span>lyplg_type_free_simple(const struct ly_ctx *ctx, struct lyd_value *value) 
+<span class="no">313 </span>{ 
+<span class="no">314 </span>    lydict_remove(ctx, value-&gt;_canonical); 
+<span class="no">315 </span>    value-&gt;_canonical = NULL; 
+<span class="no">316 </span>} 
+<span class="no">317 </span> 
+<span class="no">318 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">319 </span>lyplg_type_parse_int(const char *datatype, int base, int64_t min, int64_t max, const char *value, size_t value_len, 
+<span class="no">320 </span>        int64_t *ret, struct ly_err_item **err) 
+<span class="no">321 </span>{ 
+<span class="no">322 </span>    LY_CHECK_ARG_RET(NULL, err, datatype, LY_EINVAL); 
+<span class="no">323 </span> 
+<span class="no">324 </span>    *err = NULL; 
+<span class="no">325 </span> 
+<span class="no">326 </span>    /* consume leading whitespaces */ 
+<span class="no">327 </span>    for ( ; value_len &amp;&amp; isspace(*value); ++value, --value_len) {} 
+<span class="no">328 </span> 
+<span class="no">329 </span>    if (!value || !value_len || !value[0]) { 
+<span class="no">330 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid empty %s value.&quot;, datatype); 
+<span class="no">331 </span>    } 
+<span class="no">332 </span> 
+<span class="no">333 </span>    switch (ly_parse_int(value, value_len, min, max, base, ret)) { 
+<span class="no">334 </span>    case LY_EDENIED: 
+<span class="no">335 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Value is out of %s&apos;s min/max bounds.&quot;, datatype); 
+<span class="no">336 </span>    case LY_SUCCESS: 
+<span class="no">337 </span>        return LY_SUCCESS; 
+<span class="no">338 </span>    default: 
+<span class="no">339 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid %s value \&quot;%.*s\&quot;.&quot;, datatype, (int)value_len, value); 
+<span class="no">340 </span>    } 
+<span class="no">341 </span>} 
+<span class="no">342 </span> 
+<span class="no">343 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">344 </span>lyplg_type_parse_uint(const char *datatype, int base, uint64_t max, const char *value, size_t value_len, uint64_t *ret, 
+<span class="no">345 </span>        struct ly_err_item **err) 
+<span class="no">346 </span>{ 
+<span class="no">347 </span>    LY_CHECK_ARG_RET(NULL, err, datatype, LY_EINVAL); 
+<span class="no">348 </span> 
+<span class="no">349 </span>    *err = NULL; 
+<span class="no">350 </span> 
+<span class="no">351 </span>    /* consume leading whitespaces */ 
+<span class="no">352 </span>    for ( ; value_len &amp;&amp; isspace(*value); ++value, --value_len) {} 
+<span class="no">353 </span> 
+<span class="no">354 </span>    if (!value || !value_len || !value[0]) { 
+<span class="no">355 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid empty %s value.&quot;, datatype); 
+<span class="no">356 </span>    } 
+<span class="no">357 </span> 
+<span class="no">358 </span>    *err = NULL; 
+<span class="no">359 </span>    switch (ly_parse_uint(value, value_len, max, base, ret)) { 
+<span class="no">360 </span>    case LY_EDENIED: 
+<span class="no">361 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">362 </span>                &quot;Value \&quot;%.*s\&quot; is out of %s&apos;s min/max bounds.&quot;, (int)value_len, value, datatype); 
+<span class="no">363 </span>    case LY_SUCCESS: 
+<span class="no">364 </span>        return LY_SUCCESS; 
+<span class="no">365 </span>    default: 
+<span class="no">366 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">367 </span>                &quot;Invalid %s value \&quot;%.*s\&quot;.&quot;, datatype, (int)value_len, value); 
+<span class="no">368 </span>    } 
+<span class="no">369 </span>} 
+<span class="no">370 </span> 
+<span class="no">371 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">372 </span>lyplg_type_parse_dec64(uint8_t fraction_digits, const char *value, size_t value_len, int64_t *ret, struct ly_err_item **err) 
+<span class="no">373 </span>{ 
+<span class="no">374 </span>    LY_ERR ret_val; 
+<span class="no">375 </span>    char *valcopy = NULL; 
+<span class="no">376 </span>    size_t fraction = 0, size, len = 0, trailing_zeros; 
+<span class="no">377 </span>    int64_t d; 
+<span class="no">378 </span> 
+<span class="no">379 </span>    *err = NULL; 
+<span class="no">380 </span> 
+<span class="no">381 </span>    /* consume leading whitespaces */ 
+<span class="no">382 </span>    for ( ; value_len &amp;&amp; isspace(*value); ++value, --value_len) {} 
+<span class="no">383 </span> 
+<span class="no">384 </span>    /* parse value */ 
+<span class="no">385 </span>    if (!value_len) { 
+<span class="no">386 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid empty decimal64 value.&quot;); 
+<span class="no">387 </span>    } else if (!isdigit(value[len]) &amp;&amp; (value[len] != &apos;-&apos;) &amp;&amp; (value[len] != &apos;+&apos;)) { 
+<span class="no">388 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid %zu. character of decimal64 value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">389 </span>                len + 1, (int)value_len, value); 
+<span class="no">390 </span>    } 
+<span class="no">391 </span> 
+<span class="no">392 </span>    if ((value[len] == &apos;-&apos;) || (value[len] == &apos;+&apos;)) { 
+<span class="no">393 </span>        ++len; 
+<span class="no">394 </span>    } 
+<span class="no">395 </span> 
+<span class="no">396 </span>    while (len &lt; value_len &amp;&amp; isdigit(value[len])) { 
+<span class="no">397 </span>        ++len; 
+<span class="no">398 </span>    } 
+<span class="no">399 </span> 
+<span class="no">400 </span>    trailing_zeros = 0; 
+<span class="no">401 </span>    if ((len &lt; value_len) &amp;&amp; ((value[len] != &apos;.&apos;) || !isdigit(value[len + 1]))) { 
+<span class="no">402 </span>        goto decimal; 
+<span class="no">403 </span>    } 
+<span class="no">404 </span>    fraction = len; 
+<span class="no">405 </span>    ++len; 
+<span class="no">406 </span>    while (len &lt; value_len &amp;&amp; isdigit(value[len])) { 
+<span class="no">407 </span>        if (value[len] == &apos;0&apos;) { 
+<span class="no">408 </span>            ++trailing_zeros; 
+<span class="no">409 </span>        } else { 
+<span class="no">410 </span>            trailing_zeros = 0; 
+<span class="no">411 </span>        } 
+<span class="no">412 </span>        ++len; 
+<span class="no">413 </span>    } 
+<span class="no">414 </span>    len = len - trailing_zeros; 
+<span class="no">415 </span> 
+<span class="no">416 </span>decimal: 
+<span class="no">417 </span>    if (fraction &amp;&amp; (len - 1 - fraction &gt; fraction_digits)) { 
+<span class="no">418 </span>        return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">419 </span>                &quot;Value \&quot;%.*s\&quot; of decimal64 type exceeds defined number (%u) of fraction digits.&quot;, 
+<span class="no">420 </span>                (int)len, value, fraction_digits); 
+<span class="no">421 </span>    } 
+<span class="no">422 </span>    if (fraction) { 
+<span class="no">423 </span>        size = len + (fraction_digits - (len - 1 - fraction)); 
+<span class="no">424 </span>    } else { 
+<span class="no">425 </span>        size = len + fraction_digits + 1; 
+<span class="no">426 </span>    } 
+<span class="no">427 </span> 
+<span class="no">428 </span>    if (len + trailing_zeros &lt; value_len) { 
+<span class="no">429 </span>        /* consume trailing whitespaces to check that there is nothing after it */ 
+<span class="no">430 </span>        uint64_t u; 
+<span class="no">431 </span>        for (u = len + trailing_zeros; u &lt; value_len &amp;&amp; isspace(value[u]); ++u) {} 
+<span class="no">432 </span>        if (u != value_len) { 
+<span class="no">433 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">434 </span>                    &quot;Invalid %&quot; PRIu64 &quot;. character of decimal64 value \&quot;%.*s\&quot;.&quot;, u + 1, (int)value_len, value); 
+<span class="no">435 </span>        } 
+<span class="no">436 </span>    } 
+<span class="no">437 </span> 
+<span class="no">438 </span>    /* prepare value string without decimal point to easily parse using standard functions */ 
+<span class="no">439 </span>    valcopy = malloc(size * sizeof *valcopy); 
+<span class="no">440 </span>    if (!valcopy) { 
+<span class="no">441 </span>        return ly_err_new(err, LY_EMEM, 0, NULL, NULL, LY_EMEM_MSG); 
+<span class="no">442 </span>    } 
+<span class="no">443 </span> 
+<span class="no">444 </span>    valcopy[size - 1] = &apos;\0&apos;; 
+<span class="no">445 </span>    if (fraction) { 
+<span class="no">446 </span>        memcpy(&amp;valcopy[0], &amp;value[0], fraction); 
+<span class="no">447 </span>        memcpy(&amp;valcopy[fraction], &amp;value[fraction + 1], len - 1 - (fraction)); 
+<span class="no">448 </span>        /* add trailing zero characters */ 
+<span class="no">449 </span>        memset(&amp;valcopy[len - 1], &apos;0&apos;, fraction_digits - (len - 1 - fraction)); 
+<span class="no">450 </span>    } else { 
+<span class="no">451 </span>        memcpy(&amp;valcopy[0], &amp;value[0], len); 
+<span class="no">452 </span>        /* add trailing zero characters */ 
+<span class="no">453 </span>        memset(&amp;valcopy[len], &apos;0&apos;, fraction_digits); 
+<span class="no">454 </span>    } 
+<span class="no">455 </span> 
+<span class="no">456 </span>    ret_val = lyplg_type_parse_int(&quot;decimal64&quot;, LY_BASE_DEC, INT64_C(-9223372036854775807) - INT64_C(1), 
+<span class="no">457 </span>            INT64_C(9223372036854775807), valcopy, size - 1, &amp;d, err); 
+<span class="no">458 </span>    if (!ret_val &amp;&amp; ret) { 
+<span class="no">459 </span>        *ret = d; 
+<span class="no">460 </span>    } 
+<span class="no">461 </span>    free(valcopy); 
+<span class="no">462 </span> 
+<span class="no">463 </span>    return ret_val; 
+<span class="no">464 </span>} 
+<span class="no">465 </span> 
+<span class="no">466 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">467 </span>lyplg_type_validate_patterns(struct lysc_pattern **patterns, const char *str, size_t str_len, struct ly_err_item **err) 
+<span class="no">468 </span>{ 
+<span class="no">469 </span>    int rc, match_opts; 
+<span class="no">470 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">471 </span>    pcre2_match_data *match_data = NULL; 
+<span class="no">472 </span> 
+<span class="no">473 </span>    LY_CHECK_ARG_RET(NULL, str, err, LY_EINVAL); 
+<span class="no">474 </span> 
+<span class="no">475 </span>    *err = NULL; 
+<span class="no">476 </span> 
+<span class="no">477 </span>    LY_ARRAY_FOR(patterns, u) { 
+<span class="no">478 </span>        /* match_data needs to be allocated each time because of possible multi-threaded evaluation */ 
+<span class="no">479 </span>        match_data = pcre2_match_data_create_from_pattern(patterns[u]-&gt;code, NULL); 
+<span class="no">480 </span>        if (!match_data) { 
+<span class="no">481 </span>            return ly_err_new(err, LY_EMEM, 0, NULL, NULL, LY_EMEM_MSG); 
+<span class="no">482 </span>        } 
+<span class="no">483 </span> 
+<span class="no">484 </span>        match_opts = PCRE2_ANCHORED; 
+<span class="no">485 </span>#ifdef PCRE2_ENDANCHORED 
+<span class="no">486 </span>        /* PCRE2_ENDANCHORED was added in PCRE2 version 10.30 */ 
+<span class="no">487 </span>        match_opts |= PCRE2_ENDANCHORED; 
+<span class="no">488 </span>#endif 
+<span class="no">489 </span>        rc = pcre2_match(patterns[u]-&gt;code, (PCRE2_SPTR)str, str_len, 0, match_opts, match_data, NULL); 
+<span class="no">490 </span>        pcre2_match_data_free(match_data); 
+<span class="no">491 </span> 
+<span class="no">492 </span>        if ((rc != PCRE2_ERROR_NOMATCH) &amp;&amp; (rc &lt; 0)) { 
+<span class="no">493 </span>            PCRE2_UCHAR pcre2_errmsg[LY_PCRE2_MSG_LIMIT] = {0}; 
+<span class="no">494 </span>            pcre2_get_error_message(rc, pcre2_errmsg, LY_PCRE2_MSG_LIMIT); 
+<span class="no">495 </span> 
+<span class="no">496 </span>            return ly_err_new(err, LY_ESYS, 0, NULL, NULL, &quot;%s&quot;, (const char *)pcre2_errmsg); 
+<span class="no">497 </span>        } else if (((rc == PCRE2_ERROR_NOMATCH) &amp;&amp; !patterns[u]-&gt;inverted) || 
+<span class="no">498 </span>                ((rc != PCRE2_ERROR_NOMATCH) &amp;&amp; patterns[u]-&gt;inverted)) { 
+<span class="no">499 </span>            char *eapptag = patterns[u]-&gt;eapptag ? strdup(patterns[u]-&gt;eapptag) : NULL; 
+<span class="no">500 </span> 
+<span class="no">501 </span>            if (patterns[u]-&gt;emsg) { 
+<span class="no">502 </span>                return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, patterns[u]-&gt;emsg); 
+<span class="no">503 </span>            } else { 
+<span class="no">504 </span>                const char *inverted = patterns[u]-&gt;inverted ? &quot;inverted &quot; : &quot;&quot;; 
+<span class="no">505 </span>                return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, 
+<span class="no">506 </span>                        LY_ERRMSG_NOPATTERN, (int)str_len, str, inverted, patterns[u]-&gt;expr); 
+<span class="no">507 </span>            } 
+<span class="no">508 </span>        } 
+<span class="no">509 </span>    } 
+<span class="no">510 </span>    return LY_SUCCESS; 
+<span class="no">511 </span>} 
+<span class="no">512 </span> 
+<span class="no">513 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">514 </span>lyplg_type_validate_range(LY_DATA_TYPE basetype, struct lysc_range *range, int64_t value, const char *strval, 
+<span class="no">515 </span>        size_t strval_len, struct ly_err_item **err) 
+<span class="no">516 </span>{ 
+<span class="no">517 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">518 </span>    ly_bool is_length; /* length or range */ 
+<span class="no">519 </span> 
+<span class="no">520 </span>    *err = NULL; 
+<span class="no">521 </span>    is_length = (basetype == LY_TYPE_BINARY || basetype == LY_TYPE_STRING) ? 1 : 0; 
+<span class="no">522 </span> 
+<span class="no">523 </span>    LY_ARRAY_FOR(range-&gt;parts, u) { 
+<span class="no">524 </span>        if (basetype &lt; LY_TYPE_DEC64) { 
+<span class="no">525 </span>            /* unsigned */ 
+<span class="no">526 </span>            if ((uint64_t)value &lt; range-&gt;parts[u].min_u64) { 
+<span class="no">527 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">528 </span>                if (range-&gt;emsg) { 
+<span class="no">529 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">530 </span>                } else { 
+<span class="no">531 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, 
+<span class="no">532 </span>                            is_length ? LY_ERRMSG_NOLENGTH : LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">533 </span>                } 
+<span class="no">534 </span>            } else if ((uint64_t)value &lt;= range-&gt;parts[u].max_u64) { 
+<span class="no">535 </span>                /* inside the range */ 
+<span class="no">536 </span>                return LY_SUCCESS; 
+<span class="no">537 </span>            } else if (u == LY_ARRAY_COUNT(range-&gt;parts) - 1) { 
+<span class="no">538 </span>                /* we have the last range part, so the value is out of bounds */ 
+<span class="no">539 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">540 </span>                if (range-&gt;emsg) { 
+<span class="no">541 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">542 </span>                } else { 
+<span class="no">543 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, 
+<span class="no">544 </span>                            is_length ? LY_ERRMSG_NOLENGTH : LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">545 </span>                } 
+<span class="no">546 </span>            } 
+<span class="no">547 </span>        } else { 
+<span class="no">548 </span>            /* signed */ 
+<span class="no">549 </span>            if (value &lt; range-&gt;parts[u].min_64) { 
+<span class="no">550 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">551 </span>                if (range-&gt;emsg) { 
+<span class="no">552 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">553 </span>                } else { 
+<span class="no">554 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">555 </span>                } 
+<span class="no">556 </span>            } else if (value &lt;= range-&gt;parts[u].max_64) { 
+<span class="no">557 </span>                /* inside the range */ 
+<span class="no">558 </span>                return LY_SUCCESS; 
+<span class="no">559 </span>            } else if (u == LY_ARRAY_COUNT(range-&gt;parts) - 1) { 
+<span class="no">560 </span>                /* we have the last range part, so the value is out of bounds */ 
+<span class="no">561 </span>                char *eapptag = range-&gt;eapptag ? strdup(range-&gt;eapptag) : NULL; 
+<span class="no">562 </span>                if (range-&gt;emsg) { 
+<span class="no">563 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, &quot;%s&quot;, range-&gt;emsg); 
+<span class="no">564 </span>                } else { 
+<span class="no">565 </span>                    return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, eapptag, LY_ERRMSG_NORANGE, (int)strval_len, strval); 
+<span class="no">566 </span>                } 
+<span class="no">567 </span>            } 
+<span class="no">568 </span>        } 
+<span class="no">569 </span>    } 
+<span class="no">570 </span> 
+<span class="no">571 </span>    return LY_SUCCESS; 
+<span class="no">572 </span>} 
+<span class="no">573 </span> 
+<span class="no">574 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">575 </span>lyplg_type_prefix_data_new(const struct ly_ctx *ctx, const void *value, size_t value_len, LY_VALUE_FORMAT format, 
+<span class="no">576 </span>        const void *prefix_data, LY_VALUE_FORMAT *format_p, void **prefix_data_p) 
+<span class="no">577 </span>{ 
+<span class="no">578 </span>    LY_CHECK_ARG_RET(ctx, value, format_p, prefix_data_p, LY_EINVAL); 
+<span class="no">579 </span> 
+<span class="no">580 </span>    *prefix_data_p = NULL; 
+<span class="no">581 </span>    return ly_store_prefix_data(ctx, value, value_len, format, prefix_data, format_p, (void **)prefix_data_p); 
+<span class="no">582 </span>} 
+<span class="no">583 </span> 
+<span class="no">584 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">585 </span>lyplg_type_prefix_data_dup(const struct ly_ctx *ctx, LY_VALUE_FORMAT format, const void *orig, void **dup) 
+<span class="no">586 </span>{ 
+<span class="no">587 </span>    LY_CHECK_ARG_RET(NULL, dup, LY_EINVAL); 
+<span class="no">588 </span> 
+<span class="no">589 </span>    *dup = NULL; 
+<span class="no">590 </span>    if (!orig) { 
+<span class="no">591 </span>        return LY_SUCCESS; 
+<span class="no">592 </span>    } 
+<span class="no">593 </span> 
+<span class="no">594 </span>    return ly_dup_prefix_data(ctx, format, orig, (void **)dup); 
+<span class="no">595 </span>} 
+<span class="no">596 </span> 
+<span class="no">597 </span>LIBYANG_API_DEF void 
+<span class="no">598 </span>lyplg_type_prefix_data_free(LY_VALUE_FORMAT format, void *prefix_data) 
+<span class="no">599 </span>{ 
+<span class="no">600 </span>    ly_free_prefix_data(format, prefix_data); 
+<span class="no">601 </span>} 
+<span class="no">602 </span> 
+<span class="no">603 </span>static int 
+<span class="no">604 </span>type_get_hints_base(uint32_t hints) 
+<span class="no">605 </span>{ 
+<span class="no">606 </span>    /* set allowed base */ 
+<span class="no">607 </span>    switch (hints &amp; (LYD_VALHINT_DECNUM | LYD_VALHINT_OCTNUM | LYD_VALHINT_HEXNUM)) { 
+<span class="no">608 </span>    case LYD_VALHINT_DECNUM: 
+<span class="no">609 </span>        return LY_BASE_DEC; 
+<span class="no">610 </span>    case LYD_VALHINT_OCTNUM: 
+<span class="no">611 </span>        return LY_BASE_OCT; 
+<span class="no">612 </span>    case LYD_VALHINT_HEXNUM: 
+<span class="no">613 </span>        return LY_BASE_HEX; 
+<span class="no">614 </span>    default: 
+<span class="no">615 </span>        /* generic base - decimal by default, hexa if prexed by 0x/0X and octal otherwise if prefixed by 0 */ 
+<span class="no">616 </span>        return 0; 
+<span class="no">617 </span>    } 
+<span class="no">618 </span>} 
+<span class="no">619 </span> 
+<span class="no">620 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">621 </span>lyplg_type_check_hints(uint32_t hints, const char *value, size_t value_len, LY_DATA_TYPE type, int *base, 
+<span class="no">622 </span>        struct ly_err_item **err) 
+<span class="no">623 </span>{ 
+<span class="no">624 </span>    LY_CHECK_ARG_RET(NULL, value || !value_len, err, LY_EINVAL); 
+<span class="no">625 </span> 
+<span class="no">626 </span>    *err = NULL; 
+<span class="no">627 </span>    if (!value) { 
+<span class="no">628 </span>        value = &quot;&quot;; 
+<span class="no">629 </span>    } 
+<span class="no">630 </span> 
+<span class="no">631 </span>    switch (type) { 
+<span class="no">632 </span>    case LY_TYPE_UINT8: 
+<span class="no">633 </span>    case LY_TYPE_UINT16: 
+<span class="no">634 </span>    case LY_TYPE_UINT32: 
+<span class="no">635 </span>    case LY_TYPE_INT8: 
+<span class="no">636 </span>    case LY_TYPE_INT16: 
+<span class="no">637 </span>    case LY_TYPE_INT32: 
+<span class="no">638 </span>        LY_CHECK_ARG_RET(NULL, base, LY_EINVAL); 
+<span class="no">639 </span> 
+<span class="no">640 </span>        if (!(hints &amp; (LYD_VALHINT_DECNUM | LYD_VALHINT_OCTNUM | LYD_VALHINT_HEXNUM))) { 
+<span class="no">641 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-number-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">642 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">643 </span>        } 
+<span class="no">644 </span>        *base = type_get_hints_base(hints); 
+<span class="no">645 </span>        break; 
+<span class="no">646 </span>    case LY_TYPE_UINT64: 
+<span class="no">647 </span>    case LY_TYPE_INT64: 
+<span class="no">648 </span>        LY_CHECK_ARG_RET(NULL, base, LY_EINVAL); 
+<span class="no">649 </span> 
+<span class="no">650 </span>        if (!(hints &amp; LYD_VALHINT_NUM64)) { 
+<span class="no">651 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-num64-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">652 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">653 </span>        } 
+<span class="no">654 </span>        *base = type_get_hints_base(hints); 
+<span class="no">655 </span>        break; 
+<span class="no">656 </span>    case LY_TYPE_STRING: 
+<span class="no">657 </span>    case LY_TYPE_DEC64: 
+<span class="no">658 </span>    case LY_TYPE_ENUM: 
+<span class="no">659 </span>    case LY_TYPE_BITS: 
+<span class="no">660 </span>    case LY_TYPE_BINARY: 
+<span class="no">661 </span>    case LY_TYPE_IDENT: 
+<span class="no">662 </span>    case LY_TYPE_INST: 
+<span class="no">663 </span>        if (!(hints &amp; LYD_VALHINT_STRING)) { 
+<span class="no">664 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-string-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">665 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">666 </span>        } 
+<span class="no">667 </span>        break; 
+<span class="no">668 </span>    case LY_TYPE_BOOL: 
+<span class="no">669 </span>        if (!(hints &amp; LYD_VALHINT_BOOLEAN)) { 
+<span class="no">670 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-boolean-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">671 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">672 </span>        } 
+<span class="no">673 </span>        break; 
+<span class="no">674 </span>    case LY_TYPE_EMPTY: 
+<span class="no">675 </span>        if (!(hints &amp; LYD_VALHINT_EMPTY)) { 
+<span class="no">676 </span>            return ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, &quot;Invalid non-empty-encoded %s value \&quot;%.*s\&quot;.&quot;, 
+<span class="no">677 </span>                    lys_datatype2str(type), (int)value_len, value); 
+<span class="no">678 </span>        } 
+<span class="no">679 </span>        break; 
+<span class="no">680 </span>    case LY_TYPE_UNKNOWN: 
+<span class="no">681 </span>    case LY_TYPE_LEAFREF: 
+<span class="no">682 </span>    case LY_TYPE_UNION: 
+<span class="no">683 </span>        LOGINT_RET(NULL); 
+<span class="no">684 </span>    } 
+<span class="no">685 </span> 
+<span class="no">686 </span>    return LY_SUCCESS; 
+<span class="no">687 </span>} 
+<span class="no">688 </span> 
+<span class="no">689 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">690 </span>lyplg_type_check_status(const struct lysc_node *ctx_node, uint16_t val_flags, LY_VALUE_FORMAT format, void *prefix_data, 
+<span class="no">691 </span>        const char *val_name, struct ly_err_item **err) 
+<span class="no">692 </span>{ 
+<span class="no">693 </span>    LY_ERR ret; 
+<span class="no">694 </span>    const struct lys_module *mod2; 
+<span class="no">695 </span>    uint16_t flg1, flg2; 
+<span class="no">696 </span> 
+<span class="no">697 </span>    if (format != LY_VALUE_SCHEMA) { 
+<span class="no">698 </span>        /* nothing/unable to check */ 
+<span class="no">699 </span>        return LY_SUCCESS; 
+<span class="no">700 </span>    } 
+<span class="no">701 </span> 
+<span class="no">702 </span>    mod2 = ((struct lysp_module *)prefix_data)-&gt;mod; 
+<span class="no">703 </span> 
+<span class="no">704 </span>    if (mod2 == ctx_node-&gt;module) { 
+<span class="no">705 </span>        /* use flags of the context node since the definition is local */ 
+<span class="no">706 </span>        flg1 = (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) ? (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">707 </span>    } else { 
+<span class="no">708 </span>        /* definition is foreign (deviation, refine), always current */ 
+<span class="no">709 </span>        flg1 = LYS_STATUS_CURR; 
+<span class="no">710 </span>    } 
+<span class="no">711 </span>    flg2 = (val_flags &amp; LYS_STATUS_MASK) ? (val_flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">712 </span> 
+<span class="no">713 </span>    if ((flg1 &lt; flg2) &amp;&amp; (ctx_node-&gt;module == mod2)) { 
+<span class="no">714 </span>        ret = ly_err_new(err, LY_EVALID, LYVE_REFERENCE, NULL, NULL, 
+<span class="no">715 </span>                &quot;A %s definition \&quot;%s\&quot; is not allowed to reference %s value \&quot;%s\&quot;.&quot;, 
+<span class="no">716 </span>                flg1 == LYS_STATUS_CURR ? &quot;current&quot; : &quot;deprecated&quot;, ctx_node-&gt;name, 
+<span class="no">717 </span>                flg2 == LYS_STATUS_OBSLT ? &quot;obsolete&quot; : &quot;deprecated&quot;, val_name); 
+<span class="no">718 </span>        return ret; 
+<span class="no">719 </span>    } 
+<span class="no">720 </span> 
+<span class="no">721 </span>    return LY_SUCCESS; 
+<span class="no">722 </span>} 
+<span class="no">723 </span> 
+<span class="no">724 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">725 </span>lyplg_type_lypath_check_status(const struct lysc_node *ctx_node, const struct ly_path *path, LY_VALUE_FORMAT format, 
+<span class="no">726 </span>        void *prefix_data, struct ly_err_item **err) 
+<span class="no">727 </span>{ 
+<span class="no">728 </span>    LY_ERR ret; 
+<span class="no">729 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">730 </span>    const struct lys_module *val_mod; 
+<span class="no">731 </span>    const struct lysc_node *node; 
+<span class="no">732 </span>    uint16_t flg1, flg2; 
+<span class="no">733 </span> 
+<span class="no">734 </span>    if (format != LY_VALUE_SCHEMA) { 
+<span class="no">735 </span>        /* nothing to check */ 
+<span class="no">736 </span>        return LY_SUCCESS; 
+<span class="no">737 </span>    } 
+<span class="no">738 </span> 
+<span class="no">739 </span>    val_mod = ((struct lysp_module *)prefix_data)-&gt;mod; 
+<span class="no">740 </span>    if (val_mod == ctx_node-&gt;module) { 
+<span class="no">741 </span>        /* use flags of the context node since the definition is local */ 
+<span class="no">742 </span>        flg1 = (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) ? (ctx_node-&gt;flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">743 </span>    } else { 
+<span class="no">744 </span>        /* definition is foreign (deviation, refine), always current */ 
+<span class="no">745 </span>        flg1 = LYS_STATUS_CURR; 
+<span class="no">746 </span>    } 
+<span class="no">747 </span> 
+<span class="no">748 </span>    LY_ARRAY_FOR(path, u) { 
+<span class="no">749 </span>        node = path[u].node; 
+<span class="no">750 </span> 
+<span class="no">751 </span>        flg2 = (node-&gt;flags &amp; LYS_STATUS_MASK) ? (node-&gt;flags &amp; LYS_STATUS_MASK) : LYS_STATUS_CURR; 
+<span class="no">752 </span>        if ((flg1 &lt; flg2) &amp;&amp; (val_mod == node-&gt;module)) { 
+<span class="no">753 </span>            ret = ly_err_new(err, LY_EVALID, LYVE_REFERENCE, NULL, NULL, 
+<span class="no">754 </span>                    &quot;A %s definition \&quot;%s\&quot; is not allowed to reference %s value \&quot;%s\&quot;.&quot;, 
+<span class="no">755 </span>                    flg1 == LYS_STATUS_CURR ? &quot;current&quot; : &quot;deprecated&quot;, ctx_node-&gt;name, 
+<span class="no">756 </span>                    flg2 == LYS_STATUS_OBSLT ? &quot;obsolete&quot; : &quot;deprecated&quot;, node-&gt;name); 
+<span class="no">757 </span>            return ret; 
+<span class="no">758 </span>        } 
+<span class="no">759 </span>    } 
+<span class="no">760 </span> 
+<span class="no">761 </span>    return LY_SUCCESS; 
+<span class="no">762 </span>} 
+<span class="no">763 </span> 
+<span class="no">764 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">765 </span>lyplg_type_lypath_new(const struct ly_ctx *ctx, const char *value, size_t value_len, uint32_t options, 
+<span class="no">766 </span>        LY_VALUE_FORMAT format, void *prefix_data, const struct lysc_node *ctx_node, struct lys_glob_unres *unres, 
+<span class="no">767 </span>        struct ly_path **path, struct ly_err_item **err) 
+<span class="no">768 </span>{ 
+<span class="no">769 </span>    LY_ERR ret = LY_SUCCESS; 
+<span class="no">770 </span>    struct lyxp_expr *exp = NULL; 
+<span class="no">771 </span>    uint32_t prefix_opt = 0; 
+<span class="no">772 </span> 
+<span class="no">773 </span>    LY_CHECK_ARG_RET(ctx, ctx, value, ctx_node, path, err, LY_EINVAL); 
+<span class="no">774 </span> 
+<span class="no">775 </span>    *path = NULL; 
+<span class="no">776 </span>    *err = NULL; 
+<span class="no">777 </span> 
+<span class="no">778 </span>    switch (format) { 
+<span class="no">779 </span>    case LY_VALUE_SCHEMA: 
+<span class="no">780 </span>    case LY_VALUE_SCHEMA_RESOLVED: 
+<span class="no">781 </span>    case LY_VALUE_XML: 
+<span class="no">782 </span>        prefix_opt = LY_PATH_PREFIX_MANDATORY; 
+<span class="no">783 </span>        break; 
+<span class="no">784 </span>    case LY_VALUE_CANON: 
+<span class="no">785 </span>    case LY_VALUE_LYB: 
+<span class="no">786 </span>    case LY_VALUE_JSON: 
+<span class="no">787 </span>        prefix_opt = LY_PATH_PREFIX_STRICT_INHERIT; 
+<span class="no">788 </span>        break; 
+<span class="no">789 </span>    } 
+<span class="no">790 </span> 
+<span class="no">791 </span>    /* parse the value */ 
+<span class="no">792 </span>    ret = ly_path_parse(ctx, ctx_node, value, value_len, 0, LY_PATH_BEGIN_ABSOLUTE, prefix_opt, LY_PATH_PRED_SIMPLE, &amp;exp); 
+<span class="no">793 </span>    if (ret) { 
+<span class="no">794 </span>        ret = ly_err_new(err, LY_EVALID, LYVE_DATA, NULL, NULL, 
+<span class="no">795 </span>                &quot;Invalid instance-identifier \&quot;%.*s\&quot; value - syntax error.&quot;, (int)value_len, value); 
+<span class="no">796 </span>        goto cleanup; 
+<span class="no">797 </span>    } 
+<span class="no">798 </span> 
+<span class="no">799 </span>    if (options &amp; LYPLG_TYPE_STORE_IMPLEMENT) { 
+<span class="no">800 </span>        /* implement all prefixes */ 
+<span class="no">801 </span>        LY_CHECK_GOTO(ret = lys_compile_expr_implement(ctx, exp, format, prefix_data, 1, unres, NULL), cleanup); 
+<span class="no">802 </span>    } 
+<span class="no">803 </span> 
+<span class="no">804 </span>    /* resolve it on schema tree */ 
+<span class="no">805 </span>    ret = ly_path_compile(ctx, NULL, ctx_node, NULL, exp, (ctx_node-&gt;flags &amp; LYS_IS_OUTPUT) ? 
+<span class="no">806 </span>            LY_PATH_OPER_OUTPUT : LY_PATH_OPER_INPUT, LY_PATH_TARGET_SINGLE, 1, format, prefix_data, path); 
+<span class="no">807 </span>    if (ret) { 
+<span class="no">808 </span>        ret = ly_err_new(err, ret, LYVE_DATA, NULL, NULL, 
+<span class="no">809 </span>                &quot;Invalid instance-identifier \&quot;%.*s\&quot; value - semantic error.&quot;, (int)value_len, value); 
+<span class="no">810 </span>        goto cleanup; 
+<span class="no">811 </span>    } 
+<span class="no">812 </span> 
+<span class="no">813 </span>cleanup: 
+<span class="no">814 </span>    lyxp_expr_free(ctx, exp); 
+<span class="no">815 </span>    if (ret) { 
+<span class="no">816 </span>        ly_path_free(ctx, *path); 
+<span class="no">817 </span>        *path = NULL; 
+<span class="no">818 </span>    } 
+<span class="no">819 </span> 
+<span class="no">820 </span>    return ret; 
+<span class="no">821 </span>} 
+<span class="no">822 </span> 
+<span class="no">823 </span>LIBYANG_API_DEF void 
+<span class="no">824 </span>lyplg_type_lypath_free(const struct ly_ctx *ctx, struct ly_path *path) 
+<span class="no">825 </span>{ 
+<span class="no">826 </span>    ly_path_free(ctx, path); 
+<span class="no">827 </span>} 
+<span class="no">828 </span> 
+<span class="no">829 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">830 </span>lyplg_type_make_implemented(struct lys_module *mod, const char **features, struct lys_glob_unres *unres) 
+<span class="no">831 </span>{ 
+<span class="no">832 </span>    if (mod-&gt;implemented) { 
+<span class="no">833 </span>        return LY_SUCCESS; 
+<span class="no">834 </span>    } 
+<span class="no">835 </span> 
+<span class="no">836 </span>    LY_CHECK_RET(lys_implement(mod, features, unres)); 
+<span class="no">837 </span>    LY_CHECK_RET(lys_compile(mod, &amp;unres-&gt;ds_unres)); 
+<span class="no">838 </span> 
+<span class="no">839 </span>    return LY_SUCCESS; 
+<span class="no">840 </span>} 
+<span class="no">841 </span> 
+<span class="no">842 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">843 </span>lyplg_type_identity_isderived(const struct lysc_ident *base, const struct lysc_ident *der) 
+<span class="no">844 </span>{ 
+<span class="no">845 </span>    LY_ARRAY_COUNT_TYPE u; 
+<span class="no">846 </span> 
+<span class="no">847 </span>    LY_ARRAY_FOR(base-&gt;derived, u) { 
+<span class="no">848 </span>        if (der == base-&gt;derived[u]) { 
+<span class="no">849 </span>            return LY_SUCCESS; 
+<span class="no">850 </span>        } 
+<span class="no">851 </span>        if (!lyplg_type_identity_isderived(base-&gt;derived[u], der)) { 
+<span class="no">852 </span>            return LY_SUCCESS; 
+<span class="no">853 </span>        } 
+<span class="no">854 </span>    } 
+<span class="no">855 </span>    return LY_ENOTFOUND; 
+<span class="no">856 </span>} 
+<span class="no">857 </span> 
+<span class="no">858 </span>LIBYANG_API_DEF LY_ERR 
+<span class="no">859 </span>lyplg_type_resolve_leafref(const struct lysc_type_leafref *lref, const struct lyd_node *node, struct lyd_value *value, 
+<span class="no">860 </span>        const struct lyd_node *tree, struct lyd_node **target, char **errmsg) 
+<span class="no">861 </span>{ 
+<span class="no">862 </span>    LY_ERR ret; 
+<span class="no">863 </span>    struct lyxp_set set = {0}; 
+<span class="no">864 </span>    const char *val_str; 
+<span class="no">865 </span>    uint32_t i; 
+<span class="no">866 </span>    int rc; 
+<span class="no">867 </span> 
+<span class="no">868 </span>    LY_CHECK_ARG_RET(NULL, lref, node, value, errmsg, LY_EINVAL); 
+<span class="no">869 </span> 
+<span class="no">870 </span>    /* find all target data instances */ 
+<span class="no">871 </span>    ret = lyxp_eval(LYD_CTX(node), lref-&gt;path, node-&gt;schema-&gt;module, LY_VALUE_SCHEMA_RESOLVED, lref-&gt;prefixes, 
+<span class="no">872 </span>            node, tree, NULL, &amp;set, LYXP_IGNORE_WHEN); 
+<span class="no">873 </span>    if (ret) { 
+<span class="no">874 </span>        ret = LY_ENOTFOUND; 
+<span class="no">875 </span>        val_str = lref-&gt;plugin-&gt;print(LYD_CTX(node), value, LY_VALUE_CANON, NULL, NULL, NULL); 
+<span class="no">876 </span>        if (asprintf(errmsg, &quot;Invalid leafref value \&quot;%s\&quot; - XPath evaluation error.&quot;, val_str) == -1) { 
+<span class="no">877 </span>            *errmsg = NULL; 
+<span class="no">878 </span>            ret = LY_EMEM; 
+<span class="no">879 </span>        } 
+<span class="no">880 </span>        goto error; 
+<span class="no">881 </span>    } 
+<span class="no">882 </span> 
+<span class="no">883 </span>    /* check whether any matches */ 
+<span class="no">884 </span>    for (i = 0; i &lt; set.used; ++i) { 
+<span class="no">885 </span>        if (set.val.nodes[i].type != LYXP_NODE_ELEM) { 
+<span class="no">886 </span>            continue; 
+<span class="no">887 </span>        } 
+<span class="no">888 </span> 
+<span class="no">889 </span>        if (!lref-&gt;plugin-&gt;compare(&amp;((struct lyd_node_term *)set.val.nodes[i].node)-&gt;value, value)) { 
+<span class="no">890 </span>            break; 
+<span class="no">891 </span>        } 
+<span class="no">892 </span>    } 
+<span class="no">893 </span>    if (i == set.used) { 
+<span class="no">894 </span>        ret = LY_ENOTFOUND; 
+<span class="no">895 </span>        val_str = lref-&gt;plugin-&gt;print(LYD_CTX(node), value, LY_VALUE_CANON, NULL, NULL, NULL); 
+<span class="no">896 </span>        if (set.used) { 
+<span class="no">897 </span>            rc = asprintf(errmsg, LY_ERRMSG_NOLREF_VAL, val_str, lref-&gt;path-&gt;expr); 
+<span class="no">898 </span>        } else { 
+<span class="no">899 </span>            rc = asprintf(errmsg, LY_ERRMSG_NOLREF_INST, val_str, lref-&gt;path-&gt;expr); 
+<span class="no">900 </span>        } 
+<span class="no">901 </span>        if (rc == -1) { 
+<span class="no">902 </span>            *errmsg = NULL; 
+<span class="no">903 </span>            ret = LY_EMEM; 
+<span class="no">904 </span>        } 
+<span class="no">905 </span>        goto error; 
+<span class="no">906 </span>    } 
+<span class="no">907 </span> 
+<span class="no">908 </span>    if (target) { 
+<span class="no">909 </span>        *target = set.val.nodes[i].node; 
+<span class="no">910 </span>    } 
+<span class="no">911 </span> 
+<span class="no">912 </span>    lyxp_set_free_content(&amp;set); 
+<span class="no">913 </span>    return LY_SUCCESS; 
+<span class="no">914 </span> 
+<span class="no">915 </span>error: 
+<span class="no">916 </span>    lyxp_set_free_content(&amp;set); 
+<span class="no">917 </span>    return ret; 
+<span class="no">918 </span>} 
+<span class="no">919 </span></code></pre></div>
 </div></div></div>
 </body>
 </html>

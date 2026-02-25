@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --del-clr: 255 150 141;
+  --mov-clr: 191 175 255;
+  --upd-clr: 255 217 50;
+  --ins-clr: 97 216 54;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+}
+.grid {
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+}
+.panel {
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  border-radius: 6px;
+  border: 1px solid #b7b7b7;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  line-height: 1;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  justify-content: space-between;
+}
+.codebox {
+  overflow: auto;
+  background: #f7f7f7;
+  flex: 1;
+  line-height: 1.5;
+  padding: 2px 4px;
+  font-size: 12px;
+  min-height: 0;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  background: #f7f7f7;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-weight: normal;
+  letter-spacing: normal;
+  color: #878787;
+}
+.legend {
+  margin: 8px 0 12px 0;
+  line-height: 1.5;
+  font-size: 12px;
+}
+.legend-row {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.legend-key kbd {
+  background: #fbfbfb;
+  margin-right: 4px;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+}
+.description {
+  overflow: auto;
+  width: 384px;
+  box-sizing: border-box;
+  padding: 0px 2px;
+  border: 1px solid black;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
+
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
+    });
+  });
+
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return runShortcut("unfocus");
+
+    const key = e.key.toLowerCase();
+    if (key === "u") return runShortcut("unfocus");
+    if (key !== "n" && key !== "b") return;
+
+    e.preventDefault();
+    runShortcut(key === "n" ? "next" : "back");
+  });
+});
+</script>
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 9 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 9 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 9 :&ensp;<b>Insert <code class="type">"dotted_name"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 9 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 9 :&ensp;<b>Insert <code class="type">"identifier"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 9 :&ensp;<b>Delete <code class="type">"identifier"</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 9 :&ensp;<b>Insert <code class="type">"tuple"</code></b></span>
+<span id="descr-8" style="display:none;">Edit #8 / 9 :&ensp;<b>Delete <code class="type">"identifier"</code></b></span>
+<span id="descr-9" style="display:none;">Edit #9 / 9 :&ensp;<b>Insert <code class="type">"tuple"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">36_A (original)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>&quot;&quot;&quot;Common IO api utilities&quot;&quot;&quot; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import bz2 
+<span class="no">  4 </span>from collections import abc 
+<span class="no">  5 </span>import gzip 
+<span class="no">  6 </span>from io import BufferedIOBase<span id="edit-2-old" data-kind="mov"><span id="hl-2-112" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>,</span></span> <span id="edit-3-old" data-kind="ins"></span>BytesIO 
+<span class="no">  7 </span>import mmap 
+<span class="no">  8 </span>import os 
+<span class="no">  9 </span>import pathlib 
+<span class="no"> 10 </span>from typing import IO, Any, AnyStr, Dict, List, Mapping, Optional, Tuple, Union 
+<span class="no"> 11 </span>from urllib.parse import (  # noqa 
+<span class="no"> 12 </span>    urlencode, 
+<span class="no"> 13 </span>    urljoin, 
+<span class="no"> 14 </span>    urlparse as parse_url, 
+<span class="no"> 15 </span>    uses_netloc, 
+<span class="no"> 16 </span>    uses_params, 
+<span class="no"> 17 </span>    uses_relative, 
+<span class="no"> 18 </span>) 
+<span class="no"> 19 </span>import zipfile 
+<span class="no"> 20 </span> 
+<span class="no"> 21 </span>from pandas._typing import FilePathOrBuffer 
+<span class="no"> 22 </span>from pandas.compat import _get_lzma_file, _import_lzma 
+<span class="no"> 23 </span>from pandas.errors import (  # noqa 
+<span class="no"> 24 </span>    AbstractMethodError, 
+<span class="no"> 25 </span>    DtypeWarning, 
+<span class="no"> 26 </span>    EmptyDataError, 
+<span class="no"> 27 </span>    ParserError, 
+<span class="no"> 28 </span>    ParserWarning, 
+<span class="no"> 29 </span>) 
+<span class="no"> 30 </span> 
+<span class="no"> 31 </span>from pandas.core.dtypes.common import is_file_like 
+<span class="no"> 32 </span> 
+<span class="no"> 33 </span>lzma = _import_lzma() 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span> 
+<span class="no"> 36 </span>_VALID_URLS = set(uses_relative + uses_netloc + uses_params) 
+<span class="no"> 37 </span>_VALID_URLS.discard(&quot;&quot;) 
+<span class="no"> 38 </span> 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>def is_url(url) -&gt; bool: 
+<span class="no"> 41 </span>    &quot;&quot;&quot; 
+<span class="no"> 42 </span>    Check to see if a URL has a valid protocol. 
+<span class="no"> 43 </span> 
+<span class="no"> 44 </span>    Parameters 
+<span class="no"> 45 </span>    ---------- 
+<span class="no"> 46 </span>    url : str or unicode 
+<span class="no"> 47 </span> 
+<span class="no"> 48 </span>    Returns 
+<span class="no"> 49 </span>    ------- 
+<span class="no"> 50 </span>    isurl : bool 
+<span class="no"> 51 </span>        If `url` has a valid protocol return True otherwise False. 
+<span class="no"> 52 </span>    &quot;&quot;&quot; 
+<span class="no"> 53 </span>    if not isinstance(url, str): 
+<span class="no"> 54 </span>        return False 
+<span class="no"> 55 </span>    return parse_url(url).scheme in _VALID_URLS 
+<span class="no"> 56 </span> 
+<span class="no"> 57 </span> 
+<span class="no"> 58 </span>def _expand_user( 
+<span class="no"> 59 </span>    filepath_or_buffer: FilePathOrBuffer[AnyStr], 
+<span class="no"> 60 </span>) -&gt; FilePathOrBuffer[AnyStr]: 
+<span class="no"> 61 </span>    &quot;&quot;&quot;Return the argument with an initial component of ~ or ~user 
+<span class="no"> 62 </span>       replaced by that user&apos;s home directory. 
+<span class="no"> 63 </span> 
+<span class="no"> 64 </span>    Parameters 
+<span class="no"> 65 </span>    ---------- 
+<span class="no"> 66 </span>    filepath_or_buffer : object to be converted if possible 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>    Returns 
+<span class="no"> 69 </span>    ------- 
+<span class="no"> 70 </span>    expanded_filepath_or_buffer : an expanded filepath or the 
+<span class="no"> 71 </span>                                  input if not expandable 
+<span class="no"> 72 </span>    &quot;&quot;&quot; 
+<span class="no"> 73 </span>    if isinstance(filepath_or_buffer, str): 
+<span class="no"> 74 </span>        return os.path.expanduser(filepath_or_buffer) 
+<span class="no"> 75 </span>    return filepath_or_buffer 
+<span class="no"> 76 </span> 
+<span class="no"> 77 </span> 
+<span class="no"> 78 </span>def validate_header_arg(header) -&gt; None: 
+<span class="no"> 79 </span>    if isinstance(header, bool): 
+<span class="no"> 80 </span>        raise TypeError( 
+<span class="no"> 81 </span>            &quot;Passing a bool to header is invalid. Use header=None for no header or &quot; 
+<span class="no"> 82 </span>            &quot;header=int or list-like of ints to specify &quot; 
+<span class="no"> 83 </span>            &quot;the row(s) making up the column names&quot; 
+<span class="no"> 84 </span>        ) 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span> 
+<span class="no"> 87 </span>def stringify_path( 
+<span class="no"> 88 </span>    filepath_or_buffer: FilePathOrBuffer[AnyStr], 
+<span class="no"> 89 </span>) -&gt; FilePathOrBuffer[AnyStr]: 
+<span class="no"> 90 </span>    &quot;&quot;&quot;Attempt to convert a path-like object to a string. 
+<span class="no"> 91 </span> 
+<span class="no"> 92 </span>    Parameters 
+<span class="no"> 93 </span>    ---------- 
+<span class="no"> 94 </span>    filepath_or_buffer : object to be converted 
+<span class="no"> 95 </span> 
+<span class="no"> 96 </span>    Returns 
+<span class="no"> 97 </span>    ------- 
+<span class="no"> 98 </span>    str_filepath_or_buffer : maybe a string version of the object 
+<span class="no"> 99 </span> 
+<span class="no">100 </span>    Notes 
+<span class="no">101 </span>    ----- 
+<span class="no">102 </span>    Objects supporting the fspath protocol (python 3.6+) are coerced 
+<span class="no">103 </span>    according to its __fspath__ method. 
+<span class="no">104 </span> 
+<span class="no">105 </span>    For backwards compatibility with older pythons, pathlib.Path and 
+<span class="no">106 </span>    py.path objects are specially coerced. 
+<span class="no">107 </span> 
+<span class="no">108 </span>    Any other object is passed through unchanged, which includes bytes, 
+<span class="no">109 </span>    strings, buffers, or anything else that&apos;s not even path-like. 
+<span class="no">110 </span>    &quot;&quot;&quot; 
+<span class="no">111 </span>    if hasattr(filepath_or_buffer, &quot;__fspath__&quot;): 
+<span class="no">112 </span>        # https://github.com/python/mypy/issues/1424 
+<span class="no">113 </span>        return filepath_or_buffer.__fspath__()  # type: ignore 
+<span class="no">114 </span>    elif isinstance(filepath_or_buffer, pathlib.Path): 
+<span class="no">115 </span>        return str(filepath_or_buffer) 
+<span class="no">116 </span>    return _expand_user(filepath_or_buffer) 
+<span class="no">117 </span> 
+<span class="no">118 </span> 
+<span class="no">119 </span>def is_s3_url(url) -&gt; bool: 
+<span class="no">120 </span>    &quot;&quot;&quot;Check for an s3, s3n, or s3a url&quot;&quot;&quot; 
+<span class="no">121 </span>    if not isinstance(url, str): 
+<span class="no">122 </span>        return False 
+<span class="no">123 </span>    return parse_url(url).scheme in [&quot;s3&quot;, &quot;s3n&quot;, &quot;s3a&quot;] 
+<span class="no">124 </span> 
+<span class="no">125 </span> 
+<span class="no">126 </span>def is_gcs_url(url) -&gt; bool: 
+<span class="no">127 </span>    &quot;&quot;&quot;Check for a gcs url&quot;&quot;&quot; 
+<span class="no">128 </span>    if not isinstance(url, str): 
+<span class="no">129 </span>        return False 
+<span class="no">130 </span>    return parse_url(url).scheme in [&quot;gcs&quot;, &quot;gs&quot;] 
+<span class="no">131 </span> 
+<span class="no">132 </span> 
+<span class="no">133 </span>def urlopen(*args, **kwargs): 
+<span class="no">134 </span>    &quot;&quot;&quot; 
+<span class="no">135 </span>    Lazy-import wrapper for stdlib urlopen, as that imports a big chunk of 
+<span class="no">136 </span>    the stdlib. 
+<span class="no">137 </span>    &quot;&quot;&quot; 
+<span class="no">138 </span>    import urllib.request 
+<span class="no">139 </span> 
+<span class="no">140 </span>    return urllib.request.urlopen(*args, **kwargs) 
+<span class="no">141 </span> 
+<span class="no">142 </span> 
+<span class="no">143 </span>def get_filepath_or_buffer( 
+<span class="no">144 </span>    filepath_or_buffer: FilePathOrBuffer, 
+<span class="no">145 </span>    encoding: Optional[str] = None, 
+<span class="no">146 </span>    compression: Optional[str] = None, 
+<span class="no">147 </span>    mode: Optional[str] = None, 
+<span class="no">148 </span>): 
+<span class="no">149 </span>    &quot;&quot;&quot; 
+<span class="no">150 </span>    If the filepath_or_buffer is a url, translate and return the buffer. 
+<span class="no">151 </span>    Otherwise passthrough. 
+<span class="no">152 </span> 
+<span class="no">153 </span>    Parameters 
+<span class="no">154 </span>    ---------- 
+<span class="no">155 </span>    filepath_or_buffer : a url, filepath (str, py.path.local or pathlib.Path), 
+<span class="no">156 </span>                         or buffer 
+<span class="no">157 </span>    compression : {{&apos;gzip&apos;, &apos;bz2&apos;, &apos;zip&apos;, &apos;xz&apos;, None}}, optional 
+<span class="no">158 </span>    encoding : the encoding to use to decode bytes, default is &apos;utf-8&apos; 
+<span class="no">159 </span>    mode : str, optional 
+<span class="no">160 </span> 
+<span class="no">161 </span>    Returns 
+<span class="no">162 </span>    ------- 
+<span class="no">163 </span>    Tuple[FilePathOrBuffer, str, str, bool] 
+<span class="no">164 </span>        Tuple containing the filepath or buffer, the encoding, the compression 
+<span class="no">165 </span>        and should_close. 
+<span class="no">166 </span>    &quot;&quot;&quot; 
+<span class="no">167 </span>    filepath_or_buffer = stringify_path(filepath_or_buffer) 
+<span class="no">168 </span> 
+<span class="no">169 </span>    if isinstance(filepath_or_buffer, str) and is_url(filepath_or_buffer): 
+<span class="no">170 </span>        req = urlopen(filepath_or_buffer) 
+<span class="no">171 </span>        content_encoding = req.headers.get(&quot;Content-Encoding&quot;, None) 
+<span class="no">172 </span>        if content_encoding == &quot;gzip&quot;: 
+<span class="no">173 </span>            # Override compression based on Content-Encoding header 
+<span class="no">174 </span>            compression = &quot;gzip&quot; 
+<span class="no">175 </span>        reader = BytesIO(req.read()) 
+<span class="no">176 </span>        req.close() 
+<span class="no">177 </span>        return reader, encoding, compression, True 
+<span class="no">178 </span> 
+<span class="no">179 </span>    if is_s3_url(filepath_or_buffer): 
+<span class="no">180 </span>        from pandas.io import s3 
+<span class="no">181 </span> 
+<span class="no">182 </span>        return s3.get_filepath_or_buffer( 
+<span class="no">183 </span>            filepath_or_buffer, encoding=encoding, compression=compression, mode=mode 
+<span class="no">184 </span>        ) 
+<span class="no">185 </span> 
+<span class="no">186 </span>    if is_gcs_url(filepath_or_buffer): 
+<span class="no">187 </span>        from pandas.io import gcs 
+<span class="no">188 </span> 
+<span class="no">189 </span>        return gcs.get_filepath_or_buffer( 
+<span class="no">190 </span>            filepath_or_buffer, encoding=encoding, compression=compression, mode=mode 
+<span class="no">191 </span>        ) 
+<span class="no">192 </span> 
+<span class="no">193 </span>    if isinstance(filepath_or_buffer, (str, bytes, mmap.mmap)): 
+<span class="no">194 </span>        return _expand_user(filepath_or_buffer), None, compression, False 
+<span class="no">195 </span> 
+<span class="no">196 </span>    if not is_file_like(filepath_or_buffer): 
+<span class="no">197 </span>        msg = f&quot;Invalid file path or buffer object type: {type(filepath_or_buffer)}&quot; 
+<span class="no">198 </span>        raise ValueError(msg) 
+<span class="no">199 </span> 
+<span class="no">200 </span>    return filepath_or_buffer, None, compression, False 
+<span class="no">201 </span> 
+<span class="no">202 </span> 
+<span class="no">203 </span>def file_path_to_url(path: str) -&gt; str: 
+<span class="no">204 </span>    &quot;&quot;&quot; 
+<span class="no">205 </span>    converts an absolute native path to a FILE URL. 
+<span class="no">206 </span> 
+<span class="no">207 </span>    Parameters 
+<span class="no">208 </span>    ---------- 
+<span class="no">209 </span>    path : a path in native format 
+<span class="no">210 </span> 
+<span class="no">211 </span>    Returns 
+<span class="no">212 </span>    ------- 
+<span class="no">213 </span>    a valid FILE URL 
+<span class="no">214 </span>    &quot;&quot;&quot; 
+<span class="no">215 </span>    # lazify expensive import (~30ms) 
+<span class="no">216 </span>    from urllib.request import pathname2url 
+<span class="no">217 </span> 
+<span class="no">218 </span>    return urljoin(&quot;file:&quot;, pathname2url(path)) 
+<span class="no">219 </span> 
+<span class="no">220 </span> 
+<span class="no">221 </span>_compression_to_extension = {&quot;gzip&quot;: &quot;.gz&quot;, &quot;bz2&quot;: &quot;.bz2&quot;, &quot;zip&quot;: &quot;.zip&quot;, &quot;xz&quot;: &quot;.xz&quot;} 
+<span class="no">222 </span> 
+<span class="no">223 </span> 
+<span class="no">224 </span>def get_compression_method( 
+<span class="no">225 </span>    compression: Optional[Union[str, Mapping[str, str]]] 
+<span class="no">226 </span>) -&gt; Tuple[Optional[str], Dict[str, str]]: 
+<span class="no">227 </span>    &quot;&quot;&quot; 
+<span class="no">228 </span>    Simplifies a compression argument to a compression method string and 
+<span class="no">229 </span>    a mapping containing additional arguments. 
+<span class="no">230 </span> 
+<span class="no">231 </span>    Parameters 
+<span class="no">232 </span>    ---------- 
+<span class="no">233 </span>    compression : str or mapping 
+<span class="no">234 </span>        If string, specifies the compression method. If mapping, value at key 
+<span class="no">235 </span>        &apos;method&apos; specifies compression method. 
+<span class="no">236 </span> 
+<span class="no">237 </span>    Returns 
+<span class="no">238 </span>    ------- 
+<span class="no">239 </span>    tuple of ({compression method}, Optional[str] 
+<span class="no">240 </span>              {compression arguments}, Dict[str, str]) 
+<span class="no">241 </span> 
+<span class="no">242 </span>    Raises 
+<span class="no">243 </span>    ------ 
+<span class="no">244 </span>    ValueError on mapping missing &apos;method&apos; key 
+<span class="no">245 </span>    &quot;&quot;&quot; 
+<span class="no">246 </span>    if isinstance(compression, Mapping): 
+<span class="no">247 </span>        compression_args = dict(compression) 
+<span class="no">248 </span>        try: 
+<span class="no">249 </span>            compression = compression_args.pop(&quot;method&quot;) 
+<span class="no">250 </span>        except KeyError: 
+<span class="no">251 </span>            raise ValueError(&quot;If mapping, compression must have key &apos;method&apos;&quot;) 
+<span class="no">252 </span>    else: 
+<span class="no">253 </span>        compression_args = {} 
+<span class="no">254 </span>    return compression, compression_args 
+<span class="no">255 </span> 
+<span class="no">256 </span> 
+<span class="no">257 </span>def infer_compression( 
+<span class="no">258 </span>    filepath_or_buffer: FilePathOrBuffer, compression: Optional[str] 
+<span class="no">259 </span>) -&gt; Optional[str]: 
+<span class="no">260 </span>    &quot;&quot;&quot; 
+<span class="no">261 </span>    Get the compression method for filepath_or_buffer. If compression=&apos;infer&apos;, 
+<span class="no">262 </span>    the inferred compression method is returned. Otherwise, the input 
+<span class="no">263 </span>    compression method is returned unchanged, unless it&apos;s invalid, in which 
+<span class="no">264 </span>    case an error is raised. 
+<span class="no">265 </span> 
+<span class="no">266 </span>    Parameters 
+<span class="no">267 </span>    ---------- 
+<span class="no">268 </span>    filepath_or_buffer : str or file handle 
+<span class="no">269 </span>        File path or object. 
+<span class="no">270 </span>    compression : {&apos;infer&apos;, &apos;gzip&apos;, &apos;bz2&apos;, &apos;zip&apos;, &apos;xz&apos;, None} 
+<span class="no">271 </span>        If &apos;infer&apos; and `filepath_or_buffer` is path-like, then detect 
+<span class="no">272 </span>        compression from the following extensions: &apos;.gz&apos;, &apos;.bz2&apos;, &apos;.zip&apos;, 
+<span class="no">273 </span>        or &apos;.xz&apos; (otherwise no compression). 
+<span class="no">274 </span> 
+<span class="no">275 </span>    Returns 
+<span class="no">276 </span>    ------- 
+<span class="no">277 </span>    string or None 
+<span class="no">278 </span> 
+<span class="no">279 </span>    Raises 
+<span class="no">280 </span>    ------ 
+<span class="no">281 </span>    ValueError on invalid compression specified. 
+<span class="no">282 </span>    &quot;&quot;&quot; 
+<span class="no">283 </span> 
+<span class="no">284 </span>    # No compression has been explicitly specified 
+<span class="no">285 </span>    if compression is None: 
+<span class="no">286 </span>        return None 
+<span class="no">287 </span> 
+<span class="no">288 </span>    # Infer compression 
+<span class="no">289 </span>    if compression == &quot;infer&quot;: 
+<span class="no">290 </span>        # Convert all path types (e.g. pathlib.Path) to strings 
+<span class="no">291 </span>        filepath_or_buffer = stringify_path(filepath_or_buffer) 
+<span class="no">292 </span>        if not isinstance(filepath_or_buffer, str): 
+<span class="no">293 </span>            # Cannot infer compression of a buffer, assume no compression 
+<span class="no">294 </span>            return None 
+<span class="no">295 </span> 
+<span class="no">296 </span>        # Infer compression from the filename/URL extension 
+<span class="no">297 </span>        for compression, extension in _compression_to_extension.items(): 
+<span class="no">298 </span>            if filepath_or_buffer.endswith(extension): 
+<span class="no">299 </span>                return compression 
+<span class="no">300 </span>        return None 
+<span class="no">301 </span> 
+<span class="no">302 </span>    # Compression has been specified. Check that it&apos;s valid 
+<span class="no">303 </span>    if compression in _compression_to_extension: 
+<span class="no">304 </span>        return compression 
+<span class="no">305 </span> 
+<span class="no">306 </span>    msg = f&quot;Unrecognized compression type: {compression}&quot; 
+<span class="no">307 </span>    valid = [&quot;infer&quot;, None] + sorted(_compression_to_extension) 
+<span class="no">308 </span>    msg += f&quot;\nValid compression types are {valid}&quot; 
+<span class="no">309 </span>    raise ValueError(msg) 
+<span class="no">310 </span> 
+<span class="no">311 </span> 
+<span class="no">312 </span>def get_handle( 
+<span class="no">313 </span>    path_or_buf, 
+<span class="no">314 </span>    mode: str, 
+<span class="no">315 </span>    encoding=None, 
+<span class="no">316 </span>    compression: Optional[Union[str, Mapping[str, Any]]] = None, 
+<span class="no">317 </span>    memory_map: bool = False, 
+<span class="no">318 </span>    is_text: bool = True, 
+<span class="no">319 </span>): 
+<span class="no">320 </span>    &quot;&quot;&quot; 
+<span class="no">321 </span>    Get file handle for given path/buffer and mode. 
+<span class="no">322 </span> 
+<span class="no">323 </span>    Parameters 
+<span class="no">324 </span>    ---------- 
+<span class="no">325 </span>    path_or_buf : str or file handle 
+<span class="no">326 </span>        File path or object. 
+<span class="no">327 </span>    mode : str 
+<span class="no">328 </span>        Mode to open path_or_buf with. 
+<span class="no">329 </span>    encoding : str or None 
+<span class="no">330 </span>        Encoding to use. 
+<span class="no">331 </span>    compression : str or dict, default None 
+<span class="no">332 </span>        If string, specifies compression mode. If dict, value at key &apos;method&apos; 
+<span class="no">333 </span>        specifies compression mode. Compression mode must be one of {&apos;infer&apos;, 
+<span class="no">334 </span>        &apos;gzip&apos;, &apos;bz2&apos;, &apos;zip&apos;, &apos;xz&apos;, None}. If compression mode is &apos;infer&apos; 
+<span class="no">335 </span>        and `filepath_or_buffer` is path-like, then detect compression from 
+<span class="no">336 </span>        the following extensions: &apos;.gz&apos;, &apos;.bz2&apos;, &apos;.zip&apos;, or &apos;.xz&apos; (otherwise 
+<span class="no">337 </span>        no compression). If dict and compression mode is &apos;zip&apos; or inferred as 
+<span class="no">338 </span>        &apos;zip&apos;, other entries passed as additional compression options. 
+<span class="no">339 </span> 
+<span class="no">340 </span>        .. versionchanged:: 1.0.0 
+<span class="no">341 </span> 
+<span class="no">342 </span>           May now be a dict with key &apos;method&apos; as compression mode 
+<span class="no">343 </span>           and other keys as compression options if compression 
+<span class="no">344 </span>           mode is &apos;zip&apos;. 
+<span class="no">345 </span> 
+<span class="no">346 </span>    memory_map : boolean, default False 
+<span class="no">347 </span>        See parsers._parser_params for more information. 
+<span class="no">348 </span>    is_text : boolean, default True 
+<span class="no">349 </span>        whether file/buffer is in text format (csv, json, etc.), or in binary 
+<span class="no">350 </span>        mode (pickle, etc.). 
+<span class="no">351 </span> 
+<span class="no">352 </span>    Returns 
+<span class="no">353 </span>    ------- 
+<span class="no">354 </span>    f : file-like 
+<span class="no">355 </span>        A file-like object. 
+<span class="no">356 </span>    handles : list of file-like objects 
+<span class="no">357 </span>        A list of file-like object that were opened in this function. 
+<span class="no">358 </span>    &quot;&quot;&quot; 
+<span class="no">359 </span>    try: 
+<span class="no">360 </span>        from s3fs import S3File 
+<span class="no">361 </span> 
+<span class="no">362 </span>        need_text_wrapping = (BufferedIOBase<span id="edit-4-old" data-kind="ins"></span><span id="edit-5-old" data-kind="ins"></span>, S3File) 
+<span class="no">363 </span>    except ImportError: 
+<span class="no">364 </span>        need_text_wrapping = <span id="edit-6-old" data-kind="del"><span id="hl-6-10808" class="hl del"><span id="edit-7-old" data-kind="ins"></span>BufferedIOBase</span></span>  # type: ignore 
+<span class="no">365 </span> 
+<span class="no">366 </span>    handles: List[IO] = list() 
+<span class="no">367 </span>    f = path_or_buf 
+<span class="no">368 </span> 
+<span class="no">369 </span>    # Convert pathlib.Path/py.path.local or string 
+<span class="no">370 </span>    path_or_buf = stringify_path(path_or_buf) 
+<span class="no">371 </span>    is_path = isinstance(path_or_buf, str) 
+<span class="no">372 </span> 
+<span class="no">373 </span>    compression, compression_args = get_compression_method(compression) 
+<span class="no">374 </span>    if is_path: 
+<span class="no">375 </span>        compression = infer_compression(path_or_buf, compression) 
+<span class="no">376 </span> 
+<span class="no">377 </span>    if compression: 
+<span class="no">378 </span> 
+<span class="no">379 </span>        # GZ Compression 
+<span class="no">380 </span>        if compression == &quot;gzip&quot;: 
+<span class="no">381 </span>            if is_path: 
+<span class="no">382 </span>                f = gzip.open(path_or_buf, mode) 
+<span class="no">383 </span>            else: 
+<span class="no">384 </span>                f = gzip.GzipFile(fileobj=path_or_buf) 
+<span class="no">385 </span> 
+<span class="no">386 </span>        # BZ Compression 
+<span class="no">387 </span>        elif compression == &quot;bz2&quot;: 
+<span class="no">388 </span>            if is_path: 
+<span class="no">389 </span>                f = bz2.BZ2File(path_or_buf, mode) 
+<span class="no">390 </span>            else: 
+<span class="no">391 </span>                f = bz2.BZ2File(path_or_buf) 
+<span class="no">392 </span> 
+<span class="no">393 </span>        # ZIP Compression 
+<span class="no">394 </span>        elif compression == &quot;zip&quot;: 
+<span class="no">395 </span>            zf = _BytesZipFile(path_or_buf, mode, **compression_args) 
+<span class="no">396 </span>            # Ensure the container is closed as well. 
+<span class="no">397 </span>            handles.append(zf) 
+<span class="no">398 </span>            if zf.mode == &quot;w&quot;: 
+<span class="no">399 </span>                f = zf 
+<span class="no">400 </span>            elif zf.mode == &quot;r&quot;: 
+<span class="no">401 </span>                zip_names = zf.namelist() 
+<span class="no">402 </span>                if len(zip_names) == 1: 
+<span class="no">403 </span>                    f = zf.open(zip_names.pop()) 
+<span class="no">404 </span>                elif len(zip_names) == 0: 
+<span class="no">405 </span>                    raise ValueError(f&quot;Zero files found in ZIP file {path_or_buf}&quot;) 
+<span class="no">406 </span>                else: 
+<span class="no">407 </span>                    raise ValueError( 
+<span class="no">408 </span>                        &quot;Multiple files found in ZIP file. &quot; 
+<span class="no">409 </span>                        f&quot;Only one file per ZIP: {zip_names}&quot; 
+<span class="no">410 </span>                    ) 
+<span class="no">411 </span> 
+<span class="no">412 </span>        # XZ Compression 
+<span class="no">413 </span>        elif compression == &quot;xz&quot;: 
+<span class="no">414 </span>            f = _get_lzma_file(lzma)(path_or_buf, mode) 
+<span class="no">415 </span> 
+<span class="no">416 </span>        # Unrecognized Compression 
+<span class="no">417 </span>        else: 
+<span class="no">418 </span>            msg = f&quot;Unrecognized compression type: {compression}&quot; 
+<span class="no">419 </span>            raise ValueError(msg) 
+<span class="no">420 </span> 
+<span class="no">421 </span>        handles.append(f) 
+<span class="no">422 </span> 
+<span class="no">423 </span>    elif is_path: 
+<span class="no">424 </span>        if encoding: 
+<span class="no">425 </span>            # Encoding 
+<span class="no">426 </span>            f = open(path_or_buf, mode, encoding=encoding, newline=&quot;&quot;) 
+<span class="no">427 </span>        elif is_text: 
+<span class="no">428 </span>            # No explicit encoding 
+<span class="no">429 </span>            f = open(path_or_buf, mode, errors=&quot;replace&quot;, newline=&quot;&quot;) 
+<span class="no">430 </span>        else: 
+<span class="no">431 </span>            # Binary mode 
+<span class="no">432 </span>            f = open(path_or_buf, mode) 
+<span class="no">433 </span>        handles.append(f) 
+<span class="no">434 </span> 
+<span class="no">435 </span>    # Convert BytesIO or file objects passed with an encoding 
+<span class="no">436 </span>    if is_text and (compression or isinstance(f, need_text_wrapping)): 
+<span class="no">437 </span>        from io import TextIOWrapper 
+<span class="no">438 </span> 
+<span class="no">439 </span>        g = TextIOWrapper(f, encoding=encoding, newline=&quot;&quot;) 
+<span class="no">440 </span>        if not isinstance(f, <span id="edit-8-old" data-kind="del"><span id="hl-8-13300" class="hl del"><span id="edit-9-old" data-kind="ins"></span>BufferedIOBase</span></span>): 
+<span class="no">441 </span>            handles.append(g) 
+<span class="no">442 </span>        f = g 
+<span class="no">443 </span> 
+<span class="no">444 </span>    if memory_map and hasattr(f, &quot;fileno&quot;): 
+<span class="no">445 </span>        try: 
+<span class="no">446 </span>            wrapped = _MMapWrapper(f) 
+<span class="no">447 </span>            f.close() 
+<span class="no">448 </span>            f = wrapped 
+<span class="no">449 </span>        except Exception: 
+<span class="no">450 </span>            # we catch any errors that may have occurred 
+<span class="no">451 </span>            # because that is consistent with the lower-level 
+<span class="no">452 </span>            # functionality of the C engine (pd.read_csv), so 
+<span class="no">453 </span>            # leave the file handler as is then 
+<span class="no">454 </span>            pass 
+<span class="no">455 </span> 
+<span class="no">456 </span>    return f, handles 
+<span class="no">457 </span> 
+<span class="no">458 </span> 
+<span class="no">459 </span>class _BytesZipFile(zipfile.ZipFile, BytesIO):  # type: ignore 
+<span class="no">460 </span>    &quot;&quot;&quot; 
+<span class="no">461 </span>    Wrapper for standard library class ZipFile and allow the returned file-like 
+<span class="no">462 </span>    handle to accept byte strings via `write` method. 
+<span class="no">463 </span> 
+<span class="no">464 </span>    BytesIO provides attributes of file-like object and ZipFile.writestr writes 
+<span class="no">465 </span>    bytes strings into a member of the archive. 
+<span class="no">466 </span>    &quot;&quot;&quot; 
+<span class="no">467 </span> 
+<span class="no">468 </span>    # GH 17778 
+<span class="no">469 </span>    def __init__( 
+<span class="no">470 </span>        self, 
+<span class="no">471 </span>        file: FilePathOrBuffer, 
+<span class="no">472 </span>        mode: str, 
+<span class="no">473 </span>        archive_name: Optional[str] = None, 
+<span class="no">474 </span>        **kwargs, 
+<span class="no">475 </span>    ): 
+<span class="no">476 </span>        if mode in [&quot;wb&quot;, &quot;rb&quot;]: 
+<span class="no">477 </span>            mode = mode.replace(&quot;b&quot;, &quot;&quot;) 
+<span class="no">478 </span>        self.archive_name = archive_name 
+<span class="no">479 </span>        super().__init__(file, mode, zipfile.ZIP_DEFLATED, **kwargs) 
+<span class="no">480 </span> 
+<span class="no">481 </span>    def write(self, data): 
+<span class="no">482 </span>        archive_name = self.filename 
+<span class="no">483 </span>        if self.archive_name is not None: 
+<span class="no">484 </span>            archive_name = self.archive_name 
+<span class="no">485 </span>        super().writestr(archive_name, data) 
+<span class="no">486 </span> 
+<span class="no">487 </span>    @property 
+<span class="no">488 </span>    def closed(self): 
+<span class="no">489 </span>        return self.fp is None 
+<span class="no">490 </span> 
+<span class="no">491 </span> 
+<span class="no">492 </span>class _MMapWrapper(abc.Iterator): 
+<span class="no">493 </span>    &quot;&quot;&quot; 
+<span class="no">494 </span>    Wrapper for the Python&apos;s mmap class so that it can be properly read in 
+<span class="no">495 </span>    by Python&apos;s csv.reader class. 
+<span class="no">496 </span> 
+<span class="no">497 </span>    Parameters 
+<span class="no">498 </span>    ---------- 
+<span class="no">499 </span>    f : file object 
+<span class="no">500 </span>        File object to be mapped onto memory. Must support the &apos;fileno&apos; 
+<span class="no">501 </span>        method or have an equivalent attribute 
+<span class="no">502 </span> 
+<span class="no">503 </span>    &quot;&quot;&quot; 
+<span class="no">504 </span> 
+<span class="no">505 </span>    def __init__(self, f: IO): 
+<span class="no">506 </span>        self.mmap = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) 
+<span class="no">507 </span> 
+<span class="no">508 </span>    def __getattr__(self, name: str): 
+<span class="no">509 </span>        return getattr(self.mmap, name) 
+<span class="no">510 </span> 
+<span class="no">511 </span>    def __iter__(self) -&gt; &quot;_MMapWrapper&quot;: 
+<span class="no">512 </span>        return self 
+<span class="no">513 </span> 
+<span class="no">514 </span>    def __next__(self) -&gt; str: 
+<span class="no">515 </span>        newbytes = self.mmap.readline() 
+<span class="no">516 </span> 
+<span class="no">517 </span>        # readline returns bytes, not str, but Python&apos;s CSV reader 
+<span class="no">518 </span>        # expects str, so convert the output to str before continuing 
+<span class="no">519 </span>        newline = newbytes.decode(&quot;utf-8&quot;) 
+<span class="no">520 </span> 
+<span class="no">521 </span>        # mmap doesn&apos;t raise if reading past the allocated 
+<span class="no">522 </span>        # data but instead returns an empty string, so raise 
+<span class="no">523 </span>        # if that is returned 
+<span class="no">524 </span>        if newline == &quot;&quot;: 
+<span class="no">525 </span>            raise StopIteration 
+<span class="no">526 </span>        return newline 
+<span class="no">527 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">36_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>&quot;&quot;&quot;Common IO api utilities&quot;&quot;&quot; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import bz2 
+<span class="no">  4 </span>from collections import abc 
+<span class="no">  5 </span>import gzip 
+<span class="no">  6 </span>from io import BufferedIOBase<span id="edit-1-new" data-kind="ins"><span id="hl-1-112" class="hl ins">,</span></span> BytesIO<span id="edit-2-new" data-kind="mov"><span id="hl-2-121" class="hl mov">,</span></span> <span id="edit-3-new" data-kind="ins"><span id="hl-3-123" class="hl ins">RawIOBase</span></span> 
+<span class="no">  7 </span>import mmap 
+<span class="no">  8 </span>import os 
+<span class="no">  9 </span>import pathlib 
+<span class="no"> 10 </span>from typing import IO, Any, AnyStr, Dict, List, Mapping, Optional, Tuple, Union 
+<span class="no"> 11 </span>from urllib.parse import (  # noqa 
+<span class="no"> 12 </span>    urlencode, 
+<span class="no"> 13 </span>    urljoin, 
+<span class="no"> 14 </span>    urlparse as parse_url, 
+<span class="no"> 15 </span>    uses_netloc, 
+<span class="no"> 16 </span>    uses_params, 
+<span class="no"> 17 </span>    uses_relative, 
+<span class="no"> 18 </span>) 
+<span class="no"> 19 </span>import zipfile 
+<span class="no"> 20 </span> 
+<span class="no"> 21 </span>from pandas._typing import FilePathOrBuffer 
+<span class="no"> 22 </span>from pandas.compat import _get_lzma_file, _import_lzma 
+<span class="no"> 23 </span>from pandas.errors import (  # noqa 
+<span class="no"> 24 </span>    AbstractMethodError, 
+<span class="no"> 25 </span>    DtypeWarning, 
+<span class="no"> 26 </span>    EmptyDataError, 
+<span class="no"> 27 </span>    ParserError, 
+<span class="no"> 28 </span>    ParserWarning, 
+<span class="no"> 29 </span>) 
+<span class="no"> 30 </span> 
+<span class="no"> 31 </span>from pandas.core.dtypes.common import is_file_like 
+<span class="no"> 32 </span> 
+<span class="no"> 33 </span>lzma = _import_lzma() 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span> 
+<span class="no"> 36 </span>_VALID_URLS = set(uses_relative + uses_netloc + uses_params) 
+<span class="no"> 37 </span>_VALID_URLS.discard(&quot;&quot;) 
+<span class="no"> 38 </span> 
+<span class="no"> 39 </span> 
+<span class="no"> 40 </span>def is_url(url) -&gt; bool: 
+<span class="no"> 41 </span>    &quot;&quot;&quot; 
+<span class="no"> 42 </span>    Check to see if a URL has a valid protocol. 
+<span class="no"> 43 </span> 
+<span class="no"> 44 </span>    Parameters 
+<span class="no"> 45 </span>    ---------- 
+<span class="no"> 46 </span>    url : str or unicode 
+<span class="no"> 47 </span> 
+<span class="no"> 48 </span>    Returns 
+<span class="no"> 49 </span>    ------- 
+<span class="no"> 50 </span>    isurl : bool 
+<span class="no"> 51 </span>        If `url` has a valid protocol return True otherwise False. 
+<span class="no"> 52 </span>    &quot;&quot;&quot; 
+<span class="no"> 53 </span>    if not isinstance(url, str): 
+<span class="no"> 54 </span>        return False 
+<span class="no"> 55 </span>    return parse_url(url).scheme in _VALID_URLS 
+<span class="no"> 56 </span> 
+<span class="no"> 57 </span> 
+<span class="no"> 58 </span>def _expand_user( 
+<span class="no"> 59 </span>    filepath_or_buffer: FilePathOrBuffer[AnyStr], 
+<span class="no"> 60 </span>) -&gt; FilePathOrBuffer[AnyStr]: 
+<span class="no"> 61 </span>    &quot;&quot;&quot;Return the argument with an initial component of ~ or ~user 
+<span class="no"> 62 </span>       replaced by that user&apos;s home directory. 
+<span class="no"> 63 </span> 
+<span class="no"> 64 </span>    Parameters 
+<span class="no"> 65 </span>    ---------- 
+<span class="no"> 66 </span>    filepath_or_buffer : object to be converted if possible 
+<span class="no"> 67 </span> 
+<span class="no"> 68 </span>    Returns 
+<span class="no"> 69 </span>    ------- 
+<span class="no"> 70 </span>    expanded_filepath_or_buffer : an expanded filepath or the 
+<span class="no"> 71 </span>                                  input if not expandable 
+<span class="no"> 72 </span>    &quot;&quot;&quot; 
+<span class="no"> 73 </span>    if isinstance(filepath_or_buffer, str): 
+<span class="no"> 74 </span>        return os.path.expanduser(filepath_or_buffer) 
+<span class="no"> 75 </span>    return filepath_or_buffer 
+<span class="no"> 76 </span> 
+<span class="no"> 77 </span> 
+<span class="no"> 78 </span>def validate_header_arg(header) -&gt; None: 
+<span class="no"> 79 </span>    if isinstance(header, bool): 
+<span class="no"> 80 </span>        raise TypeError( 
+<span class="no"> 81 </span>            &quot;Passing a bool to header is invalid. Use header=None for no header or &quot; 
+<span class="no"> 82 </span>            &quot;header=int or list-like of ints to specify &quot; 
+<span class="no"> 83 </span>            &quot;the row(s) making up the column names&quot; 
+<span class="no"> 84 </span>        ) 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span> 
+<span class="no"> 87 </span>def stringify_path( 
+<span class="no"> 88 </span>    filepath_or_buffer: FilePathOrBuffer[AnyStr], 
+<span class="no"> 89 </span>) -&gt; FilePathOrBuffer[AnyStr]: 
+<span class="no"> 90 </span>    &quot;&quot;&quot;Attempt to convert a path-like object to a string. 
+<span class="no"> 91 </span> 
+<span class="no"> 92 </span>    Parameters 
+<span class="no"> 93 </span>    ---------- 
+<span class="no"> 94 </span>    filepath_or_buffer : object to be converted 
+<span class="no"> 95 </span> 
+<span class="no"> 96 </span>    Returns 
+<span class="no"> 97 </span>    ------- 
+<span class="no"> 98 </span>    str_filepath_or_buffer : maybe a string version of the object 
+<span class="no"> 99 </span> 
+<span class="no">100 </span>    Notes 
+<span class="no">101 </span>    ----- 
+<span class="no">102 </span>    Objects supporting the fspath protocol (python 3.6+) are coerced 
+<span class="no">103 </span>    according to its __fspath__ method. 
+<span class="no">104 </span> 
+<span class="no">105 </span>    For backwards compatibility with older pythons, pathlib.Path and 
+<span class="no">106 </span>    py.path objects are specially coerced. 
+<span class="no">107 </span> 
+<span class="no">108 </span>    Any other object is passed through unchanged, which includes bytes, 
+<span class="no">109 </span>    strings, buffers, or anything else that&apos;s not even path-like. 
+<span class="no">110 </span>    &quot;&quot;&quot; 
+<span class="no">111 </span>    if hasattr(filepath_or_buffer, &quot;__fspath__&quot;): 
+<span class="no">112 </span>        # https://github.com/python/mypy/issues/1424 
+<span class="no">113 </span>        return filepath_or_buffer.__fspath__()  # type: ignore 
+<span class="no">114 </span>    elif isinstance(filepath_or_buffer, pathlib.Path): 
+<span class="no">115 </span>        return str(filepath_or_buffer) 
+<span class="no">116 </span>    return _expand_user(filepath_or_buffer) 
+<span class="no">117 </span> 
+<span class="no">118 </span> 
+<span class="no">119 </span>def is_s3_url(url) -&gt; bool: 
+<span class="no">120 </span>    &quot;&quot;&quot;Check for an s3, s3n, or s3a url&quot;&quot;&quot; 
+<span class="no">121 </span>    if not isinstance(url, str): 
+<span class="no">122 </span>        return False 
+<span class="no">123 </span>    return parse_url(url).scheme in [&quot;s3&quot;, &quot;s3n&quot;, &quot;s3a&quot;] 
+<span class="no">124 </span> 
+<span class="no">125 </span> 
+<span class="no">126 </span>def is_gcs_url(url) -&gt; bool: 
+<span class="no">127 </span>    &quot;&quot;&quot;Check for a gcs url&quot;&quot;&quot; 
+<span class="no">128 </span>    if not isinstance(url, str): 
+<span class="no">129 </span>        return False 
+<span class="no">130 </span>    return parse_url(url).scheme in [&quot;gcs&quot;, &quot;gs&quot;] 
+<span class="no">131 </span> 
+<span class="no">132 </span> 
+<span class="no">133 </span>def urlopen(*args, **kwargs): 
+<span class="no">134 </span>    &quot;&quot;&quot; 
+<span class="no">135 </span>    Lazy-import wrapper for stdlib urlopen, as that imports a big chunk of 
+<span class="no">136 </span>    the stdlib. 
+<span class="no">137 </span>    &quot;&quot;&quot; 
+<span class="no">138 </span>    import urllib.request 
+<span class="no">139 </span> 
+<span class="no">140 </span>    return urllib.request.urlopen(*args, **kwargs) 
+<span class="no">141 </span> 
+<span class="no">142 </span> 
+<span class="no">143 </span>def get_filepath_or_buffer( 
+<span class="no">144 </span>    filepath_or_buffer: FilePathOrBuffer, 
+<span class="no">145 </span>    encoding: Optional[str] = None, 
+<span class="no">146 </span>    compression: Optional[str] = None, 
+<span class="no">147 </span>    mode: Optional[str] = None, 
+<span class="no">148 </span>): 
+<span class="no">149 </span>    &quot;&quot;&quot; 
+<span class="no">150 </span>    If the filepath_or_buffer is a url, translate and return the buffer. 
+<span class="no">151 </span>    Otherwise passthrough. 
+<span class="no">152 </span> 
+<span class="no">153 </span>    Parameters 
+<span class="no">154 </span>    ---------- 
+<span class="no">155 </span>    filepath_or_buffer : a url, filepath (str, py.path.local or pathlib.Path), 
+<span class="no">156 </span>                         or buffer 
+<span class="no">157 </span>    compression : {{&apos;gzip&apos;, &apos;bz2&apos;, &apos;zip&apos;, &apos;xz&apos;, None}}, optional 
+<span class="no">158 </span>    encoding : the encoding to use to decode bytes, default is &apos;utf-8&apos; 
+<span class="no">159 </span>    mode : str, optional 
+<span class="no">160 </span> 
+<span class="no">161 </span>    Returns 
+<span class="no">162 </span>    ------- 
+<span class="no">163 </span>    Tuple[FilePathOrBuffer, str, str, bool] 
+<span class="no">164 </span>        Tuple containing the filepath or buffer, the encoding, the compression 
+<span class="no">165 </span>        and should_close. 
+<span class="no">166 </span>    &quot;&quot;&quot; 
+<span class="no">167 </span>    filepath_or_buffer = stringify_path(filepath_or_buffer) 
+<span class="no">168 </span> 
+<span class="no">169 </span>    if isinstance(filepath_or_buffer, str) and is_url(filepath_or_buffer): 
+<span class="no">170 </span>        req = urlopen(filepath_or_buffer) 
+<span class="no">171 </span>        content_encoding = req.headers.get(&quot;Content-Encoding&quot;, None) 
+<span class="no">172 </span>        if content_encoding == &quot;gzip&quot;: 
+<span class="no">173 </span>            # Override compression based on Content-Encoding header 
+<span class="no">174 </span>            compression = &quot;gzip&quot; 
+<span class="no">175 </span>        reader = BytesIO(req.read()) 
+<span class="no">176 </span>        req.close() 
+<span class="no">177 </span>        return reader, encoding, compression, True 
+<span class="no">178 </span> 
+<span class="no">179 </span>    if is_s3_url(filepath_or_buffer): 
+<span class="no">180 </span>        from pandas.io import s3 
+<span class="no">181 </span> 
+<span class="no">182 </span>        return s3.get_filepath_or_buffer( 
+<span class="no">183 </span>            filepath_or_buffer, encoding=encoding, compression=compression, mode=mode 
+<span class="no">184 </span>        ) 
+<span class="no">185 </span> 
+<span class="no">186 </span>    if is_gcs_url(filepath_or_buffer): 
+<span class="no">187 </span>        from pandas.io import gcs 
+<span class="no">188 </span> 
+<span class="no">189 </span>        return gcs.get_filepath_or_buffer( 
+<span class="no">190 </span>            filepath_or_buffer, encoding=encoding, compression=compression, mode=mode 
+<span class="no">191 </span>        ) 
+<span class="no">192 </span> 
+<span class="no">193 </span>    if isinstance(filepath_or_buffer, (str, bytes, mmap.mmap)): 
+<span class="no">194 </span>        return _expand_user(filepath_or_buffer), None, compression, False 
+<span class="no">195 </span> 
+<span class="no">196 </span>    if not is_file_like(filepath_or_buffer): 
+<span class="no">197 </span>        msg = f&quot;Invalid file path or buffer object type: {type(filepath_or_buffer)}&quot; 
+<span class="no">198 </span>        raise ValueError(msg) 
+<span class="no">199 </span> 
+<span class="no">200 </span>    return filepath_or_buffer, None, compression, False 
+<span class="no">201 </span> 
+<span class="no">202 </span> 
+<span class="no">203 </span>def file_path_to_url(path: str) -&gt; str: 
+<span class="no">204 </span>    &quot;&quot;&quot; 
+<span class="no">205 </span>    converts an absolute native path to a FILE URL. 
+<span class="no">206 </span> 
+<span class="no">207 </span>    Parameters 
+<span class="no">208 </span>    ---------- 
+<span class="no">209 </span>    path : a path in native format 
+<span class="no">210 </span> 
+<span class="no">211 </span>    Returns 
+<span class="no">212 </span>    ------- 
+<span class="no">213 </span>    a valid FILE URL 
+<span class="no">214 </span>    &quot;&quot;&quot; 
+<span class="no">215 </span>    # lazify expensive import (~30ms) 
+<span class="no">216 </span>    from urllib.request import pathname2url 
+<span class="no">217 </span> 
+<span class="no">218 </span>    return urljoin(&quot;file:&quot;, pathname2url(path)) 
+<span class="no">219 </span> 
+<span class="no">220 </span> 
+<span class="no">221 </span>_compression_to_extension = {&quot;gzip&quot;: &quot;.gz&quot;, &quot;bz2&quot;: &quot;.bz2&quot;, &quot;zip&quot;: &quot;.zip&quot;, &quot;xz&quot;: &quot;.xz&quot;} 
+<span class="no">222 </span> 
+<span class="no">223 </span> 
+<span class="no">224 </span>def get_compression_method( 
+<span class="no">225 </span>    compression: Optional[Union[str, Mapping[str, str]]] 
+<span class="no">226 </span>) -&gt; Tuple[Optional[str], Dict[str, str]]: 
+<span class="no">227 </span>    &quot;&quot;&quot; 
+<span class="no">228 </span>    Simplifies a compression argument to a compression method string and 
+<span class="no">229 </span>    a mapping containing additional arguments. 
+<span class="no">230 </span> 
+<span class="no">231 </span>    Parameters 
+<span class="no">232 </span>    ---------- 
+<span class="no">233 </span>    compression : str or mapping 
+<span class="no">234 </span>        If string, specifies the compression method. If mapping, value at key 
+<span class="no">235 </span>        &apos;method&apos; specifies compression method. 
+<span class="no">236 </span> 
+<span class="no">237 </span>    Returns 
+<span class="no">238 </span>    ------- 
+<span class="no">239 </span>    tuple of ({compression method}, Optional[str] 
+<span class="no">240 </span>              {compression arguments}, Dict[str, str]) 
+<span class="no">241 </span> 
+<span class="no">242 </span>    Raises 
+<span class="no">243 </span>    ------ 
+<span class="no">244 </span>    ValueError on mapping missing &apos;method&apos; key 
+<span class="no">245 </span>    &quot;&quot;&quot; 
+<span class="no">246 </span>    if isinstance(compression, Mapping): 
+<span class="no">247 </span>        compression_args = dict(compression) 
+<span class="no">248 </span>        try: 
+<span class="no">249 </span>            compression = compression_args.pop(&quot;method&quot;) 
+<span class="no">250 </span>        except KeyError: 
+<span class="no">251 </span>            raise ValueError(&quot;If mapping, compression must have key &apos;method&apos;&quot;) 
+<span class="no">252 </span>    else: 
+<span class="no">253 </span>        compression_args = {} 
+<span class="no">254 </span>    return compression, compression_args 
+<span class="no">255 </span> 
+<span class="no">256 </span> 
+<span class="no">257 </span>def infer_compression( 
+<span class="no">258 </span>    filepath_or_buffer: FilePathOrBuffer, compression: Optional[str] 
+<span class="no">259 </span>) -&gt; Optional[str]: 
+<span class="no">260 </span>    &quot;&quot;&quot; 
+<span class="no">261 </span>    Get the compression method for filepath_or_buffer. If compression=&apos;infer&apos;, 
+<span class="no">262 </span>    the inferred compression method is returned. Otherwise, the input 
+<span class="no">263 </span>    compression method is returned unchanged, unless it&apos;s invalid, in which 
+<span class="no">264 </span>    case an error is raised. 
+<span class="no">265 </span> 
+<span class="no">266 </span>    Parameters 
+<span class="no">267 </span>    ---------- 
+<span class="no">268 </span>    filepath_or_buffer : str or file handle 
+<span class="no">269 </span>        File path or object. 
+<span class="no">270 </span>    compression : {&apos;infer&apos;, &apos;gzip&apos;, &apos;bz2&apos;, &apos;zip&apos;, &apos;xz&apos;, None} 
+<span class="no">271 </span>        If &apos;infer&apos; and `filepath_or_buffer` is path-like, then detect 
+<span class="no">272 </span>        compression from the following extensions: &apos;.gz&apos;, &apos;.bz2&apos;, &apos;.zip&apos;, 
+<span class="no">273 </span>        or &apos;.xz&apos; (otherwise no compression). 
+<span class="no">274 </span> 
+<span class="no">275 </span>    Returns 
+<span class="no">276 </span>    ------- 
+<span class="no">277 </span>    string or None 
+<span class="no">278 </span> 
+<span class="no">279 </span>    Raises 
+<span class="no">280 </span>    ------ 
+<span class="no">281 </span>    ValueError on invalid compression specified. 
+<span class="no">282 </span>    &quot;&quot;&quot; 
+<span class="no">283 </span> 
+<span class="no">284 </span>    # No compression has been explicitly specified 
+<span class="no">285 </span>    if compression is None: 
+<span class="no">286 </span>        return None 
+<span class="no">287 </span> 
+<span class="no">288 </span>    # Infer compression 
+<span class="no">289 </span>    if compression == &quot;infer&quot;: 
+<span class="no">290 </span>        # Convert all path types (e.g. pathlib.Path) to strings 
+<span class="no">291 </span>        filepath_or_buffer = stringify_path(filepath_or_buffer) 
+<span class="no">292 </span>        if not isinstance(filepath_or_buffer, str): 
+<span class="no">293 </span>            # Cannot infer compression of a buffer, assume no compression 
+<span class="no">294 </span>            return None 
+<span class="no">295 </span> 
+<span class="no">296 </span>        # Infer compression from the filename/URL extension 
+<span class="no">297 </span>        for compression, extension in _compression_to_extension.items(): 
+<span class="no">298 </span>            if filepath_or_buffer.endswith(extension): 
+<span class="no">299 </span>                return compression 
+<span class="no">300 </span>        return None 
+<span class="no">301 </span> 
+<span class="no">302 </span>    # Compression has been specified. Check that it&apos;s valid 
+<span class="no">303 </span>    if compression in _compression_to_extension: 
+<span class="no">304 </span>        return compression 
+<span class="no">305 </span> 
+<span class="no">306 </span>    msg = f&quot;Unrecognized compression type: {compression}&quot; 
+<span class="no">307 </span>    valid = [&quot;infer&quot;, None] + sorted(_compression_to_extension) 
+<span class="no">308 </span>    msg += f&quot;\nValid compression types are {valid}&quot; 
+<span class="no">309 </span>    raise ValueError(msg) 
+<span class="no">310 </span> 
+<span class="no">311 </span> 
+<span class="no">312 </span>def get_handle( 
+<span class="no">313 </span>    path_or_buf, 
+<span class="no">314 </span>    mode: str, 
+<span class="no">315 </span>    encoding=None, 
+<span class="no">316 </span>    compression: Optional[Union[str, Mapping[str, Any]]] = None, 
+<span class="no">317 </span>    memory_map: bool = False, 
+<span class="no">318 </span>    is_text: bool = True, 
+<span class="no">319 </span>): 
+<span class="no">320 </span>    &quot;&quot;&quot; 
+<span class="no">321 </span>    Get file handle for given path/buffer and mode. 
+<span class="no">322 </span> 
+<span class="no">323 </span>    Parameters 
+<span class="no">324 </span>    ---------- 
+<span class="no">325 </span>    path_or_buf : str or file handle 
+<span class="no">326 </span>        File path or object. 
+<span class="no">327 </span>    mode : str 
+<span class="no">328 </span>        Mode to open path_or_buf with. 
+<span class="no">329 </span>    encoding : str or None 
+<span class="no">330 </span>        Encoding to use. 
+<span class="no">331 </span>    compression : str or dict, default None 
+<span class="no">332 </span>        If string, specifies compression mode. If dict, value at key &apos;method&apos; 
+<span class="no">333 </span>        specifies compression mode. Compression mode must be one of {&apos;infer&apos;, 
+<span class="no">334 </span>        &apos;gzip&apos;, &apos;bz2&apos;, &apos;zip&apos;, &apos;xz&apos;, None}. If compression mode is &apos;infer&apos; 
+<span class="no">335 </span>        and `filepath_or_buffer` is path-like, then detect compression from 
+<span class="no">336 </span>        the following extensions: &apos;.gz&apos;, &apos;.bz2&apos;, &apos;.zip&apos;, or &apos;.xz&apos; (otherwise 
+<span class="no">337 </span>        no compression). If dict and compression mode is &apos;zip&apos; or inferred as 
+<span class="no">338 </span>        &apos;zip&apos;, other entries passed as additional compression options. 
+<span class="no">339 </span> 
+<span class="no">340 </span>        .. versionchanged:: 1.0.0 
+<span class="no">341 </span> 
+<span class="no">342 </span>           May now be a dict with key &apos;method&apos; as compression mode 
+<span class="no">343 </span>           and other keys as compression options if compression 
+<span class="no">344 </span>           mode is &apos;zip&apos;. 
+<span class="no">345 </span> 
+<span class="no">346 </span>    memory_map : boolean, default False 
+<span class="no">347 </span>        See parsers._parser_params for more information. 
+<span class="no">348 </span>    is_text : boolean, default True 
+<span class="no">349 </span>        whether file/buffer is in text format (csv, json, etc.), or in binary 
+<span class="no">350 </span>        mode (pickle, etc.). 
+<span class="no">351 </span> 
+<span class="no">352 </span>    Returns 
+<span class="no">353 </span>    ------- 
+<span class="no">354 </span>    f : file-like 
+<span class="no">355 </span>        A file-like object. 
+<span class="no">356 </span>    handles : list of file-like objects 
+<span class="no">357 </span>        A list of file-like object that were opened in this function. 
+<span class="no">358 </span>    &quot;&quot;&quot; 
+<span class="no">359 </span>    try: 
+<span class="no">360 </span>        from s3fs import S3File 
+<span class="no">361 </span> 
+<span class="no">362 </span>        need_text_wrapping = (BufferedIOBase<span id="edit-4-new" data-kind="ins"><span id="hl-4-10756" class="hl ins">,</span></span> <span id="edit-5-new" data-kind="ins"><span id="hl-5-10758" class="hl ins">RawIOBase</span></span>, S3File) 
+<span class="no">363 </span>    except ImportError: 
+<span class="no">364 </span>        need_text_wrapping = <span id="edit-7-new" data-kind="ins"><span id="hl-7-10830" class="hl ins"><span id="edit-6-new" data-kind="del"></span>(BufferedIOBase, RawIOBase)</span></span>  # type: ignore 
+<span class="no">365 </span> 
+<span class="no">366 </span>    handles: List[IO] = list() 
+<span class="no">367 </span>    f = path_or_buf 
+<span class="no">368 </span> 
+<span class="no">369 </span>    # Convert pathlib.Path/py.path.local or string 
+<span class="no">370 </span>    path_or_buf = stringify_path(path_or_buf) 
+<span class="no">371 </span>    is_path = isinstance(path_or_buf, str) 
+<span class="no">372 </span> 
+<span class="no">373 </span>    compression, compression_args = get_compression_method(compression) 
+<span class="no">374 </span>    if is_path: 
+<span class="no">375 </span>        compression = infer_compression(path_or_buf, compression) 
+<span class="no">376 </span> 
+<span class="no">377 </span>    if compression: 
+<span class="no">378 </span> 
+<span class="no">379 </span>        # GZ Compression 
+<span class="no">380 </span>        if compression == &quot;gzip&quot;: 
+<span class="no">381 </span>            if is_path: 
+<span class="no">382 </span>                f = gzip.open(path_or_buf, mode) 
+<span class="no">383 </span>            else: 
+<span class="no">384 </span>                f = gzip.GzipFile(fileobj=path_or_buf) 
+<span class="no">385 </span> 
+<span class="no">386 </span>        # BZ Compression 
+<span class="no">387 </span>        elif compression == &quot;bz2&quot;: 
+<span class="no">388 </span>            if is_path: 
+<span class="no">389 </span>                f = bz2.BZ2File(path_or_buf, mode) 
+<span class="no">390 </span>            else: 
+<span class="no">391 </span>                f = bz2.BZ2File(path_or_buf) 
+<span class="no">392 </span> 
+<span class="no">393 </span>        # ZIP Compression 
+<span class="no">394 </span>        elif compression == &quot;zip&quot;: 
+<span class="no">395 </span>            zf = _BytesZipFile(path_or_buf, mode, **compression_args) 
+<span class="no">396 </span>            # Ensure the container is closed as well. 
+<span class="no">397 </span>            handles.append(zf) 
+<span class="no">398 </span>            if zf.mode == &quot;w&quot;: 
+<span class="no">399 </span>                f = zf 
+<span class="no">400 </span>            elif zf.mode == &quot;r&quot;: 
+<span class="no">401 </span>                zip_names = zf.namelist() 
+<span class="no">402 </span>                if len(zip_names) == 1: 
+<span class="no">403 </span>                    f = zf.open(zip_names.pop()) 
+<span class="no">404 </span>                elif len(zip_names) == 0: 
+<span class="no">405 </span>                    raise ValueError(f&quot;Zero files found in ZIP file {path_or_buf}&quot;) 
+<span class="no">406 </span>                else: 
+<span class="no">407 </span>                    raise ValueError( 
+<span class="no">408 </span>                        &quot;Multiple files found in ZIP file. &quot; 
+<span class="no">409 </span>                        f&quot;Only one file per ZIP: {zip_names}&quot; 
+<span class="no">410 </span>                    ) 
+<span class="no">411 </span> 
+<span class="no">412 </span>        # XZ Compression 
+<span class="no">413 </span>        elif compression == &quot;xz&quot;: 
+<span class="no">414 </span>            f = _get_lzma_file(lzma)(path_or_buf, mode) 
+<span class="no">415 </span> 
+<span class="no">416 </span>        # Unrecognized Compression 
+<span class="no">417 </span>        else: 
+<span class="no">418 </span>            msg = f&quot;Unrecognized compression type: {compression}&quot; 
+<span class="no">419 </span>            raise ValueError(msg) 
+<span class="no">420 </span> 
+<span class="no">421 </span>        handles.append(f) 
+<span class="no">422 </span> 
+<span class="no">423 </span>    elif is_path: 
+<span class="no">424 </span>        if encoding: 
+<span class="no">425 </span>            # Encoding 
+<span class="no">426 </span>            f = open(path_or_buf, mode, encoding=encoding, newline=&quot;&quot;) 
+<span class="no">427 </span>        elif is_text: 
+<span class="no">428 </span>            # No explicit encoding 
+<span class="no">429 </span>            f = open(path_or_buf, mode, errors=&quot;replace&quot;, newline=&quot;&quot;) 
+<span class="no">430 </span>        else: 
+<span class="no">431 </span>            # Binary mode 
+<span class="no">432 </span>            f = open(path_or_buf, mode) 
+<span class="no">433 </span>        handles.append(f) 
+<span class="no">434 </span> 
+<span class="no">435 </span>    # Convert BytesIO or file objects passed with an encoding 
+<span class="no">436 </span>    if is_text and (compression or isinstance(f, need_text_wrapping)): 
+<span class="no">437 </span>        from io import TextIOWrapper 
+<span class="no">438 </span> 
+<span class="no">439 </span>        g = TextIOWrapper(f, encoding=encoding, newline=&quot;&quot;) 
+<span class="no">440 </span>        if not isinstance(f, <span id="edit-9-new" data-kind="ins"><span id="hl-9-13335" class="hl ins"><span id="edit-8-new" data-kind="del"></span>(BufferedIOBase, RawIOBase)</span></span>): 
+<span class="no">441 </span>            handles.append(g) 
+<span class="no">442 </span>        f = g 
+<span class="no">443 </span> 
+<span class="no">444 </span>    if memory_map and hasattr(f, &quot;fileno&quot;): 
+<span class="no">445 </span>        try: 
+<span class="no">446 </span>            wrapped = _MMapWrapper(f) 
+<span class="no">447 </span>            f.close() 
+<span class="no">448 </span>            f = wrapped 
+<span class="no">449 </span>        except Exception: 
+<span class="no">450 </span>            # we catch any errors that may have occurred 
+<span class="no">451 </span>            # because that is consistent with the lower-level 
+<span class="no">452 </span>            # functionality of the C engine (pd.read_csv), so 
+<span class="no">453 </span>            # leave the file handler as is then 
+<span class="no">454 </span>            pass 
+<span class="no">455 </span> 
+<span class="no">456 </span>    return f, handles 
+<span class="no">457 </span> 
+<span class="no">458 </span> 
+<span class="no">459 </span>class _BytesZipFile(zipfile.ZipFile, BytesIO):  # type: ignore 
+<span class="no">460 </span>    &quot;&quot;&quot; 
+<span class="no">461 </span>    Wrapper for standard library class ZipFile and allow the returned file-like 
+<span class="no">462 </span>    handle to accept byte strings via `write` method. 
+<span class="no">463 </span> 
+<span class="no">464 </span>    BytesIO provides attributes of file-like object and ZipFile.writestr writes 
+<span class="no">465 </span>    bytes strings into a member of the archive. 
+<span class="no">466 </span>    &quot;&quot;&quot; 
+<span class="no">467 </span> 
+<span class="no">468 </span>    # GH 17778 
+<span class="no">469 </span>    def __init__( 
+<span class="no">470 </span>        self, 
+<span class="no">471 </span>        file: FilePathOrBuffer, 
+<span class="no">472 </span>        mode: str, 
+<span class="no">473 </span>        archive_name: Optional[str] = None, 
+<span class="no">474 </span>        **kwargs, 
+<span class="no">475 </span>    ): 
+<span class="no">476 </span>        if mode in [&quot;wb&quot;, &quot;rb&quot;]: 
+<span class="no">477 </span>            mode = mode.replace(&quot;b&quot;, &quot;&quot;) 
+<span class="no">478 </span>        self.archive_name = archive_name 
+<span class="no">479 </span>        super().__init__(file, mode, zipfile.ZIP_DEFLATED, **kwargs) 
+<span class="no">480 </span> 
+<span class="no">481 </span>    def write(self, data): 
+<span class="no">482 </span>        archive_name = self.filename 
+<span class="no">483 </span>        if self.archive_name is not None: 
+<span class="no">484 </span>            archive_name = self.archive_name 
+<span class="no">485 </span>        super().writestr(archive_name, data) 
+<span class="no">486 </span> 
+<span class="no">487 </span>    @property 
+<span class="no">488 </span>    def closed(self): 
+<span class="no">489 </span>        return self.fp is None 
+<span class="no">490 </span> 
+<span class="no">491 </span> 
+<span class="no">492 </span>class _MMapWrapper(abc.Iterator): 
+<span class="no">493 </span>    &quot;&quot;&quot; 
+<span class="no">494 </span>    Wrapper for the Python&apos;s mmap class so that it can be properly read in 
+<span class="no">495 </span>    by Python&apos;s csv.reader class. 
+<span class="no">496 </span> 
+<span class="no">497 </span>    Parameters 
+<span class="no">498 </span>    ---------- 
+<span class="no">499 </span>    f : file object 
+<span class="no">500 </span>        File object to be mapped onto memory. Must support the &apos;fileno&apos; 
+<span class="no">501 </span>        method or have an equivalent attribute 
+<span class="no">502 </span> 
+<span class="no">503 </span>    &quot;&quot;&quot; 
+<span class="no">504 </span> 
+<span class="no">505 </span>    def __init__(self, f: IO): 
+<span class="no">506 </span>        self.mmap = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) 
+<span class="no">507 </span> 
+<span class="no">508 </span>    def __getattr__(self, name: str): 
+<span class="no">509 </span>        return getattr(self.mmap, name) 
+<span class="no">510 </span> 
+<span class="no">511 </span>    def __iter__(self) -&gt; &quot;_MMapWrapper&quot;: 
+<span class="no">512 </span>        return self 
+<span class="no">513 </span> 
+<span class="no">514 </span>    def __next__(self) -&gt; str: 
+<span class="no">515 </span>        newbytes = self.mmap.readline() 
+<span class="no">516 </span> 
+<span class="no">517 </span>        # readline returns bytes, not str, but Python&apos;s CSV reader 
+<span class="no">518 </span>        # expects str, so convert the output to str before continuing 
+<span class="no">519 </span>        newline = newbytes.decode(&quot;utf-8&quot;) 
+<span class="no">520 </span> 
+<span class="no">521 </span>        # mmap doesn&apos;t raise if reading past the allocated 
+<span class="no">522 </span>        # data but instead returns an empty string, so raise 
+<span class="no">523 </span>        # if that is returned 
+<span class="no">524 </span>        if newline == &quot;&quot;: 
+<span class="no">525 </span>            raise StopIteration 
+<span class="no">526 </span>        return newline 
+<span class="no">527 </span></code></pre></div>
+</div></div></div>
+</body>
+</html>

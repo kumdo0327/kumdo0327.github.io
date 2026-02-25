@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+:root {
+  --ins-clr: 97 216 54;
+  --del-clr: 255 150 141;
+  --upd-clr: 255 217 50;
+  --mov-clr: 191 175 255;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+}
+.grid {
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+}
+.panel {
+  border-radius: 6px;
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #b7b7b7;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  line-height: 1;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+}
+.codebox {
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+  flex: 1;
+  line-height: 1.5;
+  padding: 2px 4px;
+  font-size: 12px;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
+}
+.ins, .del, .mov, .upd {
+  border-top: 1px solid #878787;
+  border-bottom: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-top: 3px solid rgb(var(--ins-clr));
+  border-bottom: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-top: 3px solid rgb(var(--del-clr));
+  border-bottom: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-top: 3px solid rgb(var(--mov-clr));
+  border-bottom: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-top: 3px solid rgb(var(--upd-clr));
+  border-bottom: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  color: #878787;
+  background: #f7f7f7;
+  padding-top: 3px;
+  font-weight: normal;
+  padding-bottom: 3px;
+  letter-spacing: normal;
+}
+.legend {
+  margin: 8px 0 12px 0;
+  line-height: 1.5;
+  font-size: 12px;
+}
+.legend-row {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  border-radius: 6px;
+  padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.legend-key kbd {
+  border-radius: 2px;
+  background: #fbfbfb;
+  margin-right: 4px;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+}
+.description {
+  overflow: auto;
+  width: 384px;
+  box-sizing: border-box;
+  padding: 0px 2px;
+  border: 1px solid black;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
+
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
+    });
+  });
+
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return runShortcut("unfocus");
+
+    const key = e.key.toLowerCase();
+    if (key === "u") return runShortcut("unfocus");
+    if (key !== "n" && key !== "b") return;
+
+    e.preventDefault();
+    runShortcut(key === "n" ? "next" : "back");
+  });
+});
+</script>
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 6 :&ensp;<b>Delete <code class="type">"import_statement"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 6 :&ensp;<b>Delete <code class="type">"expression_statement"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 6 :&ensp;<b>Delete <code class="type">"expression_statement"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 6 :&ensp;<b>Insert <code class="type">"expression_statement"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 6 :&ensp;<b>Delete <code class="type">"subscript"</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 6 :&ensp;<b>Move <code class="type">"subscript"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">35_A (original)</div>
+<div class="codebox"><pre><code><span class="no"> 1 </span>from __future__ import unicode_literals 
+<span class="no"> 2 </span> 
+<span class="no"> 3 </span><span id="edit-1-old" data-kind="del"><span id="hl-1-42" class="hl del">import re</span></span> 
+<span class="no"> 4 </span> 
+<span class="no"> 5 </span>from .subtitles import SubtitlesInfoExtractor 
+<span class="no"> 6 </span>from .common import ExtractorError 
+<span class="no"> 7 </span>from ..utils import parse_iso8601 
+<span class="no"> 8 </span> 
+<span class="no"> 9 </span> 
+<span class="no">10 </span>class DRTVIE(SubtitlesInfoExtractor): 
+<span class="no">11 </span>    _VALID_URL = r&apos;http://(?:www\.)?dr\.dk/tv/se/(?:[^/]+/)+(?P&lt;id&gt;[\da-z-]+)(?:[/#?]|$)&apos; 
+<span class="no">12 </span> 
+<span class="no">13 </span>    _TEST = { 
+<span class="no">14 </span>        &apos;url&apos;: &apos;http://www.dr.dk/tv/se/partiets-mand/partiets-mand-7-8&apos;, 
+<span class="no">15 </span>        &apos;md5&apos;: &apos;4a7e1dd65cdb2643500a3f753c942f25&apos;, 
+<span class="no">16 </span>        &apos;info_dict&apos;: { 
+<span class="no">17 </span>            &apos;id&apos;: &apos;partiets-mand-7-8&apos;, 
+<span class="no">18 </span>            &apos;ext&apos;: &apos;mp4&apos;, 
+<span class="no">19 </span>            &apos;title&apos;: &apos;Partiets mand (7:8)&apos;, 
+<span class="no">20 </span>            &apos;description&apos;: &apos;md5:a684b90a8f9336cd4aab94b7647d7862&apos;, 
+<span class="no">21 </span>            &apos;timestamp&apos;: 1403047940, 
+<span class="no">22 </span>            &apos;upload_date&apos;: &apos;20140617&apos;, 
+<span class="no">23 </span>            &apos;duration&apos;: 1299.040, 
+<span class="no">24 </span>        }, 
+<span class="no">25 </span>    } 
+<span class="no">26 </span> 
+<span class="no">27 </span>    def _real_extract(self, url): 
+<span class="no">28 </span>        <span id="edit-2-old" data-kind="del"><span id="hl-2-806" class="hl del"><span id="edit-4-old" data-kind="ins"></span>mobj = re.match(self._VALID_URL, url)</span></span> 
+<span class="no">29 </span>        <span id="edit-3-old" data-kind="del"><span id="hl-3-852" class="hl del">video_id = mobj.group(&apos;id&apos;)</span></span> 
+<span class="no">30 </span> 
+<span class="no">31 </span>        programcard = self._download_json( 
+<span class="no">32 </span>            &apos;http://www.dr.dk/mu/programcard/expanded/%s&apos; % video_id, video_id, &apos;Downloading video JSON&apos;) 
+<span class="no">33 </span> 
+<span class="no">34 </span>        data = programcard[&apos;Data&apos;][0] 
+<span class="no">35 </span> 
+<span class="no">36 </span>        title = data[&apos;Title&apos;] 
+<span class="no">37 </span>        description = data[&apos;Description&apos;] 
+<span class="no">38 </span>        timestamp = parse_iso8601(<span id="edit-5-old" data-kind="del"><span id="edit-6-old" data-kind="mov"><span id="hl-6-1176" class="hl mov">data[&apos;CreatedTime&apos;]</span></span><span id="hl-5-1195" class="hl del">[:-5]</span></span>) 
+<span class="no">39 </span> 
+<span class="no">40 </span>        thumbnail = None 
+<span class="no">41 </span>        duration = None 
+<span class="no">42 </span> 
+<span class="no">43 </span>        restricted_to_denmark = False 
+<span class="no">44 </span> 
+<span class="no">45 </span>        formats = [] 
+<span class="no">46 </span>        subtitles = {} 
+<span class="no">47 </span> 
+<span class="no">48 </span>        for asset in data[&apos;Assets&apos;]: 
+<span class="no">49 </span>            if asset[&apos;Kind&apos;] == &apos;Image&apos;: 
+<span class="no">50 </span>                thumbnail = asset[&apos;Uri&apos;] 
+<span class="no">51 </span>            elif asset[&apos;Kind&apos;] == &apos;VideoResource&apos;: 
+<span class="no">52 </span>                duration = asset[&apos;DurationInMilliseconds&apos;] / 1000.0 
+<span class="no">53 </span>                restricted_to_denmark = asset[&apos;RestrictedToDenmark&apos;] 
+<span class="no">54 </span>                for link in asset[&apos;Links&apos;]: 
+<span class="no">55 </span>                    target = link[&apos;Target&apos;] 
+<span class="no">56 </span>                    uri = link[&apos;Uri&apos;] 
+<span class="no">57 </span>                    formats.append({ 
+<span class="no">58 </span>                        &apos;url&apos;: uri + &apos;?hdcore=3.3.0&amp;plugin=aasp-3.3.0.99.43&apos; if target == &apos;HDS&apos; else uri, 
+<span class="no">59 </span>                        &apos;format_id&apos;: target, 
+<span class="no">60 </span>                        &apos;ext&apos;: link[&apos;FileFormat&apos;], 
+<span class="no">61 </span>                        &apos;preference&apos;: -1 if target == &apos;HDS&apos; else -2, 
+<span class="no">62 </span>                    }) 
+<span class="no">63 </span>                subtitles_list = asset.get(&apos;SubtitlesList&apos;) 
+<span class="no">64 </span>                if isinstance(subtitles_list, list): 
+<span class="no">65 </span>                    LANGS = { 
+<span class="no">66 </span>                        &apos;Danish&apos;: &apos;dk&apos;, 
+<span class="no">67 </span>                    } 
+<span class="no">68 </span>                    for subs in subtitles_list: 
+<span class="no">69 </span>                        lang = subs[&apos;Language&apos;] 
+<span class="no">70 </span>                        subtitles[LANGS.get(lang, lang)] = subs[&apos;Uri&apos;] 
+<span class="no">71 </span> 
+<span class="no">72 </span>        if not formats and restricted_to_denmark: 
+<span class="no">73 </span>            raise ExtractorError( 
+<span class="no">74 </span>                &apos;Unfortunately, DR is not allowed to show this program outside Denmark.&apos;, expected=True) 
+<span class="no">75 </span> 
+<span class="no">76 </span>        self._sort_formats(formats) 
+<span class="no">77 </span> 
+<span class="no">78 </span>        if self._downloader.params.get(&apos;listsubtitles&apos;, False): 
+<span class="no">79 </span>            self._list_available_subtitles(video_id, subtitles) 
+<span class="no">80 </span>            return 
+<span class="no">81 </span> 
+<span class="no">82 </span>        return { 
+<span class="no">83 </span>            &apos;id&apos;: video_id, 
+<span class="no">84 </span>            &apos;title&apos;: title, 
+<span class="no">85 </span>            &apos;description&apos;: description, 
+<span class="no">86 </span>            &apos;thumbnail&apos;: thumbnail, 
+<span class="no">87 </span>            &apos;timestamp&apos;: timestamp, 
+<span class="no">88 </span>            &apos;duration&apos;: duration, 
+<span class="no">89 </span>            &apos;formats&apos;: formats, 
+<span class="no">90 </span>            &apos;subtitles&apos;: self.extract_subtitles(video_id, subtitles), 
+<span class="no">91 </span>        } 
+<span class="no">92 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">35_A (modified)</div>
+<div class="codebox"><pre><code><span class="no"> 1 </span>from __future__ import unicode_literals 
+<span class="no"> 2 </span> 
+<span class="no"> 3 </span><span id="edit-1-new" data-kind="del"></span>from .subtitles import SubtitlesInfoExtractor 
+<span class="no"> 4 </span>from .common import ExtractorError 
+<span class="no"> 5 </span>from ..utils import parse_iso8601 
+<span class="no"> 6 </span> 
+<span class="no"> 7 </span> 
+<span class="no"> 8 </span>class DRTVIE(SubtitlesInfoExtractor): 
+<span class="no"> 9 </span>    _VALID_URL = r&apos;http://(?:www\.)?dr\.dk/tv/se/(?:[^/]+/)+(?P&lt;id&gt;[\da-z-]+)(?:[/#?]|$)&apos; 
+<span class="no">10 </span> 
+<span class="no">11 </span>    _TEST = { 
+<span class="no">12 </span>        &apos;url&apos;: &apos;http://www.dr.dk/tv/se/partiets-mand/partiets-mand-7-8&apos;, 
+<span class="no">13 </span>        &apos;md5&apos;: &apos;4a7e1dd65cdb2643500a3f753c942f25&apos;, 
+<span class="no">14 </span>        &apos;info_dict&apos;: { 
+<span class="no">15 </span>            &apos;id&apos;: &apos;partiets-mand-7-8&apos;, 
+<span class="no">16 </span>            &apos;ext&apos;: &apos;mp4&apos;, 
+<span class="no">17 </span>            &apos;title&apos;: &apos;Partiets mand (7:8)&apos;, 
+<span class="no">18 </span>            &apos;description&apos;: &apos;md5:a684b90a8f9336cd4aab94b7647d7862&apos;, 
+<span class="no">19 </span>            &apos;timestamp&apos;: 1403047940, 
+<span class="no">20 </span>            &apos;upload_date&apos;: &apos;20140617&apos;, 
+<span class="no">21 </span>            &apos;duration&apos;: 1299.040, 
+<span class="no">22 </span>        }, 
+<span class="no">23 </span>    } 
+<span class="no">24 </span> 
+<span class="no">25 </span>    def _real_extract(self, url): 
+<span class="no">26 </span>        <span id="edit-4-new" data-kind="ins"><span id="hl-4-795" class="hl ins"><span id="edit-3-new" data-kind="del"></span><span id="edit-2-new" data-kind="del"></span>video_id = self._match_id(url)</span></span> 
+<span class="no">27 </span> 
+<span class="no">28 </span>        programcard = self._download_json( 
+<span class="no">29 </span>            &apos;http://www.dr.dk/mu/programcard/expanded/%s&apos; % video_id, video_id, &apos;Downloading video JSON&apos;) 
+<span class="no">30 </span> 
+<span class="no">31 </span>        data = programcard[&apos;Data&apos;][0] 
+<span class="no">32 </span> 
+<span class="no">33 </span>        title = data[&apos;Title&apos;] 
+<span class="no">34 </span>        description = data[&apos;Description&apos;] 
+<span class="no">35 </span>        timestamp = parse_iso8601(<span id="edit-6-new" data-kind="mov"><span id="hl-6-1122" class="hl mov"><span id="edit-5-new" data-kind="del"></span>data[&apos;CreatedTime&apos;]</span></span>) 
+<span class="no">36 </span> 
+<span class="no">37 </span>        thumbnail = None 
+<span class="no">38 </span>        duration = None 
+<span class="no">39 </span> 
+<span class="no">40 </span>        restricted_to_denmark = False 
+<span class="no">41 </span> 
+<span class="no">42 </span>        formats = [] 
+<span class="no">43 </span>        subtitles = {} 
+<span class="no">44 </span> 
+<span class="no">45 </span>        for asset in data[&apos;Assets&apos;]: 
+<span class="no">46 </span>            if asset[&apos;Kind&apos;] == &apos;Image&apos;: 
+<span class="no">47 </span>                thumbnail = asset[&apos;Uri&apos;] 
+<span class="no">48 </span>            elif asset[&apos;Kind&apos;] == &apos;VideoResource&apos;: 
+<span class="no">49 </span>                duration = asset[&apos;DurationInMilliseconds&apos;] / 1000.0 
+<span class="no">50 </span>                restricted_to_denmark = asset[&apos;RestrictedToDenmark&apos;] 
+<span class="no">51 </span>                for link in asset[&apos;Links&apos;]: 
+<span class="no">52 </span>                    target = link[&apos;Target&apos;] 
+<span class="no">53 </span>                    uri = link[&apos;Uri&apos;] 
+<span class="no">54 </span>                    formats.append({ 
+<span class="no">55 </span>                        &apos;url&apos;: uri + &apos;?hdcore=3.3.0&amp;plugin=aasp-3.3.0.99.43&apos; if target == &apos;HDS&apos; else uri, 
+<span class="no">56 </span>                        &apos;format_id&apos;: target, 
+<span class="no">57 </span>                        &apos;ext&apos;: link[&apos;FileFormat&apos;], 
+<span class="no">58 </span>                        &apos;preference&apos;: -1 if target == &apos;HDS&apos; else -2, 
+<span class="no">59 </span>                    }) 
+<span class="no">60 </span>                subtitles_list = asset.get(&apos;SubtitlesList&apos;) 
+<span class="no">61 </span>                if isinstance(subtitles_list, list): 
+<span class="no">62 </span>                    LANGS = { 
+<span class="no">63 </span>                        &apos;Danish&apos;: &apos;dk&apos;, 
+<span class="no">64 </span>                    } 
+<span class="no">65 </span>                    for subs in subtitles_list: 
+<span class="no">66 </span>                        lang = subs[&apos;Language&apos;] 
+<span class="no">67 </span>                        subtitles[LANGS.get(lang, lang)] = subs[&apos;Uri&apos;] 
+<span class="no">68 </span> 
+<span class="no">69 </span>        if not formats and restricted_to_denmark: 
+<span class="no">70 </span>            raise ExtractorError( 
+<span class="no">71 </span>                &apos;Unfortunately, DR is not allowed to show this program outside Denmark.&apos;, expected=True) 
+<span class="no">72 </span> 
+<span class="no">73 </span>        self._sort_formats(formats) 
+<span class="no">74 </span> 
+<span class="no">75 </span>        if self._downloader.params.get(&apos;listsubtitles&apos;, False): 
+<span class="no">76 </span>            self._list_available_subtitles(video_id, subtitles) 
+<span class="no">77 </span>            return 
+<span class="no">78 </span> 
+<span class="no">79 </span>        return { 
+<span class="no">80 </span>            &apos;id&apos;: video_id, 
+<span class="no">81 </span>            &apos;title&apos;: title, 
+<span class="no">82 </span>            &apos;description&apos;: description, 
+<span class="no">83 </span>            &apos;thumbnail&apos;: thumbnail, 
+<span class="no">84 </span>            &apos;timestamp&apos;: timestamp, 
+<span class="no">85 </span>            &apos;duration&apos;: duration, 
+<span class="no">86 </span>            &apos;formats&apos;: formats, 
+<span class="no">87 </span>            &apos;subtitles&apos;: self.extract_subtitles(video_id, subtitles), 
+<span class="no">88 </span>        } 
+<span class="no">89 </span></code></pre></div>
+</div></div></div>
+</body>
+</html>

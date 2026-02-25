@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+:root {
+  --ins-clr: 97 216 54;
+  --del-clr: 255 150 141;
+  --upd-clr: 255 217 50;
+  --mov-clr: 191 175 255;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+}
+.grid {
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+}
+.panel {
+  overflow: hidden;
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+}
+.panel-header {
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  padding: 8px 10px;
+  line-height: 1;
+  display: flex;
+  font-size: 16px;
+  background: #ebebeb;
+  align-items: center;
+  justify-content: space-between;
+}
+.codebox {
+  overflow: auto;
+  padding: 2px 4px;
+  line-height: 1.5;
+  flex: 1;
+  background: #f7f7f7;
+  font-size: 12px;
+  min-height: 0;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  cursor: pointer;
+  box-shadow: inset -1px 0 0 #878787;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-weight: normal;
+  background: #f7f7f7;
+  letter-spacing: normal;
+  color: #878787;
+}
+.legend {
+  margin: 8px 0 12px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.legend-row {
+  flex-wrap: wrap;
+  display: flex;
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  border: 1px solid #bfbfbf;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.legend-key kbd {
+  margin-right: 4px;
+  padding: 1px 5px;
+  background: #fbfbfb;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+}
+.description {
+  overflow: auto;
+  width: 384px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  padding: 0px 2px;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
+
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
+    });
+  });
+
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return runShortcut("unfocus");
+
+    const key = e.key.toLowerCase();
+    if (key === "u") return runShortcut("unfocus");
+    if (key !== "n" && key !== "b") return;
+
+    e.preventDefault();
+    runShortcut(key === "n" ? "next" : "back");
+  });
+});
+</script>
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 4 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 4 :&ensp;<b>Insert <code class="type">"dotted_name"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 4 :&ensp;<b>Insert <code class="type">"not_operator"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 4 :&ensp;<b>Move <code class="type">"attribute"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">43_A (original)</div>
+<div class="codebox"><pre><code><span class="no"> 1 </span>from difflib import get_close_matches 
+<span class="no"> 2 </span>from thefuck.utils import get_all_executables, \ 
+<span class="no"> 3 </span>    get_valid_history_without_current, get_closest 
+<span class="no"> 4 </span><span data-kind="ins" id="edit-1-old"></span><span data-kind="ins" id="edit-2-old"></span>from thefuck.specific.sudo import sudo_support 
+<span class="no"> 5 </span> 
+<span class="no"> 6 </span> 
+<span class="no"> 7 </span>@sudo_support 
+<span class="no"> 8 </span>def match(command): 
+<span class="no"> 9 </span>    return (<span data-kind="mov" id="edit-4-old"><span class="hl mov" id="hl-4-234"><span data-kind="ins" id="edit-3-old"></span>command.script_parts</span></span> 
+<span class="no">10 </span>            and &apos;not found&apos; in command.stderr 
+<span class="no">11 </span>            and bool(get_close_matches(command.script_parts[0], 
+<span class="no">12 </span>                                       get_all_executables()))) 
+<span class="no">13 </span> 
+<span class="no">14 </span> 
+<span class="no">15 </span>def _get_used_executables(command): 
+<span class="no">16 </span>    for script in get_valid_history_without_current(command): 
+<span class="no">17 </span>        yield script.split(&apos; &apos;)[0] 
+<span class="no">18 </span> 
+<span class="no">19 </span> 
+<span class="no">20 </span>@sudo_support 
+<span class="no">21 </span>def get_new_command(command): 
+<span class="no">22 </span>    old_command = command.script_parts[0] 
+<span class="no">23 </span> 
+<span class="no">24 </span>    # One from history: 
+<span class="no">25 </span>    already_used = get_closest( 
+<span class="no">26 </span>        old_command, _get_used_executables(command), 
+<span class="no">27 </span>        fallback_to_first=False) 
+<span class="no">28 </span>    if already_used: 
+<span class="no">29 </span>        new_cmds = [already_used] 
+<span class="no">30 </span>    else: 
+<span class="no">31 </span>        new_cmds = [] 
+<span class="no">32 </span> 
+<span class="no">33 </span>    # Other from all executables: 
+<span class="no">34 </span>    new_cmds += [cmd for cmd in get_close_matches(old_command, 
+<span class="no">35 </span>                                                  get_all_executables()) 
+<span class="no">36 </span>                 if cmd not in new_cmds] 
+<span class="no">37 </span> 
+<span class="no">38 </span>    return [&apos; &apos;.join([new_command] + command.script_parts[1:]) 
+<span class="no">39 </span>            for new_command in new_cmds] 
+<span class="no">40 </span> 
+<span class="no">41 </span> 
+<span class="no">42 </span>priority = 3000 
+<span class="no">43 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">43_A (modified)</div>
+<div class="codebox"><pre><code><span class="no"> 1 </span>from difflib import get_close_matches 
+<span class="no"> 2 </span>from thefuck.utils import get_all_executables, \ 
+<span class="no"> 3 </span>    get_valid_history_without_current, get_closest<span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-138">,</span></span> <span data-kind="ins" id="edit-2-new"><span class="hl ins" id="hl-2-140">which</span></span> 
+<span class="no"> 4 </span>from thefuck.specific.sudo import sudo_support 
+<span class="no"> 5 </span> 
+<span class="no"> 6 </span> 
+<span class="no"> 7 </span>@sudo_support 
+<span class="no"> 8 </span>def match(command): 
+<span class="no"> 9 </span>    return (<span data-kind="ins" id="edit-3-new"><span class="hl ins" id="hl-3-241">not which(</span><span data-kind="mov" id="edit-4-new"><span class="hl mov" id="hl-4-251">command.script_parts</span></span><span class="hl ins" id="hl-3-271">[0])</span></span> 
+<span class="no">10 </span>            and &apos;not found&apos; in command.stderr 
+<span class="no">11 </span>            and bool(get_close_matches(command.script_parts[0], 
+<span class="no">12 </span>                                       get_all_executables()))) 
+<span class="no">13 </span> 
+<span class="no">14 </span> 
+<span class="no">15 </span>def _get_used_executables(command): 
+<span class="no">16 </span>    for script in get_valid_history_without_current(command): 
+<span class="no">17 </span>        yield script.split(&apos; &apos;)[0] 
+<span class="no">18 </span> 
+<span class="no">19 </span> 
+<span class="no">20 </span>@sudo_support 
+<span class="no">21 </span>def get_new_command(command): 
+<span class="no">22 </span>    old_command = command.script_parts[0] 
+<span class="no">23 </span> 
+<span class="no">24 </span>    # One from history: 
+<span class="no">25 </span>    already_used = get_closest( 
+<span class="no">26 </span>        old_command, _get_used_executables(command), 
+<span class="no">27 </span>        fallback_to_first=False) 
+<span class="no">28 </span>    if already_used: 
+<span class="no">29 </span>        new_cmds = [already_used] 
+<span class="no">30 </span>    else: 
+<span class="no">31 </span>        new_cmds = [] 
+<span class="no">32 </span> 
+<span class="no">33 </span>    # Other from all executables: 
+<span class="no">34 </span>    new_cmds += [cmd for cmd in get_close_matches(old_command, 
+<span class="no">35 </span>                                                  get_all_executables()) 
+<span class="no">36 </span>                 if cmd not in new_cmds] 
+<span class="no">37 </span> 
+<span class="no">38 </span>    return [&apos; &apos;.join([new_command] + command.script_parts[1:]) 
+<span class="no">39 </span>            for new_command in new_cmds] 
+<span class="no">40 </span> 
+<span class="no">41 </span> 
+<span class="no">42 </span>priority = 3000 
+<span class="no">43 </span></code></pre></div>
+</div></div></div>
+</body>
+</html>

@@ -3,59 +3,59 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
 :root {
-  --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
   --mov-clr: 191 175 255;
   --upd-clr: 255 217 50;
+  --ins-clr: 97 216 54;
 }
 body {
   margin: 0;
   background: white;
 }
 .page {
-  max-width: 100vw;
   margin: 0 auto;
   padding: 0 20px 8px 20px;
+  max-width: 100vw;
 }
 .grid {
-  min-height: 216px;
   display: grid;
   min-width: 1024px;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   height: calc(100vh - 108px);
+  min-height: 216px;
 }
 .panel {
-  border: 1px solid #b7b7b7;
-  border-radius: 6px;
   display: flex;
   min-width: 0;
   box-sizing: border-box;
-  flex-direction: column;
   overflow: hidden;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
 }
 .panel-header {
-  justify-content: space-between;
   background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
   font-weight: bold;
   padding: 8px 10px;
   font-size: 16px;
   display: flex;
   line-height: 1;
-  border-bottom: 1px solid #b7b7b7;
   align-items: center;
+  justify-content: space-between;
 }
 .codebox {
-  font-size: 12px;
-  min-height: 0;
   overflow: auto;
   background: #f7f7f7;
+  padding: 2px 4px;
   flex: 1;
   line-height: 1.5;
-  padding: 2px 4px;
+  font-size: 12px;
+  min-height: 0;
 }
 pre {
   margin: 0;
@@ -65,8 +65,8 @@ pre {
   box-shadow: inset -1px 0 0 #878787;
 }
 .ins, .del, .mov, .upd {
-  border-top: 1px solid #878787;
   border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
 }
 .ins-focus, .del-focus, .mov-focus, .upd-focus {
   font-weight: bold;
@@ -96,49 +96,49 @@ pre {
   background: rgb(var(--upd-clr));
 }
 .ins-border {
-  border-top: 3px solid rgb(var(--ins-clr));
   border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
 }
 .del-border {
-  border-top: 3px solid rgb(var(--del-clr));
   border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
 }
 .mov-border {
-  border-top: 3px solid rgb(var(--mov-clr));
   border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
 }
 .upd-border {
-  border-top: 3px solid rgb(var(--upd-clr));
   border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
 }
 .no {
-  color: #878787;
-  letter-spacing: normal;
-  background: #f7f7f7;
-  padding-top: 3px;
-  font-weight: normal;
   padding-bottom: 3px;
+  background: #f7f7f7;
+  color: #878787;
+  font-weight: normal;
+  padding-top: 3px;
+  letter-spacing: normal;
 }
 .legend {
-  line-height: 1.5;
   margin: 8px 0 12px 0;
   font-size: 12px;
+  line-height: 1.5;
 }
 .legend-row {
   display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-  gap: 4px;
   align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 .legend-title {
   font-weight: bold;
   margin-right: 4px;
 }
 .legend-chip {
-  border-radius: 6px;
-  border: 1px solid #bfbfbf;
   padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
 }
 .legend-ins {
   background: rgb(var(--ins-clr) / 0.7);
@@ -157,18 +157,18 @@ pre {
   margin-right: 10px;
 }
 .legend-key kbd {
-  border: 2px solid #afafaf;
-  border-radius: 2px;
   background: #fbfbfb;
   margin-right: 4px;
   padding: 1px 5px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
 }
 .description {
-  border: 1px solid black;
   overflow: auto;
-  width: 384px;
   box-sizing: border-box;
   padding: 0px 2px;
+  width: 384px;
+  border: 1px solid black;
 }
 .type {
   color: #0076ba;
@@ -469,166 +469,336 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 2 :&ensp;<b>Insert <code class="type">"if_statement"</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 2 :&ensp;<b>Move <code class="type">"expression_statement"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 2 :&ensp;<b>Insert <code class="type">"binary_expression"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 2 :&ensp;<b>Move <code class="type">"binary_expression"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">3_A (original)</div>
-<div class="codebox"><pre><code><span class="no"> 1 </span>package com.fasterxml.jackson.databind.ser.impl; 
-<span class="no"> 2 </span> 
-<span class="no"> 3 </span>import java.io.IOException; 
-<span class="no"> 4 </span> 
-<span class="no"> 5 </span>import com.fasterxml.jackson.annotation.ObjectIdGenerator; 
-<span class="no"> 6 </span> 
-<span class="no"> 7 </span>import com.fasterxml.jackson.core.JsonGenerator; 
-<span class="no"> 8 </span>import com.fasterxml.jackson.core.SerializableString; 
-<span class="no"> 9 </span> 
-<span class="no">10 </span>import com.fasterxml.jackson.databind.SerializerProvider; 
-<span class="no">11 </span> 
-<span class="no">12 </span>/** 
-<span class="no">13 </span> * Simple value container used to keep track of Object Ids during 
-<span class="no">14 </span> * serialization. 
-<span class="no">15 </span> */ 
-<span class="no">16 </span>public final class WritableObjectId 
-<span class="no">17 </span>{ 
-<span class="no">18 </span>    public final ObjectIdGenerator&lt;?&gt; generator; 
-<span class="no">19 </span> 
-<span class="no">20 </span>    public Object id; 
-<span class="no">21 </span> 
-<span class="no">22 </span>    /** 
-<span class="no">23 </span>     * Marker to denote whether Object Id value has been written as part of an Object, 
-<span class="no">24 </span>     * to be referencible. Remains false when forward-reference is written. 
-<span class="no">25 </span>     */ 
-<span class="no">26 </span>    protected boolean idWritten = false; 
-<span class="no">27 </span> 
-<span class="no">28 </span>    public WritableObjectId(ObjectIdGenerator&lt;?&gt; generator) { 
-<span class="no">29 </span>        this.generator = generator; 
-<span class="no">30 </span>    } 
-<span class="no">31 </span> 
-<span class="no">32 </span>    public boolean writeAsId(JsonGenerator gen, SerializerProvider provider, ObjectIdWriter w) throws IOException 
-<span class="no">33 </span>    { 
-<span class="no">34 </span>        if ((id != null) &amp;&amp; (idWritten || w.alwaysAsId)) { 
-<span class="no">35 </span>            // 03-Aug-2013, tatu: Prefer Native Object Ids if available 
-<span class="no">36 </span>            if (gen.canWriteObjectId()) { 
-<span class="no">37 </span>                gen.writeObjectRef(String.valueOf(id)); 
-<span class="no">38 </span>            } else { 
-<span class="no">39 </span>                w.serializer.serialize(id, gen, provider); 
-<span class="no">40 </span>            } 
-<span class="no">41 </span>            return true; 
-<span class="no">42 </span>        } 
-<span class="no">43 </span>        return false; 
-<span class="no">44 </span>    } 
-<span class="no">45 </span>     
-<span class="no">46 </span>    public Object generateId(Object forPojo) { 
-<span class="no">47 </span>        // 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of 
-<span class="no">48 </span>        //    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless, 
-<span class="no">49 </span>        //    need to use existing id if there is one: 
-<span class="no">50 </span>            <span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-1637"><span data-kind="ins" id="edit-1-old"></span>id = generator.generateId(forPojo);</span></span> 
-<span class="no">51 </span>        return id; 
-<span class="no">52 </span>    } 
-<span class="no">53 </span> 
-<span class="no">54 </span>    /** 
-<span class="no">55 </span>     * Method called to output Object Id as specified. 
-<span class="no">56 </span>     */ 
-<span class="no">57 </span>    public void writeAsField(JsonGenerator gen, SerializerProvider provider, 
-<span class="no">58 </span>            ObjectIdWriter w) throws IOException 
-<span class="no">59 </span>    { 
-<span class="no">60 </span>        idWritten = true; 
-<span class="no">61 </span> 
-<span class="no">62 </span>        // 03-Aug-2013, tatu: Prefer Native Object Ids if available 
-<span class="no">63 </span>        if (gen.canWriteObjectId()) { 
-<span class="no">64 </span>            // Need to assume String(ified) ids, for now... could add &apos;long&apos; variant? 
-<span class="no">65 </span>            gen.writeObjectId(String.valueOf(id)); 
-<span class="no">66 </span>            return; 
-<span class="no">67 </span>        } 
-<span class="no">68 </span>         
-<span class="no">69 </span>        SerializableString name = w.propertyName; 
-<span class="no">70 </span>        if (name != null) { 
-<span class="no">71 </span>            gen.writeFieldName(name); 
-<span class="no">72 </span>            w.serializer.serialize(id, gen, provider); 
-<span class="no">73 </span>        } 
-<span class="no">74 </span>    } 
-<span class="no">75 </span>} 
-<span class="no">76 </span></code></pre></div>
+<div class="codebox"><pre><code><span class="no">  1 </span>/* 
+<span class="no">  2 </span> * Licensed to the Apache Software Foundation (ASF) under one or more 
+<span class="no">  3 </span> * contributor license agreements.  See the NOTICE file distributed with 
+<span class="no">  4 </span> * this work for additional information regarding copyright ownership. 
+<span class="no">  5 </span> * The ASF licenses this file to You under the Apache License, Version 2.0 
+<span class="no">  6 </span> * (the &quot;License&quot;); you may not use this file except in compliance with 
+<span class="no">  7 </span> * the License.  You may obtain a copy of the License at 
+<span class="no">  8 </span> *  
+<span class="no">  9 </span> *      http://www.apache.org/licenses/LICENSE-2.0 
+<span class="no"> 10 </span> *  
+<span class="no"> 11 </span> * Unless required by applicable law or agreed to in writing, software 
+<span class="no"> 12 </span> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+<span class="no"> 13 </span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class="no"> 14 </span> * See the License for the specific language governing permissions and 
+<span class="no"> 15 </span> * limitations under the License. 
+<span class="no"> 16 </span> */ 
+<span class="no"> 17 </span> 
+<span class="no"> 18 </span>package org.apache.commons.csv; 
+<span class="no"> 19 </span> 
+<span class="no"> 20 </span>import java.io.BufferedReader; 
+<span class="no"> 21 </span>import java.io.IOException; 
+<span class="no"> 22 </span>import java.io.Reader; 
+<span class="no"> 23 </span> 
+<span class="no"> 24 </span>/** 
+<span class="no"> 25 </span> * ExtendedBufferedReader 
+<span class="no"> 26 </span> * 
+<span class="no"> 27 </span> * A special reader decorator which supports more 
+<span class="no"> 28 </span> * sophisticated access to the underlying reader object. 
+<span class="no"> 29 </span> * 
+<span class="no"> 30 </span> * In particular the reader supports a look-ahead option, 
+<span class="no"> 31 </span> * which allows you to see the next char returned by 
+<span class="no"> 32 </span> * next(). 
+<span class="no"> 33 </span> */ 
+<span class="no"> 34 </span>class ExtendedBufferedReader extends BufferedReader { 
+<span class="no"> 35 </span> 
+<span class="no"> 36 </span>    /** The end of stream symbol */ 
+<span class="no"> 37 </span>    static final int END_OF_STREAM = -1; 
+<span class="no"> 38 </span> 
+<span class="no"> 39 </span>    /** Undefined state for the lookahead char */ 
+<span class="no"> 40 </span>    static final int UNDEFINED = -2; 
+<span class="no"> 41 </span> 
+<span class="no"> 42 </span>    /** The last char returned */ 
+<span class="no"> 43 </span>    private int lastChar = UNDEFINED; 
+<span class="no"> 44 </span> 
+<span class="no"> 45 </span>    /** The line counter */ 
+<span class="no"> 46 </span>    private int lineCounter = 0; 
+<span class="no"> 47 </span> 
+<span class="no"> 48 </span>    /** 
+<span class="no"> 49 </span>     * Created extended buffered reader using default buffer-size 
+<span class="no"> 50 </span>     */ 
+<span class="no"> 51 </span>    ExtendedBufferedReader(Reader r) { 
+<span class="no"> 52 </span>        super(r); 
+<span class="no"> 53 </span>    } 
+<span class="no"> 54 </span> 
+<span class="no"> 55 </span>    @Override 
+<span class="no"> 56 </span>    public int read() throws IOException { 
+<span class="no"> 57 </span>        int current = super.read(); 
+<span class="no"> 58 </span>        if (<span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-1799"><span data-kind="ins" id="edit-1-old"></span>current == &apos;\n&apos;</span></span>) { 
+<span class="no"> 59 </span>            lineCounter++; 
+<span class="no"> 60 </span>        } 
+<span class="no"> 61 </span>        lastChar = current; 
+<span class="no"> 62 </span>        return lastChar; 
+<span class="no"> 63 </span>    } 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>    /** 
+<span class="no"> 66 </span>     * Returns the last character that was read as an integer (0 to 65535). This 
+<span class="no"> 67 </span>     * will be the last character returned by any of the read methods. This will 
+<span class="no"> 68 </span>     * not include a character read using the {@link #peek()} method. If no 
+<span class="no"> 69 </span>     * character has been read then this will return {@link #UNDEFINED}. If the 
+<span class="no"> 70 </span>     * end of the stream was reached on the last read then this will return 
+<span class="no"> 71 </span>     * {@link #END_OF_STREAM}. 
+<span class="no"> 72 </span>     *  
+<span class="no"> 73 </span>     * @return the last character that was read 
+<span class="no"> 74 </span>     */ 
+<span class="no"> 75 </span>    int readAgain() { 
+<span class="no"> 76 </span>        return lastChar; 
+<span class="no"> 77 </span>    } 
+<span class="no"> 78 </span> 
+<span class="no"> 79 </span>    @Override 
+<span class="no"> 80 </span>    public int read(char[] buf, int offset, int length) throws IOException { 
+<span class="no"> 81 </span>        if (length == 0) { 
+<span class="no"> 82 </span>            return 0; 
+<span class="no"> 83 </span>        } 
+<span class="no"> 84 </span>         
+<span class="no"> 85 </span>        int len = super.read(buf, offset, length); 
+<span class="no"> 86 </span>         
+<span class="no"> 87 </span>        if (len &gt; 0) { 
+<span class="no"> 88 </span> 
+<span class="no"> 89 </span>            for (int i = offset; i &lt; offset + len; i++) { 
+<span class="no"> 90 </span>                char ch = buf[i]; 
+<span class="no"> 91 </span>                if (ch == &apos;\n&apos;) { 
+<span class="no"> 92 </span>                    if (&apos;\r&apos; != (i &gt; 0 ? buf[i-1]: lastChar)) { 
+<span class="no"> 93 </span>                        lineCounter++;                         
+<span class="no"> 94 </span>                    } 
+<span class="no"> 95 </span>                } else if (ch == &apos;\r&apos;) { 
+<span class="no"> 96 </span>                    lineCounter++; 
+<span class="no"> 97 </span>                } 
+<span class="no"> 98 </span>            } 
+<span class="no"> 99 </span> 
+<span class="no">100 </span>            lastChar = buf[offset + len - 1]; 
+<span class="no">101 </span> 
+<span class="no">102 </span>        } else if (len == -1) { 
+<span class="no">103 </span>            lastChar = END_OF_STREAM; 
+<span class="no">104 </span>        } 
+<span class="no">105 </span>         
+<span class="no">106 </span>        return len; 
+<span class="no">107 </span>    } 
+<span class="no">108 </span> 
+<span class="no">109 </span>    /** 
+<span class="no">110 </span>     * Calls {@link BufferedReader#readLine()} which drops the line terminator(s). 
+<span class="no">111 </span>     * This method should only be called when processing a comment, otherwise 
+<span class="no">112 </span>     * information can be lost. 
+<span class="no">113 </span>     * &lt;p&gt; 
+<span class="no">114 </span>     * Increments  {@link #lineCounter} 
+<span class="no">115 </span>     * &lt;p&gt; 
+<span class="no">116 </span>     * Sets {@link #lastChar} to {@link #END_OF_STREAM} at EOF,  
+<span class="no">117 </span>     * otherwise to last character on the line (won&apos;t be CR or LF)  
+<span class="no">118 </span>     *  
+<span class="no">119 </span>     * @return the line that was read, or null if reached EOF. 
+<span class="no">120 </span>     */ 
+<span class="no">121 </span>    @Override 
+<span class="no">122 </span>    public String readLine() throws IOException { 
+<span class="no">123 </span>        String line = super.readLine(); 
+<span class="no">124 </span> 
+<span class="no">125 </span>        if (line != null) { 
+<span class="no">126 </span>            if (line.length() &gt; 0) { 
+<span class="no">127 </span>                lastChar = line.charAt(line.length() - 1); 
+<span class="no">128 </span>            } 
+<span class="no">129 </span>            lineCounter++; 
+<span class="no">130 </span>        } else { 
+<span class="no">131 </span>            lastChar = END_OF_STREAM; 
+<span class="no">132 </span>        } 
+<span class="no">133 </span> 
+<span class="no">134 </span>        return line; 
+<span class="no">135 </span>    } 
+<span class="no">136 </span> 
+<span class="no">137 </span>    /** 
+<span class="no">138 </span>     * Returns the next character in the current reader without consuming it. So 
+<span class="no">139 </span>     * the next call to {@link #read()} will still return this value. 
+<span class="no">140 </span>     *  
+<span class="no">141 </span>     * @return the next character 
+<span class="no">142 </span>     *  
+<span class="no">143 </span>     * @throws IOException if there is an error in reading 
+<span class="no">144 </span>     */ 
+<span class="no">145 </span>    int lookAhead() throws IOException { 
+<span class="no">146 </span>        super.mark(1); 
+<span class="no">147 </span>        int c = super.read(); 
+<span class="no">148 </span>        super.reset(); 
+<span class="no">149 </span> 
+<span class="no">150 </span>        return c; 
+<span class="no">151 </span>    } 
+<span class="no">152 </span> 
+<span class="no">153 </span>    /** 
+<span class="no">154 </span>     * Returns the nof line read 
+<span class="no">155 </span>     * 
+<span class="no">156 </span>     * @return the current-line-number (or -1) 
+<span class="no">157 </span>     */ 
+<span class="no">158 </span>    int getLineNumber() { 
+<span class="no">159 </span>        return lineCounter; 
+<span class="no">160 </span>    } 
+<span class="no">161 </span>} 
+<span class="no">162 </span></code></pre></div>
 </div><div class="panel"><div class="panel-header">3_A (modified)</div>
-<div class="codebox"><pre><code><span class="no"> 1 </span>package com.fasterxml.jackson.databind.ser.impl; 
-<span class="no"> 2 </span> 
-<span class="no"> 3 </span>import java.io.IOException; 
-<span class="no"> 4 </span> 
-<span class="no"> 5 </span>import com.fasterxml.jackson.annotation.ObjectIdGenerator; 
-<span class="no"> 6 </span> 
-<span class="no"> 7 </span>import com.fasterxml.jackson.core.JsonGenerator; 
-<span class="no"> 8 </span>import com.fasterxml.jackson.core.SerializableString; 
-<span class="no"> 9 </span> 
-<span class="no">10 </span>import com.fasterxml.jackson.databind.SerializerProvider; 
-<span class="no">11 </span> 
-<span class="no">12 </span>/** 
-<span class="no">13 </span> * Simple value container used to keep track of Object Ids during 
-<span class="no">14 </span> * serialization. 
-<span class="no">15 </span> */ 
-<span class="no">16 </span>public final class WritableObjectId 
-<span class="no">17 </span>{ 
-<span class="no">18 </span>    public final ObjectIdGenerator&lt;?&gt; generator; 
-<span class="no">19 </span> 
-<span class="no">20 </span>    public Object id; 
-<span class="no">21 </span> 
-<span class="no">22 </span>    /** 
-<span class="no">23 </span>     * Marker to denote whether Object Id value has been written as part of an Object, 
-<span class="no">24 </span>     * to be referencible. Remains false when forward-reference is written. 
-<span class="no">25 </span>     */ 
-<span class="no">26 </span>    protected boolean idWritten = false; 
-<span class="no">27 </span> 
-<span class="no">28 </span>    public WritableObjectId(ObjectIdGenerator&lt;?&gt; generator) { 
-<span class="no">29 </span>        this.generator = generator; 
-<span class="no">30 </span>    } 
-<span class="no">31 </span> 
-<span class="no">32 </span>    public boolean writeAsId(JsonGenerator gen, SerializerProvider provider, ObjectIdWriter w) throws IOException 
-<span class="no">33 </span>    { 
-<span class="no">34 </span>        if ((id != null) &amp;&amp; (idWritten || w.alwaysAsId)) { 
-<span class="no">35 </span>            // 03-Aug-2013, tatu: Prefer Native Object Ids if available 
-<span class="no">36 </span>            if (gen.canWriteObjectId()) { 
-<span class="no">37 </span>                gen.writeObjectRef(String.valueOf(id)); 
-<span class="no">38 </span>            } else { 
-<span class="no">39 </span>                w.serializer.serialize(id, gen, provider); 
-<span class="no">40 </span>            } 
-<span class="no">41 </span>            return true; 
-<span class="no">42 </span>        } 
-<span class="no">43 </span>        return false; 
-<span class="no">44 </span>    } 
-<span class="no">45 </span>     
-<span class="no">46 </span>    public Object generateId(Object forPojo) { 
-<span class="no">47 </span>        // 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of 
-<span class="no">48 </span>        //    id being generated for &quot;alwaysAsId&quot;, but not being written as POJO; regardless, 
-<span class="no">49 </span>        //    need to use existing id if there is one: 
-<span class="no">50 </span>        <span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-1633">if (id == null) { 
-<span class="no">51 </span>            </span><span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-1663">id = generator.generateId(forPojo);</span></span><span class="hl ins" id="hl-1-1698"> 
-<span class="no">52 </span>        }</span></span> 
-<span class="no">53 </span>        return id; 
-<span class="no">54 </span>    } 
-<span class="no">55 </span> 
-<span class="no">56 </span>    /** 
-<span class="no">57 </span>     * Method called to output Object Id as specified. 
-<span class="no">58 </span>     */ 
-<span class="no">59 </span>    public void writeAsField(JsonGenerator gen, SerializerProvider provider, 
-<span class="no">60 </span>            ObjectIdWriter w) throws IOException 
-<span class="no">61 </span>    { 
-<span class="no">62 </span>        idWritten = true; 
-<span class="no">63 </span> 
-<span class="no">64 </span>        // 03-Aug-2013, tatu: Prefer Native Object Ids if available 
-<span class="no">65 </span>        if (gen.canWriteObjectId()) { 
-<span class="no">66 </span>            // Need to assume String(ified) ids, for now... could add &apos;long&apos; variant? 
-<span class="no">67 </span>            gen.writeObjectId(String.valueOf(id)); 
-<span class="no">68 </span>            return; 
-<span class="no">69 </span>        } 
-<span class="no">70 </span>         
-<span class="no">71 </span>        SerializableString name = w.propertyName; 
-<span class="no">72 </span>        if (name != null) { 
-<span class="no">73 </span>            gen.writeFieldName(name); 
-<span class="no">74 </span>            w.serializer.serialize(id, gen, provider); 
-<span class="no">75 </span>        } 
-<span class="no">76 </span>    } 
-<span class="no">77 </span>} 
-<span class="no">78 </span></code></pre></div>
+<div class="codebox"><pre><code><span class="no">  1 </span>/* 
+<span class="no">  2 </span> * Licensed to the Apache Software Foundation (ASF) under one or more 
+<span class="no">  3 </span> * contributor license agreements.  See the NOTICE file distributed with 
+<span class="no">  4 </span> * this work for additional information regarding copyright ownership. 
+<span class="no">  5 </span> * The ASF licenses this file to You under the Apache License, Version 2.0 
+<span class="no">  6 </span> * (the &quot;License&quot;); you may not use this file except in compliance with 
+<span class="no">  7 </span> * the License.  You may obtain a copy of the License at 
+<span class="no">  8 </span> *  
+<span class="no">  9 </span> *      http://www.apache.org/licenses/LICENSE-2.0 
+<span class="no"> 10 </span> *  
+<span class="no"> 11 </span> * Unless required by applicable law or agreed to in writing, software 
+<span class="no"> 12 </span> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+<span class="no"> 13 </span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class="no"> 14 </span> * See the License for the specific language governing permissions and 
+<span class="no"> 15 </span> * limitations under the License. 
+<span class="no"> 16 </span> */ 
+<span class="no"> 17 </span> 
+<span class="no"> 18 </span>package org.apache.commons.csv; 
+<span class="no"> 19 </span> 
+<span class="no"> 20 </span>import java.io.BufferedReader; 
+<span class="no"> 21 </span>import java.io.IOException; 
+<span class="no"> 22 </span>import java.io.Reader; 
+<span class="no"> 23 </span> 
+<span class="no"> 24 </span>/** 
+<span class="no"> 25 </span> * ExtendedBufferedReader 
+<span class="no"> 26 </span> * 
+<span class="no"> 27 </span> * A special reader decorator which supports more 
+<span class="no"> 28 </span> * sophisticated access to the underlying reader object. 
+<span class="no"> 29 </span> * 
+<span class="no"> 30 </span> * In particular the reader supports a look-ahead option, 
+<span class="no"> 31 </span> * which allows you to see the next char returned by 
+<span class="no"> 32 </span> * next(). 
+<span class="no"> 33 </span> */ 
+<span class="no"> 34 </span>class ExtendedBufferedReader extends BufferedReader { 
+<span class="no"> 35 </span> 
+<span class="no"> 36 </span>    /** The end of stream symbol */ 
+<span class="no"> 37 </span>    static final int END_OF_STREAM = -1; 
+<span class="no"> 38 </span> 
+<span class="no"> 39 </span>    /** Undefined state for the lookahead char */ 
+<span class="no"> 40 </span>    static final int UNDEFINED = -2; 
+<span class="no"> 41 </span> 
+<span class="no"> 42 </span>    /** The last char returned */ 
+<span class="no"> 43 </span>    private int lastChar = UNDEFINED; 
+<span class="no"> 44 </span> 
+<span class="no"> 45 </span>    /** The line counter */ 
+<span class="no"> 46 </span>    private int lineCounter = 0; 
+<span class="no"> 47 </span> 
+<span class="no"> 48 </span>    /** 
+<span class="no"> 49 </span>     * Created extended buffered reader using default buffer-size 
+<span class="no"> 50 </span>     */ 
+<span class="no"> 51 </span>    ExtendedBufferedReader(Reader r) { 
+<span class="no"> 52 </span>        super(r); 
+<span class="no"> 53 </span>    } 
+<span class="no"> 54 </span> 
+<span class="no"> 55 </span>    @Override 
+<span class="no"> 56 </span>    public int read() throws IOException { 
+<span class="no"> 57 </span>        int current = super.read(); 
+<span class="no"> 58 </span>        if (<span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-1799">current == &apos;\r&apos; || (</span><span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-1819">current == &apos;\n&apos;</span></span><span class="hl ins" id="hl-1-1834"> &amp;&amp; lastChar != &apos;\r&apos;)</span></span>) { 
+<span class="no"> 59 </span>            lineCounter++; 
+<span class="no"> 60 </span>        } 
+<span class="no"> 61 </span>        lastChar = current; 
+<span class="no"> 62 </span>        return lastChar; 
+<span class="no"> 63 </span>    } 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>    /** 
+<span class="no"> 66 </span>     * Returns the last character that was read as an integer (0 to 65535). This 
+<span class="no"> 67 </span>     * will be the last character returned by any of the read methods. This will 
+<span class="no"> 68 </span>     * not include a character read using the {@link #peek()} method. If no 
+<span class="no"> 69 </span>     * character has been read then this will return {@link #UNDEFINED}. If the 
+<span class="no"> 70 </span>     * end of the stream was reached on the last read then this will return 
+<span class="no"> 71 </span>     * {@link #END_OF_STREAM}. 
+<span class="no"> 72 </span>     *  
+<span class="no"> 73 </span>     * @return the last character that was read 
+<span class="no"> 74 </span>     */ 
+<span class="no"> 75 </span>    int readAgain() { 
+<span class="no"> 76 </span>        return lastChar; 
+<span class="no"> 77 </span>    } 
+<span class="no"> 78 </span> 
+<span class="no"> 79 </span>    @Override 
+<span class="no"> 80 </span>    public int read(char[] buf, int offset, int length) throws IOException { 
+<span class="no"> 81 </span>        if (length == 0) { 
+<span class="no"> 82 </span>            return 0; 
+<span class="no"> 83 </span>        } 
+<span class="no"> 84 </span>         
+<span class="no"> 85 </span>        int len = super.read(buf, offset, length); 
+<span class="no"> 86 </span>         
+<span class="no"> 87 </span>        if (len &gt; 0) { 
+<span class="no"> 88 </span> 
+<span class="no"> 89 </span>            for (int i = offset; i &lt; offset + len; i++) { 
+<span class="no"> 90 </span>                char ch = buf[i]; 
+<span class="no"> 91 </span>                if (ch == &apos;\n&apos;) { 
+<span class="no"> 92 </span>                    if (&apos;\r&apos; != (i &gt; 0 ? buf[i-1]: lastChar)) { 
+<span class="no"> 93 </span>                        lineCounter++;                         
+<span class="no"> 94 </span>                    } 
+<span class="no"> 95 </span>                } else if (ch == &apos;\r&apos;) { 
+<span class="no"> 96 </span>                    lineCounter++; 
+<span class="no"> 97 </span>                } 
+<span class="no"> 98 </span>            } 
+<span class="no"> 99 </span> 
+<span class="no">100 </span>            lastChar = buf[offset + len - 1]; 
+<span class="no">101 </span> 
+<span class="no">102 </span>        } else if (len == -1) { 
+<span class="no">103 </span>            lastChar = END_OF_STREAM; 
+<span class="no">104 </span>        } 
+<span class="no">105 </span>         
+<span class="no">106 </span>        return len; 
+<span class="no">107 </span>    } 
+<span class="no">108 </span> 
+<span class="no">109 </span>    /** 
+<span class="no">110 </span>     * Calls {@link BufferedReader#readLine()} which drops the line terminator(s). 
+<span class="no">111 </span>     * This method should only be called when processing a comment, otherwise 
+<span class="no">112 </span>     * information can be lost. 
+<span class="no">113 </span>     * &lt;p&gt; 
+<span class="no">114 </span>     * Increments  {@link #lineCounter} 
+<span class="no">115 </span>     * &lt;p&gt; 
+<span class="no">116 </span>     * Sets {@link #lastChar} to {@link #END_OF_STREAM} at EOF,  
+<span class="no">117 </span>     * otherwise to last character on the line (won&apos;t be CR or LF)  
+<span class="no">118 </span>     *  
+<span class="no">119 </span>     * @return the line that was read, or null if reached EOF. 
+<span class="no">120 </span>     */ 
+<span class="no">121 </span>    @Override 
+<span class="no">122 </span>    public String readLine() throws IOException { 
+<span class="no">123 </span>        String line = super.readLine(); 
+<span class="no">124 </span> 
+<span class="no">125 </span>        if (line != null) { 
+<span class="no">126 </span>            if (line.length() &gt; 0) { 
+<span class="no">127 </span>                lastChar = line.charAt(line.length() - 1); 
+<span class="no">128 </span>            } 
+<span class="no">129 </span>            lineCounter++; 
+<span class="no">130 </span>        } else { 
+<span class="no">131 </span>            lastChar = END_OF_STREAM; 
+<span class="no">132 </span>        } 
+<span class="no">133 </span> 
+<span class="no">134 </span>        return line; 
+<span class="no">135 </span>    } 
+<span class="no">136 </span> 
+<span class="no">137 </span>    /** 
+<span class="no">138 </span>     * Returns the next character in the current reader without consuming it. So 
+<span class="no">139 </span>     * the next call to {@link #read()} will still return this value. 
+<span class="no">140 </span>     *  
+<span class="no">141 </span>     * @return the next character 
+<span class="no">142 </span>     *  
+<span class="no">143 </span>     * @throws IOException if there is an error in reading 
+<span class="no">144 </span>     */ 
+<span class="no">145 </span>    int lookAhead() throws IOException { 
+<span class="no">146 </span>        super.mark(1); 
+<span class="no">147 </span>        int c = super.read(); 
+<span class="no">148 </span>        super.reset(); 
+<span class="no">149 </span> 
+<span class="no">150 </span>        return c; 
+<span class="no">151 </span>    } 
+<span class="no">152 </span> 
+<span class="no">153 </span>    /** 
+<span class="no">154 </span>     * Returns the nof line read 
+<span class="no">155 </span>     * 
+<span class="no">156 </span>     * @return the current-line-number (or -1) 
+<span class="no">157 </span>     */ 
+<span class="no">158 </span>    int getLineNumber() { 
+<span class="no">159 </span>        return lineCounter; 
+<span class="no">160 </span>    } 
+<span class="no">161 </span>} 
+<span class="no">162 </span></code></pre></div>
 </div></div></div>
 </body>
 </html>

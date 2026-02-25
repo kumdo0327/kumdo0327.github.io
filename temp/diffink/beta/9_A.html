@@ -3,12 +3,12 @@
 <head>
 <title>DiffInk Viewer</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="width=device-width, initial-scale=1" name="viewport">
 <style>
 :root {
-  --ins-clr: 97 216 54;
   --del-clr: 255 150 141;
   --mov-clr: 191 175 255;
+  --ins-clr: 97 216 54;
   --upd-clr: 255 217 50;
 }
 body {
@@ -21,40 +21,40 @@ body {
   margin: 0 auto;
 }
 .grid {
-  min-height: 216px;
-  display: grid;
   min-width: 1024px;
   grid-template-columns: 1fr 1fr;
-  height: calc(100vh - 108px);
   gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+  display: grid;
 }
 .panel {
+  min-width: 0;
   box-sizing: border-box;
   overflow: hidden;
-  display: flex;
-  min-width: 0;
+  flex-direction: column;
   border: 1px solid #b7b7b7;
   border-radius: 6px;
-  flex-direction: column;
+  display: flex;
 }
 .panel-header {
-  border-bottom: 1px solid #b7b7b7;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 1;
-  align-items: center;
-  display: flex;
   justify-content: space-between;
   background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  line-height: 1;
+  font-weight: bold;
   padding: 8px 10px;
+  font-size: 16px;
+  align-items: center;
+  display: flex;
 }
 .codebox {
-  padding: 2px 4px;
-  min-height: 0;
-  line-height: 1.5;
   background: #f7f7f7;
-  font-size: 12px;
+  padding: 2px 4px;
   flex: 1;
+  line-height: 1.5;
+  font-size: 12px;
+  min-height: 0;
   overflow: auto;
 }
 pre {
@@ -112,9 +112,9 @@ pre {
   border-top: 3px solid rgb(var(--upd-clr));
 }
 .no {
+  background: #f7f7f7;
   padding-top: 3px;
   font-weight: normal;
-  background: #f7f7f7;
   padding-bottom: 3px;
   color: #878787;
   letter-spacing: normal;
@@ -126,10 +126,10 @@ pre {
 }
 .legend-row {
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   gap: 4px;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 .legend-title {
   margin-right: 4px;
@@ -153,22 +153,22 @@ pre {
   background: rgb(var(--upd-clr) / 0.7);
 }
 .legend-shortcuts .legend-key {
-  cursor: pointer;
   margin-right: 10px;
+  cursor: pointer;
 }
 .legend-key kbd {
-  margin-right: 4px;
   background: #fbfbfb;
+  margin-right: 4px;
   border: 2px solid #afafaf;
   border-radius: 2px;
   padding: 1px 5px;
 }
 .description {
-  width: 384px;
   box-sizing: border-box;
-  border: 1px solid black;
   overflow: auto;
+  border: 1px solid black;
   padding: 0px 2px;
+  width: 384px;
 }
 .type {
   color: #0076ba;
@@ -469,1735 +469,540 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <div class="description">
 <span id="descr-0"><code>&nbsp;</code></span>
-<span id="descr-1" style="display:none;">Edit #1 / 3 :&ensp;<b>Insert <code class="type">"field_access"</code></b></span>
-<span id="descr-2" style="display:none;">Edit #2 / 3 :&ensp;<b>Move <code class="type">"field_access"</code></b></span>
-<span id="descr-3" style="display:none;">Edit #3 / 3 :&ensp;<b>Delete <code class="type">"field_access"</code></b></span>
+<span id="descr-1" style="display:none;">Edit #1 / 4 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 4 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 4 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 4 :&ensp;<b>Insert <code class="type">"string_literal"</code></b></span>
 </div>
 </div>
 <div class="grid"><div class="panel"><div class="panel-header">9_A (original)</div>
-<div class="codebox"><pre><code><span class="no">  1 </span>/* 
-<span class="no">  2 </span> *  Licensed to the Apache Software Foundation (ASF) under one or more 
-<span class="no">  3 </span> *  contributor license agreements.  See the NOTICE file distributed with 
-<span class="no">  4 </span> *  this work for additional information regarding copyright ownership. 
-<span class="no">  5 </span> *  The ASF licenses this file to You under the Apache License, Version 2.0 
-<span class="no">  6 </span> *  (the &quot;License&quot;); you may not use this file except in compliance with 
-<span class="no">  7 </span> *  the License.  You may obtain a copy of the License at 
-<span class="no">  8 </span> * 
-<span class="no">  9 </span> *      http://www.apache.org/licenses/LICENSE-2.0 
+<div class="codebox"><pre><code><span class="no">  1 </span>package org.jsoup.parser; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import org.jsoup.helper.Validate; 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>import java.util.HashMap; 
+<span class="no">  6 </span>import java.util.Map; 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>/** 
+<span class="no">  9 </span> * HTML Tag capabilities. 
 <span class="no"> 10 </span> * 
-<span class="no"> 11 </span> *  Unless required by applicable law or agreed to in writing, software 
-<span class="no"> 12 </span> *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-<span class="no"> 13 </span> *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-<span class="no"> 14 </span> *  See the License for the specific language governing permissions and 
-<span class="no"> 15 </span> *  limitations under the License. 
-<span class="no"> 16 </span> * 
-<span class="no"> 17 </span> */ 
-<span class="no"> 18 </span>package org.apache.commons.compress.archivers.zip; 
-<span class="no"> 19 </span> 
-<span class="no"> 20 </span>import org.apache.commons.compress.archivers.ArchiveEntry; 
-<span class="no"> 21 </span> 
-<span class="no"> 22 </span>import java.io.File; 
-<span class="no"> 23 </span>import java.util.ArrayList; 
-<span class="no"> 24 </span>import java.util.Arrays; 
-<span class="no"> 25 </span>import java.util.Date; 
-<span class="no"> 26 </span>import java.util.List; 
-<span class="no"> 27 </span>import java.util.zip.ZipException; 
+<span class="no"> 11 </span> * @author Jonathan Hedley, jonathan@hedley.net 
+<span class="no"> 12 </span> */ 
+<span class="no"> 13 </span>public class Tag { 
+<span class="no"> 14 </span>    private static final Map&lt;String, Tag&gt; tags = new HashMap&lt;String, Tag&gt;(); // map of known tags 
+<span class="no"> 15 </span> 
+<span class="no"> 16 </span>    private String tagName; 
+<span class="no"> 17 </span>    private boolean isBlock = true; // block or inline 
+<span class="no"> 18 </span>    private boolean formatAsBlock = true; // should be formatted as a block 
+<span class="no"> 19 </span>    private boolean canContainBlock = true; // Can this tag hold block level tags? 
+<span class="no"> 20 </span>    private boolean canContainInline = true; // only pcdata if not 
+<span class="no"> 21 </span>    private boolean empty = false; // can hold nothing; e.g. img 
+<span class="no"> 22 </span>    private boolean selfClosing = false; // can self close (&lt;foo /&gt;). used for unknown tags that self close, without forcing them as empty. 
+<span class="no"> 23 </span>    private boolean preserveWhitespace = false; // for pre, textarea, script etc 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>    private Tag(String tagName) { 
+<span class="no"> 26 </span>        this.tagName = tagName.toLowerCase(); 
+<span class="no"> 27 </span>    } 
 <span class="no"> 28 </span> 
-<span class="no"> 29 </span>/** 
-<span class="no"> 30 </span> * Extension that adds better handling of extra fields and provides 
-<span class="no"> 31 </span> * access to the internal and external file attributes. 
-<span class="no"> 32 </span> * 
-<span class="no"> 33 </span> * &lt;p&gt;The extra data is expected to follow the recommendation of 
-<span class="no"> 34 </span> * &lt;a href=&quot;http://www.pkware.com/documents/casestudies/APPNOTE.TXT&quot;&gt;APPNOTE.TXT&lt;/a&gt;:&lt;/p&gt; 
-<span class="no"> 35 </span> * &lt;ul&gt; 
-<span class="no"> 36 </span> *   &lt;li&gt;the extra byte array consists of a sequence of extra fields&lt;/li&gt; 
-<span class="no"> 37 </span> *   &lt;li&gt;each extra fields starts by a two byte header id followed by 
-<span class="no"> 38 </span> *   a two byte sequence holding the length of the remainder of 
-<span class="no"> 39 </span> *   data.&lt;/li&gt; 
-<span class="no"> 40 </span> * &lt;/ul&gt; 
-<span class="no"> 41 </span> * 
-<span class="no"> 42 </span> * &lt;p&gt;Any extra data that cannot be parsed by the rules above will be 
-<span class="no"> 43 </span> * consumed as &quot;unparseable&quot; extra data and treated differently by the 
-<span class="no"> 44 </span> * methods of this class.  Versions prior to Apache Commons Compress 
-<span class="no"> 45 </span> * 1.1 would have thrown an exception if any attempt was made to read 
-<span class="no"> 46 </span> * or write extra data not conforming to the recommendation.&lt;/p&gt; 
-<span class="no"> 47 </span> * 
-<span class="no"> 48 </span> * @NotThreadSafe 
-<span class="no"> 49 </span> */ 
-<span class="no"> 50 </span>public class ZipArchiveEntry extends java.util.zip.ZipEntry 
-<span class="no"> 51 </span>    implements ArchiveEntry { 
-<span class="no"> 52 </span> 
-<span class="no"> 53 </span>    public static final int PLATFORM_UNIX = 3; 
-<span class="no"> 54 </span>    public static final int PLATFORM_FAT  = 0; 
-<span class="no"> 55 </span>    public static final int CRC_UNKNOWN = -1; 
-<span class="no"> 56 </span>    private static final int SHORT_MASK = 0xFFFF; 
-<span class="no"> 57 </span>    private static final int SHORT_SHIFT = 16; 
-<span class="no"> 58 </span>    private static final byte[] EMPTY = new byte[0]; 
-<span class="no"> 59 </span> 
-<span class="no"> 60 </span>    /** 
-<span class="no"> 61 </span>     * The {@link java.util.zip.ZipEntry} base class only supports 
-<span class="no"> 62 </span>     * the compression methods STORED and DEFLATED. We override the 
-<span class="no"> 63 </span>     * field so that any compression methods can be used. 
-<span class="no"> 64 </span>     * &lt;p&gt; 
-<span class="no"> 65 </span>     * The default value -1 means that the method has not been specified. 
-<span class="no"> 66 </span>     * 
-<span class="no"> 67 </span>     * @see &lt;a href=&quot;https://issues.apache.org/jira/browse/COMPRESS-93&quot; 
-<span class="no"> 68 </span>     *        &gt;COMPRESS-93&lt;/a&gt; 
-<span class="no"> 69 </span>     */ 
-<span class="no"> 70 </span>    private int method = ZipMethod.UNKNOWN_CODE; 
+<span class="no"> 29 </span>    /** 
+<span class="no"> 30 </span>     * Get this tag&apos;s name. 
+<span class="no"> 31 </span>     * 
+<span class="no"> 32 </span>     * @return the tag&apos;s name 
+<span class="no"> 33 </span>     */ 
+<span class="no"> 34 </span>    public String getName() { 
+<span class="no"> 35 </span>        return tagName; 
+<span class="no"> 36 </span>    } 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>    /** 
+<span class="no"> 39 </span>     * Get a Tag by name. If not previously defined (unknown), returns a new generic tag, that can do anything. 
+<span class="no"> 40 </span>     * &lt;p/&gt; 
+<span class="no"> 41 </span>     * Pre-defined tags (P, DIV etc) will be ==, but unknown tags are not registered and will only .equals(). 
+<span class="no"> 42 </span>     * 
+<span class="no"> 43 </span>     * @param tagName Name of tag, e.g. &quot;p&quot;. Case insensitive. 
+<span class="no"> 44 </span>     * @return The tag, either defined or new generic. 
+<span class="no"> 45 </span>     */ 
+<span class="no"> 46 </span>    public static Tag valueOf(String tagName) { 
+<span class="no"> 47 </span>        Validate.notNull(tagName); 
+<span class="no"> 48 </span>        tagName = tagName.trim().toLowerCase(); 
+<span class="no"> 49 </span>        Validate.notEmpty(tagName); 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>        synchronized (tags) { 
+<span class="no"> 52 </span>            Tag tag = tags.get(tagName); 
+<span class="no"> 53 </span>            if (tag == null) { 
+<span class="no"> 54 </span>                // not defined: create default; go anywhere, do anything! (incl be inside a &lt;p&gt;) 
+<span class="no"> 55 </span>                tag = new Tag(tagName); 
+<span class="no"> 56 </span>                tag.isBlock = false; 
+<span class="no"> 57 </span>                tag.canContainBlock = true; 
+<span class="no"> 58 </span>            } 
+<span class="no"> 59 </span>            return tag; 
+<span class="no"> 60 </span>        } 
+<span class="no"> 61 </span>    } 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /** 
+<span class="no"> 64 </span>     * Gets if this is a block tag. 
+<span class="no"> 65 </span>     * 
+<span class="no"> 66 </span>     * @return if block tag 
+<span class="no"> 67 </span>     */ 
+<span class="no"> 68 </span>    public boolean isBlock() { 
+<span class="no"> 69 </span>        return isBlock; 
+<span class="no"> 70 </span>    } 
 <span class="no"> 71 </span> 
 <span class="no"> 72 </span>    /** 
-<span class="no"> 73 </span>     * The {@link java.util.zip.ZipEntry#setSize} method in the base 
-<span class="no"> 74 </span>     * class throws an IllegalArgumentException if the size is bigger 
-<span class="no"> 75 </span>     * than 2GB for Java versions &lt; 7.  Need to keep our own size 
-<span class="no"> 76 </span>     * information for Zip64 support. 
-<span class="no"> 77 </span>     */ 
-<span class="no"> 78 </span>    private long size = SIZE_UNKNOWN; 
-<span class="no"> 79 </span> 
-<span class="no"> 80 </span>    private int internalAttributes = 0; 
-<span class="no"> 81 </span>    private int versionRequired; 
-<span class="no"> 82 </span>    private int versionMadeBy; 
-<span class="no"> 83 </span>    private int platform = PLATFORM_FAT; 
-<span class="no"> 84 </span>    private int rawFlag; 
-<span class="no"> 85 </span>    private long externalAttributes = 0; 
-<span class="no"> 86 </span>    private ZipExtraField[] extraFields; 
-<span class="no"> 87 </span>    private UnparseableExtraFieldData unparseableExtra = null; 
-<span class="no"> 88 </span>    private String name = null; 
-<span class="no"> 89 </span>    private byte[] rawName = null; 
-<span class="no"> 90 </span>    private GeneralPurposeBit gpb = new GeneralPurposeBit(); 
-<span class="no"> 91 </span>    private static final ZipExtraField[] noExtraFields = new ZipExtraField[0]; 
-<span class="no"> 92 </span> 
-<span class="no"> 93 </span>    /** 
-<span class="no"> 94 </span>     * Creates a new zip entry with the specified name. 
-<span class="no"> 95 </span>     * 
-<span class="no"> 96 </span>     * &lt;p&gt;Assumes the entry represents a directory if and only if the 
-<span class="no"> 97 </span>     * name ends with a forward slash &quot;/&quot;.&lt;/p&gt; 
-<span class="no"> 98 </span>     * 
-<span class="no"> 99 </span>     * @param name the name of the entry 
-<span class="no">100 </span>     */ 
-<span class="no">101 </span>    public ZipArchiveEntry(final String name) { 
-<span class="no">102 </span>        super(name); 
-<span class="no">103 </span>        setName(name); 
-<span class="no">104 </span>    } 
-<span class="no">105 </span> 
-<span class="no">106 </span>    /** 
-<span class="no">107 </span>     * Creates a new zip entry with fields taken from the specified zip entry. 
-<span class="no">108 </span>     * 
-<span class="no">109 </span>     * &lt;p&gt;Assumes the entry represents a directory if and only if the 
-<span class="no">110 </span>     * name ends with a forward slash &quot;/&quot;.&lt;/p&gt; 
-<span class="no">111 </span>     * 
-<span class="no">112 </span>     * @param entry the entry to get fields from 
-<span class="no">113 </span>     * @throws ZipException on error 
-<span class="no">114 </span>     */ 
-<span class="no">115 </span>    public ZipArchiveEntry(final java.util.zip.ZipEntry entry) throws ZipException { 
-<span class="no">116 </span>        super(entry); 
-<span class="no">117 </span>        setName(entry.getName()); 
-<span class="no">118 </span>        final byte[] extra = entry.getExtra(); 
-<span class="no">119 </span>        if (extra != null) { 
-<span class="no">120 </span>            setExtraFields(ExtraFieldUtils.parse(extra, true, 
-<span class="no">121 </span>                                                 ExtraFieldUtils 
-<span class="no">122 </span>                                                 .UnparseableExtraField.READ)); 
-<span class="no">123 </span>        } else { 
-<span class="no">124 </span>            // initializes extra data to an empty byte array 
-<span class="no">125 </span>            setExtra(); 
-<span class="no">126 </span>        } 
-<span class="no">127 </span>        setMethod(entry.getMethod()); 
-<span class="no">128 </span>        this.size = entry.getSize(); 
-<span class="no">129 </span>    } 
-<span class="no">130 </span> 
-<span class="no">131 </span>    /** 
-<span class="no">132 </span>     * Creates a new zip entry with fields taken from the specified zip entry. 
-<span class="no">133 </span>     * 
-<span class="no">134 </span>     * &lt;p&gt;Assumes the entry represents a directory if and only if the 
-<span class="no">135 </span>     * name ends with a forward slash &quot;/&quot;.&lt;/p&gt; 
-<span class="no">136 </span>     * 
-<span class="no">137 </span>     * @param entry the entry to get fields from 
-<span class="no">138 </span>     * @throws ZipException on error 
-<span class="no">139 </span>     */ 
-<span class="no">140 </span>    public ZipArchiveEntry(final ZipArchiveEntry entry) throws ZipException { 
-<span class="no">141 </span>        this((java.util.zip.ZipEntry) entry); 
-<span class="no">142 </span>        setInternalAttributes(entry.getInternalAttributes()); 
-<span class="no">143 </span>        setExternalAttributes(entry.getExternalAttributes()); 
-<span class="no">144 </span>        setExtraFields(getAllExtraFieldsNoCopy()); 
-<span class="no">145 </span>        setPlatform(entry.getPlatform()); 
-<span class="no">146 </span>        final GeneralPurposeBit other = entry.getGeneralPurposeBit(); 
-<span class="no">147 </span>        setGeneralPurposeBit(other == null ? null : 
-<span class="no">148 </span>                             (GeneralPurposeBit) other.clone()); 
-<span class="no">149 </span>    } 
-<span class="no">150 </span> 
-<span class="no">151 </span>    /** 
-<span class="no">152 </span>     */ 
-<span class="no">153 </span>    protected ZipArchiveEntry() { 
-<span class="no">154 </span>        this(&quot;&quot;); 
-<span class="no">155 </span>    } 
-<span class="no">156 </span> 
-<span class="no">157 </span>    /** 
-<span class="no">158 </span>     * Creates a new zip entry taking some information from the given 
-<span class="no">159 </span>     * file and using the provided name. 
-<span class="no">160 </span>     * 
-<span class="no">161 </span>     * &lt;p&gt;The name will be adjusted to end with a forward slash &quot;/&quot; if 
-<span class="no">162 </span>     * the file is a directory.  If the file is not a directory a 
-<span class="no">163 </span>     * potential trailing forward slash will be stripped from the 
-<span class="no">164 </span>     * entry name.&lt;/p&gt; 
-<span class="no">165 </span>     * @param inputFile file to create the entry from 
-<span class="no">166 </span>     * @param entryName name of the entry 
-<span class="no">167 </span>     */ 
-<span class="no">168 </span>    public ZipArchiveEntry(final File inputFile, final String entryName) { 
-<span class="no">169 </span>        this(inputFile.isDirectory() &amp;&amp; !entryName.endsWith(&quot;/&quot;) ?  
-<span class="no">170 </span>             entryName + &quot;/&quot; : entryName); 
-<span class="no">171 </span>        if (inputFile.isFile()){ 
-<span class="no">172 </span>            setSize(inputFile.length()); 
-<span class="no">173 </span>        } 
-<span class="no">174 </span>        setTime(inputFile.lastModified()); 
-<span class="no">175 </span>        // TODO are there any other fields we can set here? 
+<span class="no"> 73 </span>     * Gets if this tag should be formatted as a block (or as inline) 
+<span class="no"> 74 </span>     * 
+<span class="no"> 75 </span>     * @return if should be formatted as block or inline 
+<span class="no"> 76 </span>     */ 
+<span class="no"> 77 </span>    public boolean formatAsBlock() { 
+<span class="no"> 78 </span>        return formatAsBlock; 
+<span class="no"> 79 </span>    } 
+<span class="no"> 80 </span> 
+<span class="no"> 81 </span>    /** 
+<span class="no"> 82 </span>     * Gets if this tag can contain block tags. 
+<span class="no"> 83 </span>     * 
+<span class="no"> 84 </span>     * @return if tag can contain block tags 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public boolean canContainBlock() { 
+<span class="no"> 87 </span>        return canContainBlock; 
+<span class="no"> 88 </span>    } 
+<span class="no"> 89 </span> 
+<span class="no"> 90 </span>    /** 
+<span class="no"> 91 </span>     * Gets if this tag is an inline tag. 
+<span class="no"> 92 </span>     * 
+<span class="no"> 93 </span>     * @return if this tag is an inline tag. 
+<span class="no"> 94 </span>     */ 
+<span class="no"> 95 </span>    public boolean isInline() { 
+<span class="no"> 96 </span>        return !isBlock; 
+<span class="no"> 97 </span>    } 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>    /** 
+<span class="no">100 </span>     * Gets if this tag is a data only tag. 
+<span class="no">101 </span>     * 
+<span class="no">102 </span>     * @return if this tag is a data only tag 
+<span class="no">103 </span>     */ 
+<span class="no">104 </span>    public boolean isData() { 
+<span class="no">105 </span>        return !canContainInline &amp;&amp; !isEmpty(); 
+<span class="no">106 </span>    } 
+<span class="no">107 </span> 
+<span class="no">108 </span>    /** 
+<span class="no">109 </span>     * Get if this is an empty tag 
+<span class="no">110 </span>     * 
+<span class="no">111 </span>     * @return if this is an empty tag 
+<span class="no">112 </span>     */ 
+<span class="no">113 </span>    public boolean isEmpty() { 
+<span class="no">114 </span>        return empty; 
+<span class="no">115 </span>    } 
+<span class="no">116 </span> 
+<span class="no">117 </span>    /** 
+<span class="no">118 </span>     * Get if this tag is self closing. 
+<span class="no">119 </span>     * 
+<span class="no">120 </span>     * @return if this tag should be output as self closing. 
+<span class="no">121 </span>     */ 
+<span class="no">122 </span>    public boolean isSelfClosing() { 
+<span class="no">123 </span>        return empty || selfClosing; 
+<span class="no">124 </span>    } 
+<span class="no">125 </span> 
+<span class="no">126 </span>    /** 
+<span class="no">127 </span>     * Get if this is a pre-defined tag, or was auto created on parsing. 
+<span class="no">128 </span>     * 
+<span class="no">129 </span>     * @return if a known tag 
+<span class="no">130 </span>     */ 
+<span class="no">131 </span>    public boolean isKnownTag() { 
+<span class="no">132 </span>        return tags.containsKey(tagName); 
+<span class="no">133 </span>    } 
+<span class="no">134 </span> 
+<span class="no">135 </span>    /** 
+<span class="no">136 </span>     * Check if this tagname is a known tag. 
+<span class="no">137 </span>     * 
+<span class="no">138 </span>     * @param tagName name of tag 
+<span class="no">139 </span>     * @return if known HTML tag 
+<span class="no">140 </span>     */ 
+<span class="no">141 </span>    public static boolean isKnownTag(String tagName) { 
+<span class="no">142 </span>        return tags.containsKey(tagName); 
+<span class="no">143 </span>    } 
+<span class="no">144 </span> 
+<span class="no">145 </span>    /** 
+<span class="no">146 </span>     * Get if this tag should preserve whitespace within child text nodes. 
+<span class="no">147 </span>     * 
+<span class="no">148 </span>     * @return if preserve whitepace 
+<span class="no">149 </span>     */ 
+<span class="no">150 </span>    public boolean preserveWhitespace() { 
+<span class="no">151 </span>        return preserveWhitespace; 
+<span class="no">152 </span>    } 
+<span class="no">153 </span> 
+<span class="no">154 </span>    Tag setSelfClosing() { 
+<span class="no">155 </span>        selfClosing = true; 
+<span class="no">156 </span>        return this; 
+<span class="no">157 </span>    } 
+<span class="no">158 </span> 
+<span class="no">159 </span>    @Override 
+<span class="no">160 </span>    public boolean equals(Object o) { 
+<span class="no">161 </span>        if (this == o) return true; 
+<span class="no">162 </span>        if (!(o instanceof Tag)) return false; 
+<span class="no">163 </span> 
+<span class="no">164 </span>        Tag tag = (Tag) o; 
+<span class="no">165 </span> 
+<span class="no">166 </span>        if (canContainBlock != tag.canContainBlock) return false; 
+<span class="no">167 </span>        if (canContainInline != tag.canContainInline) return false; 
+<span class="no">168 </span>        if (empty != tag.empty) return false; 
+<span class="no">169 </span>        if (formatAsBlock != tag.formatAsBlock) return false; 
+<span class="no">170 </span>        if (isBlock != tag.isBlock) return false; 
+<span class="no">171 </span>        if (preserveWhitespace != tag.preserveWhitespace) return false; 
+<span class="no">172 </span>        if (selfClosing != tag.selfClosing) return false; 
+<span class="no">173 </span>        if (!tagName.equals(tag.tagName)) return false; 
+<span class="no">174 </span> 
+<span class="no">175 </span>        return true; 
 <span class="no">176 </span>    } 
 <span class="no">177 </span> 
-<span class="no">178 </span>    /** 
-<span class="no">179 </span>     * Overwrite clone. 
-<span class="no">180 </span>     * @return a cloned copy of this ZipArchiveEntry 
-<span class="no">181 </span>     */ 
-<span class="no">182 </span>    @Override 
-<span class="no">183 </span>    public Object clone() { 
-<span class="no">184 </span>        final ZipArchiveEntry e = (ZipArchiveEntry) super.clone(); 
-<span class="no">185 </span> 
-<span class="no">186 </span>        e.setInternalAttributes(getInternalAttributes()); 
-<span class="no">187 </span>        e.setExternalAttributes(getExternalAttributes()); 
-<span class="no">188 </span>        e.setExtraFields(getAllExtraFieldsNoCopy()); 
-<span class="no">189 </span>        return e; 
-<span class="no">190 </span>    } 
-<span class="no">191 </span> 
-<span class="no">192 </span>    /** 
-<span class="no">193 </span>     * Returns the compression method of this entry, or -1 if the 
-<span class="no">194 </span>     * compression method has not been specified. 
-<span class="no">195 </span>     * 
-<span class="no">196 </span>     * @return compression method 
-<span class="no">197 </span>     * 
-<span class="no">198 </span>     * @since 1.1 
-<span class="no">199 </span>     */ 
-<span class="no">200 </span>    @Override 
-<span class="no">201 </span>    public int getMethod() { 
-<span class="no">202 </span>        return method; 
-<span class="no">203 </span>    } 
-<span class="no">204 </span> 
-<span class="no">205 </span>    /** 
-<span class="no">206 </span>     * Sets the compression method of this entry. 
-<span class="no">207 </span>     * 
-<span class="no">208 </span>     * @param method compression method 
-<span class="no">209 </span>     * 
-<span class="no">210 </span>     * @since 1.1 
-<span class="no">211 </span>     */ 
-<span class="no">212 </span>    @Override 
-<span class="no">213 </span>    public void setMethod(final int method) { 
-<span class="no">214 </span>        if (method &lt; 0) { 
-<span class="no">215 </span>            throw new IllegalArgumentException( 
-<span class="no">216 </span>                    &quot;ZIP compression method can not be negative: &quot; + method); 
-<span class="no">217 </span>        } 
-<span class="no">218 </span>        this.method = method; 
-<span class="no">219 </span>    } 
-<span class="no">220 </span> 
-<span class="no">221 </span>    /** 
-<span class="no">222 </span>     * Retrieves the internal file attributes. 
-<span class="no">223 </span>     * 
-<span class="no">224 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: {@link ZipArchiveInputStream} is unable to fill 
-<span class="no">225 </span>     * this field, you must use {@link ZipFile} if you want to read 
-<span class="no">226 </span>     * entries using this attribute.&lt;/p&gt; 
-<span class="no">227 </span>     * 
-<span class="no">228 </span>     * @return the internal file attributes 
-<span class="no">229 </span>     */ 
-<span class="no">230 </span>    public int getInternalAttributes() { 
-<span class="no">231 </span>        return internalAttributes; 
-<span class="no">232 </span>    } 
+<span class="no">178 </span>    @Override 
+<span class="no">179 </span>    public int hashCode() { 
+<span class="no">180 </span>        int result = tagName.hashCode(); 
+<span class="no">181 </span>        result = 31 * result + (isBlock ? 1 : 0); 
+<span class="no">182 </span>        result = 31 * result + (formatAsBlock ? 1 : 0); 
+<span class="no">183 </span>        result = 31 * result + (canContainBlock ? 1 : 0); 
+<span class="no">184 </span>        result = 31 * result + (canContainInline ? 1 : 0); 
+<span class="no">185 </span>        result = 31 * result + (empty ? 1 : 0); 
+<span class="no">186 </span>        result = 31 * result + (selfClosing ? 1 : 0); 
+<span class="no">187 </span>        result = 31 * result + (preserveWhitespace ? 1 : 0); 
+<span class="no">188 </span>        return result; 
+<span class="no">189 </span>    } 
+<span class="no">190 </span> 
+<span class="no">191 </span>    public String toString() { 
+<span class="no">192 </span>        return tagName; 
+<span class="no">193 </span>    } 
+<span class="no">194 </span> 
+<span class="no">195 </span>    // internal static initialisers: 
+<span class="no">196 </span>    // prepped from http://www.w3.org/TR/REC-html40/sgml/dtd.html and other sources 
+<span class="no">197 </span>    private static final String[] blockTags = { 
+<span class="no">198 </span>            &quot;html&quot;, &quot;head&quot;, &quot;body&quot;, &quot;frameset&quot;, &quot;script&quot;, &quot;noscript&quot;, &quot;style&quot;, &quot;meta&quot;, &quot;link&quot;, &quot;title&quot;, &quot;frame&quot;, 
+<span class="no">199 </span>            &quot;noframes&quot;, &quot;section&quot;, &quot;nav&quot;, &quot;aside&quot;, &quot;hgroup&quot;, &quot;header&quot;, &quot;footer&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, 
+<span class="no">200 </span>            &quot;ul&quot;, &quot;ol&quot;, &quot;pre&quot;, &quot;div&quot;, &quot;blockquote&quot;, &quot;hr&quot;, &quot;address&quot;, &quot;figure&quot;, &quot;figcaption&quot;, &quot;form&quot;, &quot;fieldset&quot;, &quot;ins&quot;, 
+<span class="no">201 </span>            &quot;del&quot;, &quot;dl&quot;, &quot;dt&quot;, &quot;dd&quot;, &quot;li&quot;, &quot;table&quot;, &quot;caption&quot;, &quot;thead&quot;, &quot;tfoot&quot;, &quot;tbody&quot;, &quot;colgroup&quot;, &quot;col&quot;, &quot;tr&quot;, &quot;th&quot;, 
+<span class="no">202 </span>            &quot;td&quot;, &quot;video&quot;, &quot;audio&quot;, &quot;canvas&quot;, &quot;details&quot;, &quot;menu&quot;, &quot;plaintext&quot; 
+<span class="no">203 </span>    }; 
+<span class="no">204 </span>    private static final String[] inlineTags = { 
+<span class="no">205 </span>            &quot;object&quot;, &quot;base&quot;, &quot;font&quot;, &quot;tt&quot;, &quot;i&quot;, &quot;b&quot;, &quot;u&quot;, &quot;big&quot;, &quot;small&quot;, &quot;em&quot;, &quot;strong&quot;, &quot;dfn&quot;, &quot;code&quot;, &quot;samp&quot;, &quot;kbd&quot;, 
+<span class="no">206 </span>            &quot;var&quot;, &quot;cite&quot;, &quot;abbr&quot;, &quot;time&quot;, &quot;acronym&quot;, &quot;mark&quot;, &quot;ruby&quot;, &quot;rt&quot;, &quot;rp&quot;, &quot;a&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;map&quot;, &quot;q&quot;, 
+<span class="no">207 </span>            &quot;sub&quot;, &quot;sup&quot;, &quot;bdo&quot;, &quot;iframe&quot;, &quot;embed&quot;, &quot;span&quot;, &quot;input&quot;, &quot;select&quot;, &quot;textarea&quot;, &quot;label&quot;, &quot;button&quot;, &quot;optgroup&quot;, 
+<span class="no">208 </span>            &quot;option&quot;, &quot;legend&quot;, &quot;datalist&quot;, &quot;keygen&quot;, &quot;output&quot;, &quot;progress&quot;, &quot;meter&quot;, &quot;area&quot;, &quot;param&quot;, &quot;source&quot;, &quot;track&quot;, 
+<span class="no">209 </span>            &quot;summary&quot;, &quot;command&quot;, &quot;device&quot; 
+<span class="no">210 </span>    }; 
+<span class="no">211 </span>    private static final String[] emptyTags = { 
+<span class="no">212 </span>            &quot;meta&quot;, &quot;link&quot;, &quot;base&quot;, &quot;frame&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;embed&quot;, &quot;hr&quot;, &quot;input&quot;, &quot;keygen&quot;, &quot;col&quot;, &quot;command&quot;, 
+<span class="no">213 </span>            &quot;device&quot; 
+<span class="no">214 </span>    }; 
+<span class="no">215 </span>    private static final String[] formatAsInlineTags = { 
+<span class="no">216 </span>            &quot;title&quot;, &quot;a&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;pre&quot;, &quot;address&quot;, &quot;li&quot;, &quot;th&quot;, &quot;td&quot;, &quot;script&quot;, &quot;style&quot; 
+<span class="no">217 </span>    }; 
+<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = {&quot;pre&quot;<span id="edit-2-old" data-kind="mov"><span id="hl-2-7095" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>,</span></span> &quot;plaintext&quot;<span id="edit-3-old" data-kind="mov"><span id="hl-3-7108" class="hl mov">,</span></span> <span id="edit-4-old" data-kind="ins"></span>&quot;title&quot;}; 
+<span class="no">219 </span> 
+<span class="no">220 </span>    static { 
+<span class="no">221 </span>        // creates 
+<span class="no">222 </span>        for (String tagName : blockTags) { 
+<span class="no">223 </span>            Tag tag = new Tag(tagName); 
+<span class="no">224 </span>            register(tag); 
+<span class="no">225 </span>        } 
+<span class="no">226 </span>        for (String tagName : inlineTags) { 
+<span class="no">227 </span>            Tag tag = new Tag(tagName); 
+<span class="no">228 </span>            tag.isBlock = false; 
+<span class="no">229 </span>            tag.canContainBlock = false; 
+<span class="no">230 </span>            tag.formatAsBlock = false; 
+<span class="no">231 </span>            register(tag); 
+<span class="no">232 </span>        } 
 <span class="no">233 </span> 
-<span class="no">234 </span>    /** 
-<span class="no">235 </span>     * Sets the internal file attributes. 
-<span class="no">236 </span>     * @param value an &lt;code&gt;int&lt;/code&gt; value 
-<span class="no">237 </span>     */ 
-<span class="no">238 </span>    public void setInternalAttributes(final int value) { 
-<span class="no">239 </span>        internalAttributes = value; 
-<span class="no">240 </span>    } 
-<span class="no">241 </span> 
-<span class="no">242 </span>    /** 
-<span class="no">243 </span>     * Retrieves the external file attributes. 
-<span class="no">244 </span>     * 
-<span class="no">245 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: {@link ZipArchiveInputStream} is unable to fill 
-<span class="no">246 </span>     * this field, you must use {@link ZipFile} if you want to read 
-<span class="no">247 </span>     * entries using this attribute.&lt;/p&gt; 
-<span class="no">248 </span>     * 
-<span class="no">249 </span>     * @return the external file attributes 
-<span class="no">250 </span>     */ 
-<span class="no">251 </span>    public long getExternalAttributes() { 
-<span class="no">252 </span>        return externalAttributes; 
-<span class="no">253 </span>    } 
-<span class="no">254 </span> 
-<span class="no">255 </span>    /** 
-<span class="no">256 </span>     * Sets the external file attributes. 
-<span class="no">257 </span>     * @param value an &lt;code&gt;long&lt;/code&gt; value 
-<span class="no">258 </span>     */ 
-<span class="no">259 </span>    public void setExternalAttributes(final long value) { 
-<span class="no">260 </span>        externalAttributes = value; 
+<span class="no">234 </span>        // mods: 
+<span class="no">235 </span>        for (String tagName : emptyTags) { 
+<span class="no">236 </span>            Tag tag = tags.get(tagName); 
+<span class="no">237 </span>            Validate.notNull(tag); 
+<span class="no">238 </span>            tag.canContainBlock = false; 
+<span class="no">239 </span>            tag.canContainInline = false; 
+<span class="no">240 </span>            tag.empty = true; 
+<span class="no">241 </span>        } 
+<span class="no">242 </span> 
+<span class="no">243 </span>        for (String tagName : formatAsInlineTags) { 
+<span class="no">244 </span>            Tag tag = tags.get(tagName); 
+<span class="no">245 </span>            Validate.notNull(tag); 
+<span class="no">246 </span>            tag.formatAsBlock = false; 
+<span class="no">247 </span>        } 
+<span class="no">248 </span> 
+<span class="no">249 </span>        for (String tagName : preserveWhitespaceTags) { 
+<span class="no">250 </span>            Tag tag = tags.get(tagName); 
+<span class="no">251 </span>            Validate.notNull(tag); 
+<span class="no">252 </span>            tag.preserveWhitespace = true; 
+<span class="no">253 </span>        } 
+<span class="no">254 </span>    } 
+<span class="no">255 </span> 
+<span class="no">256 </span>    private static Tag register(Tag tag) { 
+<span class="no">257 </span>        synchronized (tags) { 
+<span class="no">258 </span>            tags.put(tag.tagName, tag); 
+<span class="no">259 </span>        } 
+<span class="no">260 </span>        return tag; 
 <span class="no">261 </span>    } 
-<span class="no">262 </span> 
-<span class="no">263 </span>    /** 
-<span class="no">264 </span>     * Sets Unix permissions in a way that is understood by Info-Zip&apos;s 
-<span class="no">265 </span>     * unzip command. 
-<span class="no">266 </span>     * @param mode an &lt;code&gt;int&lt;/code&gt; value 
-<span class="no">267 </span>     */ 
-<span class="no">268 </span>    public void setUnixMode(final int mode) { 
-<span class="no">269 </span>        // CheckStyle:MagicNumberCheck OFF - no point 
-<span class="no">270 </span>        setExternalAttributes((mode &lt;&lt; SHORT_SHIFT) 
-<span class="no">271 </span>                              // MS-DOS read-only attribute 
-<span class="no">272 </span>                              | ((mode &amp; 0200) == 0 ? 1 : 0) 
-<span class="no">273 </span>                              // MS-DOS directory flag 
-<span class="no">274 </span>                              | (isDirectory() ? 0x10 : 0)); 
-<span class="no">275 </span>        // CheckStyle:MagicNumberCheck ON 
-<span class="no">276 </span>        platform = PLATFORM_UNIX; 
-<span class="no">277 </span>    } 
-<span class="no">278 </span> 
-<span class="no">279 </span>    /** 
-<span class="no">280 </span>     * Unix permission. 
-<span class="no">281 </span>     * @return the unix permissions 
-<span class="no">282 </span>     */ 
-<span class="no">283 </span>    public int getUnixMode() { 
-<span class="no">284 </span>        return platform != PLATFORM_UNIX ? 0 : 
-<span class="no">285 </span>            (int) ((getExternalAttributes() &gt;&gt; SHORT_SHIFT) &amp; SHORT_MASK); 
-<span class="no">286 </span>    } 
-<span class="no">287 </span> 
-<span class="no">288 </span>    /** 
-<span class="no">289 </span>     * Returns true if this entry represents a unix symlink, 
-<span class="no">290 </span>     * in which case the entry&apos;s content contains the target path 
-<span class="no">291 </span>     * for the symlink. 
-<span class="no">292 </span>     * 
-<span class="no">293 </span>     * @since 1.5 
-<span class="no">294 </span>     * @return true if the entry represents a unix symlink, false otherwise. 
-<span class="no">295 </span>     */ 
-<span class="no">296 </span>    public boolean isUnixSymlink() { 
-<span class="no">297 </span>        return (getUnixMode() &amp; <span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-10118"><span data-kind="ins" id="edit-1-old"></span>UnixStat.LINK_FLAG</span></span>) == <span data-kind="del" id="edit-3-old"><span class="hl del" id="hl-3-10141">UnixStat.LINK_FLAG</span></span>; 
-<span class="no">298 </span>    } 
-<span class="no">299 </span> 
-<span class="no">300 </span>    /** 
-<span class="no">301 </span>     * Platform specification to put into the &amp;quot;version made 
-<span class="no">302 </span>     * by&amp;quot; part of the central file header. 
-<span class="no">303 </span>     * 
-<span class="no">304 </span>     * @return PLATFORM_FAT unless {@link #setUnixMode setUnixMode} 
-<span class="no">305 </span>     * has been called, in which case PLATFORM_UNIX will be returned. 
-<span class="no">306 </span>     */ 
-<span class="no">307 </span>    public int getPlatform() { 
-<span class="no">308 </span>        return platform; 
-<span class="no">309 </span>    } 
-<span class="no">310 </span> 
-<span class="no">311 </span>    /** 
-<span class="no">312 </span>     * Set the platform (UNIX or FAT). 
-<span class="no">313 </span>     * @param platform an &lt;code&gt;int&lt;/code&gt; value - 0 is FAT, 3 is UNIX 
-<span class="no">314 </span>     */ 
-<span class="no">315 </span>    protected void setPlatform(final int platform) { 
-<span class="no">316 </span>        this.platform = platform; 
-<span class="no">317 </span>    } 
-<span class="no">318 </span> 
-<span class="no">319 </span>    /** 
-<span class="no">320 </span>     * Replaces all currently attached extra fields with the new array. 
-<span class="no">321 </span>     * @param fields an array of extra fields 
-<span class="no">322 </span>     */ 
-<span class="no">323 </span>    public void setExtraFields(final ZipExtraField[] fields) { 
-<span class="no">324 </span>        final List&lt;ZipExtraField&gt; newFields = new ArrayList&lt;&gt;(); 
-<span class="no">325 </span>        for (final ZipExtraField field : fields) { 
-<span class="no">326 </span>            if (field instanceof UnparseableExtraFieldData) { 
-<span class="no">327 </span>                unparseableExtra = (UnparseableExtraFieldData) field; 
-<span class="no">328 </span>            } else { 
-<span class="no">329 </span>                newFields.add( field); 
-<span class="no">330 </span>            } 
-<span class="no">331 </span>        } 
-<span class="no">332 </span>        extraFields = newFields.toArray(new ZipExtraField[newFields.size()]); 
-<span class="no">333 </span>        setExtra(); 
-<span class="no">334 </span>    } 
-<span class="no">335 </span> 
-<span class="no">336 </span>    /** 
-<span class="no">337 </span>     * Retrieves all extra fields that have been parsed successfully. 
-<span class="no">338 </span>     * 
-<span class="no">339 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: The set of extra fields may be incomplete when 
-<span class="no">340 </span>     * {@link ZipArchiveInputStream} has been used as some extra 
-<span class="no">341 </span>     * fields use the central directory to store additional 
-<span class="no">342 </span>     * information.&lt;/p&gt; 
-<span class="no">343 </span>     * 
-<span class="no">344 </span>     * @return an array of the extra fields 
-<span class="no">345 </span>     */ 
-<span class="no">346 </span>    public ZipExtraField[] getExtraFields() { 
-<span class="no">347 </span>        return getParseableExtraFields(); 
-<span class="no">348 </span>    } 
-<span class="no">349 </span> 
-<span class="no">350 </span>    /** 
-<span class="no">351 </span>     * Retrieves extra fields. 
-<span class="no">352 </span>     * @param includeUnparseable whether to also return unparseable 
-<span class="no">353 </span>     * extra fields as {@link UnparseableExtraFieldData} if such data 
-<span class="no">354 </span>     * exists. 
-<span class="no">355 </span>     * @return an array of the extra fields 
-<span class="no">356 </span>     * 
-<span class="no">357 </span>     * @since 1.1 
-<span class="no">358 </span>     */ 
-<span class="no">359 </span>    public ZipExtraField[] getExtraFields(final boolean includeUnparseable) { 
-<span class="no">360 </span>        return includeUnparseable ? 
-<span class="no">361 </span>                getAllExtraFields() : 
-<span class="no">362 </span>                getParseableExtraFields(); 
-<span class="no">363 </span>    } 
-<span class="no">364 </span> 
-<span class="no">365 </span>    private ZipExtraField[] getParseableExtraFieldsNoCopy() { 
-<span class="no">366 </span>        if (extraFields == null) { 
-<span class="no">367 </span>            return noExtraFields; 
-<span class="no">368 </span>        } 
-<span class="no">369 </span>        return extraFields; 
-<span class="no">370 </span>    } 
-<span class="no">371 </span> 
-<span class="no">372 </span>    private ZipExtraField[] getParseableExtraFields() { 
-<span class="no">373 </span>        final ZipExtraField[] parseableExtraFields = getParseableExtraFieldsNoCopy(); 
-<span class="no">374 </span>        return (parseableExtraFields == extraFields) ? copyOf(parseableExtraFields) : parseableExtraFields; 
-<span class="no">375 </span>    } 
-<span class="no">376 </span> 
-<span class="no">377 </span>    /** 
-<span class="no">378 </span>     * Get all extra fields, including unparseable ones. 
-<span class="no">379 </span>     * @return An array of all extra fields. Not necessarily a copy of internal data structures, hence private method 
-<span class="no">380 </span>     */ 
-<span class="no">381 </span>    private ZipExtraField[] getAllExtraFieldsNoCopy() { 
-<span class="no">382 </span>        if (extraFields == null) { 
-<span class="no">383 </span>            return getUnparseableOnly(); 
-<span class="no">384 </span>        } 
-<span class="no">385 </span>        return unparseableExtra != null ? getMergedFields() : extraFields; 
-<span class="no">386 </span>    } 
-<span class="no">387 </span> 
-<span class="no">388 </span>    private ZipExtraField[] copyOf(final ZipExtraField[] src){ 
-<span class="no">389 </span>        return copyOf(src, src.length); 
-<span class="no">390 </span>    } 
-<span class="no">391 </span> 
-<span class="no">392 </span>    private ZipExtraField[] copyOf(final ZipExtraField[] src, final int length) { 
-<span class="no">393 </span>        final ZipExtraField[] cpy = new ZipExtraField[length]; 
-<span class="no">394 </span>        System.arraycopy(src, 0, cpy, 0, Math.min(src.length, length)); 
-<span class="no">395 </span>        return cpy; 
-<span class="no">396 </span>    } 
-<span class="no">397 </span> 
-<span class="no">398 </span>    private ZipExtraField[] getMergedFields() { 
-<span class="no">399 </span>        final ZipExtraField[] zipExtraFields = copyOf(extraFields, extraFields.length + 1); 
-<span class="no">400 </span>        zipExtraFields[extraFields.length] = unparseableExtra; 
-<span class="no">401 </span>        return zipExtraFields; 
-<span class="no">402 </span>    } 
-<span class="no">403 </span> 
-<span class="no">404 </span>    private ZipExtraField[] getUnparseableOnly() { 
-<span class="no">405 </span>        return unparseableExtra == null ? noExtraFields : new ZipExtraField[] { unparseableExtra }; 
-<span class="no">406 </span>    } 
-<span class="no">407 </span> 
-<span class="no">408 </span>    private ZipExtraField[] getAllExtraFields() { 
-<span class="no">409 </span>        final ZipExtraField[] allExtraFieldsNoCopy = getAllExtraFieldsNoCopy(); 
-<span class="no">410 </span>        return (allExtraFieldsNoCopy == extraFields) ? copyOf( allExtraFieldsNoCopy) : allExtraFieldsNoCopy; 
-<span class="no">411 </span>    } 
-<span class="no">412 </span>    /** 
-<span class="no">413 </span>     * Adds an extra field - replacing an already present extra field 
-<span class="no">414 </span>     * of the same type. 
-<span class="no">415 </span>     * 
-<span class="no">416 </span>     * &lt;p&gt;If no extra field of the same type exists, the field will be 
-<span class="no">417 </span>     * added as last field.&lt;/p&gt; 
-<span class="no">418 </span>     * @param ze an extra field 
-<span class="no">419 </span>     */ 
-<span class="no">420 </span>    public void addExtraField(final ZipExtraField ze) { 
-<span class="no">421 </span>        if (ze instanceof UnparseableExtraFieldData) { 
-<span class="no">422 </span>            unparseableExtra = (UnparseableExtraFieldData) ze; 
-<span class="no">423 </span>        } else { 
-<span class="no">424 </span>            if (extraFields == null) { 
-<span class="no">425 </span>                extraFields = new ZipExtraField[]{ ze}; 
-<span class="no">426 </span>            } else { 
-<span class="no">427 </span>                if (getExtraField(ze.getHeaderId())!= null){ 
-<span class="no">428 </span>                    removeExtraField(ze.getHeaderId()); 
-<span class="no">429 </span>                } 
-<span class="no">430 </span>                final ZipExtraField[] zipExtraFields = copyOf(extraFields, extraFields.length + 1); 
-<span class="no">431 </span>                zipExtraFields[zipExtraFields.length -1] = ze; 
-<span class="no">432 </span>                extraFields = zipExtraFields; 
-<span class="no">433 </span>            } 
-<span class="no">434 </span>        } 
-<span class="no">435 </span>        setExtra(); 
-<span class="no">436 </span>    } 
-<span class="no">437 </span> 
-<span class="no">438 </span>    /** 
-<span class="no">439 </span>     * Adds an extra field - replacing an already present extra field 
-<span class="no">440 </span>     * of the same type. 
-<span class="no">441 </span>     * 
-<span class="no">442 </span>     * &lt;p&gt;The new extra field will be the first one.&lt;/p&gt; 
-<span class="no">443 </span>     * @param ze an extra field 
-<span class="no">444 </span>     */ 
-<span class="no">445 </span>    public void addAsFirstExtraField(final ZipExtraField ze) { 
-<span class="no">446 </span>        if (ze instanceof UnparseableExtraFieldData) { 
-<span class="no">447 </span>            unparseableExtra = (UnparseableExtraFieldData) ze; 
-<span class="no">448 </span>        } else { 
-<span class="no">449 </span>            if (getExtraField(ze.getHeaderId()) != null){ 
-<span class="no">450 </span>                removeExtraField(ze.getHeaderId()); 
-<span class="no">451 </span>            } 
-<span class="no">452 </span>            final ZipExtraField[] copy = extraFields; 
-<span class="no">453 </span>            final int newLen = extraFields != null ? extraFields.length + 1: 1; 
-<span class="no">454 </span>            extraFields = new ZipExtraField[newLen]; 
-<span class="no">455 </span>            extraFields[0] = ze; 
-<span class="no">456 </span>            if (copy != null){ 
-<span class="no">457 </span>                System.arraycopy(copy, 0, extraFields, 1, extraFields.length - 1); 
-<span class="no">458 </span>            } 
-<span class="no">459 </span>        } 
-<span class="no">460 </span>        setExtra(); 
-<span class="no">461 </span>    } 
-<span class="no">462 </span> 
-<span class="no">463 </span>    /** 
-<span class="no">464 </span>     * Remove an extra field. 
-<span class="no">465 </span>     * @param type the type of extra field to remove 
-<span class="no">466 </span>     */ 
-<span class="no">467 </span>    public void removeExtraField(final ZipShort type) { 
-<span class="no">468 </span>        if (extraFields == null) { 
-<span class="no">469 </span>            throw new java.util.NoSuchElementException(); 
-<span class="no">470 </span>        } 
-<span class="no">471 </span> 
-<span class="no">472 </span>        final List&lt;ZipExtraField&gt; newResult = new ArrayList&lt;&gt;(); 
-<span class="no">473 </span>        for (final ZipExtraField extraField : extraFields) { 
-<span class="no">474 </span>            if (!type.equals(extraField.getHeaderId())){ 
-<span class="no">475 </span>                newResult.add( extraField); 
-<span class="no">476 </span>            } 
-<span class="no">477 </span>        } 
-<span class="no">478 </span>        if (extraFields.length == newResult.size()) { 
-<span class="no">479 </span>            throw new java.util.NoSuchElementException(); 
-<span class="no">480 </span>        } 
-<span class="no">481 </span>        extraFields = newResult.toArray(new ZipExtraField[newResult.size()]); 
-<span class="no">482 </span>        setExtra(); 
-<span class="no">483 </span>    } 
-<span class="no">484 </span> 
-<span class="no">485 </span>    /** 
-<span class="no">486 </span>     * Removes unparseable extra field data. 
-<span class="no">487 </span>     * 
-<span class="no">488 </span>     * @since 1.1 
-<span class="no">489 </span>     */ 
-<span class="no">490 </span>    public void removeUnparseableExtraFieldData() { 
-<span class="no">491 </span>        if (unparseableExtra == null) { 
-<span class="no">492 </span>            throw new java.util.NoSuchElementException(); 
-<span class="no">493 </span>        } 
-<span class="no">494 </span>        unparseableExtra = null; 
-<span class="no">495 </span>        setExtra(); 
-<span class="no">496 </span>    } 
-<span class="no">497 </span> 
-<span class="no">498 </span>    /** 
-<span class="no">499 </span>     * Looks up an extra field by its header id. 
-<span class="no">500 </span>     * 
-<span class="no">501 </span>     * @param type the header id 
-<span class="no">502 </span>     * @return null if no such field exists. 
-<span class="no">503 </span>     */ 
-<span class="no">504 </span>    public ZipExtraField getExtraField(final ZipShort type) { 
-<span class="no">505 </span>        if (extraFields != null) { 
-<span class="no">506 </span>            for (final ZipExtraField extraField : extraFields) { 
-<span class="no">507 </span>                if (type.equals(extraField.getHeaderId())) { 
-<span class="no">508 </span>                    return extraField; 
-<span class="no">509 </span>                } 
-<span class="no">510 </span>            } 
-<span class="no">511 </span>        } 
-<span class="no">512 </span>        return null; 
-<span class="no">513 </span>    } 
-<span class="no">514 </span> 
-<span class="no">515 </span>    /** 
-<span class="no">516 </span>     * Looks up extra field data that couldn&apos;t be parsed correctly. 
-<span class="no">517 </span>     * 
-<span class="no">518 </span>     * @return null if no such field exists. 
-<span class="no">519 </span>     * 
-<span class="no">520 </span>     * @since 1.1 
-<span class="no">521 </span>     */ 
-<span class="no">522 </span>    public UnparseableExtraFieldData getUnparseableExtraFieldData() { 
-<span class="no">523 </span>        return unparseableExtra; 
-<span class="no">524 </span>    } 
-<span class="no">525 </span> 
-<span class="no">526 </span>    /** 
-<span class="no">527 </span>     * Parses the given bytes as extra field data and consumes any 
-<span class="no">528 </span>     * unparseable data as an {@link UnparseableExtraFieldData} 
-<span class="no">529 </span>     * instance. 
-<span class="no">530 </span>     * @param extra an array of bytes to be parsed into extra fields 
-<span class="no">531 </span>     * @throws RuntimeException if the bytes cannot be parsed 
-<span class="no">532 </span>     * @throws RuntimeException on error 
-<span class="no">533 </span>     */ 
-<span class="no">534 </span>    @Override 
-<span class="no">535 </span>    public void setExtra(final byte[] extra) throws RuntimeException { 
-<span class="no">536 </span>        try { 
-<span class="no">537 </span>            final ZipExtraField[] local = 
-<span class="no">538 </span>                ExtraFieldUtils.parse(extra, true, 
-<span class="no">539 </span>                                      ExtraFieldUtils.UnparseableExtraField.READ); 
-<span class="no">540 </span>            mergeExtraFields(local, true); 
-<span class="no">541 </span>        } catch (final ZipException e) { 
-<span class="no">542 </span>            // actually this is not possible as of Commons Compress 1.1 
-<span class="no">543 </span>            throw new RuntimeException(&quot;Error parsing extra fields for entry: &quot; //NOSONAR 
-<span class="no">544 </span>                                       + getName() + &quot; - &quot; + e.getMessage(), e); 
-<span class="no">545 </span>        } 
-<span class="no">546 </span>    } 
-<span class="no">547 </span> 
-<span class="no">548 </span>    /** 
-<span class="no">549 </span>     * Unfortunately {@link java.util.zip.ZipOutputStream 
-<span class="no">550 </span>     * java.util.zip.ZipOutputStream} seems to access the extra data 
-<span class="no">551 </span>     * directly, so overriding getExtra doesn&apos;t help - we need to 
-<span class="no">552 </span>     * modify super&apos;s data directly. 
-<span class="no">553 </span>     */ 
-<span class="no">554 </span>    protected void setExtra() { 
-<span class="no">555 </span>        super.setExtra(ExtraFieldUtils.mergeLocalFileDataData(getAllExtraFieldsNoCopy())); 
-<span class="no">556 </span>    } 
-<span class="no">557 </span> 
-<span class="no">558 </span>    /** 
-<span class="no">559 </span>     * Sets the central directory part of extra fields. 
-<span class="no">560 </span>     * @param b an array of bytes to be parsed into extra fields 
-<span class="no">561 </span>     */ 
-<span class="no">562 </span>    public void setCentralDirectoryExtra(final byte[] b) { 
-<span class="no">563 </span>        try { 
-<span class="no">564 </span>            final ZipExtraField[] central = 
-<span class="no">565 </span>                ExtraFieldUtils.parse(b, false, 
-<span class="no">566 </span>                                      ExtraFieldUtils.UnparseableExtraField.READ); 
-<span class="no">567 </span>            mergeExtraFields(central, false); 
-<span class="no">568 </span>        } catch (final ZipException e) { 
-<span class="no">569 </span>            throw new RuntimeException(e.getMessage(), e); //NOSONAR 
-<span class="no">570 </span>        } 
-<span class="no">571 </span>    } 
-<span class="no">572 </span> 
-<span class="no">573 </span>    /** 
-<span class="no">574 </span>     * Retrieves the extra data for the local file data. 
-<span class="no">575 </span>     * @return the extra data for local file 
-<span class="no">576 </span>     */ 
-<span class="no">577 </span>    public byte[] getLocalFileDataExtra() { 
-<span class="no">578 </span>        final byte[] extra = getExtra(); 
-<span class="no">579 </span>        return extra != null ? extra : EMPTY; 
-<span class="no">580 </span>    } 
-<span class="no">581 </span> 
-<span class="no">582 </span>    /** 
-<span class="no">583 </span>     * Retrieves the extra data for the central directory. 
-<span class="no">584 </span>     * @return the central directory extra data 
-<span class="no">585 </span>     */ 
-<span class="no">586 </span>    public byte[] getCentralDirectoryExtra() { 
-<span class="no">587 </span>        return ExtraFieldUtils.mergeCentralDirectoryData(getAllExtraFieldsNoCopy()); 
-<span class="no">588 </span>    } 
-<span class="no">589 </span> 
-<span class="no">590 </span>    /** 
-<span class="no">591 </span>     * Get the name of the entry. 
-<span class="no">592 </span>     * @return the entry name 
-<span class="no">593 </span>     */ 
-<span class="no">594 </span>    @Override 
-<span class="no">595 </span>    public String getName() { 
-<span class="no">596 </span>        return name == null ? super.getName() : name; 
-<span class="no">597 </span>    } 
-<span class="no">598 </span> 
-<span class="no">599 </span>    /** 
-<span class="no">600 </span>     * Is this entry a directory? 
-<span class="no">601 </span>     * @return true if the entry is a directory 
-<span class="no">602 </span>     */ 
-<span class="no">603 </span>    @Override 
-<span class="no">604 </span>    public boolean isDirectory() { 
-<span class="no">605 </span>        return getName().endsWith(&quot;/&quot;); 
-<span class="no">606 </span>    } 
-<span class="no">607 </span> 
-<span class="no">608 </span>    /** 
-<span class="no">609 </span>     * Set the name of the entry. 
-<span class="no">610 </span>     * @param name the name to use 
-<span class="no">611 </span>     */ 
-<span class="no">612 </span>    protected void setName(String name) { 
-<span class="no">613 </span>        if (name != null &amp;&amp; getPlatform() == PLATFORM_FAT 
-<span class="no">614 </span>            &amp;&amp; !name.contains(&quot;/&quot;)) { 
-<span class="no">615 </span>            name = name.replace(&apos;\\&apos;, &apos;/&apos;); 
-<span class="no">616 </span>        } 
-<span class="no">617 </span>        this.name = name; 
-<span class="no">618 </span>    } 
-<span class="no">619 </span> 
-<span class="no">620 </span>    /** 
-<span class="no">621 </span>     * Gets the uncompressed size of the entry data. 
-<span class="no">622 </span>     * 
-<span class="no">623 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: {@link ZipArchiveInputStream} may create 
-<span class="no">624 </span>     * entries that return {@link #SIZE_UNKNOWN SIZE_UNKNOWN} as long 
-<span class="no">625 </span>     * as the entry hasn&apos;t been read completely.&lt;/p&gt; 
-<span class="no">626 </span>     * 
-<span class="no">627 </span>     * @return the entry size 
-<span class="no">628 </span>     */ 
-<span class="no">629 </span>    @Override 
-<span class="no">630 </span>    public long getSize() { 
-<span class="no">631 </span>        return size; 
-<span class="no">632 </span>    } 
-<span class="no">633 </span> 
-<span class="no">634 </span>    /** 
-<span class="no">635 </span>     * Sets the uncompressed size of the entry data. 
-<span class="no">636 </span>     * @param size the uncompressed size in bytes 
-<span class="no">637 </span>     * @throws IllegalArgumentException if the specified size is less 
-<span class="no">638 </span>     *            than 0 
-<span class="no">639 </span>     */ 
-<span class="no">640 </span>    @Override 
-<span class="no">641 </span>    public void setSize(final long size) { 
-<span class="no">642 </span>        if (size &lt; 0) { 
-<span class="no">643 </span>            throw new IllegalArgumentException(&quot;invalid entry size&quot;); 
-<span class="no">644 </span>        } 
-<span class="no">645 </span>        this.size = size; 
-<span class="no">646 </span>    } 
-<span class="no">647 </span> 
-<span class="no">648 </span>    /** 
-<span class="no">649 </span>     * Sets the name using the raw bytes and the string created from 
-<span class="no">650 </span>     * it by guessing or using the configured encoding. 
-<span class="no">651 </span>     * @param name the name to use created from the raw bytes using 
-<span class="no">652 </span>     * the guessed or configured encoding 
-<span class="no">653 </span>     * @param rawName the bytes originally read as name from the 
-<span class="no">654 </span>     * archive 
-<span class="no">655 </span>     * @since 1.2 
-<span class="no">656 </span>     */ 
-<span class="no">657 </span>    protected void setName(final String name, final byte[] rawName) { 
-<span class="no">658 </span>        setName(name); 
-<span class="no">659 </span>        this.rawName = rawName; 
-<span class="no">660 </span>    } 
-<span class="no">661 </span> 
-<span class="no">662 </span>    /** 
-<span class="no">663 </span>     * Returns the raw bytes that made up the name before it has been 
-<span class="no">664 </span>     * converted using the configured or guessed encoding. 
-<span class="no">665 </span>     * 
-<span class="no">666 </span>     * &lt;p&gt;This method will return null if this instance has not been 
-<span class="no">667 </span>     * read from an archive.&lt;/p&gt; 
-<span class="no">668 </span>     * 
-<span class="no">669 </span>     * @return the raw name bytes 
-<span class="no">670 </span>     * @since 1.2 
-<span class="no">671 </span>     */ 
-<span class="no">672 </span>    public byte[] getRawName() { 
-<span class="no">673 </span>        if (rawName != null) { 
-<span class="no">674 </span>            final byte[] b = new byte[rawName.length]; 
-<span class="no">675 </span>            System.arraycopy(rawName, 0, b, 0, rawName.length); 
-<span class="no">676 </span>            return b; 
-<span class="no">677 </span>        } 
-<span class="no">678 </span>        return null; 
-<span class="no">679 </span>    } 
-<span class="no">680 </span> 
-<span class="no">681 </span>    /** 
-<span class="no">682 </span>     * Get the hashCode of the entry. 
-<span class="no">683 </span>     * This uses the name as the hashcode. 
-<span class="no">684 </span>     * @return a hashcode. 
-<span class="no">685 </span>     */ 
-<span class="no">686 </span>    @Override 
-<span class="no">687 </span>    public int hashCode() { 
-<span class="no">688 </span>        // this method has severe consequences on performance. We cannot rely 
-<span class="no">689 </span>        // on the super.hashCode() method since super.getName() always return 
-<span class="no">690 </span>        // the empty string in the current implemention (there&apos;s no setter) 
-<span class="no">691 </span>        // so it is basically draining the performance of a hashmap lookup 
-<span class="no">692 </span>        return getName().hashCode(); 
-<span class="no">693 </span>    } 
-<span class="no">694 </span> 
-<span class="no">695 </span>    /** 
-<span class="no">696 </span>     * The &quot;general purpose bit&quot; field. 
-<span class="no">697 </span>     * @return the general purpose bit 
-<span class="no">698 </span>     * @since 1.1 
-<span class="no">699 </span>     */ 
-<span class="no">700 </span>    public GeneralPurposeBit getGeneralPurposeBit() { 
-<span class="no">701 </span>        return gpb; 
-<span class="no">702 </span>    } 
-<span class="no">703 </span> 
-<span class="no">704 </span>    /** 
-<span class="no">705 </span>     * The &quot;general purpose bit&quot; field. 
-<span class="no">706 </span>     * @param b the general purpose bit 
-<span class="no">707 </span>     * @since 1.1 
-<span class="no">708 </span>     */ 
-<span class="no">709 </span>    public void setGeneralPurposeBit(final GeneralPurposeBit b) { 
-<span class="no">710 </span>        gpb = b; 
-<span class="no">711 </span>    } 
-<span class="no">712 </span> 
-<span class="no">713 </span>    /** 
-<span class="no">714 </span>     * If there are no extra fields, use the given fields as new extra 
-<span class="no">715 </span>     * data - otherwise merge the fields assuming the existing fields 
-<span class="no">716 </span>     * and the new fields stem from different locations inside the 
-<span class="no">717 </span>     * archive. 
-<span class="no">718 </span>     * @param f the extra fields to merge 
-<span class="no">719 </span>     * @param local whether the new fields originate from local data 
-<span class="no">720 </span>     */ 
-<span class="no">721 </span>    private void mergeExtraFields(final ZipExtraField[] f, final boolean local) 
-<span class="no">722 </span>        throws ZipException { 
-<span class="no">723 </span>        if (extraFields == null) { 
-<span class="no">724 </span>            setExtraFields(f); 
-<span class="no">725 </span>        } else { 
-<span class="no">726 </span>            for (final ZipExtraField element : f) { 
-<span class="no">727 </span>                ZipExtraField existing; 
-<span class="no">728 </span>                if (element instanceof UnparseableExtraFieldData) { 
-<span class="no">729 </span>                    existing = unparseableExtra; 
-<span class="no">730 </span>                } else { 
-<span class="no">731 </span>                    existing = getExtraField(element.getHeaderId()); 
-<span class="no">732 </span>                } 
-<span class="no">733 </span>                if (existing == null) { 
-<span class="no">734 </span>                    addExtraField(element); 
-<span class="no">735 </span>                } else { 
-<span class="no">736 </span>                    if (local) { 
-<span class="no">737 </span>                        final byte[] b = element.getLocalFileDataData(); 
-<span class="no">738 </span>                        existing.parseFromLocalFileData(b, 0, b.length); 
-<span class="no">739 </span>                    } else { 
-<span class="no">740 </span>                        final byte[] b = element.getCentralDirectoryData(); 
-<span class="no">741 </span>                        existing.parseFromCentralDirectoryData(b, 0, b.length); 
-<span class="no">742 </span>                    } 
-<span class="no">743 </span>                } 
-<span class="no">744 </span>            } 
-<span class="no">745 </span>            setExtra(); 
-<span class="no">746 </span>        } 
-<span class="no">747 </span>    } 
-<span class="no">748 </span> 
-<span class="no">749 </span>    /** 
-<span class="no">750 </span>     * Wraps {@link java.util.zip.ZipEntry#getTime} with a {@link Date} as the 
-<span class="no">751 </span>     * entry&apos;s last modified date. 
-<span class="no">752 </span>     * 
-<span class="no">753 </span>     * &lt;p&gt;Changes to the implementation of {@link java.util.zip.ZipEntry#getTime} 
-<span class="no">754 </span>     * leak through and the returned value may depend on your local 
-<span class="no">755 </span>     * time zone as well as your version of Java.&lt;/p&gt; 
-<span class="no">756 </span>     */ 
-<span class="no">757 </span>    @Override 
-<span class="no">758 </span>    public Date getLastModifiedDate() { 
-<span class="no">759 </span>        return new Date(getTime()); 
-<span class="no">760 </span>    } 
-<span class="no">761 </span> 
-<span class="no">762 </span>    /* (non-Javadoc) 
-<span class="no">763 </span>     * @see java.lang.Object#equals(java.lang.Object) 
-<span class="no">764 </span>     */ 
-<span class="no">765 </span>    @Override 
-<span class="no">766 </span>    public boolean equals(final Object obj) { 
-<span class="no">767 </span>        if (this == obj) { 
-<span class="no">768 </span>            return true; 
-<span class="no">769 </span>        } 
-<span class="no">770 </span>        if (obj == null || getClass() != obj.getClass()) { 
-<span class="no">771 </span>            return false; 
-<span class="no">772 </span>        } 
-<span class="no">773 </span>        final ZipArchiveEntry other = (ZipArchiveEntry) obj; 
-<span class="no">774 </span>        final String myName = getName(); 
-<span class="no">775 </span>        final String otherName = other.getName(); 
-<span class="no">776 </span>        if (myName == null) { 
-<span class="no">777 </span>            if (otherName != null) { 
-<span class="no">778 </span>                return false; 
-<span class="no">779 </span>            } 
-<span class="no">780 </span>        } else if (!myName.equals(otherName)) { 
-<span class="no">781 </span>            return false; 
-<span class="no">782 </span>        } 
-<span class="no">783 </span>        String myComment = getComment(); 
-<span class="no">784 </span>        String otherComment = other.getComment(); 
-<span class="no">785 </span>        if (myComment == null) { 
-<span class="no">786 </span>            myComment = &quot;&quot;; 
-<span class="no">787 </span>        } 
-<span class="no">788 </span>        if (otherComment == null) { 
-<span class="no">789 </span>            otherComment = &quot;&quot;; 
-<span class="no">790 </span>        } 
-<span class="no">791 </span>        return getTime() == other.getTime() 
-<span class="no">792 </span>            &amp;&amp; myComment.equals(otherComment) 
-<span class="no">793 </span>            &amp;&amp; getInternalAttributes() == other.getInternalAttributes() 
-<span class="no">794 </span>            &amp;&amp; getPlatform() == other.getPlatform() 
-<span class="no">795 </span>            &amp;&amp; getExternalAttributes() == other.getExternalAttributes() 
-<span class="no">796 </span>            &amp;&amp; getMethod() == other.getMethod() 
-<span class="no">797 </span>            &amp;&amp; getSize() == other.getSize() 
-<span class="no">798 </span>            &amp;&amp; getCrc() == other.getCrc() 
-<span class="no">799 </span>            &amp;&amp; getCompressedSize() == other.getCompressedSize() 
-<span class="no">800 </span>            &amp;&amp; Arrays.equals(getCentralDirectoryExtra(), 
-<span class="no">801 </span>                             other.getCentralDirectoryExtra()) 
-<span class="no">802 </span>            &amp;&amp; Arrays.equals(getLocalFileDataExtra(), 
-<span class="no">803 </span>                             other.getLocalFileDataExtra()) 
-<span class="no">804 </span>            &amp;&amp; gpb.equals(other.gpb); 
-<span class="no">805 </span>    } 
-<span class="no">806 </span> 
-<span class="no">807 </span>    /** 
-<span class="no">808 </span>     * Sets the &quot;version made by&quot; field. 
-<span class="no">809 </span>     * @param versionMadeBy &quot;version made by&quot; field 
-<span class="no">810 </span>     * @since 1.11 
-<span class="no">811 </span>     */ 
-<span class="no">812 </span>    public void setVersionMadeBy(final int versionMadeBy) { 
-<span class="no">813 </span>        this.versionMadeBy = versionMadeBy; 
-<span class="no">814 </span>    } 
-<span class="no">815 </span> 
-<span class="no">816 </span>    /** 
-<span class="no">817 </span>     * Sets the &quot;version required to expand&quot; field. 
-<span class="no">818 </span>     * @param versionRequired &quot;version required to expand&quot; field 
-<span class="no">819 </span>     * @since 1.11 
-<span class="no">820 </span>     */ 
-<span class="no">821 </span>    public void setVersionRequired(final int versionRequired) { 
-<span class="no">822 </span>        this.versionRequired = versionRequired; 
-<span class="no">823 </span>    } 
-<span class="no">824 </span> 
-<span class="no">825 </span>    /** 
-<span class="no">826 </span>     * The &quot;version required to expand&quot; field. 
-<span class="no">827 </span>     * @return &quot;version required to expand&quot; field 
-<span class="no">828 </span>     * @since 1.11 
-<span class="no">829 </span>     */ 
-<span class="no">830 </span>    public int getVersionRequired() { 
-<span class="no">831 </span>        return versionRequired; 
-<span class="no">832 </span>    } 
-<span class="no">833 </span> 
-<span class="no">834 </span>    /** 
-<span class="no">835 </span>     * The &quot;version made by&quot; field. 
-<span class="no">836 </span>     * @return &quot;version made by&quot; field 
-<span class="no">837 </span>     * @since 1.11 
-<span class="no">838 </span>     */ 
-<span class="no">839 </span>    public int getVersionMadeBy() { 
-<span class="no">840 </span>        return versionMadeBy; 
-<span class="no">841 </span>    } 
-<span class="no">842 </span> 
-<span class="no">843 </span>    /** 
-<span class="no">844 </span>     * The content of the flags field. 
-<span class="no">845 </span>     * @return content of the flags field 
-<span class="no">846 </span>     * @since 1.11 
-<span class="no">847 </span>     */ 
-<span class="no">848 </span>    public int getRawFlag() { 
-<span class="no">849 </span>        return rawFlag; 
-<span class="no">850 </span>    } 
-<span class="no">851 </span> 
-<span class="no">852 </span>    /** 
-<span class="no">853 </span>     * Sets the content of the flags field. 
-<span class="no">854 </span>     * @param rawFlag content of the flags field 
-<span class="no">855 </span>     * @since 1.11 
-<span class="no">856 </span>     */ 
-<span class="no">857 </span>    public void setRawFlag(final int rawFlag) { 
-<span class="no">858 </span>        this.rawFlag = rawFlag; 
-<span class="no">859 </span>    } 
-<span class="no">860 </span>} 
-<span class="no">861 </span></code></pre></div>
+<span class="no">262 </span>} 
+<span class="no">263 </span></code></pre></div>
 </div><div class="panel"><div class="panel-header">9_A (modified)</div>
-<div class="codebox"><pre><code><span class="no">  1 </span>/* 
-<span class="no">  2 </span> *  Licensed to the Apache Software Foundation (ASF) under one or more 
-<span class="no">  3 </span> *  contributor license agreements.  See the NOTICE file distributed with 
-<span class="no">  4 </span> *  this work for additional information regarding copyright ownership. 
-<span class="no">  5 </span> *  The ASF licenses this file to You under the Apache License, Version 2.0 
-<span class="no">  6 </span> *  (the &quot;License&quot;); you may not use this file except in compliance with 
-<span class="no">  7 </span> *  the License.  You may obtain a copy of the License at 
-<span class="no">  8 </span> * 
-<span class="no">  9 </span> *      http://www.apache.org/licenses/LICENSE-2.0 
+<div class="codebox"><pre><code><span class="no">  1 </span>package org.jsoup.parser; 
+<span class="no">  2 </span> 
+<span class="no">  3 </span>import org.jsoup.helper.Validate; 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>import java.util.HashMap; 
+<span class="no">  6 </span>import java.util.Map; 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>/** 
+<span class="no">  9 </span> * HTML Tag capabilities. 
 <span class="no"> 10 </span> * 
-<span class="no"> 11 </span> *  Unless required by applicable law or agreed to in writing, software 
-<span class="no"> 12 </span> *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-<span class="no"> 13 </span> *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-<span class="no"> 14 </span> *  See the License for the specific language governing permissions and 
-<span class="no"> 15 </span> *  limitations under the License. 
-<span class="no"> 16 </span> * 
-<span class="no"> 17 </span> */ 
-<span class="no"> 18 </span>package org.apache.commons.compress.archivers.zip; 
-<span class="no"> 19 </span> 
-<span class="no"> 20 </span>import org.apache.commons.compress.archivers.ArchiveEntry; 
-<span class="no"> 21 </span> 
-<span class="no"> 22 </span>import java.io.File; 
-<span class="no"> 23 </span>import java.util.ArrayList; 
-<span class="no"> 24 </span>import java.util.Arrays; 
-<span class="no"> 25 </span>import java.util.Date; 
-<span class="no"> 26 </span>import java.util.List; 
-<span class="no"> 27 </span>import java.util.zip.ZipException; 
+<span class="no"> 11 </span> * @author Jonathan Hedley, jonathan@hedley.net 
+<span class="no"> 12 </span> */ 
+<span class="no"> 13 </span>public class Tag { 
+<span class="no"> 14 </span>    private static final Map&lt;String, Tag&gt; tags = new HashMap&lt;String, Tag&gt;(); // map of known tags 
+<span class="no"> 15 </span> 
+<span class="no"> 16 </span>    private String tagName; 
+<span class="no"> 17 </span>    private boolean isBlock = true; // block or inline 
+<span class="no"> 18 </span>    private boolean formatAsBlock = true; // should be formatted as a block 
+<span class="no"> 19 </span>    private boolean canContainBlock = true; // Can this tag hold block level tags? 
+<span class="no"> 20 </span>    private boolean canContainInline = true; // only pcdata if not 
+<span class="no"> 21 </span>    private boolean empty = false; // can hold nothing; e.g. img 
+<span class="no"> 22 </span>    private boolean selfClosing = false; // can self close (&lt;foo /&gt;). used for unknown tags that self close, without forcing them as empty. 
+<span class="no"> 23 </span>    private boolean preserveWhitespace = false; // for pre, textarea, script etc 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>    private Tag(String tagName) { 
+<span class="no"> 26 </span>        this.tagName = tagName.toLowerCase(); 
+<span class="no"> 27 </span>    } 
 <span class="no"> 28 </span> 
-<span class="no"> 29 </span>/** 
-<span class="no"> 30 </span> * Extension that adds better handling of extra fields and provides 
-<span class="no"> 31 </span> * access to the internal and external file attributes. 
-<span class="no"> 32 </span> * 
-<span class="no"> 33 </span> * &lt;p&gt;The extra data is expected to follow the recommendation of 
-<span class="no"> 34 </span> * &lt;a href=&quot;http://www.pkware.com/documents/casestudies/APPNOTE.TXT&quot;&gt;APPNOTE.TXT&lt;/a&gt;:&lt;/p&gt; 
-<span class="no"> 35 </span> * &lt;ul&gt; 
-<span class="no"> 36 </span> *   &lt;li&gt;the extra byte array consists of a sequence of extra fields&lt;/li&gt; 
-<span class="no"> 37 </span> *   &lt;li&gt;each extra fields starts by a two byte header id followed by 
-<span class="no"> 38 </span> *   a two byte sequence holding the length of the remainder of 
-<span class="no"> 39 </span> *   data.&lt;/li&gt; 
-<span class="no"> 40 </span> * &lt;/ul&gt; 
-<span class="no"> 41 </span> * 
-<span class="no"> 42 </span> * &lt;p&gt;Any extra data that cannot be parsed by the rules above will be 
-<span class="no"> 43 </span> * consumed as &quot;unparseable&quot; extra data and treated differently by the 
-<span class="no"> 44 </span> * methods of this class.  Versions prior to Apache Commons Compress 
-<span class="no"> 45 </span> * 1.1 would have thrown an exception if any attempt was made to read 
-<span class="no"> 46 </span> * or write extra data not conforming to the recommendation.&lt;/p&gt; 
-<span class="no"> 47 </span> * 
-<span class="no"> 48 </span> * @NotThreadSafe 
-<span class="no"> 49 </span> */ 
-<span class="no"> 50 </span>public class ZipArchiveEntry extends java.util.zip.ZipEntry 
-<span class="no"> 51 </span>    implements ArchiveEntry { 
-<span class="no"> 52 </span> 
-<span class="no"> 53 </span>    public static final int PLATFORM_UNIX = 3; 
-<span class="no"> 54 </span>    public static final int PLATFORM_FAT  = 0; 
-<span class="no"> 55 </span>    public static final int CRC_UNKNOWN = -1; 
-<span class="no"> 56 </span>    private static final int SHORT_MASK = 0xFFFF; 
-<span class="no"> 57 </span>    private static final int SHORT_SHIFT = 16; 
-<span class="no"> 58 </span>    private static final byte[] EMPTY = new byte[0]; 
-<span class="no"> 59 </span> 
-<span class="no"> 60 </span>    /** 
-<span class="no"> 61 </span>     * The {@link java.util.zip.ZipEntry} base class only supports 
-<span class="no"> 62 </span>     * the compression methods STORED and DEFLATED. We override the 
-<span class="no"> 63 </span>     * field so that any compression methods can be used. 
-<span class="no"> 64 </span>     * &lt;p&gt; 
-<span class="no"> 65 </span>     * The default value -1 means that the method has not been specified. 
-<span class="no"> 66 </span>     * 
-<span class="no"> 67 </span>     * @see &lt;a href=&quot;https://issues.apache.org/jira/browse/COMPRESS-93&quot; 
-<span class="no"> 68 </span>     *        &gt;COMPRESS-93&lt;/a&gt; 
-<span class="no"> 69 </span>     */ 
-<span class="no"> 70 </span>    private int method = ZipMethod.UNKNOWN_CODE; 
+<span class="no"> 29 </span>    /** 
+<span class="no"> 30 </span>     * Get this tag&apos;s name. 
+<span class="no"> 31 </span>     * 
+<span class="no"> 32 </span>     * @return the tag&apos;s name 
+<span class="no"> 33 </span>     */ 
+<span class="no"> 34 </span>    public String getName() { 
+<span class="no"> 35 </span>        return tagName; 
+<span class="no"> 36 </span>    } 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>    /** 
+<span class="no"> 39 </span>     * Get a Tag by name. If not previously defined (unknown), returns a new generic tag, that can do anything. 
+<span class="no"> 40 </span>     * &lt;p/&gt; 
+<span class="no"> 41 </span>     * Pre-defined tags (P, DIV etc) will be ==, but unknown tags are not registered and will only .equals(). 
+<span class="no"> 42 </span>     * 
+<span class="no"> 43 </span>     * @param tagName Name of tag, e.g. &quot;p&quot;. Case insensitive. 
+<span class="no"> 44 </span>     * @return The tag, either defined or new generic. 
+<span class="no"> 45 </span>     */ 
+<span class="no"> 46 </span>    public static Tag valueOf(String tagName) { 
+<span class="no"> 47 </span>        Validate.notNull(tagName); 
+<span class="no"> 48 </span>        tagName = tagName.trim().toLowerCase(); 
+<span class="no"> 49 </span>        Validate.notEmpty(tagName); 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>        synchronized (tags) { 
+<span class="no"> 52 </span>            Tag tag = tags.get(tagName); 
+<span class="no"> 53 </span>            if (tag == null) { 
+<span class="no"> 54 </span>                // not defined: create default; go anywhere, do anything! (incl be inside a &lt;p&gt;) 
+<span class="no"> 55 </span>                tag = new Tag(tagName); 
+<span class="no"> 56 </span>                tag.isBlock = false; 
+<span class="no"> 57 </span>                tag.canContainBlock = true; 
+<span class="no"> 58 </span>            } 
+<span class="no"> 59 </span>            return tag; 
+<span class="no"> 60 </span>        } 
+<span class="no"> 61 </span>    } 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>    /** 
+<span class="no"> 64 </span>     * Gets if this is a block tag. 
+<span class="no"> 65 </span>     * 
+<span class="no"> 66 </span>     * @return if block tag 
+<span class="no"> 67 </span>     */ 
+<span class="no"> 68 </span>    public boolean isBlock() { 
+<span class="no"> 69 </span>        return isBlock; 
+<span class="no"> 70 </span>    } 
 <span class="no"> 71 </span> 
 <span class="no"> 72 </span>    /** 
-<span class="no"> 73 </span>     * The {@link java.util.zip.ZipEntry#setSize} method in the base 
-<span class="no"> 74 </span>     * class throws an IllegalArgumentException if the size is bigger 
-<span class="no"> 75 </span>     * than 2GB for Java versions &lt; 7.  Need to keep our own size 
-<span class="no"> 76 </span>     * information for Zip64 support. 
-<span class="no"> 77 </span>     */ 
-<span class="no"> 78 </span>    private long size = SIZE_UNKNOWN; 
-<span class="no"> 79 </span> 
-<span class="no"> 80 </span>    private int internalAttributes = 0; 
-<span class="no"> 81 </span>    private int versionRequired; 
-<span class="no"> 82 </span>    private int versionMadeBy; 
-<span class="no"> 83 </span>    private int platform = PLATFORM_FAT; 
-<span class="no"> 84 </span>    private int rawFlag; 
-<span class="no"> 85 </span>    private long externalAttributes = 0; 
-<span class="no"> 86 </span>    private ZipExtraField[] extraFields; 
-<span class="no"> 87 </span>    private UnparseableExtraFieldData unparseableExtra = null; 
-<span class="no"> 88 </span>    private String name = null; 
-<span class="no"> 89 </span>    private byte[] rawName = null; 
-<span class="no"> 90 </span>    private GeneralPurposeBit gpb = new GeneralPurposeBit(); 
-<span class="no"> 91 </span>    private static final ZipExtraField[] noExtraFields = new ZipExtraField[0]; 
-<span class="no"> 92 </span> 
-<span class="no"> 93 </span>    /** 
-<span class="no"> 94 </span>     * Creates a new zip entry with the specified name. 
-<span class="no"> 95 </span>     * 
-<span class="no"> 96 </span>     * &lt;p&gt;Assumes the entry represents a directory if and only if the 
-<span class="no"> 97 </span>     * name ends with a forward slash &quot;/&quot;.&lt;/p&gt; 
-<span class="no"> 98 </span>     * 
-<span class="no"> 99 </span>     * @param name the name of the entry 
-<span class="no">100 </span>     */ 
-<span class="no">101 </span>    public ZipArchiveEntry(final String name) { 
-<span class="no">102 </span>        super(name); 
-<span class="no">103 </span>        setName(name); 
-<span class="no">104 </span>    } 
-<span class="no">105 </span> 
-<span class="no">106 </span>    /** 
-<span class="no">107 </span>     * Creates a new zip entry with fields taken from the specified zip entry. 
-<span class="no">108 </span>     * 
-<span class="no">109 </span>     * &lt;p&gt;Assumes the entry represents a directory if and only if the 
-<span class="no">110 </span>     * name ends with a forward slash &quot;/&quot;.&lt;/p&gt; 
-<span class="no">111 </span>     * 
-<span class="no">112 </span>     * @param entry the entry to get fields from 
-<span class="no">113 </span>     * @throws ZipException on error 
-<span class="no">114 </span>     */ 
-<span class="no">115 </span>    public ZipArchiveEntry(final java.util.zip.ZipEntry entry) throws ZipException { 
-<span class="no">116 </span>        super(entry); 
-<span class="no">117 </span>        setName(entry.getName()); 
-<span class="no">118 </span>        final byte[] extra = entry.getExtra(); 
-<span class="no">119 </span>        if (extra != null) { 
-<span class="no">120 </span>            setExtraFields(ExtraFieldUtils.parse(extra, true, 
-<span class="no">121 </span>                                                 ExtraFieldUtils 
-<span class="no">122 </span>                                                 .UnparseableExtraField.READ)); 
-<span class="no">123 </span>        } else { 
-<span class="no">124 </span>            // initializes extra data to an empty byte array 
-<span class="no">125 </span>            setExtra(); 
-<span class="no">126 </span>        } 
-<span class="no">127 </span>        setMethod(entry.getMethod()); 
-<span class="no">128 </span>        this.size = entry.getSize(); 
-<span class="no">129 </span>    } 
-<span class="no">130 </span> 
-<span class="no">131 </span>    /** 
-<span class="no">132 </span>     * Creates a new zip entry with fields taken from the specified zip entry. 
-<span class="no">133 </span>     * 
-<span class="no">134 </span>     * &lt;p&gt;Assumes the entry represents a directory if and only if the 
-<span class="no">135 </span>     * name ends with a forward slash &quot;/&quot;.&lt;/p&gt; 
-<span class="no">136 </span>     * 
-<span class="no">137 </span>     * @param entry the entry to get fields from 
-<span class="no">138 </span>     * @throws ZipException on error 
-<span class="no">139 </span>     */ 
-<span class="no">140 </span>    public ZipArchiveEntry(final ZipArchiveEntry entry) throws ZipException { 
-<span class="no">141 </span>        this((java.util.zip.ZipEntry) entry); 
-<span class="no">142 </span>        setInternalAttributes(entry.getInternalAttributes()); 
-<span class="no">143 </span>        setExternalAttributes(entry.getExternalAttributes()); 
-<span class="no">144 </span>        setExtraFields(getAllExtraFieldsNoCopy()); 
-<span class="no">145 </span>        setPlatform(entry.getPlatform()); 
-<span class="no">146 </span>        final GeneralPurposeBit other = entry.getGeneralPurposeBit(); 
-<span class="no">147 </span>        setGeneralPurposeBit(other == null ? null : 
-<span class="no">148 </span>                             (GeneralPurposeBit) other.clone()); 
-<span class="no">149 </span>    } 
-<span class="no">150 </span> 
-<span class="no">151 </span>    /** 
-<span class="no">152 </span>     */ 
-<span class="no">153 </span>    protected ZipArchiveEntry() { 
-<span class="no">154 </span>        this(&quot;&quot;); 
-<span class="no">155 </span>    } 
-<span class="no">156 </span> 
-<span class="no">157 </span>    /** 
-<span class="no">158 </span>     * Creates a new zip entry taking some information from the given 
-<span class="no">159 </span>     * file and using the provided name. 
-<span class="no">160 </span>     * 
-<span class="no">161 </span>     * &lt;p&gt;The name will be adjusted to end with a forward slash &quot;/&quot; if 
-<span class="no">162 </span>     * the file is a directory.  If the file is not a directory a 
-<span class="no">163 </span>     * potential trailing forward slash will be stripped from the 
-<span class="no">164 </span>     * entry name.&lt;/p&gt; 
-<span class="no">165 </span>     * @param inputFile file to create the entry from 
-<span class="no">166 </span>     * @param entryName name of the entry 
-<span class="no">167 </span>     */ 
-<span class="no">168 </span>    public ZipArchiveEntry(final File inputFile, final String entryName) { 
-<span class="no">169 </span>        this(inputFile.isDirectory() &amp;&amp; !entryName.endsWith(&quot;/&quot;) ?  
-<span class="no">170 </span>             entryName + &quot;/&quot; : entryName); 
-<span class="no">171 </span>        if (inputFile.isFile()){ 
-<span class="no">172 </span>            setSize(inputFile.length()); 
-<span class="no">173 </span>        } 
-<span class="no">174 </span>        setTime(inputFile.lastModified()); 
-<span class="no">175 </span>        // TODO are there any other fields we can set here? 
+<span class="no"> 73 </span>     * Gets if this tag should be formatted as a block (or as inline) 
+<span class="no"> 74 </span>     * 
+<span class="no"> 75 </span>     * @return if should be formatted as block or inline 
+<span class="no"> 76 </span>     */ 
+<span class="no"> 77 </span>    public boolean formatAsBlock() { 
+<span class="no"> 78 </span>        return formatAsBlock; 
+<span class="no"> 79 </span>    } 
+<span class="no"> 80 </span> 
+<span class="no"> 81 </span>    /** 
+<span class="no"> 82 </span>     * Gets if this tag can contain block tags. 
+<span class="no"> 83 </span>     * 
+<span class="no"> 84 </span>     * @return if tag can contain block tags 
+<span class="no"> 85 </span>     */ 
+<span class="no"> 86 </span>    public boolean canContainBlock() { 
+<span class="no"> 87 </span>        return canContainBlock; 
+<span class="no"> 88 </span>    } 
+<span class="no"> 89 </span> 
+<span class="no"> 90 </span>    /** 
+<span class="no"> 91 </span>     * Gets if this tag is an inline tag. 
+<span class="no"> 92 </span>     * 
+<span class="no"> 93 </span>     * @return if this tag is an inline tag. 
+<span class="no"> 94 </span>     */ 
+<span class="no"> 95 </span>    public boolean isInline() { 
+<span class="no"> 96 </span>        return !isBlock; 
+<span class="no"> 97 </span>    } 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>    /** 
+<span class="no">100 </span>     * Gets if this tag is a data only tag. 
+<span class="no">101 </span>     * 
+<span class="no">102 </span>     * @return if this tag is a data only tag 
+<span class="no">103 </span>     */ 
+<span class="no">104 </span>    public boolean isData() { 
+<span class="no">105 </span>        return !canContainInline &amp;&amp; !isEmpty(); 
+<span class="no">106 </span>    } 
+<span class="no">107 </span> 
+<span class="no">108 </span>    /** 
+<span class="no">109 </span>     * Get if this is an empty tag 
+<span class="no">110 </span>     * 
+<span class="no">111 </span>     * @return if this is an empty tag 
+<span class="no">112 </span>     */ 
+<span class="no">113 </span>    public boolean isEmpty() { 
+<span class="no">114 </span>        return empty; 
+<span class="no">115 </span>    } 
+<span class="no">116 </span> 
+<span class="no">117 </span>    /** 
+<span class="no">118 </span>     * Get if this tag is self closing. 
+<span class="no">119 </span>     * 
+<span class="no">120 </span>     * @return if this tag should be output as self closing. 
+<span class="no">121 </span>     */ 
+<span class="no">122 </span>    public boolean isSelfClosing() { 
+<span class="no">123 </span>        return empty || selfClosing; 
+<span class="no">124 </span>    } 
+<span class="no">125 </span> 
+<span class="no">126 </span>    /** 
+<span class="no">127 </span>     * Get if this is a pre-defined tag, or was auto created on parsing. 
+<span class="no">128 </span>     * 
+<span class="no">129 </span>     * @return if a known tag 
+<span class="no">130 </span>     */ 
+<span class="no">131 </span>    public boolean isKnownTag() { 
+<span class="no">132 </span>        return tags.containsKey(tagName); 
+<span class="no">133 </span>    } 
+<span class="no">134 </span> 
+<span class="no">135 </span>    /** 
+<span class="no">136 </span>     * Check if this tagname is a known tag. 
+<span class="no">137 </span>     * 
+<span class="no">138 </span>     * @param tagName name of tag 
+<span class="no">139 </span>     * @return if known HTML tag 
+<span class="no">140 </span>     */ 
+<span class="no">141 </span>    public static boolean isKnownTag(String tagName) { 
+<span class="no">142 </span>        return tags.containsKey(tagName); 
+<span class="no">143 </span>    } 
+<span class="no">144 </span> 
+<span class="no">145 </span>    /** 
+<span class="no">146 </span>     * Get if this tag should preserve whitespace within child text nodes. 
+<span class="no">147 </span>     * 
+<span class="no">148 </span>     * @return if preserve whitepace 
+<span class="no">149 </span>     */ 
+<span class="no">150 </span>    public boolean preserveWhitespace() { 
+<span class="no">151 </span>        return preserveWhitespace; 
+<span class="no">152 </span>    } 
+<span class="no">153 </span> 
+<span class="no">154 </span>    Tag setSelfClosing() { 
+<span class="no">155 </span>        selfClosing = true; 
+<span class="no">156 </span>        return this; 
+<span class="no">157 </span>    } 
+<span class="no">158 </span> 
+<span class="no">159 </span>    @Override 
+<span class="no">160 </span>    public boolean equals(Object o) { 
+<span class="no">161 </span>        if (this == o) return true; 
+<span class="no">162 </span>        if (!(o instanceof Tag)) return false; 
+<span class="no">163 </span> 
+<span class="no">164 </span>        Tag tag = (Tag) o; 
+<span class="no">165 </span> 
+<span class="no">166 </span>        if (canContainBlock != tag.canContainBlock) return false; 
+<span class="no">167 </span>        if (canContainInline != tag.canContainInline) return false; 
+<span class="no">168 </span>        if (empty != tag.empty) return false; 
+<span class="no">169 </span>        if (formatAsBlock != tag.formatAsBlock) return false; 
+<span class="no">170 </span>        if (isBlock != tag.isBlock) return false; 
+<span class="no">171 </span>        if (preserveWhitespace != tag.preserveWhitespace) return false; 
+<span class="no">172 </span>        if (selfClosing != tag.selfClosing) return false; 
+<span class="no">173 </span>        if (!tagName.equals(tag.tagName)) return false; 
+<span class="no">174 </span> 
+<span class="no">175 </span>        return true; 
 <span class="no">176 </span>    } 
 <span class="no">177 </span> 
-<span class="no">178 </span>    /** 
-<span class="no">179 </span>     * Overwrite clone. 
-<span class="no">180 </span>     * @return a cloned copy of this ZipArchiveEntry 
-<span class="no">181 </span>     */ 
-<span class="no">182 </span>    @Override 
-<span class="no">183 </span>    public Object clone() { 
-<span class="no">184 </span>        final ZipArchiveEntry e = (ZipArchiveEntry) super.clone(); 
-<span class="no">185 </span> 
-<span class="no">186 </span>        e.setInternalAttributes(getInternalAttributes()); 
-<span class="no">187 </span>        e.setExternalAttributes(getExternalAttributes()); 
-<span class="no">188 </span>        e.setExtraFields(getAllExtraFieldsNoCopy()); 
-<span class="no">189 </span>        return e; 
-<span class="no">190 </span>    } 
-<span class="no">191 </span> 
-<span class="no">192 </span>    /** 
-<span class="no">193 </span>     * Returns the compression method of this entry, or -1 if the 
-<span class="no">194 </span>     * compression method has not been specified. 
-<span class="no">195 </span>     * 
-<span class="no">196 </span>     * @return compression method 
-<span class="no">197 </span>     * 
-<span class="no">198 </span>     * @since 1.1 
-<span class="no">199 </span>     */ 
-<span class="no">200 </span>    @Override 
-<span class="no">201 </span>    public int getMethod() { 
-<span class="no">202 </span>        return method; 
-<span class="no">203 </span>    } 
-<span class="no">204 </span> 
-<span class="no">205 </span>    /** 
-<span class="no">206 </span>     * Sets the compression method of this entry. 
-<span class="no">207 </span>     * 
-<span class="no">208 </span>     * @param method compression method 
-<span class="no">209 </span>     * 
-<span class="no">210 </span>     * @since 1.1 
-<span class="no">211 </span>     */ 
-<span class="no">212 </span>    @Override 
-<span class="no">213 </span>    public void setMethod(final int method) { 
-<span class="no">214 </span>        if (method &lt; 0) { 
-<span class="no">215 </span>            throw new IllegalArgumentException( 
-<span class="no">216 </span>                    &quot;ZIP compression method can not be negative: &quot; + method); 
-<span class="no">217 </span>        } 
-<span class="no">218 </span>        this.method = method; 
-<span class="no">219 </span>    } 
-<span class="no">220 </span> 
-<span class="no">221 </span>    /** 
-<span class="no">222 </span>     * Retrieves the internal file attributes. 
-<span class="no">223 </span>     * 
-<span class="no">224 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: {@link ZipArchiveInputStream} is unable to fill 
-<span class="no">225 </span>     * this field, you must use {@link ZipFile} if you want to read 
-<span class="no">226 </span>     * entries using this attribute.&lt;/p&gt; 
-<span class="no">227 </span>     * 
-<span class="no">228 </span>     * @return the internal file attributes 
-<span class="no">229 </span>     */ 
-<span class="no">230 </span>    public int getInternalAttributes() { 
-<span class="no">231 </span>        return internalAttributes; 
-<span class="no">232 </span>    } 
+<span class="no">178 </span>    @Override 
+<span class="no">179 </span>    public int hashCode() { 
+<span class="no">180 </span>        int result = tagName.hashCode(); 
+<span class="no">181 </span>        result = 31 * result + (isBlock ? 1 : 0); 
+<span class="no">182 </span>        result = 31 * result + (formatAsBlock ? 1 : 0); 
+<span class="no">183 </span>        result = 31 * result + (canContainBlock ? 1 : 0); 
+<span class="no">184 </span>        result = 31 * result + (canContainInline ? 1 : 0); 
+<span class="no">185 </span>        result = 31 * result + (empty ? 1 : 0); 
+<span class="no">186 </span>        result = 31 * result + (selfClosing ? 1 : 0); 
+<span class="no">187 </span>        result = 31 * result + (preserveWhitespace ? 1 : 0); 
+<span class="no">188 </span>        return result; 
+<span class="no">189 </span>    } 
+<span class="no">190 </span> 
+<span class="no">191 </span>    public String toString() { 
+<span class="no">192 </span>        return tagName; 
+<span class="no">193 </span>    } 
+<span class="no">194 </span> 
+<span class="no">195 </span>    // internal static initialisers: 
+<span class="no">196 </span>    // prepped from http://www.w3.org/TR/REC-html40/sgml/dtd.html and other sources 
+<span class="no">197 </span>    private static final String[] blockTags = { 
+<span class="no">198 </span>            &quot;html&quot;, &quot;head&quot;, &quot;body&quot;, &quot;frameset&quot;, &quot;script&quot;, &quot;noscript&quot;, &quot;style&quot;, &quot;meta&quot;, &quot;link&quot;, &quot;title&quot;, &quot;frame&quot;, 
+<span class="no">199 </span>            &quot;noframes&quot;, &quot;section&quot;, &quot;nav&quot;, &quot;aside&quot;, &quot;hgroup&quot;, &quot;header&quot;, &quot;footer&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, 
+<span class="no">200 </span>            &quot;ul&quot;, &quot;ol&quot;, &quot;pre&quot;, &quot;div&quot;, &quot;blockquote&quot;, &quot;hr&quot;, &quot;address&quot;, &quot;figure&quot;, &quot;figcaption&quot;, &quot;form&quot;, &quot;fieldset&quot;, &quot;ins&quot;, 
+<span class="no">201 </span>            &quot;del&quot;, &quot;dl&quot;, &quot;dt&quot;, &quot;dd&quot;, &quot;li&quot;, &quot;table&quot;, &quot;caption&quot;, &quot;thead&quot;, &quot;tfoot&quot;, &quot;tbody&quot;, &quot;colgroup&quot;, &quot;col&quot;, &quot;tr&quot;, &quot;th&quot;, 
+<span class="no">202 </span>            &quot;td&quot;, &quot;video&quot;, &quot;audio&quot;, &quot;canvas&quot;, &quot;details&quot;, &quot;menu&quot;, &quot;plaintext&quot; 
+<span class="no">203 </span>    }; 
+<span class="no">204 </span>    private static final String[] inlineTags = { 
+<span class="no">205 </span>            &quot;object&quot;, &quot;base&quot;, &quot;font&quot;, &quot;tt&quot;, &quot;i&quot;, &quot;b&quot;, &quot;u&quot;, &quot;big&quot;, &quot;small&quot;, &quot;em&quot;, &quot;strong&quot;, &quot;dfn&quot;, &quot;code&quot;, &quot;samp&quot;, &quot;kbd&quot;, 
+<span class="no">206 </span>            &quot;var&quot;, &quot;cite&quot;, &quot;abbr&quot;, &quot;time&quot;, &quot;acronym&quot;, &quot;mark&quot;, &quot;ruby&quot;, &quot;rt&quot;, &quot;rp&quot;, &quot;a&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;map&quot;, &quot;q&quot;, 
+<span class="no">207 </span>            &quot;sub&quot;, &quot;sup&quot;, &quot;bdo&quot;, &quot;iframe&quot;, &quot;embed&quot;, &quot;span&quot;, &quot;input&quot;, &quot;select&quot;, &quot;textarea&quot;, &quot;label&quot;, &quot;button&quot;, &quot;optgroup&quot;, 
+<span class="no">208 </span>            &quot;option&quot;, &quot;legend&quot;, &quot;datalist&quot;, &quot;keygen&quot;, &quot;output&quot;, &quot;progress&quot;, &quot;meter&quot;, &quot;area&quot;, &quot;param&quot;, &quot;source&quot;, &quot;track&quot;, 
+<span class="no">209 </span>            &quot;summary&quot;, &quot;command&quot;, &quot;device&quot; 
+<span class="no">210 </span>    }; 
+<span class="no">211 </span>    private static final String[] emptyTags = { 
+<span class="no">212 </span>            &quot;meta&quot;, &quot;link&quot;, &quot;base&quot;, &quot;frame&quot;, &quot;img&quot;, &quot;br&quot;, &quot;wbr&quot;, &quot;embed&quot;, &quot;hr&quot;, &quot;input&quot;, &quot;keygen&quot;, &quot;col&quot;, &quot;command&quot;, 
+<span class="no">213 </span>            &quot;device&quot; 
+<span class="no">214 </span>    }; 
+<span class="no">215 </span>    private static final String[] formatAsInlineTags = { 
+<span class="no">216 </span>            &quot;title&quot;, &quot;a&quot;, &quot;p&quot;, &quot;h1&quot;, &quot;h2&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;h5&quot;, &quot;h6&quot;, &quot;pre&quot;, &quot;address&quot;, &quot;li&quot;, &quot;th&quot;, &quot;td&quot;, &quot;script&quot;, &quot;style&quot; 
+<span class="no">217 </span>    }; 
+<span class="no">218 </span>    private static final String[] preserveWhitespaceTags = {&quot;pre&quot;<span id="edit-1-new" data-kind="ins"><span id="hl-1-7095" class="hl ins">,</span></span> &quot;plaintext&quot;<span id="edit-2-new" data-kind="mov"><span id="hl-2-7108" class="hl mov">,</span></span> &quot;title&quot;<span id="edit-3-new" data-kind="mov"><span id="hl-3-7117" class="hl mov">,</span></span> <span id="edit-4-new" data-kind="ins"><span id="hl-4-7119" class="hl ins">&quot;textarea&quot;</span></span>}; 
+<span class="no">219 </span> 
+<span class="no">220 </span>    static { 
+<span class="no">221 </span>        // creates 
+<span class="no">222 </span>        for (String tagName : blockTags) { 
+<span class="no">223 </span>            Tag tag = new Tag(tagName); 
+<span class="no">224 </span>            register(tag); 
+<span class="no">225 </span>        } 
+<span class="no">226 </span>        for (String tagName : inlineTags) { 
+<span class="no">227 </span>            Tag tag = new Tag(tagName); 
+<span class="no">228 </span>            tag.isBlock = false; 
+<span class="no">229 </span>            tag.canContainBlock = false; 
+<span class="no">230 </span>            tag.formatAsBlock = false; 
+<span class="no">231 </span>            register(tag); 
+<span class="no">232 </span>        } 
 <span class="no">233 </span> 
-<span class="no">234 </span>    /** 
-<span class="no">235 </span>     * Sets the internal file attributes. 
-<span class="no">236 </span>     * @param value an &lt;code&gt;int&lt;/code&gt; value 
-<span class="no">237 </span>     */ 
-<span class="no">238 </span>    public void setInternalAttributes(final int value) { 
-<span class="no">239 </span>        internalAttributes = value; 
-<span class="no">240 </span>    } 
-<span class="no">241 </span> 
-<span class="no">242 </span>    /** 
-<span class="no">243 </span>     * Retrieves the external file attributes. 
-<span class="no">244 </span>     * 
-<span class="no">245 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: {@link ZipArchiveInputStream} is unable to fill 
-<span class="no">246 </span>     * this field, you must use {@link ZipFile} if you want to read 
-<span class="no">247 </span>     * entries using this attribute.&lt;/p&gt; 
-<span class="no">248 </span>     * 
-<span class="no">249 </span>     * @return the external file attributes 
-<span class="no">250 </span>     */ 
-<span class="no">251 </span>    public long getExternalAttributes() { 
-<span class="no">252 </span>        return externalAttributes; 
-<span class="no">253 </span>    } 
-<span class="no">254 </span> 
-<span class="no">255 </span>    /** 
-<span class="no">256 </span>     * Sets the external file attributes. 
-<span class="no">257 </span>     * @param value an &lt;code&gt;long&lt;/code&gt; value 
-<span class="no">258 </span>     */ 
-<span class="no">259 </span>    public void setExternalAttributes(final long value) { 
-<span class="no">260 </span>        externalAttributes = value; 
+<span class="no">234 </span>        // mods: 
+<span class="no">235 </span>        for (String tagName : emptyTags) { 
+<span class="no">236 </span>            Tag tag = tags.get(tagName); 
+<span class="no">237 </span>            Validate.notNull(tag); 
+<span class="no">238 </span>            tag.canContainBlock = false; 
+<span class="no">239 </span>            tag.canContainInline = false; 
+<span class="no">240 </span>            tag.empty = true; 
+<span class="no">241 </span>        } 
+<span class="no">242 </span> 
+<span class="no">243 </span>        for (String tagName : formatAsInlineTags) { 
+<span class="no">244 </span>            Tag tag = tags.get(tagName); 
+<span class="no">245 </span>            Validate.notNull(tag); 
+<span class="no">246 </span>            tag.formatAsBlock = false; 
+<span class="no">247 </span>        } 
+<span class="no">248 </span> 
+<span class="no">249 </span>        for (String tagName : preserveWhitespaceTags) { 
+<span class="no">250 </span>            Tag tag = tags.get(tagName); 
+<span class="no">251 </span>            Validate.notNull(tag); 
+<span class="no">252 </span>            tag.preserveWhitespace = true; 
+<span class="no">253 </span>        } 
+<span class="no">254 </span>    } 
+<span class="no">255 </span> 
+<span class="no">256 </span>    private static Tag register(Tag tag) { 
+<span class="no">257 </span>        synchronized (tags) { 
+<span class="no">258 </span>            tags.put(tag.tagName, tag); 
+<span class="no">259 </span>        } 
+<span class="no">260 </span>        return tag; 
 <span class="no">261 </span>    } 
-<span class="no">262 </span> 
-<span class="no">263 </span>    /** 
-<span class="no">264 </span>     * Sets Unix permissions in a way that is understood by Info-Zip&apos;s 
-<span class="no">265 </span>     * unzip command. 
-<span class="no">266 </span>     * @param mode an &lt;code&gt;int&lt;/code&gt; value 
-<span class="no">267 </span>     */ 
-<span class="no">268 </span>    public void setUnixMode(final int mode) { 
-<span class="no">269 </span>        // CheckStyle:MagicNumberCheck OFF - no point 
-<span class="no">270 </span>        setExternalAttributes((mode &lt;&lt; SHORT_SHIFT) 
-<span class="no">271 </span>                              // MS-DOS read-only attribute 
-<span class="no">272 </span>                              | ((mode &amp; 0200) == 0 ? 1 : 0) 
-<span class="no">273 </span>                              // MS-DOS directory flag 
-<span class="no">274 </span>                              | (isDirectory() ? 0x10 : 0)); 
-<span class="no">275 </span>        // CheckStyle:MagicNumberCheck ON 
-<span class="no">276 </span>        platform = PLATFORM_UNIX; 
-<span class="no">277 </span>    } 
-<span class="no">278 </span> 
-<span class="no">279 </span>    /** 
-<span class="no">280 </span>     * Unix permission. 
-<span class="no">281 </span>     * @return the unix permissions 
-<span class="no">282 </span>     */ 
-<span class="no">283 </span>    public int getUnixMode() { 
-<span class="no">284 </span>        return platform != PLATFORM_UNIX ? 0 : 
-<span class="no">285 </span>            (int) ((getExternalAttributes() &gt;&gt; SHORT_SHIFT) &amp; SHORT_MASK); 
-<span class="no">286 </span>    } 
-<span class="no">287 </span> 
-<span class="no">288 </span>    /** 
-<span class="no">289 </span>     * Returns true if this entry represents a unix symlink, 
-<span class="no">290 </span>     * in which case the entry&apos;s content contains the target path 
-<span class="no">291 </span>     * for the symlink. 
-<span class="no">292 </span>     * 
-<span class="no">293 </span>     * @since 1.5 
-<span class="no">294 </span>     * @return true if the entry represents a unix symlink, false otherwise. 
-<span class="no">295 </span>     */ 
-<span class="no">296 </span>    public boolean isUnixSymlink() { 
-<span class="no">297 </span>        return (getUnixMode() &amp; <span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-10118">UnixStat.FILE_TYPE_FLAG</span></span>) == <span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-10146"><span data-kind="del" id="edit-3-new"></span>UnixStat.LINK_FLAG</span></span>; 
-<span class="no">298 </span>    } 
-<span class="no">299 </span> 
-<span class="no">300 </span>    /** 
-<span class="no">301 </span>     * Platform specification to put into the &amp;quot;version made 
-<span class="no">302 </span>     * by&amp;quot; part of the central file header. 
-<span class="no">303 </span>     * 
-<span class="no">304 </span>     * @return PLATFORM_FAT unless {@link #setUnixMode setUnixMode} 
-<span class="no">305 </span>     * has been called, in which case PLATFORM_UNIX will be returned. 
-<span class="no">306 </span>     */ 
-<span class="no">307 </span>    public int getPlatform() { 
-<span class="no">308 </span>        return platform; 
-<span class="no">309 </span>    } 
-<span class="no">310 </span> 
-<span class="no">311 </span>    /** 
-<span class="no">312 </span>     * Set the platform (UNIX or FAT). 
-<span class="no">313 </span>     * @param platform an &lt;code&gt;int&lt;/code&gt; value - 0 is FAT, 3 is UNIX 
-<span class="no">314 </span>     */ 
-<span class="no">315 </span>    protected void setPlatform(final int platform) { 
-<span class="no">316 </span>        this.platform = platform; 
-<span class="no">317 </span>    } 
-<span class="no">318 </span> 
-<span class="no">319 </span>    /** 
-<span class="no">320 </span>     * Replaces all currently attached extra fields with the new array. 
-<span class="no">321 </span>     * @param fields an array of extra fields 
-<span class="no">322 </span>     */ 
-<span class="no">323 </span>    public void setExtraFields(final ZipExtraField[] fields) { 
-<span class="no">324 </span>        final List&lt;ZipExtraField&gt; newFields = new ArrayList&lt;&gt;(); 
-<span class="no">325 </span>        for (final ZipExtraField field : fields) { 
-<span class="no">326 </span>            if (field instanceof UnparseableExtraFieldData) { 
-<span class="no">327 </span>                unparseableExtra = (UnparseableExtraFieldData) field; 
-<span class="no">328 </span>            } else { 
-<span class="no">329 </span>                newFields.add( field); 
-<span class="no">330 </span>            } 
-<span class="no">331 </span>        } 
-<span class="no">332 </span>        extraFields = newFields.toArray(new ZipExtraField[newFields.size()]); 
-<span class="no">333 </span>        setExtra(); 
-<span class="no">334 </span>    } 
-<span class="no">335 </span> 
-<span class="no">336 </span>    /** 
-<span class="no">337 </span>     * Retrieves all extra fields that have been parsed successfully. 
-<span class="no">338 </span>     * 
-<span class="no">339 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: The set of extra fields may be incomplete when 
-<span class="no">340 </span>     * {@link ZipArchiveInputStream} has been used as some extra 
-<span class="no">341 </span>     * fields use the central directory to store additional 
-<span class="no">342 </span>     * information.&lt;/p&gt; 
-<span class="no">343 </span>     * 
-<span class="no">344 </span>     * @return an array of the extra fields 
-<span class="no">345 </span>     */ 
-<span class="no">346 </span>    public ZipExtraField[] getExtraFields() { 
-<span class="no">347 </span>        return getParseableExtraFields(); 
-<span class="no">348 </span>    } 
-<span class="no">349 </span> 
-<span class="no">350 </span>    /** 
-<span class="no">351 </span>     * Retrieves extra fields. 
-<span class="no">352 </span>     * @param includeUnparseable whether to also return unparseable 
-<span class="no">353 </span>     * extra fields as {@link UnparseableExtraFieldData} if such data 
-<span class="no">354 </span>     * exists. 
-<span class="no">355 </span>     * @return an array of the extra fields 
-<span class="no">356 </span>     * 
-<span class="no">357 </span>     * @since 1.1 
-<span class="no">358 </span>     */ 
-<span class="no">359 </span>    public ZipExtraField[] getExtraFields(final boolean includeUnparseable) { 
-<span class="no">360 </span>        return includeUnparseable ? 
-<span class="no">361 </span>                getAllExtraFields() : 
-<span class="no">362 </span>                getParseableExtraFields(); 
-<span class="no">363 </span>    } 
-<span class="no">364 </span> 
-<span class="no">365 </span>    private ZipExtraField[] getParseableExtraFieldsNoCopy() { 
-<span class="no">366 </span>        if (extraFields == null) { 
-<span class="no">367 </span>            return noExtraFields; 
-<span class="no">368 </span>        } 
-<span class="no">369 </span>        return extraFields; 
-<span class="no">370 </span>    } 
-<span class="no">371 </span> 
-<span class="no">372 </span>    private ZipExtraField[] getParseableExtraFields() { 
-<span class="no">373 </span>        final ZipExtraField[] parseableExtraFields = getParseableExtraFieldsNoCopy(); 
-<span class="no">374 </span>        return (parseableExtraFields == extraFields) ? copyOf(parseableExtraFields) : parseableExtraFields; 
-<span class="no">375 </span>    } 
-<span class="no">376 </span> 
-<span class="no">377 </span>    /** 
-<span class="no">378 </span>     * Get all extra fields, including unparseable ones. 
-<span class="no">379 </span>     * @return An array of all extra fields. Not necessarily a copy of internal data structures, hence private method 
-<span class="no">380 </span>     */ 
-<span class="no">381 </span>    private ZipExtraField[] getAllExtraFieldsNoCopy() { 
-<span class="no">382 </span>        if (extraFields == null) { 
-<span class="no">383 </span>            return getUnparseableOnly(); 
-<span class="no">384 </span>        } 
-<span class="no">385 </span>        return unparseableExtra != null ? getMergedFields() : extraFields; 
-<span class="no">386 </span>    } 
-<span class="no">387 </span> 
-<span class="no">388 </span>    private ZipExtraField[] copyOf(final ZipExtraField[] src){ 
-<span class="no">389 </span>        return copyOf(src, src.length); 
-<span class="no">390 </span>    } 
-<span class="no">391 </span> 
-<span class="no">392 </span>    private ZipExtraField[] copyOf(final ZipExtraField[] src, final int length) { 
-<span class="no">393 </span>        final ZipExtraField[] cpy = new ZipExtraField[length]; 
-<span class="no">394 </span>        System.arraycopy(src, 0, cpy, 0, Math.min(src.length, length)); 
-<span class="no">395 </span>        return cpy; 
-<span class="no">396 </span>    } 
-<span class="no">397 </span> 
-<span class="no">398 </span>    private ZipExtraField[] getMergedFields() { 
-<span class="no">399 </span>        final ZipExtraField[] zipExtraFields = copyOf(extraFields, extraFields.length + 1); 
-<span class="no">400 </span>        zipExtraFields[extraFields.length] = unparseableExtra; 
-<span class="no">401 </span>        return zipExtraFields; 
-<span class="no">402 </span>    } 
-<span class="no">403 </span> 
-<span class="no">404 </span>    private ZipExtraField[] getUnparseableOnly() { 
-<span class="no">405 </span>        return unparseableExtra == null ? noExtraFields : new ZipExtraField[] { unparseableExtra }; 
-<span class="no">406 </span>    } 
-<span class="no">407 </span> 
-<span class="no">408 </span>    private ZipExtraField[] getAllExtraFields() { 
-<span class="no">409 </span>        final ZipExtraField[] allExtraFieldsNoCopy = getAllExtraFieldsNoCopy(); 
-<span class="no">410 </span>        return (allExtraFieldsNoCopy == extraFields) ? copyOf( allExtraFieldsNoCopy) : allExtraFieldsNoCopy; 
-<span class="no">411 </span>    } 
-<span class="no">412 </span>    /** 
-<span class="no">413 </span>     * Adds an extra field - replacing an already present extra field 
-<span class="no">414 </span>     * of the same type. 
-<span class="no">415 </span>     * 
-<span class="no">416 </span>     * &lt;p&gt;If no extra field of the same type exists, the field will be 
-<span class="no">417 </span>     * added as last field.&lt;/p&gt; 
-<span class="no">418 </span>     * @param ze an extra field 
-<span class="no">419 </span>     */ 
-<span class="no">420 </span>    public void addExtraField(final ZipExtraField ze) { 
-<span class="no">421 </span>        if (ze instanceof UnparseableExtraFieldData) { 
-<span class="no">422 </span>            unparseableExtra = (UnparseableExtraFieldData) ze; 
-<span class="no">423 </span>        } else { 
-<span class="no">424 </span>            if (extraFields == null) { 
-<span class="no">425 </span>                extraFields = new ZipExtraField[]{ ze}; 
-<span class="no">426 </span>            } else { 
-<span class="no">427 </span>                if (getExtraField(ze.getHeaderId())!= null){ 
-<span class="no">428 </span>                    removeExtraField(ze.getHeaderId()); 
-<span class="no">429 </span>                } 
-<span class="no">430 </span>                final ZipExtraField[] zipExtraFields = copyOf(extraFields, extraFields.length + 1); 
-<span class="no">431 </span>                zipExtraFields[zipExtraFields.length -1] = ze; 
-<span class="no">432 </span>                extraFields = zipExtraFields; 
-<span class="no">433 </span>            } 
-<span class="no">434 </span>        } 
-<span class="no">435 </span>        setExtra(); 
-<span class="no">436 </span>    } 
-<span class="no">437 </span> 
-<span class="no">438 </span>    /** 
-<span class="no">439 </span>     * Adds an extra field - replacing an already present extra field 
-<span class="no">440 </span>     * of the same type. 
-<span class="no">441 </span>     * 
-<span class="no">442 </span>     * &lt;p&gt;The new extra field will be the first one.&lt;/p&gt; 
-<span class="no">443 </span>     * @param ze an extra field 
-<span class="no">444 </span>     */ 
-<span class="no">445 </span>    public void addAsFirstExtraField(final ZipExtraField ze) { 
-<span class="no">446 </span>        if (ze instanceof UnparseableExtraFieldData) { 
-<span class="no">447 </span>            unparseableExtra = (UnparseableExtraFieldData) ze; 
-<span class="no">448 </span>        } else { 
-<span class="no">449 </span>            if (getExtraField(ze.getHeaderId()) != null){ 
-<span class="no">450 </span>                removeExtraField(ze.getHeaderId()); 
-<span class="no">451 </span>            } 
-<span class="no">452 </span>            final ZipExtraField[] copy = extraFields; 
-<span class="no">453 </span>            final int newLen = extraFields != null ? extraFields.length + 1: 1; 
-<span class="no">454 </span>            extraFields = new ZipExtraField[newLen]; 
-<span class="no">455 </span>            extraFields[0] = ze; 
-<span class="no">456 </span>            if (copy != null){ 
-<span class="no">457 </span>                System.arraycopy(copy, 0, extraFields, 1, extraFields.length - 1); 
-<span class="no">458 </span>            } 
-<span class="no">459 </span>        } 
-<span class="no">460 </span>        setExtra(); 
-<span class="no">461 </span>    } 
-<span class="no">462 </span> 
-<span class="no">463 </span>    /** 
-<span class="no">464 </span>     * Remove an extra field. 
-<span class="no">465 </span>     * @param type the type of extra field to remove 
-<span class="no">466 </span>     */ 
-<span class="no">467 </span>    public void removeExtraField(final ZipShort type) { 
-<span class="no">468 </span>        if (extraFields == null) { 
-<span class="no">469 </span>            throw new java.util.NoSuchElementException(); 
-<span class="no">470 </span>        } 
-<span class="no">471 </span> 
-<span class="no">472 </span>        final List&lt;ZipExtraField&gt; newResult = new ArrayList&lt;&gt;(); 
-<span class="no">473 </span>        for (final ZipExtraField extraField : extraFields) { 
-<span class="no">474 </span>            if (!type.equals(extraField.getHeaderId())){ 
-<span class="no">475 </span>                newResult.add( extraField); 
-<span class="no">476 </span>            } 
-<span class="no">477 </span>        } 
-<span class="no">478 </span>        if (extraFields.length == newResult.size()) { 
-<span class="no">479 </span>            throw new java.util.NoSuchElementException(); 
-<span class="no">480 </span>        } 
-<span class="no">481 </span>        extraFields = newResult.toArray(new ZipExtraField[newResult.size()]); 
-<span class="no">482 </span>        setExtra(); 
-<span class="no">483 </span>    } 
-<span class="no">484 </span> 
-<span class="no">485 </span>    /** 
-<span class="no">486 </span>     * Removes unparseable extra field data. 
-<span class="no">487 </span>     * 
-<span class="no">488 </span>     * @since 1.1 
-<span class="no">489 </span>     */ 
-<span class="no">490 </span>    public void removeUnparseableExtraFieldData() { 
-<span class="no">491 </span>        if (unparseableExtra == null) { 
-<span class="no">492 </span>            throw new java.util.NoSuchElementException(); 
-<span class="no">493 </span>        } 
-<span class="no">494 </span>        unparseableExtra = null; 
-<span class="no">495 </span>        setExtra(); 
-<span class="no">496 </span>    } 
-<span class="no">497 </span> 
-<span class="no">498 </span>    /** 
-<span class="no">499 </span>     * Looks up an extra field by its header id. 
-<span class="no">500 </span>     * 
-<span class="no">501 </span>     * @param type the header id 
-<span class="no">502 </span>     * @return null if no such field exists. 
-<span class="no">503 </span>     */ 
-<span class="no">504 </span>    public ZipExtraField getExtraField(final ZipShort type) { 
-<span class="no">505 </span>        if (extraFields != null) { 
-<span class="no">506 </span>            for (final ZipExtraField extraField : extraFields) { 
-<span class="no">507 </span>                if (type.equals(extraField.getHeaderId())) { 
-<span class="no">508 </span>                    return extraField; 
-<span class="no">509 </span>                } 
-<span class="no">510 </span>            } 
-<span class="no">511 </span>        } 
-<span class="no">512 </span>        return null; 
-<span class="no">513 </span>    } 
-<span class="no">514 </span> 
-<span class="no">515 </span>    /** 
-<span class="no">516 </span>     * Looks up extra field data that couldn&apos;t be parsed correctly. 
-<span class="no">517 </span>     * 
-<span class="no">518 </span>     * @return null if no such field exists. 
-<span class="no">519 </span>     * 
-<span class="no">520 </span>     * @since 1.1 
-<span class="no">521 </span>     */ 
-<span class="no">522 </span>    public UnparseableExtraFieldData getUnparseableExtraFieldData() { 
-<span class="no">523 </span>        return unparseableExtra; 
-<span class="no">524 </span>    } 
-<span class="no">525 </span> 
-<span class="no">526 </span>    /** 
-<span class="no">527 </span>     * Parses the given bytes as extra field data and consumes any 
-<span class="no">528 </span>     * unparseable data as an {@link UnparseableExtraFieldData} 
-<span class="no">529 </span>     * instance. 
-<span class="no">530 </span>     * @param extra an array of bytes to be parsed into extra fields 
-<span class="no">531 </span>     * @throws RuntimeException if the bytes cannot be parsed 
-<span class="no">532 </span>     * @throws RuntimeException on error 
-<span class="no">533 </span>     */ 
-<span class="no">534 </span>    @Override 
-<span class="no">535 </span>    public void setExtra(final byte[] extra) throws RuntimeException { 
-<span class="no">536 </span>        try { 
-<span class="no">537 </span>            final ZipExtraField[] local = 
-<span class="no">538 </span>                ExtraFieldUtils.parse(extra, true, 
-<span class="no">539 </span>                                      ExtraFieldUtils.UnparseableExtraField.READ); 
-<span class="no">540 </span>            mergeExtraFields(local, true); 
-<span class="no">541 </span>        } catch (final ZipException e) { 
-<span class="no">542 </span>            // actually this is not possible as of Commons Compress 1.1 
-<span class="no">543 </span>            throw new RuntimeException(&quot;Error parsing extra fields for entry: &quot; //NOSONAR 
-<span class="no">544 </span>                                       + getName() + &quot; - &quot; + e.getMessage(), e); 
-<span class="no">545 </span>        } 
-<span class="no">546 </span>    } 
-<span class="no">547 </span> 
-<span class="no">548 </span>    /** 
-<span class="no">549 </span>     * Unfortunately {@link java.util.zip.ZipOutputStream 
-<span class="no">550 </span>     * java.util.zip.ZipOutputStream} seems to access the extra data 
-<span class="no">551 </span>     * directly, so overriding getExtra doesn&apos;t help - we need to 
-<span class="no">552 </span>     * modify super&apos;s data directly. 
-<span class="no">553 </span>     */ 
-<span class="no">554 </span>    protected void setExtra() { 
-<span class="no">555 </span>        super.setExtra(ExtraFieldUtils.mergeLocalFileDataData(getAllExtraFieldsNoCopy())); 
-<span class="no">556 </span>    } 
-<span class="no">557 </span> 
-<span class="no">558 </span>    /** 
-<span class="no">559 </span>     * Sets the central directory part of extra fields. 
-<span class="no">560 </span>     * @param b an array of bytes to be parsed into extra fields 
-<span class="no">561 </span>     */ 
-<span class="no">562 </span>    public void setCentralDirectoryExtra(final byte[] b) { 
-<span class="no">563 </span>        try { 
-<span class="no">564 </span>            final ZipExtraField[] central = 
-<span class="no">565 </span>                ExtraFieldUtils.parse(b, false, 
-<span class="no">566 </span>                                      ExtraFieldUtils.UnparseableExtraField.READ); 
-<span class="no">567 </span>            mergeExtraFields(central, false); 
-<span class="no">568 </span>        } catch (final ZipException e) { 
-<span class="no">569 </span>            throw new RuntimeException(e.getMessage(), e); //NOSONAR 
-<span class="no">570 </span>        } 
-<span class="no">571 </span>    } 
-<span class="no">572 </span> 
-<span class="no">573 </span>    /** 
-<span class="no">574 </span>     * Retrieves the extra data for the local file data. 
-<span class="no">575 </span>     * @return the extra data for local file 
-<span class="no">576 </span>     */ 
-<span class="no">577 </span>    public byte[] getLocalFileDataExtra() { 
-<span class="no">578 </span>        final byte[] extra = getExtra(); 
-<span class="no">579 </span>        return extra != null ? extra : EMPTY; 
-<span class="no">580 </span>    } 
-<span class="no">581 </span> 
-<span class="no">582 </span>    /** 
-<span class="no">583 </span>     * Retrieves the extra data for the central directory. 
-<span class="no">584 </span>     * @return the central directory extra data 
-<span class="no">585 </span>     */ 
-<span class="no">586 </span>    public byte[] getCentralDirectoryExtra() { 
-<span class="no">587 </span>        return ExtraFieldUtils.mergeCentralDirectoryData(getAllExtraFieldsNoCopy()); 
-<span class="no">588 </span>    } 
-<span class="no">589 </span> 
-<span class="no">590 </span>    /** 
-<span class="no">591 </span>     * Get the name of the entry. 
-<span class="no">592 </span>     * @return the entry name 
-<span class="no">593 </span>     */ 
-<span class="no">594 </span>    @Override 
-<span class="no">595 </span>    public String getName() { 
-<span class="no">596 </span>        return name == null ? super.getName() : name; 
-<span class="no">597 </span>    } 
-<span class="no">598 </span> 
-<span class="no">599 </span>    /** 
-<span class="no">600 </span>     * Is this entry a directory? 
-<span class="no">601 </span>     * @return true if the entry is a directory 
-<span class="no">602 </span>     */ 
-<span class="no">603 </span>    @Override 
-<span class="no">604 </span>    public boolean isDirectory() { 
-<span class="no">605 </span>        return getName().endsWith(&quot;/&quot;); 
-<span class="no">606 </span>    } 
-<span class="no">607 </span> 
-<span class="no">608 </span>    /** 
-<span class="no">609 </span>     * Set the name of the entry. 
-<span class="no">610 </span>     * @param name the name to use 
-<span class="no">611 </span>     */ 
-<span class="no">612 </span>    protected void setName(String name) { 
-<span class="no">613 </span>        if (name != null &amp;&amp; getPlatform() == PLATFORM_FAT 
-<span class="no">614 </span>            &amp;&amp; !name.contains(&quot;/&quot;)) { 
-<span class="no">615 </span>            name = name.replace(&apos;\\&apos;, &apos;/&apos;); 
-<span class="no">616 </span>        } 
-<span class="no">617 </span>        this.name = name; 
-<span class="no">618 </span>    } 
-<span class="no">619 </span> 
-<span class="no">620 </span>    /** 
-<span class="no">621 </span>     * Gets the uncompressed size of the entry data. 
-<span class="no">622 </span>     * 
-<span class="no">623 </span>     * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: {@link ZipArchiveInputStream} may create 
-<span class="no">624 </span>     * entries that return {@link #SIZE_UNKNOWN SIZE_UNKNOWN} as long 
-<span class="no">625 </span>     * as the entry hasn&apos;t been read completely.&lt;/p&gt; 
-<span class="no">626 </span>     * 
-<span class="no">627 </span>     * @return the entry size 
-<span class="no">628 </span>     */ 
-<span class="no">629 </span>    @Override 
-<span class="no">630 </span>    public long getSize() { 
-<span class="no">631 </span>        return size; 
-<span class="no">632 </span>    } 
-<span class="no">633 </span> 
-<span class="no">634 </span>    /** 
-<span class="no">635 </span>     * Sets the uncompressed size of the entry data. 
-<span class="no">636 </span>     * @param size the uncompressed size in bytes 
-<span class="no">637 </span>     * @throws IllegalArgumentException if the specified size is less 
-<span class="no">638 </span>     *            than 0 
-<span class="no">639 </span>     */ 
-<span class="no">640 </span>    @Override 
-<span class="no">641 </span>    public void setSize(final long size) { 
-<span class="no">642 </span>        if (size &lt; 0) { 
-<span class="no">643 </span>            throw new IllegalArgumentException(&quot;invalid entry size&quot;); 
-<span class="no">644 </span>        } 
-<span class="no">645 </span>        this.size = size; 
-<span class="no">646 </span>    } 
-<span class="no">647 </span> 
-<span class="no">648 </span>    /** 
-<span class="no">649 </span>     * Sets the name using the raw bytes and the string created from 
-<span class="no">650 </span>     * it by guessing or using the configured encoding. 
-<span class="no">651 </span>     * @param name the name to use created from the raw bytes using 
-<span class="no">652 </span>     * the guessed or configured encoding 
-<span class="no">653 </span>     * @param rawName the bytes originally read as name from the 
-<span class="no">654 </span>     * archive 
-<span class="no">655 </span>     * @since 1.2 
-<span class="no">656 </span>     */ 
-<span class="no">657 </span>    protected void setName(final String name, final byte[] rawName) { 
-<span class="no">658 </span>        setName(name); 
-<span class="no">659 </span>        this.rawName = rawName; 
-<span class="no">660 </span>    } 
-<span class="no">661 </span> 
-<span class="no">662 </span>    /** 
-<span class="no">663 </span>     * Returns the raw bytes that made up the name before it has been 
-<span class="no">664 </span>     * converted using the configured or guessed encoding. 
-<span class="no">665 </span>     * 
-<span class="no">666 </span>     * &lt;p&gt;This method will return null if this instance has not been 
-<span class="no">667 </span>     * read from an archive.&lt;/p&gt; 
-<span class="no">668 </span>     * 
-<span class="no">669 </span>     * @return the raw name bytes 
-<span class="no">670 </span>     * @since 1.2 
-<span class="no">671 </span>     */ 
-<span class="no">672 </span>    public byte[] getRawName() { 
-<span class="no">673 </span>        if (rawName != null) { 
-<span class="no">674 </span>            final byte[] b = new byte[rawName.length]; 
-<span class="no">675 </span>            System.arraycopy(rawName, 0, b, 0, rawName.length); 
-<span class="no">676 </span>            return b; 
-<span class="no">677 </span>        } 
-<span class="no">678 </span>        return null; 
-<span class="no">679 </span>    } 
-<span class="no">680 </span> 
-<span class="no">681 </span>    /** 
-<span class="no">682 </span>     * Get the hashCode of the entry. 
-<span class="no">683 </span>     * This uses the name as the hashcode. 
-<span class="no">684 </span>     * @return a hashcode. 
-<span class="no">685 </span>     */ 
-<span class="no">686 </span>    @Override 
-<span class="no">687 </span>    public int hashCode() { 
-<span class="no">688 </span>        // this method has severe consequences on performance. We cannot rely 
-<span class="no">689 </span>        // on the super.hashCode() method since super.getName() always return 
-<span class="no">690 </span>        // the empty string in the current implemention (there&apos;s no setter) 
-<span class="no">691 </span>        // so it is basically draining the performance of a hashmap lookup 
-<span class="no">692 </span>        return getName().hashCode(); 
-<span class="no">693 </span>    } 
-<span class="no">694 </span> 
-<span class="no">695 </span>    /** 
-<span class="no">696 </span>     * The &quot;general purpose bit&quot; field. 
-<span class="no">697 </span>     * @return the general purpose bit 
-<span class="no">698 </span>     * @since 1.1 
-<span class="no">699 </span>     */ 
-<span class="no">700 </span>    public GeneralPurposeBit getGeneralPurposeBit() { 
-<span class="no">701 </span>        return gpb; 
-<span class="no">702 </span>    } 
-<span class="no">703 </span> 
-<span class="no">704 </span>    /** 
-<span class="no">705 </span>     * The &quot;general purpose bit&quot; field. 
-<span class="no">706 </span>     * @param b the general purpose bit 
-<span class="no">707 </span>     * @since 1.1 
-<span class="no">708 </span>     */ 
-<span class="no">709 </span>    public void setGeneralPurposeBit(final GeneralPurposeBit b) { 
-<span class="no">710 </span>        gpb = b; 
-<span class="no">711 </span>    } 
-<span class="no">712 </span> 
-<span class="no">713 </span>    /** 
-<span class="no">714 </span>     * If there are no extra fields, use the given fields as new extra 
-<span class="no">715 </span>     * data - otherwise merge the fields assuming the existing fields 
-<span class="no">716 </span>     * and the new fields stem from different locations inside the 
-<span class="no">717 </span>     * archive. 
-<span class="no">718 </span>     * @param f the extra fields to merge 
-<span class="no">719 </span>     * @param local whether the new fields originate from local data 
-<span class="no">720 </span>     */ 
-<span class="no">721 </span>    private void mergeExtraFields(final ZipExtraField[] f, final boolean local) 
-<span class="no">722 </span>        throws ZipException { 
-<span class="no">723 </span>        if (extraFields == null) { 
-<span class="no">724 </span>            setExtraFields(f); 
-<span class="no">725 </span>        } else { 
-<span class="no">726 </span>            for (final ZipExtraField element : f) { 
-<span class="no">727 </span>                ZipExtraField existing; 
-<span class="no">728 </span>                if (element instanceof UnparseableExtraFieldData) { 
-<span class="no">729 </span>                    existing = unparseableExtra; 
-<span class="no">730 </span>                } else { 
-<span class="no">731 </span>                    existing = getExtraField(element.getHeaderId()); 
-<span class="no">732 </span>                } 
-<span class="no">733 </span>                if (existing == null) { 
-<span class="no">734 </span>                    addExtraField(element); 
-<span class="no">735 </span>                } else { 
-<span class="no">736 </span>                    if (local) { 
-<span class="no">737 </span>                        final byte[] b = element.getLocalFileDataData(); 
-<span class="no">738 </span>                        existing.parseFromLocalFileData(b, 0, b.length); 
-<span class="no">739 </span>                    } else { 
-<span class="no">740 </span>                        final byte[] b = element.getCentralDirectoryData(); 
-<span class="no">741 </span>                        existing.parseFromCentralDirectoryData(b, 0, b.length); 
-<span class="no">742 </span>                    } 
-<span class="no">743 </span>                } 
-<span class="no">744 </span>            } 
-<span class="no">745 </span>            setExtra(); 
-<span class="no">746 </span>        } 
-<span class="no">747 </span>    } 
-<span class="no">748 </span> 
-<span class="no">749 </span>    /** 
-<span class="no">750 </span>     * Wraps {@link java.util.zip.ZipEntry#getTime} with a {@link Date} as the 
-<span class="no">751 </span>     * entry&apos;s last modified date. 
-<span class="no">752 </span>     * 
-<span class="no">753 </span>     * &lt;p&gt;Changes to the implementation of {@link java.util.zip.ZipEntry#getTime} 
-<span class="no">754 </span>     * leak through and the returned value may depend on your local 
-<span class="no">755 </span>     * time zone as well as your version of Java.&lt;/p&gt; 
-<span class="no">756 </span>     */ 
-<span class="no">757 </span>    @Override 
-<span class="no">758 </span>    public Date getLastModifiedDate() { 
-<span class="no">759 </span>        return new Date(getTime()); 
-<span class="no">760 </span>    } 
-<span class="no">761 </span> 
-<span class="no">762 </span>    /* (non-Javadoc) 
-<span class="no">763 </span>     * @see java.lang.Object#equals(java.lang.Object) 
-<span class="no">764 </span>     */ 
-<span class="no">765 </span>    @Override 
-<span class="no">766 </span>    public boolean equals(final Object obj) { 
-<span class="no">767 </span>        if (this == obj) { 
-<span class="no">768 </span>            return true; 
-<span class="no">769 </span>        } 
-<span class="no">770 </span>        if (obj == null || getClass() != obj.getClass()) { 
-<span class="no">771 </span>            return false; 
-<span class="no">772 </span>        } 
-<span class="no">773 </span>        final ZipArchiveEntry other = (ZipArchiveEntry) obj; 
-<span class="no">774 </span>        final String myName = getName(); 
-<span class="no">775 </span>        final String otherName = other.getName(); 
-<span class="no">776 </span>        if (myName == null) { 
-<span class="no">777 </span>            if (otherName != null) { 
-<span class="no">778 </span>                return false; 
-<span class="no">779 </span>            } 
-<span class="no">780 </span>        } else if (!myName.equals(otherName)) { 
-<span class="no">781 </span>            return false; 
-<span class="no">782 </span>        } 
-<span class="no">783 </span>        String myComment = getComment(); 
-<span class="no">784 </span>        String otherComment = other.getComment(); 
-<span class="no">785 </span>        if (myComment == null) { 
-<span class="no">786 </span>            myComment = &quot;&quot;; 
-<span class="no">787 </span>        } 
-<span class="no">788 </span>        if (otherComment == null) { 
-<span class="no">789 </span>            otherComment = &quot;&quot;; 
-<span class="no">790 </span>        } 
-<span class="no">791 </span>        return getTime() == other.getTime() 
-<span class="no">792 </span>            &amp;&amp; myComment.equals(otherComment) 
-<span class="no">793 </span>            &amp;&amp; getInternalAttributes() == other.getInternalAttributes() 
-<span class="no">794 </span>            &amp;&amp; getPlatform() == other.getPlatform() 
-<span class="no">795 </span>            &amp;&amp; getExternalAttributes() == other.getExternalAttributes() 
-<span class="no">796 </span>            &amp;&amp; getMethod() == other.getMethod() 
-<span class="no">797 </span>            &amp;&amp; getSize() == other.getSize() 
-<span class="no">798 </span>            &amp;&amp; getCrc() == other.getCrc() 
-<span class="no">799 </span>            &amp;&amp; getCompressedSize() == other.getCompressedSize() 
-<span class="no">800 </span>            &amp;&amp; Arrays.equals(getCentralDirectoryExtra(), 
-<span class="no">801 </span>                             other.getCentralDirectoryExtra()) 
-<span class="no">802 </span>            &amp;&amp; Arrays.equals(getLocalFileDataExtra(), 
-<span class="no">803 </span>                             other.getLocalFileDataExtra()) 
-<span class="no">804 </span>            &amp;&amp; gpb.equals(other.gpb); 
-<span class="no">805 </span>    } 
-<span class="no">806 </span> 
-<span class="no">807 </span>    /** 
-<span class="no">808 </span>     * Sets the &quot;version made by&quot; field. 
-<span class="no">809 </span>     * @param versionMadeBy &quot;version made by&quot; field 
-<span class="no">810 </span>     * @since 1.11 
-<span class="no">811 </span>     */ 
-<span class="no">812 </span>    public void setVersionMadeBy(final int versionMadeBy) { 
-<span class="no">813 </span>        this.versionMadeBy = versionMadeBy; 
-<span class="no">814 </span>    } 
-<span class="no">815 </span> 
-<span class="no">816 </span>    /** 
-<span class="no">817 </span>     * Sets the &quot;version required to expand&quot; field. 
-<span class="no">818 </span>     * @param versionRequired &quot;version required to expand&quot; field 
-<span class="no">819 </span>     * @since 1.11 
-<span class="no">820 </span>     */ 
-<span class="no">821 </span>    public void setVersionRequired(final int versionRequired) { 
-<span class="no">822 </span>        this.versionRequired = versionRequired; 
-<span class="no">823 </span>    } 
-<span class="no">824 </span> 
-<span class="no">825 </span>    /** 
-<span class="no">826 </span>     * The &quot;version required to expand&quot; field. 
-<span class="no">827 </span>     * @return &quot;version required to expand&quot; field 
-<span class="no">828 </span>     * @since 1.11 
-<span class="no">829 </span>     */ 
-<span class="no">830 </span>    public int getVersionRequired() { 
-<span class="no">831 </span>        return versionRequired; 
-<span class="no">832 </span>    } 
-<span class="no">833 </span> 
-<span class="no">834 </span>    /** 
-<span class="no">835 </span>     * The &quot;version made by&quot; field. 
-<span class="no">836 </span>     * @return &quot;version made by&quot; field 
-<span class="no">837 </span>     * @since 1.11 
-<span class="no">838 </span>     */ 
-<span class="no">839 </span>    public int getVersionMadeBy() { 
-<span class="no">840 </span>        return versionMadeBy; 
-<span class="no">841 </span>    } 
-<span class="no">842 </span> 
-<span class="no">843 </span>    /** 
-<span class="no">844 </span>     * The content of the flags field. 
-<span class="no">845 </span>     * @return content of the flags field 
-<span class="no">846 </span>     * @since 1.11 
-<span class="no">847 </span>     */ 
-<span class="no">848 </span>    public int getRawFlag() { 
-<span class="no">849 </span>        return rawFlag; 
-<span class="no">850 </span>    } 
-<span class="no">851 </span> 
-<span class="no">852 </span>    /** 
-<span class="no">853 </span>     * Sets the content of the flags field. 
-<span class="no">854 </span>     * @param rawFlag content of the flags field 
-<span class="no">855 </span>     * @since 1.11 
-<span class="no">856 </span>     */ 
-<span class="no">857 </span>    public void setRawFlag(final int rawFlag) { 
-<span class="no">858 </span>        this.rawFlag = rawFlag; 
-<span class="no">859 </span>    } 
-<span class="no">860 </span>} 
-<span class="no">861 </span></code></pre></div>
+<span class="no">262 </span>} 
+<span class="no">263 </span></code></pre></div>
 </div></div></div>
 </body>
 </html>

@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<style>
+:root {
+  --mov-clr: 191 175 255;
+  --upd-clr: 255 217 50;
+  --ins-clr: 97 216 54;
+  --del-clr: 255 150 141;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+}
+.grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+}
+.panel {
+  box-sizing: border-box;
+  border-radius: 6px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #b7b7b7;
+  display: flex;
+  min-width: 0;
+}
+.panel-header {
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1;
+  background: #ebebeb;
+}
+.codebox {
+  flex: 1;
+  line-height: 1.5;
+  padding: 2px 4px;
+  font-size: 12px;
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  padding-top: 3px;
+  font-weight: normal;
+  padding-bottom: 3px;
+  letter-spacing: normal;
+  color: #878787;
+  background: #f7f7f7;
+}
+.legend {
+  font-size: 12px;
+  margin: 8px 0 12px 0;
+  line-height: 1.5;
+}
+.legend-row {
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.legend-key kbd {
+  margin-right: 4px;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+  background: #fbfbfb;
+}
+.description {
+  width: 384px;
+  padding: 0px 2px;
+  border: 1px solid black;
+  overflow: auto;
+  box-sizing: border-box;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
+
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
+    });
+  });
+
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return runShortcut("unfocus");
+
+    const key = e.key.toLowerCase();
+    if (key === "u") return runShortcut("unfocus");
+    if (key !== "n" && key !== "b") return;
+
+    e.preventDefault();
+    runShortcut(key === "n" ? "next" : "back");
+  });
+});
+</script>
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 5 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 5 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 5 :&ensp;<b>Insert <code class="type">"dotted_name"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 5 :&ensp;<b>Update <code class="type">"string_content"</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 5 :&ensp;<b>Insert <code class="type">"elif_clause"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">37_B (original)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>&quot;&quot;&quot; 
+<span class="no">  2 </span>Quantilization functions and related stuff 
+<span class="no">  3 </span>&quot;&quot;&quot; 
+<span class="no">  4 </span>from functools import partial 
+<span class="no">  5 </span> 
+<span class="no">  6 </span>import numpy as np 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>from pandas._libs import Timedelta, Timestamp 
+<span class="no">  9 </span>from pandas._libs.lib import infer_dtype 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>from pandas.core.dtypes.common import ( 
+<span class="no"> 12 </span>    _NS_DTYPE<span id="edit-2-old" data-kind="mov"><span id="hl-2-244" class="hl mov"><span id="edit-1-old" data-kind="ins"></span>,</span></span> 
+<span class="no"> 13 </span>    <span id="edit-3-old" data-kind="ins"></span>ensure_int64, 
+<span class="no"> 14 </span>    is_categorical_dtype, 
+<span class="no"> 15 </span>    is_datetime64_dtype, 
+<span class="no"> 16 </span>    is_datetime64tz_dtype, 
+<span class="no"> 17 </span>    is_datetime_or_timedelta_dtype, 
+<span class="no"> 18 </span>    is_integer, 
+<span class="no"> 19 </span>    is_scalar, 
+<span class="no"> 20 </span>    is_timedelta64_dtype, 
+<span class="no"> 21 </span>) 
+<span class="no"> 22 </span>from pandas.core.dtypes.missing import isna 
+<span class="no"> 23 </span> 
+<span class="no"> 24 </span>from pandas import ( 
+<span class="no"> 25 </span>    Categorical, 
+<span class="no"> 26 </span>    Index, 
+<span class="no"> 27 </span>    Interval, 
+<span class="no"> 28 </span>    IntervalIndex, 
+<span class="no"> 29 </span>    Series, 
+<span class="no"> 30 </span>    to_datetime, 
+<span class="no"> 31 </span>    to_timedelta, 
+<span class="no"> 32 </span>) 
+<span class="no"> 33 </span>import pandas.core.algorithms as algos 
+<span class="no"> 34 </span>import pandas.core.nanops as nanops 
+<span class="no"> 35 </span> 
+<span class="no"> 36 </span> 
+<span class="no"> 37 </span>def cut( 
+<span class="no"> 38 </span>    x, 
+<span class="no"> 39 </span>    bins, 
+<span class="no"> 40 </span>    right=True, 
+<span class="no"> 41 </span>    labels=None, 
+<span class="no"> 42 </span>    retbins=False, 
+<span class="no"> 43 </span>    precision=3, 
+<span class="no"> 44 </span>    include_lowest=False, 
+<span class="no"> 45 </span>    duplicates=&quot;raise&quot;, 
+<span class="no"> 46 </span>): 
+<span class="no"> 47 </span>    &quot;&quot;&quot; 
+<span class="no"> 48 </span>    Bin values into discrete intervals. 
+<span class="no"> 49 </span> 
+<span class="no"> 50 </span>    Use `cut` when you need to segment and sort data values into bins. This 
+<span class="no"> 51 </span>    function is also useful for going from a continuous variable to a 
+<span class="no"> 52 </span>    categorical variable. For example, `cut` could convert ages to groups of 
+<span class="no"> 53 </span>    age ranges. Supports binning into an equal number of bins, or a 
+<span class="no"> 54 </span>    pre-specified array of bins. 
+<span class="no"> 55 </span> 
+<span class="no"> 56 </span>    Parameters 
+<span class="no"> 57 </span>    ---------- 
+<span class="no"> 58 </span>    x : array-like 
+<span class="no"> 59 </span>        The input array to be binned. Must be 1-dimensional. 
+<span class="no"> 60 </span>    bins : int, sequence of scalars, or IntervalIndex 
+<span class="no"> 61 </span>        The criteria to bin by. 
+<span class="no"> 62 </span> 
+<span class="no"> 63 </span>        * int : Defines the number of equal-width bins in the range of `x`. The 
+<span class="no"> 64 </span>          range of `x` is extended by .1% on each side to include the minimum 
+<span class="no"> 65 </span>          and maximum values of `x`. 
+<span class="no"> 66 </span>        * sequence of scalars : Defines the bin edges allowing for non-uniform 
+<span class="no"> 67 </span>          width. No extension of the range of `x` is done. 
+<span class="no"> 68 </span>        * IntervalIndex : Defines the exact bins to be used. Note that 
+<span class="no"> 69 </span>          IntervalIndex for `bins` must be non-overlapping. 
+<span class="no"> 70 </span> 
+<span class="no"> 71 </span>    right : bool, default True 
+<span class="no"> 72 </span>        Indicates whether `bins` includes the rightmost edge or not. If 
+<span class="no"> 73 </span>        ``right == True`` (the default), then the `bins` ``[1, 2, 3, 4]`` 
+<span class="no"> 74 </span>        indicate (1,2], (2,3], (3,4]. This argument is ignored when 
+<span class="no"> 75 </span>        `bins` is an IntervalIndex. 
+<span class="no"> 76 </span>    labels : array or bool, optional 
+<span class="no"> 77 </span>        Specifies the labels for the returned bins. Must be the same length as 
+<span class="no"> 78 </span>        the resulting bins. If False, returns only integer indicators of the 
+<span class="no"> 79 </span>        bins. This affects the type of the output container (see below). 
+<span class="no"> 80 </span>        This argument is ignored when `bins` is an IntervalIndex. 
+<span class="no"> 81 </span>    retbins : bool, default False 
+<span class="no"> 82 </span>        Whether to return the bins or not. Useful when bins is provided 
+<span class="no"> 83 </span>        as a scalar. 
+<span class="no"> 84 </span>    precision : int, default 3 
+<span class="no"> 85 </span>        The precision at which to store and display the bins labels. 
+<span class="no"> 86 </span>    include_lowest : bool, default False 
+<span class="no"> 87 </span>        Whether the first interval should be left-inclusive or not. 
+<span class="no"> 88 </span>    duplicates : {default &apos;raise&apos;, &apos;drop&apos;}, optional 
+<span class="no"> 89 </span>        If bin edges are not unique, raise ValueError or drop non-uniques. 
+<span class="no"> 90 </span> 
+<span class="no"> 91 </span>        .. versionadded:: 0.23.0 
+<span class="no"> 92 </span> 
+<span class="no"> 93 </span>    Returns 
+<span class="no"> 94 </span>    ------- 
+<span class="no"> 95 </span>    out : Categorical, Series, or ndarray 
+<span class="no"> 96 </span>        An array-like object representing the respective bin for each value 
+<span class="no"> 97 </span>        of `x`. The type depends on the value of `labels`. 
+<span class="no"> 98 </span> 
+<span class="no"> 99 </span>        * True (default) : returns a Series for Series `x` or a 
+<span class="no">100 </span>          Categorical for all other inputs. The values stored within 
+<span class="no">101 </span>          are Interval dtype. 
+<span class="no">102 </span> 
+<span class="no">103 </span>        * sequence of scalars : returns a Series for Series `x` or a 
+<span class="no">104 </span>          Categorical for all other inputs. The values stored within 
+<span class="no">105 </span>          are whatever the type in the sequence is. 
+<span class="no">106 </span> 
+<span class="no">107 </span>        * False : returns an ndarray of integers. 
+<span class="no">108 </span> 
+<span class="no">109 </span>    bins : numpy.ndarray or IntervalIndex. 
+<span class="no">110 </span>        The computed or specified bins. Only returned when `retbins=True`. 
+<span class="no">111 </span>        For scalar or sequence `bins`, this is an ndarray with the computed 
+<span class="no">112 </span>        bins. If set `duplicates=drop`, `bins` will drop non-unique bin. For 
+<span class="no">113 </span>        an IntervalIndex `bins`, this is equal to `bins`. 
+<span class="no">114 </span> 
+<span class="no">115 </span>    See Also 
+<span class="no">116 </span>    -------- 
+<span class="no">117 </span>    qcut : Discretize variable into equal-sized buckets based on rank 
+<span class="no">118 </span>        or based on sample quantiles. 
+<span class="no">119 </span>    Categorical : Array type for storing data that come from a 
+<span class="no">120 </span>        fixed set of values. 
+<span class="no">121 </span>    Series : One-dimensional array with axis labels (including time series). 
+<span class="no">122 </span>    IntervalIndex : Immutable Index implementing an ordered, sliceable set. 
+<span class="no">123 </span> 
+<span class="no">124 </span>    Notes 
+<span class="no">125 </span>    ----- 
+<span class="no">126 </span>    Any NA values will be NA in the result. Out of bounds values will be NA in 
+<span class="no">127 </span>    the resulting Series or Categorical object. 
+<span class="no">128 </span> 
+<span class="no">129 </span>    Examples 
+<span class="no">130 </span>    -------- 
+<span class="no">131 </span>    Discretize into three equal-sized bins. 
+<span class="no">132 </span> 
+<span class="no">133 </span>    &gt;&gt;&gt; pd.cut(np.array([1, 7, 5, 4, 6, 3]), 3) 
+<span class="no">134 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">135 </span>    [(0.994, 3.0], (5.0, 7.0], (3.0, 5.0], (3.0, 5.0], (5.0, 7.0], ... 
+<span class="no">136 </span>    Categories (3, interval[float64]): [(0.994, 3.0] &lt; (3.0, 5.0] ... 
+<span class="no">137 </span> 
+<span class="no">138 </span>    &gt;&gt;&gt; pd.cut(np.array([1, 7, 5, 4, 6, 3]), 3, retbins=True) 
+<span class="no">139 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">140 </span>    ([(0.994, 3.0], (5.0, 7.0], (3.0, 5.0], (3.0, 5.0], (5.0, 7.0], ... 
+<span class="no">141 </span>    Categories (3, interval[float64]): [(0.994, 3.0] &lt; (3.0, 5.0] ... 
+<span class="no">142 </span>    array([0.994, 3.   , 5.   , 7.   ])) 
+<span class="no">143 </span> 
+<span class="no">144 </span>    Discovers the same bins, but assign them specific labels. Notice that 
+<span class="no">145 </span>    the returned Categorical&apos;s categories are `labels` and is ordered. 
+<span class="no">146 </span> 
+<span class="no">147 </span>    &gt;&gt;&gt; pd.cut(np.array([1, 7, 5, 4, 6, 3]), 
+<span class="no">148 </span>    ...        3, labels=[&quot;bad&quot;, &quot;medium&quot;, &quot;good&quot;]) 
+<span class="no">149 </span>    [bad, good, medium, medium, good, bad] 
+<span class="no">150 </span>    Categories (3, object): [bad &lt; medium &lt; good] 
+<span class="no">151 </span> 
+<span class="no">152 </span>    ``labels=False`` implies you just want the bins back. 
+<span class="no">153 </span> 
+<span class="no">154 </span>    &gt;&gt;&gt; pd.cut([0, 1, 1, 2], bins=4, labels=False) 
+<span class="no">155 </span>    array([0, 1, 1, 3]) 
+<span class="no">156 </span> 
+<span class="no">157 </span>    Passing a Series as an input returns a Series with categorical dtype: 
+<span class="no">158 </span> 
+<span class="no">159 </span>    &gt;&gt;&gt; s = pd.Series(np.array([2, 4, 6, 8, 10]), 
+<span class="no">160 </span>    ...               index=[&apos;a&apos;, &apos;b&apos;, &apos;c&apos;, &apos;d&apos;, &apos;e&apos;]) 
+<span class="no">161 </span>    &gt;&gt;&gt; pd.cut(s, 3) 
+<span class="no">162 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">163 </span>    a    (1.992, 4.667] 
+<span class="no">164 </span>    b    (1.992, 4.667] 
+<span class="no">165 </span>    c    (4.667, 7.333] 
+<span class="no">166 </span>    d     (7.333, 10.0] 
+<span class="no">167 </span>    e     (7.333, 10.0] 
+<span class="no">168 </span>    dtype: category 
+<span class="no">169 </span>    Categories (3, interval[float64]): [(1.992, 4.667] &lt; (4.667, ... 
+<span class="no">170 </span> 
+<span class="no">171 </span>    Passing a Series as an input returns a Series with mapping value. 
+<span class="no">172 </span>    It is used to map numerically to intervals based on bins. 
+<span class="no">173 </span> 
+<span class="no">174 </span>    &gt;&gt;&gt; s = pd.Series(np.array([2, 4, 6, 8, 10]), 
+<span class="no">175 </span>    ...               index=[&apos;a&apos;, &apos;b&apos;, &apos;c&apos;, &apos;d&apos;, &apos;e&apos;]) 
+<span class="no">176 </span>    &gt;&gt;&gt; pd.cut(s, [0, 2, 4, 6, 8, 10], labels=False, retbins=True, right=False) 
+<span class="no">177 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">178 </span>    (a    0.0 
+<span class="no">179 </span>     b    1.0 
+<span class="no">180 </span>     c    2.0 
+<span class="no">181 </span>     d    3.0 
+<span class="no">182 </span>     e    4.0 
+<span class="no">183 </span>     dtype: float64, array([0, 2, 4, 6, 8])) 
+<span class="no">184 </span> 
+<span class="no">185 </span>    Use `drop` optional when bins is not unique 
+<span class="no">186 </span> 
+<span class="no">187 </span>    &gt;&gt;&gt; pd.cut(s, [0, 2, 4, 6, 10, 10], labels=False, retbins=True, 
+<span class="no">188 </span>    ...        right=False, duplicates=&apos;drop&apos;) 
+<span class="no">189 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">190 </span>    (a    0.0 
+<span class="no">191 </span>     b    1.0 
+<span class="no">192 </span>     c    2.0 
+<span class="no">193 </span>     d    3.0 
+<span class="no">194 </span>     e    3.0 
+<span class="no">195 </span>     dtype: float64, array([0, 2, 4, 6, 8])) 
+<span class="no">196 </span> 
+<span class="no">197 </span>    Passing an IntervalIndex for `bins` results in those categories exactly. 
+<span class="no">198 </span>    Notice that values not covered by the IntervalIndex are set to NaN. 0 
+<span class="no">199 </span>    is to the left of the first bin (which is closed on the right), and 1.5 
+<span class="no">200 </span>    falls between two bins. 
+<span class="no">201 </span> 
+<span class="no">202 </span>    &gt;&gt;&gt; bins = pd.IntervalIndex.from_tuples([(0, 1), (2, 3), (4, 5)]) 
+<span class="no">203 </span>    &gt;&gt;&gt; pd.cut([0, 0.5, 1.5, 2.5, 4.5], bins) 
+<span class="no">204 </span>    [NaN, (0, 1], NaN, (2, 3], (4, 5]] 
+<span class="no">205 </span>    Categories (3, interval[int64]): [(0, 1] &lt; (2, 3] &lt; (4, 5]] 
+<span class="no">206 </span>    &quot;&quot;&quot; 
+<span class="no">207 </span>    # NOTE: this binning code is changed a bit from histogram for var(x) == 0 
+<span class="no">208 </span> 
+<span class="no">209 </span>    # for handling the cut for datetime and timedelta objects 
+<span class="no">210 </span>    x_is_series, series_index, name, x = _preprocess_for_cut(x) 
+<span class="no">211 </span>    x, dtype = _coerce_to_type(x) 
+<span class="no">212 </span> 
+<span class="no">213 </span>    if not np.iterable(bins): 
+<span class="no">214 </span>        if is_scalar(bins) and bins &lt; 1: 
+<span class="no">215 </span>            raise ValueError(&quot;`bins` should be a positive integer.&quot;) 
+<span class="no">216 </span> 
+<span class="no">217 </span>        try:  # for array-like 
+<span class="no">218 </span>            sz = x.size 
+<span class="no">219 </span>        except AttributeError: 
+<span class="no">220 </span>            x = np.asarray(x) 
+<span class="no">221 </span>            sz = x.size 
+<span class="no">222 </span> 
+<span class="no">223 </span>        if sz == 0: 
+<span class="no">224 </span>            raise ValueError(&quot;Cannot cut empty array&quot;) 
+<span class="no">225 </span> 
+<span class="no">226 </span>        rng = (nanops.nanmin(x), nanops.nanmax(x)) 
+<span class="no">227 </span>        mn, mx = [mi + 0.0 for mi in rng] 
+<span class="no">228 </span> 
+<span class="no">229 </span>        if np.isinf(mn) or np.isinf(mx): 
+<span class="no">230 </span>            # GH 24314 
+<span class="no">231 </span>            raise ValueError( 
+<span class="no">232 </span>                &quot;cannot specify integer `bins` when input data contains infinity&quot; 
+<span class="no">233 </span>            ) 
+<span class="no">234 </span>        elif mn == mx:  # adjust end points before binning 
+<span class="no">235 </span>            mn -= 0.001 * abs(mn) if mn != 0 else 0.001 
+<span class="no">236 </span>            mx += 0.001 * abs(mx) if mx != 0 else 0.001 
+<span class="no">237 </span>            bins = np.linspace(mn, mx, bins + 1, endpoint=True) 
+<span class="no">238 </span>        else:  # adjust end points after binning 
+<span class="no">239 </span>            bins = np.linspace(mn, mx, bins + 1, endpoint=True) 
+<span class="no">240 </span>            adj = (mx - mn) * 0.001  # 0.1% of the range 
+<span class="no">241 </span>            if right: 
+<span class="no">242 </span>                bins[0] -= adj 
+<span class="no">243 </span>            else: 
+<span class="no">244 </span>                bins[-1] += adj 
+<span class="no">245 </span> 
+<span class="no">246 </span>    elif isinstance(bins, IntervalIndex): 
+<span class="no">247 </span>        if bins.is_overlapping: 
+<span class="no">248 </span>            raise ValueError(&quot;Overlapping IntervalIndex is not accepted.&quot;) 
+<span class="no">249 </span> 
+<span class="no">250 </span>    else: 
+<span class="no">251 </span>        if is_datetime64tz_dtype(bins): 
+<span class="no">252 </span>            bins = np.asarray(bins, dtype=_NS_DTYPE) 
+<span class="no">253 </span>        else: 
+<span class="no">254 </span>            bins = np.asarray(bins) 
+<span class="no">255 </span>        bins = _convert_bin_to_numeric_type(bins, dtype) 
+<span class="no">256 </span> 
+<span class="no">257 </span>        # GH 26045: cast to float64 to avoid an overflow 
+<span class="no">258 </span>        if (np.diff(bins.astype(&quot;float64&quot;)) &lt; 0).any(): 
+<span class="no">259 </span>            raise ValueError(&quot;bins must increase monotonically.&quot;) 
+<span class="no">260 </span> 
+<span class="no">261 </span>    fac, bins = _bins_to_cuts( 
+<span class="no">262 </span>        x, 
+<span class="no">263 </span>        bins, 
+<span class="no">264 </span>        right=right, 
+<span class="no">265 </span>        labels=labels, 
+<span class="no">266 </span>        precision=precision, 
+<span class="no">267 </span>        include_lowest=include_lowest, 
+<span class="no">268 </span>        dtype=dtype, 
+<span class="no">269 </span>        duplicates=duplicates, 
+<span class="no">270 </span>    ) 
+<span class="no">271 </span> 
+<span class="no">272 </span>    return _postprocess_for_cut( 
+<span class="no">273 </span>        fac, bins, retbins, x_is_series, series_index, name, dtype 
+<span class="no">274 </span>    ) 
+<span class="no">275 </span> 
+<span class="no">276 </span> 
+<span class="no">277 </span>def qcut(x, q, labels=None, retbins=False, precision=3, duplicates=&quot;raise&quot;): 
+<span class="no">278 </span>    &quot;&quot;&quot; 
+<span class="no">279 </span>    Quantile-based discretization function. Discretize variable into 
+<span class="no">280 </span>    equal-sized buckets based on rank or based on sample quantiles. For example 
+<span class="no">281 </span>    1000 values for 10 quantiles would produce a Categorical object indicating 
+<span class="no">282 </span>    quantile membership for each data point. 
+<span class="no">283 </span> 
+<span class="no">284 </span>    Parameters 
+<span class="no">285 </span>    ---------- 
+<span class="no">286 </span>    x : 1d ndarray or Series 
+<span class="no">287 </span>    q : integer or array of quantiles 
+<span class="no">288 </span>        Number of quantiles. 10 for deciles, 4 for quartiles, etc. Alternately 
+<span class="no">289 </span>        array of quantiles, e.g. [0, .25, .5, .75, 1.] for quartiles 
+<span class="no">290 </span>    labels : array or boolean, default None 
+<span class="no">291 </span>        Used as labels for the resulting bins. Must be of the same length as 
+<span class="no">292 </span>        the resulting bins. If False, return only integer indicators of the 
+<span class="no">293 </span>        bins. 
+<span class="no">294 </span>    retbins : bool, optional 
+<span class="no">295 </span>        Whether to return the (bins, labels) or not. Can be useful if bins 
+<span class="no">296 </span>        is given as a scalar. 
+<span class="no">297 </span>    precision : int, optional 
+<span class="no">298 </span>        The precision at which to store and display the bins labels 
+<span class="no">299 </span>    duplicates : {default &apos;raise&apos;, &apos;drop&apos;}, optional 
+<span class="no">300 </span>        If bin edges are not unique, raise ValueError or drop non-uniques. 
+<span class="no">301 </span> 
+<span class="no">302 </span>        .. versionadded:: 0.20.0 
+<span class="no">303 </span> 
+<span class="no">304 </span>    Returns 
+<span class="no">305 </span>    ------- 
+<span class="no">306 </span>    out : Categorical or Series or array of integers if labels is False 
+<span class="no">307 </span>        The return type (Categorical or Series) depends on the input: a Series 
+<span class="no">308 </span>        of type category if input is a Series else Categorical. Bins are 
+<span class="no">309 </span>        represented as categories when categorical data is returned. 
+<span class="no">310 </span>    bins : ndarray of floats 
+<span class="no">311 </span>        Returned only if `retbins` is True. 
+<span class="no">312 </span> 
+<span class="no">313 </span>    Notes 
+<span class="no">314 </span>    ----- 
+<span class="no">315 </span>    Out of bounds values will be NA in the resulting Categorical object 
+<span class="no">316 </span> 
+<span class="no">317 </span>    Examples 
+<span class="no">318 </span>    -------- 
+<span class="no">319 </span>    &gt;&gt;&gt; pd.qcut(range(5), 4) 
+<span class="no">320 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">321 </span>    [(-0.001, 1.0], (-0.001, 1.0], (1.0, 2.0], (2.0, 3.0], (3.0, 4.0]] 
+<span class="no">322 </span>    Categories (4, interval[float64]): [(-0.001, 1.0] &lt; (1.0, 2.0] ... 
+<span class="no">323 </span> 
+<span class="no">324 </span>    &gt;&gt;&gt; pd.qcut(range(5), 3, labels=[&quot;good&quot;, &quot;medium&quot;, &quot;bad&quot;]) 
+<span class="no">325 </span>    ... # doctest: +SKIP 
+<span class="no">326 </span>    [good, good, medium, bad, bad] 
+<span class="no">327 </span>    Categories (3, object): [good &lt; medium &lt; bad] 
+<span class="no">328 </span> 
+<span class="no">329 </span>    &gt;&gt;&gt; pd.qcut(range(5), 4, labels=False) 
+<span class="no">330 </span>    array([0, 0, 1, 2, 3]) 
+<span class="no">331 </span>    &quot;&quot;&quot; 
+<span class="no">332 </span>    x_is_series, series_index, name, x = _preprocess_for_cut(x) 
+<span class="no">333 </span> 
+<span class="no">334 </span>    x, dtype = _coerce_to_type(x) 
+<span class="no">335 </span> 
+<span class="no">336 </span>    if is_integer(q): 
+<span class="no">337 </span>        quantiles = np.linspace(0, 1, q + 1) 
+<span class="no">338 </span>    else: 
+<span class="no">339 </span>        quantiles = q 
+<span class="no">340 </span>    bins = algos.quantile(x, quantiles) 
+<span class="no">341 </span>    fac, bins = _bins_to_cuts( 
+<span class="no">342 </span>        x, 
+<span class="no">343 </span>        bins, 
+<span class="no">344 </span>        labels=labels, 
+<span class="no">345 </span>        precision=precision, 
+<span class="no">346 </span>        include_lowest=True, 
+<span class="no">347 </span>        dtype=dtype, 
+<span class="no">348 </span>        duplicates=duplicates, 
+<span class="no">349 </span>    ) 
+<span class="no">350 </span> 
+<span class="no">351 </span>    return _postprocess_for_cut( 
+<span class="no">352 </span>        fac, bins, retbins, x_is_series, series_index, name, dtype 
+<span class="no">353 </span>    ) 
+<span class="no">354 </span> 
+<span class="no">355 </span> 
+<span class="no">356 </span>def _bins_to_cuts( 
+<span class="no">357 </span>    x, 
+<span class="no">358 </span>    bins, 
+<span class="no">359 </span>    right=True, 
+<span class="no">360 </span>    labels=None, 
+<span class="no">361 </span>    precision=3, 
+<span class="no">362 </span>    include_lowest=False, 
+<span class="no">363 </span>    dtype=None, 
+<span class="no">364 </span>    duplicates=&quot;raise&quot;, 
+<span class="no">365 </span>): 
+<span class="no">366 </span> 
+<span class="no">367 </span>    if duplicates not in [&quot;raise&quot;, &quot;drop&quot;]: 
+<span class="no">368 </span>        raise ValueError( 
+<span class="no">369 </span>            &quot;invalid value for &apos;duplicates&apos; parameter, &quot; 
+<span class="no">370 </span>            &quot;valid options are: raise, drop&quot; 
+<span class="no">371 </span>        ) 
+<span class="no">372 </span> 
+<span class="no">373 </span>    if isinstance(bins, IntervalIndex): 
+<span class="no">374 </span>        # we have a fast-path here 
+<span class="no">375 </span>        ids = bins.get_indexer(x) 
+<span class="no">376 </span>        result = Categorical.from_codes(ids, categories=bins, ordered=True) 
+<span class="no">377 </span>        return result, bins 
+<span class="no">378 </span> 
+<span class="no">379 </span>    unique_bins = algos.unique(bins) 
+<span class="no">380 </span>    if len(unique_bins) &lt; len(bins) and len(bins) != 2: 
+<span class="no">381 </span>        if duplicates == &quot;raise&quot;: 
+<span class="no">382 </span>            raise ValueError( 
+<span class="no">383 </span>                &quot;Bin edges must be unique: {bins!r}.\nYou &quot; 
+<span class="no">384 </span>                &quot;can drop duplicate edges by setting &quot; 
+<span class="no">385 </span>                &quot;the &apos;duplicates&apos; kwarg&quot;.format(bins=bins) 
+<span class="no">386 </span>            ) 
+<span class="no">387 </span>        else: 
+<span class="no">388 </span>            bins = unique_bins 
+<span class="no">389 </span> 
+<span class="no">390 </span>    side = &quot;left&quot; if right else &quot;right&quot; 
+<span class="no">391 </span>    ids = ensure_int64(bins.searchsorted(x, side=side)) 
+<span class="no">392 </span> 
+<span class="no">393 </span>    if include_lowest: 
+<span class="no">394 </span>        ids[x == bins[0]] = 1 
+<span class="no">395 </span> 
+<span class="no">396 </span>    na_mask = isna(x) | (ids == len(bins)) | (ids == 0) 
+<span class="no">397 </span>    has_nas = na_mask.any() 
+<span class="no">398 </span> 
+<span class="no">399 </span>    if labels is not False: 
+<span class="no">400 </span>        if labels is None: 
+<span class="no">401 </span>            labels = _format_labels( 
+<span class="no">402 </span>                bins, precision, right=right, include_lowest=include_lowest, dtype=dtype 
+<span class="no">403 </span>            ) 
+<span class="no">404 </span>        else: 
+<span class="no">405 </span>            if len(labels) != len(bins) - 1: 
+<span class="no">406 </span>                raise ValueError( 
+<span class="no">407 </span>                    &quot;Bin labels must be one fewer than the number of bin edges&quot; 
+<span class="no">408 </span>                ) 
+<span class="no">409 </span>        if not is_categorical_dtype(labels): 
+<span class="no">410 </span>            labels = Categorical(labels, categories=labels, ordered=True) 
+<span class="no">411 </span> 
+<span class="no">412 </span>        np.putmask(ids, na_mask, 0) 
+<span class="no">413 </span>        result = algos.take_nd(labels, ids - 1) 
+<span class="no">414 </span> 
+<span class="no">415 </span>    else: 
+<span class="no">416 </span>        result = ids - 1 
+<span class="no">417 </span>        if has_nas: 
+<span class="no">418 </span>            result = result.astype(np.float64) 
+<span class="no">419 </span>            np.putmask(result, na_mask, np.nan) 
+<span class="no">420 </span> 
+<span class="no">421 </span>    return result, bins 
+<span class="no">422 </span> 
+<span class="no">423 </span> 
+<span class="no">424 </span>def _coerce_to_type(x): 
+<span class="no">425 </span>    &quot;&quot;&quot;<span id="edit-4-old" data-kind="upd"><span id="hl-4-14146" class="hl upd"> 
+<span class="no">426 </span>    if the passed data is of datetime/timedelta type, 
+<span class="no">427 </span>    this method converts it to numeric so that cut method can 
+<span class="no">428 </span>    handle it 
+<span class="no">429 </span>    </span></span>&quot;&quot;&quot; 
+<span class="no">430 </span>    dtype = None 
+<span class="no">431 </span> 
+<span class="no">432 </span>    if is_datetime64tz_dtype(x): 
+<span class="no">433 </span>        dtype = x.dtype 
+<span class="no">434 </span>    elif is_datetime64_dtype(x): 
+<span class="no">435 </span>        x = to_datetime(x) 
+<span class="no">436 </span>        dtype = np.dtype(&quot;datetime64[ns]&quot;) 
+<span class="no">437 </span>    elif is_timedelta64_dtype(x): 
+<span class="no">438 </span>        x = to_timedelta(x) 
+<span class="no">439 </span>        dtype = np.dtype(&quot;timedelta64[ns]&quot;) 
+<span class="no">440 </span> 
+<span class="no">441 </span>    <span id="edit-5-old" data-kind="ins"></span>if dtype is not None: 
+<span class="no">442 </span>        # GH 19768: force NaT to NaN during integer conversion 
+<span class="no">443 </span>        x = np.where(x.notna(), x.view(np.int64), np.nan) 
+<span class="no">444 </span> 
+<span class="no">445 </span>    return x, dtype 
+<span class="no">446 </span> 
+<span class="no">447 </span> 
+<span class="no">448 </span>def _convert_bin_to_numeric_type(bins, dtype): 
+<span class="no">449 </span>    &quot;&quot;&quot; 
+<span class="no">450 </span>    if the passed bin is of datetime/timedelta type, 
+<span class="no">451 </span>    this method converts it to integer 
+<span class="no">452 </span> 
+<span class="no">453 </span>    Parameters 
+<span class="no">454 </span>    ---------- 
+<span class="no">455 </span>    bins : list-like of bins 
+<span class="no">456 </span>    dtype : dtype of data 
+<span class="no">457 </span> 
+<span class="no">458 </span>    Raises 
+<span class="no">459 </span>    ------ 
+<span class="no">460 </span>    ValueError if bins are not of a compat dtype to dtype 
+<span class="no">461 </span>    &quot;&quot;&quot; 
+<span class="no">462 </span>    bins_dtype = infer_dtype(bins, skipna=False) 
+<span class="no">463 </span>    if is_timedelta64_dtype(dtype): 
+<span class="no">464 </span>        if bins_dtype in [&quot;timedelta&quot;, &quot;timedelta64&quot;]: 
+<span class="no">465 </span>            bins = to_timedelta(bins).view(np.int64) 
+<span class="no">466 </span>        else: 
+<span class="no">467 </span>            raise ValueError(&quot;bins must be of timedelta64 dtype&quot;) 
+<span class="no">468 </span>    elif is_datetime64_dtype(dtype) or is_datetime64tz_dtype(dtype): 
+<span class="no">469 </span>        if bins_dtype in [&quot;datetime&quot;, &quot;datetime64&quot;]: 
+<span class="no">470 </span>            bins = to_datetime(bins).view(np.int64) 
+<span class="no">471 </span>        else: 
+<span class="no">472 </span>            raise ValueError(&quot;bins must be of datetime64 dtype&quot;) 
+<span class="no">473 </span> 
+<span class="no">474 </span>    return bins 
+<span class="no">475 </span> 
+<span class="no">476 </span> 
+<span class="no">477 </span>def _convert_bin_to_datelike_type(bins, dtype): 
+<span class="no">478 </span>    &quot;&quot;&quot; 
+<span class="no">479 </span>    Convert bins to a DatetimeIndex or TimedeltaIndex if the original dtype is 
+<span class="no">480 </span>    datelike 
+<span class="no">481 </span> 
+<span class="no">482 </span>    Parameters 
+<span class="no">483 </span>    ---------- 
+<span class="no">484 </span>    bins : list-like of bins 
+<span class="no">485 </span>    dtype : dtype of data 
+<span class="no">486 </span> 
+<span class="no">487 </span>    Returns 
+<span class="no">488 </span>    ------- 
+<span class="no">489 </span>    bins : Array-like of bins, DatetimeIndex or TimedeltaIndex if dtype is 
+<span class="no">490 </span>           datelike 
+<span class="no">491 </span>    &quot;&quot;&quot; 
+<span class="no">492 </span>    if is_datetime64tz_dtype(dtype): 
+<span class="no">493 </span>        bins = to_datetime(bins.astype(np.int64), utc=True).tz_convert(dtype.tz) 
+<span class="no">494 </span>    elif is_datetime_or_timedelta_dtype(dtype): 
+<span class="no">495 </span>        bins = Index(bins.astype(np.int64), dtype=dtype) 
+<span class="no">496 </span>    return bins 
+<span class="no">497 </span> 
+<span class="no">498 </span> 
+<span class="no">499 </span>def _format_labels(bins, precision, right=True, include_lowest=False, dtype=None): 
+<span class="no">500 </span>    &quot;&quot;&quot; based on the dtype, return our labels &quot;&quot;&quot; 
+<span class="no">501 </span> 
+<span class="no">502 </span>    closed = &quot;right&quot; if right else &quot;left&quot; 
+<span class="no">503 </span> 
+<span class="no">504 </span>    if is_datetime64tz_dtype(dtype): 
+<span class="no">505 </span>        formatter = partial(Timestamp, tz=dtype.tz) 
+<span class="no">506 </span>        adjust = lambda x: x - Timedelta(&quot;1ns&quot;) 
+<span class="no">507 </span>    elif is_datetime64_dtype(dtype): 
+<span class="no">508 </span>        formatter = Timestamp 
+<span class="no">509 </span>        adjust = lambda x: x - Timedelta(&quot;1ns&quot;) 
+<span class="no">510 </span>    elif is_timedelta64_dtype(dtype): 
+<span class="no">511 </span>        formatter = Timedelta 
+<span class="no">512 </span>        adjust = lambda x: x - Timedelta(&quot;1ns&quot;) 
+<span class="no">513 </span>    else: 
+<span class="no">514 </span>        precision = _infer_precision(precision, bins) 
+<span class="no">515 </span>        formatter = lambda x: _round_frac(x, precision) 
+<span class="no">516 </span>        adjust = lambda x: x - 10 ** (-precision) 
+<span class="no">517 </span> 
+<span class="no">518 </span>    breaks = [formatter(b) for b in bins] 
+<span class="no">519 </span>    labels = IntervalIndex.from_breaks(breaks, closed=closed) 
+<span class="no">520 </span> 
+<span class="no">521 </span>    if right and include_lowest: 
+<span class="no">522 </span>        # we will adjust the left hand side by precision to 
+<span class="no">523 </span>        # account that we are all right closed 
+<span class="no">524 </span>        v = adjust(labels[0].left) 
+<span class="no">525 </span> 
+<span class="no">526 </span>        i = IntervalIndex([Interval(v, labels[0].right, closed=&quot;right&quot;)]) 
+<span class="no">527 </span>        labels = i.append(labels[1:]) 
+<span class="no">528 </span> 
+<span class="no">529 </span>    return labels 
+<span class="no">530 </span> 
+<span class="no">531 </span> 
+<span class="no">532 </span>def _preprocess_for_cut(x): 
+<span class="no">533 </span>    &quot;&quot;&quot; 
+<span class="no">534 </span>    handles preprocessing for cut where we convert passed 
+<span class="no">535 </span>    input to array, strip the index information and store it 
+<span class="no">536 </span>    separately 
+<span class="no">537 </span>    &quot;&quot;&quot; 
+<span class="no">538 </span>    x_is_series = isinstance(x, Series) 
+<span class="no">539 </span>    series_index = None 
+<span class="no">540 </span>    name = None 
+<span class="no">541 </span> 
+<span class="no">542 </span>    if x_is_series: 
+<span class="no">543 </span>        series_index = x.index 
+<span class="no">544 </span>        name = x.name 
+<span class="no">545 </span> 
+<span class="no">546 </span>    # Check that the passed array is a Pandas or Numpy object 
+<span class="no">547 </span>    # We don&apos;t want to strip away a Pandas data-type here (e.g. datetimetz) 
+<span class="no">548 </span>    ndim = getattr(x, &quot;ndim&quot;, None) 
+<span class="no">549 </span>    if ndim is None: 
+<span class="no">550 </span>        x = np.asarray(x) 
+<span class="no">551 </span>    if x.ndim != 1: 
+<span class="no">552 </span>        raise ValueError(&quot;Input array must be 1 dimensional&quot;) 
+<span class="no">553 </span> 
+<span class="no">554 </span>    return x_is_series, series_index, name, x 
+<span class="no">555 </span> 
+<span class="no">556 </span> 
+<span class="no">557 </span>def _postprocess_for_cut(fac, bins, retbins, x_is_series, series_index, name, dtype): 
+<span class="no">558 </span>    &quot;&quot;&quot; 
+<span class="no">559 </span>    handles post processing for the cut method where 
+<span class="no">560 </span>    we combine the index information if the originally passed 
+<span class="no">561 </span>    datatype was a series 
+<span class="no">562 </span>    &quot;&quot;&quot; 
+<span class="no">563 </span>    if x_is_series: 
+<span class="no">564 </span>        fac = Series(fac, index=series_index, name=name) 
+<span class="no">565 </span> 
+<span class="no">566 </span>    if not retbins: 
+<span class="no">567 </span>        return fac 
+<span class="no">568 </span> 
+<span class="no">569 </span>    bins = _convert_bin_to_datelike_type(bins, dtype) 
+<span class="no">570 </span> 
+<span class="no">571 </span>    return fac, bins 
+<span class="no">572 </span> 
+<span class="no">573 </span> 
+<span class="no">574 </span>def _round_frac(x, precision): 
+<span class="no">575 </span>    &quot;&quot;&quot; 
+<span class="no">576 </span>    Round the fractional part of the given number 
+<span class="no">577 </span>    &quot;&quot;&quot; 
+<span class="no">578 </span>    if not np.isfinite(x) or x == 0: 
+<span class="no">579 </span>        return x 
+<span class="no">580 </span>    else: 
+<span class="no">581 </span>        frac, whole = np.modf(x) 
+<span class="no">582 </span>        if whole == 0: 
+<span class="no">583 </span>            digits = -int(np.floor(np.log10(abs(frac)))) - 1 + precision 
+<span class="no">584 </span>        else: 
+<span class="no">585 </span>            digits = precision 
+<span class="no">586 </span>        return np.around(x, digits) 
+<span class="no">587 </span> 
+<span class="no">588 </span> 
+<span class="no">589 </span>def _infer_precision(base_precision, bins): 
+<span class="no">590 </span>    &quot;&quot;&quot;Infer an appropriate precision for _round_frac 
+<span class="no">591 </span>    &quot;&quot;&quot; 
+<span class="no">592 </span>    for precision in range(base_precision, 20): 
+<span class="no">593 </span>        levels = [_round_frac(b, precision) for b in bins] 
+<span class="no">594 </span>        if algos.unique(levels).size == bins.size: 
+<span class="no">595 </span>            return precision 
+<span class="no">596 </span>    return base_precision  # default 
+<span class="no">597 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">37_B (modified)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>&quot;&quot;&quot; 
+<span class="no">  2 </span>Quantilization functions and related stuff 
+<span class="no">  3 </span>&quot;&quot;&quot; 
+<span class="no">  4 </span>from functools import partial 
+<span class="no">  5 </span> 
+<span class="no">  6 </span>import numpy as np 
+<span class="no">  7 </span> 
+<span class="no">  8 </span>from pandas._libs import Timedelta, Timestamp 
+<span class="no">  9 </span>from pandas._libs.lib import infer_dtype 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>from pandas.core.dtypes.common import ( 
+<span class="no"> 12 </span>    _NS_DTYPE<span id="edit-1-new" data-kind="ins"><span id="hl-1-244" class="hl ins">,</span></span> 
+<span class="no"> 13 </span>    ensure_int64<span id="edit-2-new" data-kind="mov"><span id="hl-2-262" class="hl mov">,</span></span> 
+<span class="no"> 14 </span>    <span id="edit-3-new" data-kind="ins"><span id="hl-3-268" class="hl ins">is_bool_dtype</span></span>, 
+<span class="no"> 15 </span>    is_categorical_dtype, 
+<span class="no"> 16 </span>    is_datetime64_dtype, 
+<span class="no"> 17 </span>    is_datetime64tz_dtype, 
+<span class="no"> 18 </span>    is_datetime_or_timedelta_dtype, 
+<span class="no"> 19 </span>    is_integer, 
+<span class="no"> 20 </span>    is_scalar, 
+<span class="no"> 21 </span>    is_timedelta64_dtype, 
+<span class="no"> 22 </span>) 
+<span class="no"> 23 </span>from pandas.core.dtypes.missing import isna 
+<span class="no"> 24 </span> 
+<span class="no"> 25 </span>from pandas import ( 
+<span class="no"> 26 </span>    Categorical, 
+<span class="no"> 27 </span>    Index, 
+<span class="no"> 28 </span>    Interval, 
+<span class="no"> 29 </span>    IntervalIndex, 
+<span class="no"> 30 </span>    Series, 
+<span class="no"> 31 </span>    to_datetime, 
+<span class="no"> 32 </span>    to_timedelta, 
+<span class="no"> 33 </span>) 
+<span class="no"> 34 </span>import pandas.core.algorithms as algos 
+<span class="no"> 35 </span>import pandas.core.nanops as nanops 
+<span class="no"> 36 </span> 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>def cut( 
+<span class="no"> 39 </span>    x, 
+<span class="no"> 40 </span>    bins, 
+<span class="no"> 41 </span>    right=True, 
+<span class="no"> 42 </span>    labels=None, 
+<span class="no"> 43 </span>    retbins=False, 
+<span class="no"> 44 </span>    precision=3, 
+<span class="no"> 45 </span>    include_lowest=False, 
+<span class="no"> 46 </span>    duplicates=&quot;raise&quot;, 
+<span class="no"> 47 </span>): 
+<span class="no"> 48 </span>    &quot;&quot;&quot; 
+<span class="no"> 49 </span>    Bin values into discrete intervals. 
+<span class="no"> 50 </span> 
+<span class="no"> 51 </span>    Use `cut` when you need to segment and sort data values into bins. This 
+<span class="no"> 52 </span>    function is also useful for going from a continuous variable to a 
+<span class="no"> 53 </span>    categorical variable. For example, `cut` could convert ages to groups of 
+<span class="no"> 54 </span>    age ranges. Supports binning into an equal number of bins, or a 
+<span class="no"> 55 </span>    pre-specified array of bins. 
+<span class="no"> 56 </span> 
+<span class="no"> 57 </span>    Parameters 
+<span class="no"> 58 </span>    ---------- 
+<span class="no"> 59 </span>    x : array-like 
+<span class="no"> 60 </span>        The input array to be binned. Must be 1-dimensional. 
+<span class="no"> 61 </span>    bins : int, sequence of scalars, or IntervalIndex 
+<span class="no"> 62 </span>        The criteria to bin by. 
+<span class="no"> 63 </span> 
+<span class="no"> 64 </span>        * int : Defines the number of equal-width bins in the range of `x`. The 
+<span class="no"> 65 </span>          range of `x` is extended by .1% on each side to include the minimum 
+<span class="no"> 66 </span>          and maximum values of `x`. 
+<span class="no"> 67 </span>        * sequence of scalars : Defines the bin edges allowing for non-uniform 
+<span class="no"> 68 </span>          width. No extension of the range of `x` is done. 
+<span class="no"> 69 </span>        * IntervalIndex : Defines the exact bins to be used. Note that 
+<span class="no"> 70 </span>          IntervalIndex for `bins` must be non-overlapping. 
+<span class="no"> 71 </span> 
+<span class="no"> 72 </span>    right : bool, default True 
+<span class="no"> 73 </span>        Indicates whether `bins` includes the rightmost edge or not. If 
+<span class="no"> 74 </span>        ``right == True`` (the default), then the `bins` ``[1, 2, 3, 4]`` 
+<span class="no"> 75 </span>        indicate (1,2], (2,3], (3,4]. This argument is ignored when 
+<span class="no"> 76 </span>        `bins` is an IntervalIndex. 
+<span class="no"> 77 </span>    labels : array or bool, optional 
+<span class="no"> 78 </span>        Specifies the labels for the returned bins. Must be the same length as 
+<span class="no"> 79 </span>        the resulting bins. If False, returns only integer indicators of the 
+<span class="no"> 80 </span>        bins. This affects the type of the output container (see below). 
+<span class="no"> 81 </span>        This argument is ignored when `bins` is an IntervalIndex. 
+<span class="no"> 82 </span>    retbins : bool, default False 
+<span class="no"> 83 </span>        Whether to return the bins or not. Useful when bins is provided 
+<span class="no"> 84 </span>        as a scalar. 
+<span class="no"> 85 </span>    precision : int, default 3 
+<span class="no"> 86 </span>        The precision at which to store and display the bins labels. 
+<span class="no"> 87 </span>    include_lowest : bool, default False 
+<span class="no"> 88 </span>        Whether the first interval should be left-inclusive or not. 
+<span class="no"> 89 </span>    duplicates : {default &apos;raise&apos;, &apos;drop&apos;}, optional 
+<span class="no"> 90 </span>        If bin edges are not unique, raise ValueError or drop non-uniques. 
+<span class="no"> 91 </span> 
+<span class="no"> 92 </span>        .. versionadded:: 0.23.0 
+<span class="no"> 93 </span> 
+<span class="no"> 94 </span>    Returns 
+<span class="no"> 95 </span>    ------- 
+<span class="no"> 96 </span>    out : Categorical, Series, or ndarray 
+<span class="no"> 97 </span>        An array-like object representing the respective bin for each value 
+<span class="no"> 98 </span>        of `x`. The type depends on the value of `labels`. 
+<span class="no"> 99 </span> 
+<span class="no">100 </span>        * True (default) : returns a Series for Series `x` or a 
+<span class="no">101 </span>          Categorical for all other inputs. The values stored within 
+<span class="no">102 </span>          are Interval dtype. 
+<span class="no">103 </span> 
+<span class="no">104 </span>        * sequence of scalars : returns a Series for Series `x` or a 
+<span class="no">105 </span>          Categorical for all other inputs. The values stored within 
+<span class="no">106 </span>          are whatever the type in the sequence is. 
+<span class="no">107 </span> 
+<span class="no">108 </span>        * False : returns an ndarray of integers. 
+<span class="no">109 </span> 
+<span class="no">110 </span>    bins : numpy.ndarray or IntervalIndex. 
+<span class="no">111 </span>        The computed or specified bins. Only returned when `retbins=True`. 
+<span class="no">112 </span>        For scalar or sequence `bins`, this is an ndarray with the computed 
+<span class="no">113 </span>        bins. If set `duplicates=drop`, `bins` will drop non-unique bin. For 
+<span class="no">114 </span>        an IntervalIndex `bins`, this is equal to `bins`. 
+<span class="no">115 </span> 
+<span class="no">116 </span>    See Also 
+<span class="no">117 </span>    -------- 
+<span class="no">118 </span>    qcut : Discretize variable into equal-sized buckets based on rank 
+<span class="no">119 </span>        or based on sample quantiles. 
+<span class="no">120 </span>    Categorical : Array type for storing data that come from a 
+<span class="no">121 </span>        fixed set of values. 
+<span class="no">122 </span>    Series : One-dimensional array with axis labels (including time series). 
+<span class="no">123 </span>    IntervalIndex : Immutable Index implementing an ordered, sliceable set. 
+<span class="no">124 </span> 
+<span class="no">125 </span>    Notes 
+<span class="no">126 </span>    ----- 
+<span class="no">127 </span>    Any NA values will be NA in the result. Out of bounds values will be NA in 
+<span class="no">128 </span>    the resulting Series or Categorical object. 
+<span class="no">129 </span> 
+<span class="no">130 </span>    Examples 
+<span class="no">131 </span>    -------- 
+<span class="no">132 </span>    Discretize into three equal-sized bins. 
+<span class="no">133 </span> 
+<span class="no">134 </span>    &gt;&gt;&gt; pd.cut(np.array([1, 7, 5, 4, 6, 3]), 3) 
+<span class="no">135 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">136 </span>    [(0.994, 3.0], (5.0, 7.0], (3.0, 5.0], (3.0, 5.0], (5.0, 7.0], ... 
+<span class="no">137 </span>    Categories (3, interval[float64]): [(0.994, 3.0] &lt; (3.0, 5.0] ... 
+<span class="no">138 </span> 
+<span class="no">139 </span>    &gt;&gt;&gt; pd.cut(np.array([1, 7, 5, 4, 6, 3]), 3, retbins=True) 
+<span class="no">140 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">141 </span>    ([(0.994, 3.0], (5.0, 7.0], (3.0, 5.0], (3.0, 5.0], (5.0, 7.0], ... 
+<span class="no">142 </span>    Categories (3, interval[float64]): [(0.994, 3.0] &lt; (3.0, 5.0] ... 
+<span class="no">143 </span>    array([0.994, 3.   , 5.   , 7.   ])) 
+<span class="no">144 </span> 
+<span class="no">145 </span>    Discovers the same bins, but assign them specific labels. Notice that 
+<span class="no">146 </span>    the returned Categorical&apos;s categories are `labels` and is ordered. 
+<span class="no">147 </span> 
+<span class="no">148 </span>    &gt;&gt;&gt; pd.cut(np.array([1, 7, 5, 4, 6, 3]), 
+<span class="no">149 </span>    ...        3, labels=[&quot;bad&quot;, &quot;medium&quot;, &quot;good&quot;]) 
+<span class="no">150 </span>    [bad, good, medium, medium, good, bad] 
+<span class="no">151 </span>    Categories (3, object): [bad &lt; medium &lt; good] 
+<span class="no">152 </span> 
+<span class="no">153 </span>    ``labels=False`` implies you just want the bins back. 
+<span class="no">154 </span> 
+<span class="no">155 </span>    &gt;&gt;&gt; pd.cut([0, 1, 1, 2], bins=4, labels=False) 
+<span class="no">156 </span>    array([0, 1, 1, 3]) 
+<span class="no">157 </span> 
+<span class="no">158 </span>    Passing a Series as an input returns a Series with categorical dtype: 
+<span class="no">159 </span> 
+<span class="no">160 </span>    &gt;&gt;&gt; s = pd.Series(np.array([2, 4, 6, 8, 10]), 
+<span class="no">161 </span>    ...               index=[&apos;a&apos;, &apos;b&apos;, &apos;c&apos;, &apos;d&apos;, &apos;e&apos;]) 
+<span class="no">162 </span>    &gt;&gt;&gt; pd.cut(s, 3) 
+<span class="no">163 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">164 </span>    a    (1.992, 4.667] 
+<span class="no">165 </span>    b    (1.992, 4.667] 
+<span class="no">166 </span>    c    (4.667, 7.333] 
+<span class="no">167 </span>    d     (7.333, 10.0] 
+<span class="no">168 </span>    e     (7.333, 10.0] 
+<span class="no">169 </span>    dtype: category 
+<span class="no">170 </span>    Categories (3, interval[float64]): [(1.992, 4.667] &lt; (4.667, ... 
+<span class="no">171 </span> 
+<span class="no">172 </span>    Passing a Series as an input returns a Series with mapping value. 
+<span class="no">173 </span>    It is used to map numerically to intervals based on bins. 
+<span class="no">174 </span> 
+<span class="no">175 </span>    &gt;&gt;&gt; s = pd.Series(np.array([2, 4, 6, 8, 10]), 
+<span class="no">176 </span>    ...               index=[&apos;a&apos;, &apos;b&apos;, &apos;c&apos;, &apos;d&apos;, &apos;e&apos;]) 
+<span class="no">177 </span>    &gt;&gt;&gt; pd.cut(s, [0, 2, 4, 6, 8, 10], labels=False, retbins=True, right=False) 
+<span class="no">178 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">179 </span>    (a    0.0 
+<span class="no">180 </span>     b    1.0 
+<span class="no">181 </span>     c    2.0 
+<span class="no">182 </span>     d    3.0 
+<span class="no">183 </span>     e    4.0 
+<span class="no">184 </span>     dtype: float64, array([0, 2, 4, 6, 8])) 
+<span class="no">185 </span> 
+<span class="no">186 </span>    Use `drop` optional when bins is not unique 
+<span class="no">187 </span> 
+<span class="no">188 </span>    &gt;&gt;&gt; pd.cut(s, [0, 2, 4, 6, 10, 10], labels=False, retbins=True, 
+<span class="no">189 </span>    ...        right=False, duplicates=&apos;drop&apos;) 
+<span class="no">190 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">191 </span>    (a    0.0 
+<span class="no">192 </span>     b    1.0 
+<span class="no">193 </span>     c    2.0 
+<span class="no">194 </span>     d    3.0 
+<span class="no">195 </span>     e    3.0 
+<span class="no">196 </span>     dtype: float64, array([0, 2, 4, 6, 8])) 
+<span class="no">197 </span> 
+<span class="no">198 </span>    Passing an IntervalIndex for `bins` results in those categories exactly. 
+<span class="no">199 </span>    Notice that values not covered by the IntervalIndex are set to NaN. 0 
+<span class="no">200 </span>    is to the left of the first bin (which is closed on the right), and 1.5 
+<span class="no">201 </span>    falls between two bins. 
+<span class="no">202 </span> 
+<span class="no">203 </span>    &gt;&gt;&gt; bins = pd.IntervalIndex.from_tuples([(0, 1), (2, 3), (4, 5)]) 
+<span class="no">204 </span>    &gt;&gt;&gt; pd.cut([0, 0.5, 1.5, 2.5, 4.5], bins) 
+<span class="no">205 </span>    [NaN, (0, 1], NaN, (2, 3], (4, 5]] 
+<span class="no">206 </span>    Categories (3, interval[int64]): [(0, 1] &lt; (2, 3] &lt; (4, 5]] 
+<span class="no">207 </span>    &quot;&quot;&quot; 
+<span class="no">208 </span>    # NOTE: this binning code is changed a bit from histogram for var(x) == 0 
+<span class="no">209 </span> 
+<span class="no">210 </span>    # for handling the cut for datetime and timedelta objects 
+<span class="no">211 </span>    x_is_series, series_index, name, x = _preprocess_for_cut(x) 
+<span class="no">212 </span>    x, dtype = _coerce_to_type(x) 
+<span class="no">213 </span> 
+<span class="no">214 </span>    if not np.iterable(bins): 
+<span class="no">215 </span>        if is_scalar(bins) and bins &lt; 1: 
+<span class="no">216 </span>            raise ValueError(&quot;`bins` should be a positive integer.&quot;) 
+<span class="no">217 </span> 
+<span class="no">218 </span>        try:  # for array-like 
+<span class="no">219 </span>            sz = x.size 
+<span class="no">220 </span>        except AttributeError: 
+<span class="no">221 </span>            x = np.asarray(x) 
+<span class="no">222 </span>            sz = x.size 
+<span class="no">223 </span> 
+<span class="no">224 </span>        if sz == 0: 
+<span class="no">225 </span>            raise ValueError(&quot;Cannot cut empty array&quot;) 
+<span class="no">226 </span> 
+<span class="no">227 </span>        rng = (nanops.nanmin(x), nanops.nanmax(x)) 
+<span class="no">228 </span>        mn, mx = [mi + 0.0 for mi in rng] 
+<span class="no">229 </span> 
+<span class="no">230 </span>        if np.isinf(mn) or np.isinf(mx): 
+<span class="no">231 </span>            # GH 24314 
+<span class="no">232 </span>            raise ValueError( 
+<span class="no">233 </span>                &quot;cannot specify integer `bins` when input data contains infinity&quot; 
+<span class="no">234 </span>            ) 
+<span class="no">235 </span>        elif mn == mx:  # adjust end points before binning 
+<span class="no">236 </span>            mn -= 0.001 * abs(mn) if mn != 0 else 0.001 
+<span class="no">237 </span>            mx += 0.001 * abs(mx) if mx != 0 else 0.001 
+<span class="no">238 </span>            bins = np.linspace(mn, mx, bins + 1, endpoint=True) 
+<span class="no">239 </span>        else:  # adjust end points after binning 
+<span class="no">240 </span>            bins = np.linspace(mn, mx, bins + 1, endpoint=True) 
+<span class="no">241 </span>            adj = (mx - mn) * 0.001  # 0.1% of the range 
+<span class="no">242 </span>            if right: 
+<span class="no">243 </span>                bins[0] -= adj 
+<span class="no">244 </span>            else: 
+<span class="no">245 </span>                bins[-1] += adj 
+<span class="no">246 </span> 
+<span class="no">247 </span>    elif isinstance(bins, IntervalIndex): 
+<span class="no">248 </span>        if bins.is_overlapping: 
+<span class="no">249 </span>            raise ValueError(&quot;Overlapping IntervalIndex is not accepted.&quot;) 
+<span class="no">250 </span> 
+<span class="no">251 </span>    else: 
+<span class="no">252 </span>        if is_datetime64tz_dtype(bins): 
+<span class="no">253 </span>            bins = np.asarray(bins, dtype=_NS_DTYPE) 
+<span class="no">254 </span>        else: 
+<span class="no">255 </span>            bins = np.asarray(bins) 
+<span class="no">256 </span>        bins = _convert_bin_to_numeric_type(bins, dtype) 
+<span class="no">257 </span> 
+<span class="no">258 </span>        # GH 26045: cast to float64 to avoid an overflow 
+<span class="no">259 </span>        if (np.diff(bins.astype(&quot;float64&quot;)) &lt; 0).any(): 
+<span class="no">260 </span>            raise ValueError(&quot;bins must increase monotonically.&quot;) 
+<span class="no">261 </span> 
+<span class="no">262 </span>    fac, bins = _bins_to_cuts( 
+<span class="no">263 </span>        x, 
+<span class="no">264 </span>        bins, 
+<span class="no">265 </span>        right=right, 
+<span class="no">266 </span>        labels=labels, 
+<span class="no">267 </span>        precision=precision, 
+<span class="no">268 </span>        include_lowest=include_lowest, 
+<span class="no">269 </span>        dtype=dtype, 
+<span class="no">270 </span>        duplicates=duplicates, 
+<span class="no">271 </span>    ) 
+<span class="no">272 </span> 
+<span class="no">273 </span>    return _postprocess_for_cut( 
+<span class="no">274 </span>        fac, bins, retbins, x_is_series, series_index, name, dtype 
+<span class="no">275 </span>    ) 
+<span class="no">276 </span> 
+<span class="no">277 </span> 
+<span class="no">278 </span>def qcut(x, q, labels=None, retbins=False, precision=3, duplicates=&quot;raise&quot;): 
+<span class="no">279 </span>    &quot;&quot;&quot; 
+<span class="no">280 </span>    Quantile-based discretization function. Discretize variable into 
+<span class="no">281 </span>    equal-sized buckets based on rank or based on sample quantiles. For example 
+<span class="no">282 </span>    1000 values for 10 quantiles would produce a Categorical object indicating 
+<span class="no">283 </span>    quantile membership for each data point. 
+<span class="no">284 </span> 
+<span class="no">285 </span>    Parameters 
+<span class="no">286 </span>    ---------- 
+<span class="no">287 </span>    x : 1d ndarray or Series 
+<span class="no">288 </span>    q : integer or array of quantiles 
+<span class="no">289 </span>        Number of quantiles. 10 for deciles, 4 for quartiles, etc. Alternately 
+<span class="no">290 </span>        array of quantiles, e.g. [0, .25, .5, .75, 1.] for quartiles 
+<span class="no">291 </span>    labels : array or boolean, default None 
+<span class="no">292 </span>        Used as labels for the resulting bins. Must be of the same length as 
+<span class="no">293 </span>        the resulting bins. If False, return only integer indicators of the 
+<span class="no">294 </span>        bins. 
+<span class="no">295 </span>    retbins : bool, optional 
+<span class="no">296 </span>        Whether to return the (bins, labels) or not. Can be useful if bins 
+<span class="no">297 </span>        is given as a scalar. 
+<span class="no">298 </span>    precision : int, optional 
+<span class="no">299 </span>        The precision at which to store and display the bins labels 
+<span class="no">300 </span>    duplicates : {default &apos;raise&apos;, &apos;drop&apos;}, optional 
+<span class="no">301 </span>        If bin edges are not unique, raise ValueError or drop non-uniques. 
+<span class="no">302 </span> 
+<span class="no">303 </span>        .. versionadded:: 0.20.0 
+<span class="no">304 </span> 
+<span class="no">305 </span>    Returns 
+<span class="no">306 </span>    ------- 
+<span class="no">307 </span>    out : Categorical or Series or array of integers if labels is False 
+<span class="no">308 </span>        The return type (Categorical or Series) depends on the input: a Series 
+<span class="no">309 </span>        of type category if input is a Series else Categorical. Bins are 
+<span class="no">310 </span>        represented as categories when categorical data is returned. 
+<span class="no">311 </span>    bins : ndarray of floats 
+<span class="no">312 </span>        Returned only if `retbins` is True. 
+<span class="no">313 </span> 
+<span class="no">314 </span>    Notes 
+<span class="no">315 </span>    ----- 
+<span class="no">316 </span>    Out of bounds values will be NA in the resulting Categorical object 
+<span class="no">317 </span> 
+<span class="no">318 </span>    Examples 
+<span class="no">319 </span>    -------- 
+<span class="no">320 </span>    &gt;&gt;&gt; pd.qcut(range(5), 4) 
+<span class="no">321 </span>    ... # doctest: +ELLIPSIS 
+<span class="no">322 </span>    [(-0.001, 1.0], (-0.001, 1.0], (1.0, 2.0], (2.0, 3.0], (3.0, 4.0]] 
+<span class="no">323 </span>    Categories (4, interval[float64]): [(-0.001, 1.0] &lt; (1.0, 2.0] ... 
+<span class="no">324 </span> 
+<span class="no">325 </span>    &gt;&gt;&gt; pd.qcut(range(5), 3, labels=[&quot;good&quot;, &quot;medium&quot;, &quot;bad&quot;]) 
+<span class="no">326 </span>    ... # doctest: +SKIP 
+<span class="no">327 </span>    [good, good, medium, bad, bad] 
+<span class="no">328 </span>    Categories (3, object): [good &lt; medium &lt; bad] 
+<span class="no">329 </span> 
+<span class="no">330 </span>    &gt;&gt;&gt; pd.qcut(range(5), 4, labels=False) 
+<span class="no">331 </span>    array([0, 0, 1, 2, 3]) 
+<span class="no">332 </span>    &quot;&quot;&quot; 
+<span class="no">333 </span>    x_is_series, series_index, name, x = _preprocess_for_cut(x) 
+<span class="no">334 </span> 
+<span class="no">335 </span>    x, dtype = _coerce_to_type(x) 
+<span class="no">336 </span> 
+<span class="no">337 </span>    if is_integer(q): 
+<span class="no">338 </span>        quantiles = np.linspace(0, 1, q + 1) 
+<span class="no">339 </span>    else: 
+<span class="no">340 </span>        quantiles = q 
+<span class="no">341 </span>    bins = algos.quantile(x, quantiles) 
+<span class="no">342 </span>    fac, bins = _bins_to_cuts( 
+<span class="no">343 </span>        x, 
+<span class="no">344 </span>        bins, 
+<span class="no">345 </span>        labels=labels, 
+<span class="no">346 </span>        precision=precision, 
+<span class="no">347 </span>        include_lowest=True, 
+<span class="no">348 </span>        dtype=dtype, 
+<span class="no">349 </span>        duplicates=duplicates, 
+<span class="no">350 </span>    ) 
+<span class="no">351 </span> 
+<span class="no">352 </span>    return _postprocess_for_cut( 
+<span class="no">353 </span>        fac, bins, retbins, x_is_series, series_index, name, dtype 
+<span class="no">354 </span>    ) 
+<span class="no">355 </span> 
+<span class="no">356 </span> 
+<span class="no">357 </span>def _bins_to_cuts( 
+<span class="no">358 </span>    x, 
+<span class="no">359 </span>    bins, 
+<span class="no">360 </span>    right=True, 
+<span class="no">361 </span>    labels=None, 
+<span class="no">362 </span>    precision=3, 
+<span class="no">363 </span>    include_lowest=False, 
+<span class="no">364 </span>    dtype=None, 
+<span class="no">365 </span>    duplicates=&quot;raise&quot;, 
+<span class="no">366 </span>): 
+<span class="no">367 </span> 
+<span class="no">368 </span>    if duplicates not in [&quot;raise&quot;, &quot;drop&quot;]: 
+<span class="no">369 </span>        raise ValueError( 
+<span class="no">370 </span>            &quot;invalid value for &apos;duplicates&apos; parameter, &quot; 
+<span class="no">371 </span>            &quot;valid options are: raise, drop&quot; 
+<span class="no">372 </span>        ) 
+<span class="no">373 </span> 
+<span class="no">374 </span>    if isinstance(bins, IntervalIndex): 
+<span class="no">375 </span>        # we have a fast-path here 
+<span class="no">376 </span>        ids = bins.get_indexer(x) 
+<span class="no">377 </span>        result = Categorical.from_codes(ids, categories=bins, ordered=True) 
+<span class="no">378 </span>        return result, bins 
+<span class="no">379 </span> 
+<span class="no">380 </span>    unique_bins = algos.unique(bins) 
+<span class="no">381 </span>    if len(unique_bins) &lt; len(bins) and len(bins) != 2: 
+<span class="no">382 </span>        if duplicates == &quot;raise&quot;: 
+<span class="no">383 </span>            raise ValueError( 
+<span class="no">384 </span>                &quot;Bin edges must be unique: {bins!r}.\nYou &quot; 
+<span class="no">385 </span>                &quot;can drop duplicate edges by setting &quot; 
+<span class="no">386 </span>                &quot;the &apos;duplicates&apos; kwarg&quot;.format(bins=bins) 
+<span class="no">387 </span>            ) 
+<span class="no">388 </span>        else: 
+<span class="no">389 </span>            bins = unique_bins 
+<span class="no">390 </span> 
+<span class="no">391 </span>    side = &quot;left&quot; if right else &quot;right&quot; 
+<span class="no">392 </span>    ids = ensure_int64(bins.searchsorted(x, side=side)) 
+<span class="no">393 </span> 
+<span class="no">394 </span>    if include_lowest: 
+<span class="no">395 </span>        ids[x == bins[0]] = 1 
+<span class="no">396 </span> 
+<span class="no">397 </span>    na_mask = isna(x) | (ids == len(bins)) | (ids == 0) 
+<span class="no">398 </span>    has_nas = na_mask.any() 
+<span class="no">399 </span> 
+<span class="no">400 </span>    if labels is not False: 
+<span class="no">401 </span>        if labels is None: 
+<span class="no">402 </span>            labels = _format_labels( 
+<span class="no">403 </span>                bins, precision, right=right, include_lowest=include_lowest, dtype=dtype 
+<span class="no">404 </span>            ) 
+<span class="no">405 </span>        else: 
+<span class="no">406 </span>            if len(labels) != len(bins) - 1: 
+<span class="no">407 </span>                raise ValueError( 
+<span class="no">408 </span>                    &quot;Bin labels must be one fewer than the number of bin edges&quot; 
+<span class="no">409 </span>                ) 
+<span class="no">410 </span>        if not is_categorical_dtype(labels): 
+<span class="no">411 </span>            labels = Categorical(labels, categories=labels, ordered=True) 
+<span class="no">412 </span> 
+<span class="no">413 </span>        np.putmask(ids, na_mask, 0) 
+<span class="no">414 </span>        result = algos.take_nd(labels, ids - 1) 
+<span class="no">415 </span> 
+<span class="no">416 </span>    else: 
+<span class="no">417 </span>        result = ids - 1 
+<span class="no">418 </span>        if has_nas: 
+<span class="no">419 </span>            result = result.astype(np.float64) 
+<span class="no">420 </span>            np.putmask(result, na_mask, np.nan) 
+<span class="no">421 </span> 
+<span class="no">422 </span>    return result, bins 
+<span class="no">423 </span> 
+<span class="no">424 </span> 
+<span class="no">425 </span>def _coerce_to_type(x): 
+<span class="no">426 </span>    &quot;&quot;&quot;<span id="edit-4-new" data-kind="upd"><span id="hl-4-14165" class="hl upd"> 
+<span class="no">427 </span>    if the passed data is of datetime/timedelta or bool type, 
+<span class="no">428 </span>    this method converts it to numeric so that cut or qcut method can 
+<span class="no">429 </span>    handle it 
+<span class="no">430 </span>    </span></span>&quot;&quot;&quot; 
+<span class="no">431 </span>    dtype = None 
+<span class="no">432 </span> 
+<span class="no">433 </span>    if is_datetime64tz_dtype(x): 
+<span class="no">434 </span>        dtype = x.dtype 
+<span class="no">435 </span>    elif is_datetime64_dtype(x): 
+<span class="no">436 </span>        x = to_datetime(x) 
+<span class="no">437 </span>        dtype = np.dtype(&quot;datetime64[ns]&quot;) 
+<span class="no">438 </span>    elif is_timedelta64_dtype(x): 
+<span class="no">439 </span>        x = to_timedelta(x) 
+<span class="no">440 </span>        dtype = np.dtype(&quot;timedelta64[ns]&quot;) 
+<span class="no">441 </span>    <span id="edit-5-new" data-kind="ins"><span id="hl-5-14608" class="hl ins">elif is_bool_dtype(x): 
+<span class="no">442 </span>        # GH 20303 
+<span class="no">443 </span>        x = x.astype(np.int64)</span></span> 
+<span class="no">444 </span> 
+<span class="no">445 </span>    if dtype is not None: 
+<span class="no">446 </span>        # GH 19768: force NaT to NaN during integer conversion 
+<span class="no">447 </span>        x = np.where(x.notna(), x.view(np.int64), np.nan) 
+<span class="no">448 </span> 
+<span class="no">449 </span>    return x, dtype 
+<span class="no">450 </span> 
+<span class="no">451 </span> 
+<span class="no">452 </span>def _convert_bin_to_numeric_type(bins, dtype): 
+<span class="no">453 </span>    &quot;&quot;&quot; 
+<span class="no">454 </span>    if the passed bin is of datetime/timedelta type, 
+<span class="no">455 </span>    this method converts it to integer 
+<span class="no">456 </span> 
+<span class="no">457 </span>    Parameters 
+<span class="no">458 </span>    ---------- 
+<span class="no">459 </span>    bins : list-like of bins 
+<span class="no">460 </span>    dtype : dtype of data 
+<span class="no">461 </span> 
+<span class="no">462 </span>    Raises 
+<span class="no">463 </span>    ------ 
+<span class="no">464 </span>    ValueError if bins are not of a compat dtype to dtype 
+<span class="no">465 </span>    &quot;&quot;&quot; 
+<span class="no">466 </span>    bins_dtype = infer_dtype(bins, skipna=False) 
+<span class="no">467 </span>    if is_timedelta64_dtype(dtype): 
+<span class="no">468 </span>        if bins_dtype in [&quot;timedelta&quot;, &quot;timedelta64&quot;]: 
+<span class="no">469 </span>            bins = to_timedelta(bins).view(np.int64) 
+<span class="no">470 </span>        else: 
+<span class="no">471 </span>            raise ValueError(&quot;bins must be of timedelta64 dtype&quot;) 
+<span class="no">472 </span>    elif is_datetime64_dtype(dtype) or is_datetime64tz_dtype(dtype): 
+<span class="no">473 </span>        if bins_dtype in [&quot;datetime&quot;, &quot;datetime64&quot;]: 
+<span class="no">474 </span>            bins = to_datetime(bins).view(np.int64) 
+<span class="no">475 </span>        else: 
+<span class="no">476 </span>            raise ValueError(&quot;bins must be of datetime64 dtype&quot;) 
+<span class="no">477 </span> 
+<span class="no">478 </span>    return bins 
+<span class="no">479 </span> 
+<span class="no">480 </span> 
+<span class="no">481 </span>def _convert_bin_to_datelike_type(bins, dtype): 
+<span class="no">482 </span>    &quot;&quot;&quot; 
+<span class="no">483 </span>    Convert bins to a DatetimeIndex or TimedeltaIndex if the original dtype is 
+<span class="no">484 </span>    datelike 
+<span class="no">485 </span> 
+<span class="no">486 </span>    Parameters 
+<span class="no">487 </span>    ---------- 
+<span class="no">488 </span>    bins : list-like of bins 
+<span class="no">489 </span>    dtype : dtype of data 
+<span class="no">490 </span> 
+<span class="no">491 </span>    Returns 
+<span class="no">492 </span>    ------- 
+<span class="no">493 </span>    bins : Array-like of bins, DatetimeIndex or TimedeltaIndex if dtype is 
+<span class="no">494 </span>           datelike 
+<span class="no">495 </span>    &quot;&quot;&quot; 
+<span class="no">496 </span>    if is_datetime64tz_dtype(dtype): 
+<span class="no">497 </span>        bins = to_datetime(bins.astype(np.int64), utc=True).tz_convert(dtype.tz) 
+<span class="no">498 </span>    elif is_datetime_or_timedelta_dtype(dtype): 
+<span class="no">499 </span>        bins = Index(bins.astype(np.int64), dtype=dtype) 
+<span class="no">500 </span>    return bins 
+<span class="no">501 </span> 
+<span class="no">502 </span> 
+<span class="no">503 </span>def _format_labels(bins, precision, right=True, include_lowest=False, dtype=None): 
+<span class="no">504 </span>    &quot;&quot;&quot; based on the dtype, return our labels &quot;&quot;&quot; 
+<span class="no">505 </span> 
+<span class="no">506 </span>    closed = &quot;right&quot; if right else &quot;left&quot; 
+<span class="no">507 </span> 
+<span class="no">508 </span>    if is_datetime64tz_dtype(dtype): 
+<span class="no">509 </span>        formatter = partial(Timestamp, tz=dtype.tz) 
+<span class="no">510 </span>        adjust = lambda x: x - Timedelta(&quot;1ns&quot;) 
+<span class="no">511 </span>    elif is_datetime64_dtype(dtype): 
+<span class="no">512 </span>        formatter = Timestamp 
+<span class="no">513 </span>        adjust = lambda x: x - Timedelta(&quot;1ns&quot;) 
+<span class="no">514 </span>    elif is_timedelta64_dtype(dtype): 
+<span class="no">515 </span>        formatter = Timedelta 
+<span class="no">516 </span>        adjust = lambda x: x - Timedelta(&quot;1ns&quot;) 
+<span class="no">517 </span>    else: 
+<span class="no">518 </span>        precision = _infer_precision(precision, bins) 
+<span class="no">519 </span>        formatter = lambda x: _round_frac(x, precision) 
+<span class="no">520 </span>        adjust = lambda x: x - 10 ** (-precision) 
+<span class="no">521 </span> 
+<span class="no">522 </span>    breaks = [formatter(b) for b in bins] 
+<span class="no">523 </span>    labels = IntervalIndex.from_breaks(breaks, closed=closed) 
+<span class="no">524 </span> 
+<span class="no">525 </span>    if right and include_lowest: 
+<span class="no">526 </span>        # we will adjust the left hand side by precision to 
+<span class="no">527 </span>        # account that we are all right closed 
+<span class="no">528 </span>        v = adjust(labels[0].left) 
+<span class="no">529 </span> 
+<span class="no">530 </span>        i = IntervalIndex([Interval(v, labels[0].right, closed=&quot;right&quot;)]) 
+<span class="no">531 </span>        labels = i.append(labels[1:]) 
+<span class="no">532 </span> 
+<span class="no">533 </span>    return labels 
+<span class="no">534 </span> 
+<span class="no">535 </span> 
+<span class="no">536 </span>def _preprocess_for_cut(x): 
+<span class="no">537 </span>    &quot;&quot;&quot; 
+<span class="no">538 </span>    handles preprocessing for cut where we convert passed 
+<span class="no">539 </span>    input to array, strip the index information and store it 
+<span class="no">540 </span>    separately 
+<span class="no">541 </span>    &quot;&quot;&quot; 
+<span class="no">542 </span>    x_is_series = isinstance(x, Series) 
+<span class="no">543 </span>    series_index = None 
+<span class="no">544 </span>    name = None 
+<span class="no">545 </span> 
+<span class="no">546 </span>    if x_is_series: 
+<span class="no">547 </span>        series_index = x.index 
+<span class="no">548 </span>        name = x.name 
+<span class="no">549 </span> 
+<span class="no">550 </span>    # Check that the passed array is a Pandas or Numpy object 
+<span class="no">551 </span>    # We don&apos;t want to strip away a Pandas data-type here (e.g. datetimetz) 
+<span class="no">552 </span>    ndim = getattr(x, &quot;ndim&quot;, None) 
+<span class="no">553 </span>    if ndim is None: 
+<span class="no">554 </span>        x = np.asarray(x) 
+<span class="no">555 </span>    if x.ndim != 1: 
+<span class="no">556 </span>        raise ValueError(&quot;Input array must be 1 dimensional&quot;) 
+<span class="no">557 </span> 
+<span class="no">558 </span>    return x_is_series, series_index, name, x 
+<span class="no">559 </span> 
+<span class="no">560 </span> 
+<span class="no">561 </span>def _postprocess_for_cut(fac, bins, retbins, x_is_series, series_index, name, dtype): 
+<span class="no">562 </span>    &quot;&quot;&quot; 
+<span class="no">563 </span>    handles post processing for the cut method where 
+<span class="no">564 </span>    we combine the index information if the originally passed 
+<span class="no">565 </span>    datatype was a series 
+<span class="no">566 </span>    &quot;&quot;&quot; 
+<span class="no">567 </span>    if x_is_series: 
+<span class="no">568 </span>        fac = Series(fac, index=series_index, name=name) 
+<span class="no">569 </span> 
+<span class="no">570 </span>    if not retbins: 
+<span class="no">571 </span>        return fac 
+<span class="no">572 </span> 
+<span class="no">573 </span>    bins = _convert_bin_to_datelike_type(bins, dtype) 
+<span class="no">574 </span> 
+<span class="no">575 </span>    return fac, bins 
+<span class="no">576 </span> 
+<span class="no">577 </span> 
+<span class="no">578 </span>def _round_frac(x, precision): 
+<span class="no">579 </span>    &quot;&quot;&quot; 
+<span class="no">580 </span>    Round the fractional part of the given number 
+<span class="no">581 </span>    &quot;&quot;&quot; 
+<span class="no">582 </span>    if not np.isfinite(x) or x == 0: 
+<span class="no">583 </span>        return x 
+<span class="no">584 </span>    else: 
+<span class="no">585 </span>        frac, whole = np.modf(x) 
+<span class="no">586 </span>        if whole == 0: 
+<span class="no">587 </span>            digits = -int(np.floor(np.log10(abs(frac)))) - 1 + precision 
+<span class="no">588 </span>        else: 
+<span class="no">589 </span>            digits = precision 
+<span class="no">590 </span>        return np.around(x, digits) 
+<span class="no">591 </span> 
+<span class="no">592 </span> 
+<span class="no">593 </span>def _infer_precision(base_precision, bins): 
+<span class="no">594 </span>    &quot;&quot;&quot;Infer an appropriate precision for _round_frac 
+<span class="no">595 </span>    &quot;&quot;&quot; 
+<span class="no">596 </span>    for precision in range(base_precision, 20): 
+<span class="no">597 </span>        levels = [_round_frac(b, precision) for b in bins] 
+<span class="no">598 </span>        if algos.unique(levels).size == bins.size: 
+<span class="no">599 </span>            return precision 
+<span class="no">600 </span>    return base_precision  # default 
+<span class="no">601 </span></code></pre></div>
+</div></div></div>
+</body>
+</html>

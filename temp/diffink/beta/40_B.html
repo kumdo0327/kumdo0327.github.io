@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --ins-clr: 97 216 54;
+  --del-clr: 255 150 141;
+  --mov-clr: 191 175 255;
+  --upd-clr: 255 217 50;
+}
+body {
+  margin: 0;
+  background: white;
+}
+.page {
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: 0 20px 8px 20px;
+}
+.grid {
+  min-height: 216px;
+  display: grid;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 108px);
+}
+.panel {
+  border-radius: 6px;
+  display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid #b7b7b7;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  line-height: 1;
+  background: #ebebeb;
+  border-bottom: 1px solid #b7b7b7;
+  align-items: center;
+  font-weight: bold;
+  padding: 8px 10px;
+  font-size: 16px;
+}
+.codebox {
+  min-height: 0;
+  overflow: auto;
+  background: #f7f7f7;
+  padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
+  font-size: 12px;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
+}
+.ins, .del, .mov, .upd {
+  border-top: 1px solid #878787;
+  border-bottom: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-top: 3px solid rgb(var(--ins-clr));
+  border-bottom: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-top: 3px solid rgb(var(--del-clr));
+  border-bottom: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-top: 3px solid rgb(var(--mov-clr));
+  border-bottom: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-top: 3px solid rgb(var(--upd-clr));
+  border-bottom: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  color: #878787;
+  background: #f7f7f7;
+  letter-spacing: normal;
+  padding-top: 3px;
+  font-weight: normal;
+  padding-bottom: 3px;
+}
+.legend {
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
+  font-size: 12px;
+}
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  gap: 4px;
+  align-items: center;
+}
+.legend-title {
+  font-weight: bold;
+  margin-right: 4px;
+}
+.legend-chip {
+  border-radius: 6px;
+  padding: 1px 6px;
+  border: 1px solid #bfbfbf;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.legend-key kbd {
+  border-radius: 2px;
+  background: #fbfbfb;
+  margin-right: 4px;
+  padding: 1px 5px;
+  border: 2px solid #afafaf;
+}
+.description {
+  width: 384px;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 0px 2px;
+  border: 1px solid black;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
+
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
+    });
+  });
+
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return runShortcut("unfocus");
+
+    const key = e.key.toLowerCase();
+    if (key === "u") return runShortcut("unfocus");
+    if (key !== "n" && key !== "b") return;
+
+    e.preventDefault();
+    runShortcut(key === "n" ? "next" : "back");
+  });
+});
+</script>
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 4 :&ensp;<b>Delete <code class="type">"identifier"</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 4 :&ensp;<b>Insert <code class="type">"attribute"</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 4 :&ensp;<b>Delete <code class="type">"identifier"</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 4 :&ensp;<b>Insert <code class="type">"attribute"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">40_B (original)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>import six 
+<span class="no">  2 </span>import signal 
+<span class="no">  3 </span>import logging 
+<span class="no">  4 </span>import warnings 
+<span class="no">  5 </span> 
+<span class="no">  6 </span>from twisted.internet import reactor, defer 
+<span class="no">  7 </span>from zope.interface.verify import verifyClass, DoesNotImplement 
+<span class="no">  8 </span> 
+<span class="no">  9 </span>from scrapy.core.engine import ExecutionEngine 
+<span class="no"> 10 </span>from scrapy.resolver import CachingThreadedResolver 
+<span class="no"> 11 </span>from scrapy.interfaces import ISpiderLoader 
+<span class="no"> 12 </span>from scrapy.extension import ExtensionManager 
+<span class="no"> 13 </span>from scrapy.settings import Settings 
+<span class="no"> 14 </span>from scrapy.signalmanager import SignalManager 
+<span class="no"> 15 </span>from scrapy.exceptions import ScrapyDeprecationWarning 
+<span class="no"> 16 </span>from scrapy.utils.ossignal import install_shutdown_handlers, signal_names 
+<span class="no"> 17 </span>from scrapy.utils.misc import load_object 
+<span class="no"> 18 </span>from scrapy.utils.log import LogCounterHandler, configure_logging, log_scrapy_info 
+<span class="no"> 19 </span>from scrapy import signals 
+<span class="no"> 20 </span> 
+<span class="no"> 21 </span>logger = logging.getLogger(__name__) 
+<span class="no"> 22 </span> 
+<span class="no"> 23 </span> 
+<span class="no"> 24 </span>class Crawler(object): 
+<span class="no"> 25 </span> 
+<span class="no"> 26 </span>    def __init__(self, spidercls, settings): 
+<span class="no"> 27 </span>        if isinstance(settings, dict): 
+<span class="no"> 28 </span>            settings = Settings(settings) 
+<span class="no"> 29 </span> 
+<span class="no"> 30 </span>        self.spidercls = spidercls 
+<span class="no"> 31 </span>        self.settings = settings.copy() 
+<span class="no"> 32 </span> 
+<span class="no"> 33 </span>        self.signals = SignalManager(self) 
+<span class="no"> 34 </span>        self.stats = load_object(self.settings[&apos;STATS_CLASS&apos;])(self) 
+<span class="no"> 35 </span> 
+<span class="no"> 36 </span>        handler = LogCounterHandler(self, level=settings.get(&apos;LOG_LEVEL&apos;)) 
+<span class="no"> 37 </span>        logging.root.addHandler(handler) 
+<span class="no"> 38 </span>        # lambda is assigned to Crawler attribute because this way it is not 
+<span class="no"> 39 </span>        # garbage collected after leaving __init__ scope 
+<span class="no"> 40 </span>        self.__remove_handler = lambda: logging.root.removeHandler(handler) 
+<span class="no"> 41 </span>        self.signals.connect(self.__remove_handler, signals.engine_stopped) 
+<span class="no"> 42 </span> 
+<span class="no"> 43 </span>        lf_cls = load_object(self.settings[&apos;LOG_FORMATTER&apos;]) 
+<span class="no"> 44 </span>        self.logformatter = lf_cls.from_crawler(self) 
+<span class="no"> 45 </span>        self.extensions = ExtensionManager.from_crawler(self) 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>        self.spidercls.update_settings(self.settings) 
+<span class="no"> 48 </span>        self.settings.freeze() 
+<span class="no"> 49 </span> 
+<span class="no"> 50 </span>        self.crawling = False 
+<span class="no"> 51 </span>        self.spider = None 
+<span class="no"> 52 </span>        self.engine = None 
+<span class="no"> 53 </span> 
+<span class="no"> 54 </span>    @property 
+<span class="no"> 55 </span>    def spiders(self): 
+<span class="no"> 56 </span>        if not hasattr(self, &apos;_spiders&apos;): 
+<span class="no"> 57 </span>            warnings.warn(&quot;Crawler.spiders is deprecated, use &quot; 
+<span class="no"> 58 </span>                          &quot;CrawlerRunner.spider_loader or instantiate &quot; 
+<span class="no"> 59 </span>                          &quot;scrapy.spiderloader.SpiderLoader with your &quot; 
+<span class="no"> 60 </span>                          &quot;settings.&quot;, 
+<span class="no"> 61 </span>                          category=ScrapyDeprecationWarning, stacklevel=2) 
+<span class="no"> 62 </span>            self._spiders = _get_spider_loader(self.settings.frozencopy()) 
+<span class="no"> 63 </span>        return self._spiders 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>    @defer.inlineCallbacks 
+<span class="no"> 66 </span>    def crawl(self, *args, **kwargs): 
+<span class="no"> 67 </span>        assert not self.crawling, &quot;Crawling already taking place&quot; 
+<span class="no"> 68 </span>        self.crawling = True 
+<span class="no"> 69 </span> 
+<span class="no"> 70 </span>        try: 
+<span class="no"> 71 </span>            self.spider = self._create_spider(*args, **kwargs) 
+<span class="no"> 72 </span>            self.engine = self._create_engine() 
+<span class="no"> 73 </span>            start_requests = iter(self.spider.start_requests()) 
+<span class="no"> 74 </span>            yield self.engine.open_spider(self.spider, start_requests) 
+<span class="no"> 75 </span>            yield defer.maybeDeferred(self.engine.start) 
+<span class="no"> 76 </span>        except Exception: 
+<span class="no"> 77 </span>            self.crawling = False 
+<span class="no"> 78 </span>            raise 
+<span class="no"> 79 </span> 
+<span class="no"> 80 </span>    def _create_spider(self, *args, **kwargs): 
+<span class="no"> 81 </span>        return self.spidercls.from_crawler(self, *args, **kwargs) 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>    def _create_engine(self): 
+<span class="no"> 84 </span>        return ExecutionEngine(self, lambda _: self.stop()) 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span>    @defer.inlineCallbacks 
+<span class="no"> 87 </span>    def stop(self): 
+<span class="no"> 88 </span>        if self.crawling: 
+<span class="no"> 89 </span>            self.crawling = False 
+<span class="no"> 90 </span>            yield defer.maybeDeferred(self.engine.stop) 
+<span class="no"> 91 </span> 
+<span class="no"> 92 </span> 
+<span class="no"> 93 </span>class CrawlerRunner(object): 
+<span class="no"> 94 </span>    &quot;&quot;&quot; 
+<span class="no"> 95 </span>    This is a convenient helper class that keeps track of, manages and runs 
+<span class="no"> 96 </span>    crawlers inside an already setup Twisted `reactor`_. 
+<span class="no"> 97 </span> 
+<span class="no"> 98 </span>    The CrawlerRunner object must be instantiated with a 
+<span class="no"> 99 </span>    :class:`~scrapy.settings.Settings` object. 
+<span class="no">100 </span> 
+<span class="no">101 </span>    This class shouldn&apos;t be needed (since Scrapy is responsible of using it 
+<span class="no">102 </span>    accordingly) unless writing scripts that manually handle the crawling 
+<span class="no">103 </span>    process. See :ref:`run-from-script` for an example. 
+<span class="no">104 </span>    &quot;&quot;&quot; 
+<span class="no">105 </span> 
+<span class="no">106 </span>    crawlers = property( 
+<span class="no">107 </span>        lambda self: self._crawlers, 
+<span class="no">108 </span>        doc=&quot;Set of :class:`crawlers &lt;scrapy.crawler.Crawler&gt;` started by &quot; 
+<span class="no">109 </span>            &quot;:meth:`crawl` and managed by this class.&quot; 
+<span class="no">110 </span>    ) 
+<span class="no">111 </span> 
+<span class="no">112 </span>    def __init__(self, settings): 
+<span class="no">113 </span>        if isinstance(settings, dict): 
+<span class="no">114 </span>            settings = Settings(settings) 
+<span class="no">115 </span>        self.settings = settings 
+<span class="no">116 </span>        self.spider_loader = _get_spider_loader(settings) 
+<span class="no">117 </span>        self._crawlers = set() 
+<span class="no">118 </span>        self._active = set() 
+<span class="no">119 </span> 
+<span class="no">120 </span>    @property 
+<span class="no">121 </span>    def spiders(self): 
+<span class="no">122 </span>        warnings.warn(&quot;CrawlerRunner.spiders attribute is renamed to &quot; 
+<span class="no">123 </span>                      &quot;CrawlerRunner.spider_loader.&quot;, 
+<span class="no">124 </span>                      category=ScrapyDeprecationWarning, stacklevel=2) 
+<span class="no">125 </span>        return self.spider_loader 
+<span class="no">126 </span> 
+<span class="no">127 </span>    def crawl(self, crawler_or_spidercls, *args, **kwargs): 
+<span class="no">128 </span>        &quot;&quot;&quot; 
+<span class="no">129 </span>        Run a crawler with the provided arguments. 
+<span class="no">130 </span> 
+<span class="no">131 </span>        It will call the given Crawler&apos;s :meth:`~Crawler.crawl` method, while 
+<span class="no">132 </span>        keeping track of it so it can be stopped later. 
+<span class="no">133 </span> 
+<span class="no">134 </span>        If `crawler_or_spidercls` isn&apos;t a :class:`~scrapy.crawler.Crawler` 
+<span class="no">135 </span>        instance, this method will try to create one using this parameter as 
+<span class="no">136 </span>        the spider class given to it. 
+<span class="no">137 </span> 
+<span class="no">138 </span>        Returns a deferred that is fired when the crawling is finished. 
+<span class="no">139 </span> 
+<span class="no">140 </span>        :param crawler_or_spidercls: already created crawler, or a spider class 
+<span class="no">141 </span>            or spider&apos;s name inside the project to create it 
+<span class="no">142 </span>        :type crawler_or_spidercls: :class:`~scrapy.crawler.Crawler` instance, 
+<span class="no">143 </span>            :class:`~scrapy.spiders.Spider` subclass or string 
+<span class="no">144 </span> 
+<span class="no">145 </span>        :param list args: arguments to initialize the spider 
+<span class="no">146 </span> 
+<span class="no">147 </span>        :param dict kwargs: keyword arguments to initialize the spider 
+<span class="no">148 </span>        &quot;&quot;&quot; 
+<span class="no">149 </span>        crawler = crawler_or_spidercls 
+<span class="no">150 </span>        if not isinstance(crawler_or_spidercls, Crawler): 
+<span class="no">151 </span>            crawler = self._create_crawler(crawler_or_spidercls) 
+<span class="no">152 </span> 
+<span class="no">153 </span>        self.crawlers.add(crawler) 
+<span class="no">154 </span>        d = crawler.crawl(*args, **kwargs) 
+<span class="no">155 </span>        self._active.add(d) 
+<span class="no">156 </span> 
+<span class="no">157 </span>        def _done(result): 
+<span class="no">158 </span>            self.crawlers.discard(crawler) 
+<span class="no">159 </span>            self._active.discard(d) 
+<span class="no">160 </span>            return result 
+<span class="no">161 </span> 
+<span class="no">162 </span>        return d.addBoth(_done) 
+<span class="no">163 </span> 
+<span class="no">164 </span>    def _create_crawler(self, spidercls): 
+<span class="no">165 </span>        if isinstance(spidercls, six.string_types): 
+<span class="no">166 </span>            spidercls = self.spider_loader.load(spidercls) 
+<span class="no">167 </span>        return Crawler(spidercls, self.settings) 
+<span class="no">168 </span> 
+<span class="no">169 </span>    def stop(self): 
+<span class="no">170 </span>        &quot;&quot;&quot; 
+<span class="no">171 </span>        Stops simultaneously all the crawling jobs taking place. 
+<span class="no">172 </span> 
+<span class="no">173 </span>        Returns a deferred that is fired when they all have ended. 
+<span class="no">174 </span>        &quot;&quot;&quot; 
+<span class="no">175 </span>        return defer.DeferredList([c.stop() for c in list(self.crawlers)]) 
+<span class="no">176 </span> 
+<span class="no">177 </span>    @defer.inlineCallbacks 
+<span class="no">178 </span>    def join(self): 
+<span class="no">179 </span>        &quot;&quot;&quot; 
+<span class="no">180 </span>        join() 
+<span class="no">181 </span> 
+<span class="no">182 </span>        Returns a deferred that is fired when all managed :attr:`crawlers` have 
+<span class="no">183 </span>        completed their executions. 
+<span class="no">184 </span>        &quot;&quot;&quot; 
+<span class="no">185 </span>        while self._active: 
+<span class="no">186 </span>            yield defer.DeferredList(self._active) 
+<span class="no">187 </span> 
+<span class="no">188 </span> 
+<span class="no">189 </span>class CrawlerProcess(CrawlerRunner): 
+<span class="no">190 </span>    &quot;&quot;&quot; 
+<span class="no">191 </span>    A class to run multiple scrapy crawlers in a process simultaneously. 
+<span class="no">192 </span> 
+<span class="no">193 </span>    This class extends :class:`~scrapy.crawler.CrawlerRunner` by adding support 
+<span class="no">194 </span>    for starting a Twisted `reactor`_ and handling shutdown signals, like the 
+<span class="no">195 </span>    keyboard interrupt command Ctrl-C. It also configures top-level logging. 
+<span class="no">196 </span> 
+<span class="no">197 </span>    This utility should be a better fit than 
+<span class="no">198 </span>    :class:`~scrapy.crawler.CrawlerRunner` if you aren&apos;t running another 
+<span class="no">199 </span>    Twisted `reactor`_ within your application. 
+<span class="no">200 </span> 
+<span class="no">201 </span>    The CrawlerProcess object must be instantiated with a 
+<span class="no">202 </span>    :class:`~scrapy.settings.Settings` object. 
+<span class="no">203 </span> 
+<span class="no">204 </span>    This class shouldn&apos;t be needed (since Scrapy is responsible of using it 
+<span class="no">205 </span>    accordingly) unless writing scripts that manually handle the crawling 
+<span class="no">206 </span>    process. See :ref:`run-from-script` for an example. 
+<span class="no">207 </span>    &quot;&quot;&quot; 
+<span class="no">208 </span> 
+<span class="no">209 </span>    def __init__(self, settings): 
+<span class="no">210 </span>        super(CrawlerProcess, self).__init__(settings) 
+<span class="no">211 </span>        install_shutdown_handlers(self._signal_shutdown) 
+<span class="no">212 </span>        configure_logging(<span data-kind="del" id="edit-1-old"><span class="hl del" id="hl-1-7654"><span data-kind="ins" id="edit-2-old"></span>settings</span></span>) 
+<span class="no">213 </span>        log_scrapy_info(<span data-kind="del" id="edit-3-old"><span class="hl del" id="hl-3-7688"><span data-kind="ins" id="edit-4-old"></span>settings</span></span>) 
+<span class="no">214 </span> 
+<span class="no">215 </span>    def _signal_shutdown(self, signum, _): 
+<span class="no">216 </span>        install_shutdown_handlers(self._signal_kill) 
+<span class="no">217 </span>        signame = signal_names[signum] 
+<span class="no">218 </span>        logger.info(&quot;Received %(signame)s, shutting down gracefully. Send again to force &quot;, 
+<span class="no">219 </span>                    {&apos;signame&apos;: signame}) 
+<span class="no">220 </span>        reactor.callFromThread(self.stop) 
+<span class="no">221 </span> 
+<span class="no">222 </span>    def _signal_kill(self, signum, _): 
+<span class="no">223 </span>        install_shutdown_handlers(signal.SIG_IGN) 
+<span class="no">224 </span>        signame = signal_names[signum] 
+<span class="no">225 </span>        logger.info(&apos;Received %(signame)s twice, forcing unclean shutdown&apos;, 
+<span class="no">226 </span>                    {&apos;signame&apos;: signame}) 
+<span class="no">227 </span>        reactor.callFromThread(self._stop_reactor) 
+<span class="no">228 </span> 
+<span class="no">229 </span>    def start(self, stop_after_crawl=True): 
+<span class="no">230 </span>        &quot;&quot;&quot; 
+<span class="no">231 </span>        This method starts a Twisted `reactor`_, adjusts its pool size to 
+<span class="no">232 </span>        :setting:`REACTOR_THREADPOOL_MAXSIZE`, and installs a DNS cache based 
+<span class="no">233 </span>        on :setting:`DNSCACHE_ENABLED` and :setting:`DNSCACHE_SIZE`. 
+<span class="no">234 </span> 
+<span class="no">235 </span>        If `stop_after_crawl` is True, the reactor will be stopped after all 
+<span class="no">236 </span>        crawlers have finished, using :meth:`join`. 
+<span class="no">237 </span> 
+<span class="no">238 </span>        :param boolean stop_after_crawl: stop or not the reactor when all 
+<span class="no">239 </span>            crawlers have finished 
+<span class="no">240 </span>        &quot;&quot;&quot; 
+<span class="no">241 </span>        if stop_after_crawl: 
+<span class="no">242 </span>            d = self.join() 
+<span class="no">243 </span>            # Don&apos;t start the reactor if the deferreds are already fired 
+<span class="no">244 </span>            if d.called: 
+<span class="no">245 </span>                return 
+<span class="no">246 </span>            d.addBoth(lambda _: self._stop_reactor()) 
+<span class="no">247 </span> 
+<span class="no">248 </span>        cache_size = self.settings.getint(&apos;DNSCACHE_SIZE&apos;) if self.settings.getbool(&apos;DNSCACHE_ENABLED&apos;) else 0 
+<span class="no">249 </span>        reactor.installResolver(CachingThreadedResolver(reactor, cache_size, 
+<span class="no">250 </span>                                                            self.settings.getfloat(&apos;DNS_TIMEOUT&apos;))) 
+<span class="no">251 </span>        tp = reactor.getThreadPool() 
+<span class="no">252 </span>        tp.adjustPoolsize(maxthreads=self.settings.getint(&apos;REACTOR_THREADPOOL_MAXSIZE&apos;)) 
+<span class="no">253 </span>        reactor.addSystemEventTrigger(&apos;before&apos;, &apos;shutdown&apos;, self.stop) 
+<span class="no">254 </span>        reactor.run(installSignalHandlers=False)  # blocking call 
+<span class="no">255 </span> 
+<span class="no">256 </span>    def _stop_reactor(self, _=None): 
+<span class="no">257 </span>        try: 
+<span class="no">258 </span>            reactor.stop() 
+<span class="no">259 </span>        except RuntimeError:  # raised if already stopped or in shutdown stage 
+<span class="no">260 </span>            pass 
+<span class="no">261 </span> 
+<span class="no">262 </span> 
+<span class="no">263 </span>def _get_spider_loader(settings): 
+<span class="no">264 </span>    &quot;&quot;&quot; Get SpiderLoader instance from settings &quot;&quot;&quot; 
+<span class="no">265 </span>    if settings.get(&apos;SPIDER_MANAGER_CLASS&apos;): 
+<span class="no">266 </span>        warnings.warn( 
+<span class="no">267 </span>            &apos;SPIDER_MANAGER_CLASS option is deprecated. &apos; 
+<span class="no">268 </span>            &apos;Please use SPIDER_LOADER_CLASS.&apos;, 
+<span class="no">269 </span>            category=ScrapyDeprecationWarning, stacklevel=2 
+<span class="no">270 </span>        ) 
+<span class="no">271 </span>    cls_path = settings.get(&apos;SPIDER_MANAGER_CLASS&apos;, 
+<span class="no">272 </span>                            settings.get(&apos;SPIDER_LOADER_CLASS&apos;)) 
+<span class="no">273 </span>    loader_cls = load_object(cls_path) 
+<span class="no">274 </span>    try: 
+<span class="no">275 </span>        verifyClass(ISpiderLoader, loader_cls) 
+<span class="no">276 </span>    except DoesNotImplement: 
+<span class="no">277 </span>        warnings.warn( 
+<span class="no">278 </span>            &apos;SPIDER_LOADER_CLASS (previously named SPIDER_MANAGER_CLASS) does &apos; 
+<span class="no">279 </span>            &apos;not fully implement scrapy.interfaces.ISpiderLoader interface. &apos; 
+<span class="no">280 </span>            &apos;Please add all missing methods to avoid unexpected runtime errors.&apos;, 
+<span class="no">281 </span>            category=ScrapyDeprecationWarning, stacklevel=2 
+<span class="no">282 </span>        ) 
+<span class="no">283 </span>    return loader_cls.from_settings(settings.frozencopy()) 
+<span class="no">284 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">40_B (modified)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>import six 
+<span class="no">  2 </span>import signal 
+<span class="no">  3 </span>import logging 
+<span class="no">  4 </span>import warnings 
+<span class="no">  5 </span> 
+<span class="no">  6 </span>from twisted.internet import reactor, defer 
+<span class="no">  7 </span>from zope.interface.verify import verifyClass, DoesNotImplement 
+<span class="no">  8 </span> 
+<span class="no">  9 </span>from scrapy.core.engine import ExecutionEngine 
+<span class="no"> 10 </span>from scrapy.resolver import CachingThreadedResolver 
+<span class="no"> 11 </span>from scrapy.interfaces import ISpiderLoader 
+<span class="no"> 12 </span>from scrapy.extension import ExtensionManager 
+<span class="no"> 13 </span>from scrapy.settings import Settings 
+<span class="no"> 14 </span>from scrapy.signalmanager import SignalManager 
+<span class="no"> 15 </span>from scrapy.exceptions import ScrapyDeprecationWarning 
+<span class="no"> 16 </span>from scrapy.utils.ossignal import install_shutdown_handlers, signal_names 
+<span class="no"> 17 </span>from scrapy.utils.misc import load_object 
+<span class="no"> 18 </span>from scrapy.utils.log import LogCounterHandler, configure_logging, log_scrapy_info 
+<span class="no"> 19 </span>from scrapy import signals 
+<span class="no"> 20 </span> 
+<span class="no"> 21 </span>logger = logging.getLogger(__name__) 
+<span class="no"> 22 </span> 
+<span class="no"> 23 </span> 
+<span class="no"> 24 </span>class Crawler(object): 
+<span class="no"> 25 </span> 
+<span class="no"> 26 </span>    def __init__(self, spidercls, settings): 
+<span class="no"> 27 </span>        if isinstance(settings, dict): 
+<span class="no"> 28 </span>            settings = Settings(settings) 
+<span class="no"> 29 </span> 
+<span class="no"> 30 </span>        self.spidercls = spidercls 
+<span class="no"> 31 </span>        self.settings = settings.copy() 
+<span class="no"> 32 </span> 
+<span class="no"> 33 </span>        self.signals = SignalManager(self) 
+<span class="no"> 34 </span>        self.stats = load_object(self.settings[&apos;STATS_CLASS&apos;])(self) 
+<span class="no"> 35 </span> 
+<span class="no"> 36 </span>        handler = LogCounterHandler(self, level=settings.get(&apos;LOG_LEVEL&apos;)) 
+<span class="no"> 37 </span>        logging.root.addHandler(handler) 
+<span class="no"> 38 </span>        # lambda is assigned to Crawler attribute because this way it is not 
+<span class="no"> 39 </span>        # garbage collected after leaving __init__ scope 
+<span class="no"> 40 </span>        self.__remove_handler = lambda: logging.root.removeHandler(handler) 
+<span class="no"> 41 </span>        self.signals.connect(self.__remove_handler, signals.engine_stopped) 
+<span class="no"> 42 </span> 
+<span class="no"> 43 </span>        lf_cls = load_object(self.settings[&apos;LOG_FORMATTER&apos;]) 
+<span class="no"> 44 </span>        self.logformatter = lf_cls.from_crawler(self) 
+<span class="no"> 45 </span>        self.extensions = ExtensionManager.from_crawler(self) 
+<span class="no"> 46 </span> 
+<span class="no"> 47 </span>        self.spidercls.update_settings(self.settings) 
+<span class="no"> 48 </span>        self.settings.freeze() 
+<span class="no"> 49 </span> 
+<span class="no"> 50 </span>        self.crawling = False 
+<span class="no"> 51 </span>        self.spider = None 
+<span class="no"> 52 </span>        self.engine = None 
+<span class="no"> 53 </span> 
+<span class="no"> 54 </span>    @property 
+<span class="no"> 55 </span>    def spiders(self): 
+<span class="no"> 56 </span>        if not hasattr(self, &apos;_spiders&apos;): 
+<span class="no"> 57 </span>            warnings.warn(&quot;Crawler.spiders is deprecated, use &quot; 
+<span class="no"> 58 </span>                          &quot;CrawlerRunner.spider_loader or instantiate &quot; 
+<span class="no"> 59 </span>                          &quot;scrapy.spiderloader.SpiderLoader with your &quot; 
+<span class="no"> 60 </span>                          &quot;settings.&quot;, 
+<span class="no"> 61 </span>                          category=ScrapyDeprecationWarning, stacklevel=2) 
+<span class="no"> 62 </span>            self._spiders = _get_spider_loader(self.settings.frozencopy()) 
+<span class="no"> 63 </span>        return self._spiders 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>    @defer.inlineCallbacks 
+<span class="no"> 66 </span>    def crawl(self, *args, **kwargs): 
+<span class="no"> 67 </span>        assert not self.crawling, &quot;Crawling already taking place&quot; 
+<span class="no"> 68 </span>        self.crawling = True 
+<span class="no"> 69 </span> 
+<span class="no"> 70 </span>        try: 
+<span class="no"> 71 </span>            self.spider = self._create_spider(*args, **kwargs) 
+<span class="no"> 72 </span>            self.engine = self._create_engine() 
+<span class="no"> 73 </span>            start_requests = iter(self.spider.start_requests()) 
+<span class="no"> 74 </span>            yield self.engine.open_spider(self.spider, start_requests) 
+<span class="no"> 75 </span>            yield defer.maybeDeferred(self.engine.start) 
+<span class="no"> 76 </span>        except Exception: 
+<span class="no"> 77 </span>            self.crawling = False 
+<span class="no"> 78 </span>            raise 
+<span class="no"> 79 </span> 
+<span class="no"> 80 </span>    def _create_spider(self, *args, **kwargs): 
+<span class="no"> 81 </span>        return self.spidercls.from_crawler(self, *args, **kwargs) 
+<span class="no"> 82 </span> 
+<span class="no"> 83 </span>    def _create_engine(self): 
+<span class="no"> 84 </span>        return ExecutionEngine(self, lambda _: self.stop()) 
+<span class="no"> 85 </span> 
+<span class="no"> 86 </span>    @defer.inlineCallbacks 
+<span class="no"> 87 </span>    def stop(self): 
+<span class="no"> 88 </span>        if self.crawling: 
+<span class="no"> 89 </span>            self.crawling = False 
+<span class="no"> 90 </span>            yield defer.maybeDeferred(self.engine.stop) 
+<span class="no"> 91 </span> 
+<span class="no"> 92 </span> 
+<span class="no"> 93 </span>class CrawlerRunner(object): 
+<span class="no"> 94 </span>    &quot;&quot;&quot; 
+<span class="no"> 95 </span>    This is a convenient helper class that keeps track of, manages and runs 
+<span class="no"> 96 </span>    crawlers inside an already setup Twisted `reactor`_. 
+<span class="no"> 97 </span> 
+<span class="no"> 98 </span>    The CrawlerRunner object must be instantiated with a 
+<span class="no"> 99 </span>    :class:`~scrapy.settings.Settings` object. 
+<span class="no">100 </span> 
+<span class="no">101 </span>    This class shouldn&apos;t be needed (since Scrapy is responsible of using it 
+<span class="no">102 </span>    accordingly) unless writing scripts that manually handle the crawling 
+<span class="no">103 </span>    process. See :ref:`run-from-script` for an example. 
+<span class="no">104 </span>    &quot;&quot;&quot; 
+<span class="no">105 </span> 
+<span class="no">106 </span>    crawlers = property( 
+<span class="no">107 </span>        lambda self: self._crawlers, 
+<span class="no">108 </span>        doc=&quot;Set of :class:`crawlers &lt;scrapy.crawler.Crawler&gt;` started by &quot; 
+<span class="no">109 </span>            &quot;:meth:`crawl` and managed by this class.&quot; 
+<span class="no">110 </span>    ) 
+<span class="no">111 </span> 
+<span class="no">112 </span>    def __init__(self, settings): 
+<span class="no">113 </span>        if isinstance(settings, dict): 
+<span class="no">114 </span>            settings = Settings(settings) 
+<span class="no">115 </span>        self.settings = settings 
+<span class="no">116 </span>        self.spider_loader = _get_spider_loader(settings) 
+<span class="no">117 </span>        self._crawlers = set() 
+<span class="no">118 </span>        self._active = set() 
+<span class="no">119 </span> 
+<span class="no">120 </span>    @property 
+<span class="no">121 </span>    def spiders(self): 
+<span class="no">122 </span>        warnings.warn(&quot;CrawlerRunner.spiders attribute is renamed to &quot; 
+<span class="no">123 </span>                      &quot;CrawlerRunner.spider_loader.&quot;, 
+<span class="no">124 </span>                      category=ScrapyDeprecationWarning, stacklevel=2) 
+<span class="no">125 </span>        return self.spider_loader 
+<span class="no">126 </span> 
+<span class="no">127 </span>    def crawl(self, crawler_or_spidercls, *args, **kwargs): 
+<span class="no">128 </span>        &quot;&quot;&quot; 
+<span class="no">129 </span>        Run a crawler with the provided arguments. 
+<span class="no">130 </span> 
+<span class="no">131 </span>        It will call the given Crawler&apos;s :meth:`~Crawler.crawl` method, while 
+<span class="no">132 </span>        keeping track of it so it can be stopped later. 
+<span class="no">133 </span> 
+<span class="no">134 </span>        If `crawler_or_spidercls` isn&apos;t a :class:`~scrapy.crawler.Crawler` 
+<span class="no">135 </span>        instance, this method will try to create one using this parameter as 
+<span class="no">136 </span>        the spider class given to it. 
+<span class="no">137 </span> 
+<span class="no">138 </span>        Returns a deferred that is fired when the crawling is finished. 
+<span class="no">139 </span> 
+<span class="no">140 </span>        :param crawler_or_spidercls: already created crawler, or a spider class 
+<span class="no">141 </span>            or spider&apos;s name inside the project to create it 
+<span class="no">142 </span>        :type crawler_or_spidercls: :class:`~scrapy.crawler.Crawler` instance, 
+<span class="no">143 </span>            :class:`~scrapy.spiders.Spider` subclass or string 
+<span class="no">144 </span> 
+<span class="no">145 </span>        :param list args: arguments to initialize the spider 
+<span class="no">146 </span> 
+<span class="no">147 </span>        :param dict kwargs: keyword arguments to initialize the spider 
+<span class="no">148 </span>        &quot;&quot;&quot; 
+<span class="no">149 </span>        crawler = crawler_or_spidercls 
+<span class="no">150 </span>        if not isinstance(crawler_or_spidercls, Crawler): 
+<span class="no">151 </span>            crawler = self._create_crawler(crawler_or_spidercls) 
+<span class="no">152 </span> 
+<span class="no">153 </span>        self.crawlers.add(crawler) 
+<span class="no">154 </span>        d = crawler.crawl(*args, **kwargs) 
+<span class="no">155 </span>        self._active.add(d) 
+<span class="no">156 </span> 
+<span class="no">157 </span>        def _done(result): 
+<span class="no">158 </span>            self.crawlers.discard(crawler) 
+<span class="no">159 </span>            self._active.discard(d) 
+<span class="no">160 </span>            return result 
+<span class="no">161 </span> 
+<span class="no">162 </span>        return d.addBoth(_done) 
+<span class="no">163 </span> 
+<span class="no">164 </span>    def _create_crawler(self, spidercls): 
+<span class="no">165 </span>        if isinstance(spidercls, six.string_types): 
+<span class="no">166 </span>            spidercls = self.spider_loader.load(spidercls) 
+<span class="no">167 </span>        return Crawler(spidercls, self.settings) 
+<span class="no">168 </span> 
+<span class="no">169 </span>    def stop(self): 
+<span class="no">170 </span>        &quot;&quot;&quot; 
+<span class="no">171 </span>        Stops simultaneously all the crawling jobs taking place. 
+<span class="no">172 </span> 
+<span class="no">173 </span>        Returns a deferred that is fired when they all have ended. 
+<span class="no">174 </span>        &quot;&quot;&quot; 
+<span class="no">175 </span>        return defer.DeferredList([c.stop() for c in list(self.crawlers)]) 
+<span class="no">176 </span> 
+<span class="no">177 </span>    @defer.inlineCallbacks 
+<span class="no">178 </span>    def join(self): 
+<span class="no">179 </span>        &quot;&quot;&quot; 
+<span class="no">180 </span>        join() 
+<span class="no">181 </span> 
+<span class="no">182 </span>        Returns a deferred that is fired when all managed :attr:`crawlers` have 
+<span class="no">183 </span>        completed their executions. 
+<span class="no">184 </span>        &quot;&quot;&quot; 
+<span class="no">185 </span>        while self._active: 
+<span class="no">186 </span>            yield defer.DeferredList(self._active) 
+<span class="no">187 </span> 
+<span class="no">188 </span> 
+<span class="no">189 </span>class CrawlerProcess(CrawlerRunner): 
+<span class="no">190 </span>    &quot;&quot;&quot; 
+<span class="no">191 </span>    A class to run multiple scrapy crawlers in a process simultaneously. 
+<span class="no">192 </span> 
+<span class="no">193 </span>    This class extends :class:`~scrapy.crawler.CrawlerRunner` by adding support 
+<span class="no">194 </span>    for starting a Twisted `reactor`_ and handling shutdown signals, like the 
+<span class="no">195 </span>    keyboard interrupt command Ctrl-C. It also configures top-level logging. 
+<span class="no">196 </span> 
+<span class="no">197 </span>    This utility should be a better fit than 
+<span class="no">198 </span>    :class:`~scrapy.crawler.CrawlerRunner` if you aren&apos;t running another 
+<span class="no">199 </span>    Twisted `reactor`_ within your application. 
+<span class="no">200 </span> 
+<span class="no">201 </span>    The CrawlerProcess object must be instantiated with a 
+<span class="no">202 </span>    :class:`~scrapy.settings.Settings` object. 
+<span class="no">203 </span> 
+<span class="no">204 </span>    This class shouldn&apos;t be needed (since Scrapy is responsible of using it 
+<span class="no">205 </span>    accordingly) unless writing scripts that manually handle the crawling 
+<span class="no">206 </span>    process. See :ref:`run-from-script` for an example. 
+<span class="no">207 </span>    &quot;&quot;&quot; 
+<span class="no">208 </span> 
+<span class="no">209 </span>    def __init__(self, settings): 
+<span class="no">210 </span>        super(CrawlerProcess, self).__init__(settings) 
+<span class="no">211 </span>        install_shutdown_handlers(self._signal_shutdown) 
+<span class="no">212 </span>        configure_logging(<span data-kind="ins" id="edit-2-new"><span class="hl ins" id="hl-2-7654"><span data-kind="del" id="edit-1-new"></span>self.settings</span></span>) 
+<span class="no">213 </span>        log_scrapy_info(<span data-kind="ins" id="edit-4-new"><span class="hl ins" id="hl-4-7693"><span data-kind="del" id="edit-3-new"></span>self.settings</span></span>) 
+<span class="no">214 </span> 
+<span class="no">215 </span>    def _signal_shutdown(self, signum, _): 
+<span class="no">216 </span>        install_shutdown_handlers(self._signal_kill) 
+<span class="no">217 </span>        signame = signal_names[signum] 
+<span class="no">218 </span>        logger.info(&quot;Received %(signame)s, shutting down gracefully. Send again to force &quot;, 
+<span class="no">219 </span>                    {&apos;signame&apos;: signame}) 
+<span class="no">220 </span>        reactor.callFromThread(self.stop) 
+<span class="no">221 </span> 
+<span class="no">222 </span>    def _signal_kill(self, signum, _): 
+<span class="no">223 </span>        install_shutdown_handlers(signal.SIG_IGN) 
+<span class="no">224 </span>        signame = signal_names[signum] 
+<span class="no">225 </span>        logger.info(&apos;Received %(signame)s twice, forcing unclean shutdown&apos;, 
+<span class="no">226 </span>                    {&apos;signame&apos;: signame}) 
+<span class="no">227 </span>        reactor.callFromThread(self._stop_reactor) 
+<span class="no">228 </span> 
+<span class="no">229 </span>    def start(self, stop_after_crawl=True): 
+<span class="no">230 </span>        &quot;&quot;&quot; 
+<span class="no">231 </span>        This method starts a Twisted `reactor`_, adjusts its pool size to 
+<span class="no">232 </span>        :setting:`REACTOR_THREADPOOL_MAXSIZE`, and installs a DNS cache based 
+<span class="no">233 </span>        on :setting:`DNSCACHE_ENABLED` and :setting:`DNSCACHE_SIZE`. 
+<span class="no">234 </span> 
+<span class="no">235 </span>        If `stop_after_crawl` is True, the reactor will be stopped after all 
+<span class="no">236 </span>        crawlers have finished, using :meth:`join`. 
+<span class="no">237 </span> 
+<span class="no">238 </span>        :param boolean stop_after_crawl: stop or not the reactor when all 
+<span class="no">239 </span>            crawlers have finished 
+<span class="no">240 </span>        &quot;&quot;&quot; 
+<span class="no">241 </span>        if stop_after_crawl: 
+<span class="no">242 </span>            d = self.join() 
+<span class="no">243 </span>            # Don&apos;t start the reactor if the deferreds are already fired 
+<span class="no">244 </span>            if d.called: 
+<span class="no">245 </span>                return 
+<span class="no">246 </span>            d.addBoth(lambda _: self._stop_reactor()) 
+<span class="no">247 </span> 
+<span class="no">248 </span>        cache_size = self.settings.getint(&apos;DNSCACHE_SIZE&apos;) if self.settings.getbool(&apos;DNSCACHE_ENABLED&apos;) else 0 
+<span class="no">249 </span>        reactor.installResolver(CachingThreadedResolver(reactor, cache_size, 
+<span class="no">250 </span>                                                            self.settings.getfloat(&apos;DNS_TIMEOUT&apos;))) 
+<span class="no">251 </span>        tp = reactor.getThreadPool() 
+<span class="no">252 </span>        tp.adjustPoolsize(maxthreads=self.settings.getint(&apos;REACTOR_THREADPOOL_MAXSIZE&apos;)) 
+<span class="no">253 </span>        reactor.addSystemEventTrigger(&apos;before&apos;, &apos;shutdown&apos;, self.stop) 
+<span class="no">254 </span>        reactor.run(installSignalHandlers=False)  # blocking call 
+<span class="no">255 </span> 
+<span class="no">256 </span>    def _stop_reactor(self, _=None): 
+<span class="no">257 </span>        try: 
+<span class="no">258 </span>            reactor.stop() 
+<span class="no">259 </span>        except RuntimeError:  # raised if already stopped or in shutdown stage 
+<span class="no">260 </span>            pass 
+<span class="no">261 </span> 
+<span class="no">262 </span> 
+<span class="no">263 </span>def _get_spider_loader(settings): 
+<span class="no">264 </span>    &quot;&quot;&quot; Get SpiderLoader instance from settings &quot;&quot;&quot; 
+<span class="no">265 </span>    if settings.get(&apos;SPIDER_MANAGER_CLASS&apos;): 
+<span class="no">266 </span>        warnings.warn( 
+<span class="no">267 </span>            &apos;SPIDER_MANAGER_CLASS option is deprecated. &apos; 
+<span class="no">268 </span>            &apos;Please use SPIDER_LOADER_CLASS.&apos;, 
+<span class="no">269 </span>            category=ScrapyDeprecationWarning, stacklevel=2 
+<span class="no">270 </span>        ) 
+<span class="no">271 </span>    cls_path = settings.get(&apos;SPIDER_MANAGER_CLASS&apos;, 
+<span class="no">272 </span>                            settings.get(&apos;SPIDER_LOADER_CLASS&apos;)) 
+<span class="no">273 </span>    loader_cls = load_object(cls_path) 
+<span class="no">274 </span>    try: 
+<span class="no">275 </span>        verifyClass(ISpiderLoader, loader_cls) 
+<span class="no">276 </span>    except DoesNotImplement: 
+<span class="no">277 </span>        warnings.warn( 
+<span class="no">278 </span>            &apos;SPIDER_LOADER_CLASS (previously named SPIDER_MANAGER_CLASS) does &apos; 
+<span class="no">279 </span>            &apos;not fully implement scrapy.interfaces.ISpiderLoader interface. &apos; 
+<span class="no">280 </span>            &apos;Please add all missing methods to avoid unexpected runtime errors.&apos;, 
+<span class="no">281 </span>            category=ScrapyDeprecationWarning, stacklevel=2 
+<span class="no">282 </span>        ) 
+<span class="no">283 </span>    return loader_cls.from_settings(settings.frozencopy()) 
+<span class="no">284 </span></code></pre></div>
+</div></div></div>
+</body>
+</html>

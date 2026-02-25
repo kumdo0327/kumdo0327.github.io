@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiffInk Viewer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --mov-clr: 191 175 255;
+  --ins-clr: 97 216 54;
+  --upd-clr: 255 217 50;
+  --del-clr: 255 150 141;
+}
+body {
+  background: white;
+  margin: 0;
+}
+.page {
+  padding: 0 20px 8px 20px;
+  max-width: 100vw;
+  margin: 0 auto;
+}
+.grid {
+  min-height: 216px;
+  min-width: 1024px;
+  grid-template-columns: 1fr 1fr;
+  display: grid;
+  gap: 20px;
+  height: calc(100vh - 108px);
+}
+.panel {
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-width: 0;
+  flex-direction: column;
+  display: flex;
+}
+.panel-header {
+  justify-content: space-between;
+  border-bottom: 1px solid #b7b7b7;
+  font-weight: bold;
+  background: #ebebeb;
+  font-size: 16px;
+  line-height: 1;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+}
+.codebox {
+  font-size: 12px;
+  min-height: 0;
+  overflow: auto;
+  padding: 2px 4px;
+  flex: 1;
+  line-height: 1.5;
+  background: #f7f7f7;
+}
+pre {
+  margin: 0;
+}
+.hl {
+  box-shadow: inset -1px 0 0 #878787;
+  cursor: pointer;
+}
+.ins, .del, .mov, .upd {
+  border-bottom: 1px solid #878787;
+  border-top: 1px solid #878787;
+}
+.ins-focus, .del-focus, .mov-focus, .upd-focus {
+  font-weight: bold;
+}
+.ins {
+  background: rgb(var(--ins-clr) / 0.5);
+}
+.del {
+  background: rgb(var(--del-clr) / 0.5);
+}
+.mov {
+  background: rgb(var(--mov-clr) / 0.5);
+}
+.upd {
+  background: rgb(var(--upd-clr) / 0.55);
+}
+.ins-focus {
+  background: rgb(var(--ins-clr));
+}
+.del-focus {
+  background: rgb(var(--del-clr));
+}
+.mov-focus {
+  background: rgb(var(--mov-clr));
+}
+.upd-focus {
+  background: rgb(var(--upd-clr));
+}
+.ins-border {
+  border-bottom: 3px solid rgb(var(--ins-clr));
+  border-top: 3px solid rgb(var(--ins-clr));
+}
+.del-border {
+  border-bottom: 3px solid rgb(var(--del-clr));
+  border-top: 3px solid rgb(var(--del-clr));
+}
+.mov-border {
+  border-bottom: 3px solid rgb(var(--mov-clr));
+  border-top: 3px solid rgb(var(--mov-clr));
+}
+.upd-border {
+  border-bottom: 3px solid rgb(var(--upd-clr));
+  border-top: 3px solid rgb(var(--upd-clr));
+}
+.no {
+  padding-bottom: 3px;
+  padding-top: 3px;
+  color: #878787;
+  letter-spacing: normal;
+  font-weight: normal;
+  background: #f7f7f7;
+}
+.legend {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
+}
+.legend-row {
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.legend-title {
+  margin-right: 4px;
+  font-weight: bold;
+}
+.legend-chip {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+.legend-ins {
+  background: rgb(var(--ins-clr) / 0.7);
+}
+.legend-del {
+  background: rgb(var(--del-clr) / 0.7);
+}
+.legend-mov {
+  background: rgb(var(--mov-clr) / 0.7);
+}
+.legend-upd {
+  background: rgb(var(--upd-clr) / 0.7);
+}
+.legend-shortcuts .legend-key {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.legend-key kbd {
+  border: 2px solid #afafaf;
+  border-radius: 2px;
+  margin-right: 4px;
+  padding: 1px 5px;
+  background: #fbfbfb;
+}
+.description {
+  border: 1px solid black;
+  overflow: auto;
+  padding: 0px 2px;
+  box-sizing: border-box;
+  width: 384px;
+}
+.type {
+  color: #0076ba;
+}
+.error {
+  color: #b51700;
+}
+</style></head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let activeEdit = null;
+  let editOrder = [];
+  let editIndex = -1;
+  const highlightFocusClass = {
+    ins: "ins-focus",
+    del: "del-focus",
+    mov: "mov-focus",
+    upd: "upd-focus",
+  };
+  const kindBorderClass = {
+    ins: "ins-border",
+    del: "del-border",
+    mov: "mov-border",
+    upd: "upd-border",
+  };
+  const borderClasses = Object.values(kindBorderClass);
+
+  (function collectEditOrder() {
+    const set = new Set();
+    document.querySelectorAll('[id^="edit-"]').forEach((el) => {
+      const m = el.id.match(/^edit-(\d+)-(old|new)$/);
+      if (m) set.add(m[1]);
+    });
+    editOrder = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  })();
+
+  function setEditBorder(n, on) {
+    ["old", "new"].forEach((side) => {
+      const el = document.getElementById(`edit-${n}-${side}`);
+      if (!el) return;
+
+      el.classList.remove(...borderClasses);
+      if (!on) return;
+
+      const kind = el.dataset.kind;
+      if (kind) el.classList.add(kindBorderClass[kind]);
+    });
+  }
+
+  function setHighlightFocus(n, on) {
+    document.querySelectorAll(`[id^="hl-${n}-"]`).forEach((el) => {
+      Object.entries(highlightFocusClass).forEach(([baseClass, focusClass]) => {
+        if (on) {
+          if (el.classList.contains(baseClass)) {
+            el.classList.remove(baseClass);
+            el.classList.add(focusClass);
+          }
+          return;
+        }
+
+        if (el.classList.contains(focusClass)) {
+          el.classList.remove(focusClass);
+          el.classList.add(baseClass);
+        }
+      });
+    });
+  }
+
+  function showDescription(n) {
+    const root = document.querySelector(".legend .description");
+    if (!root) return;
+
+    root.querySelectorAll('span[id^="descr-"]').forEach((p) => {
+      p.style.display = "none";
+    });
+
+    const id = n === null ? "descr-0" : `descr-${n}`;
+    const target = document.getElementById(id);
+    const fallback = document.getElementById("descr-0");
+    const picked = target || fallback;
+    if (picked) picked.style.display = "";
+  }
+
+  showDescription(null);
+
+  function unfocusEdit() {
+    if (activeEdit === null) return;
+
+    setHighlightFocus(activeEdit, false);
+    setEditBorder(activeEdit, false);
+
+    activeEdit = null;
+    editIndex = -1;
+
+    showDescription(null);
+  }
+
+  function focusEdit(n) {
+    if (activeEdit === n) return;
+
+    if (activeEdit !== null) {
+      setHighlightFocus(activeEdit, false);
+      setEditBorder(activeEdit, false);
+    }
+
+    setHighlightFocus(n, true);
+    setEditBorder(n, true);
+
+    activeEdit = n;
+    editIndex = editOrder.indexOf(n);
+
+    showDescription(n);
+  }
+
+  function toggleFocus(n) {
+    if (activeEdit === n) {
+      unfocusEdit();
+      return false;
+    }
+    focusEdit(n);
+    return true;
+  }
+
+  function computeTargetLeft(box, editEl) {
+    const MARGIN_SMALL = 1;
+
+    const maxLeft = Math.max(0, box.scrollWidth - box.clientWidth);
+    if (maxLeft === 0) return 0;
+
+    const boxRect = box.getBoundingClientRect();
+    const elRect = editEl.getBoundingClientRect();
+
+    const startX = elRect.left - boxRect.left + box.scrollLeft;
+    const endX = elRect.right - boxRect.left + box.scrollLeft;
+
+    let left = endX - box.clientWidth + MARGIN_SMALL;
+
+    if (left > startX) left = startX;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    return left;
+  }
+
+  function scrollCounterpartSameXY(srcEdit, n, side) {
+    const otherSide = side === "old" ? "new" : "old";
+    const counterpart = document.getElementById(`edit-${n}-${otherSide}`);
+    if (!counterpart) return;
+
+    const srcBox = srcEdit.closest(".codebox");
+    const dstBox = counterpart.closest(".codebox");
+    if (!srcBox || !dstBox) return;
+
+    const srcBoxRect = srcBox.getBoundingClientRect();
+    const dstBoxRect = dstBox.getBoundingClientRect();
+    const srcRect = srcEdit.getBoundingClientRect();
+    const cpRect = counterpart.getBoundingClientRect();
+
+    const srcViewY = srcRect.top - srcBoxRect.top;
+    const cpViewY = cpRect.top - dstBoxRect.top;
+    let targetTop = dstBox.scrollTop + (cpViewY - srcViewY);
+
+    const maxTop = Math.max(0, dstBox.scrollHeight - dstBox.clientHeight);
+    targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+    const srcViewX = srcRect.left - srcBoxRect.left;
+    const cpViewX = cpRect.left - dstBoxRect.left;
+    let targetLeft = dstBox.scrollLeft + (cpViewX - srcViewX);
+
+    const maxLeft = Math.max(0, dstBox.scrollWidth - dstBox.clientWidth);
+    targetLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+
+    dstBox.scrollTo({
+      top: targetTop,
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollBothToMargin(n) {
+    const MARGIN_Y = 54;
+
+    function scrollOne(editEl) {
+      if (!editEl) return;
+      const box = editEl.closest(".codebox");
+      if (!box) return;
+
+      const boxRect = box.getBoundingClientRect();
+      const elRect = editEl.getBoundingClientRect();
+      const offsetY = elRect.top - boxRect.top + box.scrollTop;
+
+      let targetTop = offsetY - MARGIN_Y;
+      const maxTop = Math.max(0, box.scrollHeight - box.clientHeight);
+      targetTop = Math.max(0, Math.min(targetTop, maxTop));
+
+      const targetLeft = computeTargetLeft(box, editEl);
+
+      box.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+
+    scrollOne(document.getElementById(`edit-${n}-old`));
+    scrollOne(document.getElementById(`edit-${n}-new`));
+  }
+
+  function moveFocus(step) {
+    if (editOrder.length === 0) return;
+
+    if (activeEdit === null) {
+      editIndex = step > 0 ? 0 : editOrder.length - 1;
+    } else {
+      editIndex += step;
+      if (editIndex < 0) editIndex = editOrder.length - 1;
+      if (editIndex >= editOrder.length) editIndex = 0;
+    }
+
+    const n = editOrder[editIndex];
+    focusEdit(n);
+    scrollBothToMargin(n);
+  }
+
+  function runShortcut(action) {
+    if (action === "unfocus") {
+      unfocusEdit();
+      return;
+    }
+    if (action === "next") {
+      moveFocus(1);
+      return;
+    }
+    if (action === "back") {
+      moveFocus(-1);
+    }
+  }
+
+  document.querySelectorAll('[id^="edit-"]').forEach((edit) => {
+    edit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const m = edit.id.match(/^edit-(\d+)-(old|new)$/);
+      if (!m) return;
+
+      const n = m[1];
+      const side = m[2];
+
+      const enabled = toggleFocus(n);
+      if (enabled) {
+        scrollCounterpartSameXY(edit, n, side);
+      }
+    });
+  });
+
+  function inferLegendAction(el) {
+    const text = el.textContent.toLowerCase();
+    if (text.includes("next")) return "next";
+    if (text.includes("back")) return "back";
+    if (text.includes("unfocus")) return "unfocus";
+    return null;
+  }
+
+  document.querySelectorAll(".legend-shortcuts .legend-key").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const action = el.dataset.action || inferLegendAction(el);
+      if (!action) return;
+      runShortcut(action);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return runShortcut("unfocus");
+
+    const key = e.key.toLowerCase();
+    if (key === "u") return runShortcut("unfocus");
+    if (key !== "n" && key !== "b") return;
+
+    e.preventDefault();
+    runShortcut(key === "n" ? "next" : "back");
+  });
+});
+</script>
+<div class="page">
+<div class="legend">
+<div class="legend-row">
+  <span class="legend-title">Legend</span>
+  <span class="legend-chip legend-ins">Insert</span>
+  <span class="legend-chip legend-del">Delete</span>
+  <span class="legend-chip legend-mov">Move</span>
+  <span class="legend-chip legend-upd">Update</span>
+</div>
+<div class="legend-row legend-shortcuts">
+  <span class="legend-title">Shortcuts</span>
+  <span class="legend-key" data-action="next"><kbd>n</kbd><U>N</U>ext</span>
+  <span class="legend-key" data-action="back"><kbd>b</kbd><U>B</U>ack</span>
+  <span class="legend-key" data-action="unfocus"><kbd>Esc</kbd>, <kbd>u</kbd><U>U</U>nfocus</span>
+</div>
+<div class="description">
+<span id="descr-0"><code>&nbsp;</code></span>
+<span id="descr-1" style="display:none;">Edit #1 / 12 :&ensp;<b>Insert <code class="type">","</code></b></span>
+<span id="descr-2" style="display:none;">Edit #2 / 12 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-3" style="display:none;">Edit #3 / 12 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-4" style="display:none;">Edit #4 / 12 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-5" style="display:none;">Edit #5 / 12 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-6" style="display:none;">Edit #6 / 12 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-7" style="display:none;">Edit #7 / 12 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-8" style="display:none;">Edit #8 / 12 :&ensp;<b>Move <code class="type">","</code></b></span>
+<span id="descr-9" style="display:none;">Edit #9 / 12 :&ensp;<b>Insert <code class="type">"dotted_name"</code></b></span>
+<span id="descr-10" style="display:none;">Edit #10 / 12 :&ensp;<b>Insert <code class="type">"import_from_statement"</code></b></span>
+<span id="descr-11" style="display:none;">Edit #11 / 12 :&ensp;<b>Insert <code class="type">"expression_statement"</code></b></span>
+<span id="descr-12" style="display:none;">Edit #12 / 12 :&ensp;<b>Insert <code class="type">"elif_clause"</code></b></span>
+</div>
+</div>
+<div class="grid"><div class="panel"><div class="panel-header">39_A (original)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>import numbers 
+<span class="no">  2 </span>from typing import Any, Tuple, Type 
+<span class="no">  3 </span>import warnings 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>import numpy as np 
+<span class="no">  6 </span> 
+<span class="no">  7 </span>from pandas._libs import lib, missing as libmissing 
+<span class="no">  8 </span>from pandas.compat import set_function_name 
+<span class="no">  9 </span>from pandas.util._decorators import cache_readonly 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>from pandas.core.dtypes.base import ExtensionDtype 
+<span class="no"> 12 </span>from pandas.core.dtypes.cast import astype_nansafe 
+<span class="no"> 13 </span>from pandas.core.dtypes.common import ( 
+<span class="no"> 14 </span>    is_bool_dtype<span data-kind="mov" id="edit-2-old"><span class="hl mov" id="hl-2-396"><span data-kind="ins" id="edit-1-old"></span>,</span></span> 
+<span class="no"> 15 </span>    is_float<span data-kind="mov" id="edit-3-old"><span class="hl mov" id="hl-3-410">,</span></span> 
+<span class="no"> 16 </span>    is_float_dtype<span data-kind="mov" id="edit-4-old"><span class="hl mov" id="hl-4-430">,</span></span> 
+<span class="no"> 17 </span>    is_integer<span data-kind="mov" id="edit-5-old"><span class="hl mov" id="hl-5-446">,</span></span> 
+<span class="no"> 18 </span>    is_integer_dtype<span data-kind="mov" id="edit-6-old"><span class="hl mov" id="hl-6-468">,</span></span> 
+<span class="no"> 19 </span>    is_list_like<span data-kind="mov" id="edit-7-old"><span class="hl mov" id="hl-7-486">,</span></span> 
+<span class="no"> 20 </span>    is_object_dtype<span data-kind="mov" id="edit-8-old"><span class="hl mov" id="hl-8-507">,</span></span> 
+<span class="no"> 21 </span>    <span data-kind="ins" id="edit-9-old"></span>is_scalar, 
+<span class="no"> 22 </span>) 
+<span class="no"> 23 </span>from pandas.core.dtypes.dtypes import register_extension_dtype 
+<span class="no"> 24 </span>from pandas.core.dtypes.missing import isna 
+<span class="no"> 25 </span> 
+<span class="no"> 26 </span>from pandas.core import nanops, ops 
+<span class="no"> 27 </span>from pandas.core.ops import invalid_comparison 
+<span class="no"> 28 </span>from pandas.core.ops.common import unpack_zerodim_and_defer 
+<span class="no"> 29 </span>from pandas.core.tools.numeric import to_numeric 
+<span class="no"> 30 </span> 
+<span class="no"> 31 </span>from .masked import BaseMaskedArray 
+<span class="no"> 32 </span> 
+<span class="no"> 33 </span> 
+<span class="no"> 34 </span>class _IntegerDtype(ExtensionDtype): 
+<span class="no"> 35 </span>    &quot;&quot;&quot; 
+<span class="no"> 36 </span>    An ExtensionDtype to hold a single size &amp; kind of integer dtype. 
+<span class="no"> 37 </span> 
+<span class="no"> 38 </span>    These specific implementations are subclasses of the non-public 
+<span class="no"> 39 </span>    _IntegerDtype. For example we have Int8Dtype to represent signed int 8s. 
+<span class="no"> 40 </span> 
+<span class="no"> 41 </span>    The attributes name &amp; type are set when these subclasses are created. 
+<span class="no"> 42 </span>    &quot;&quot;&quot; 
+<span class="no"> 43 </span> 
+<span class="no"> 44 </span>    name: str 
+<span class="no"> 45 </span>    base = None 
+<span class="no"> 46 </span>    type: Type 
+<span class="no"> 47 </span>    na_value = libmissing.NA 
+<span class="no"> 48 </span> 
+<span class="no"> 49 </span>    def __repr__(self) -&gt; str: 
+<span class="no"> 50 </span>        sign = &quot;U&quot; if self.is_unsigned_integer else &quot;&quot; 
+<span class="no"> 51 </span>        return f&quot;{sign}Int{8 * self.itemsize}Dtype()&quot; 
+<span class="no"> 52 </span> 
+<span class="no"> 53 </span>    @cache_readonly 
+<span class="no"> 54 </span>    def is_signed_integer(self): 
+<span class="no"> 55 </span>        return self.kind == &quot;i&quot; 
+<span class="no"> 56 </span> 
+<span class="no"> 57 </span>    @cache_readonly 
+<span class="no"> 58 </span>    def is_unsigned_integer(self): 
+<span class="no"> 59 </span>        return self.kind == &quot;u&quot; 
+<span class="no"> 60 </span> 
+<span class="no"> 61 </span>    @property 
+<span class="no"> 62 </span>    def _is_numeric(self): 
+<span class="no"> 63 </span>        return True 
+<span class="no"> 64 </span> 
+<span class="no"> 65 </span>    @cache_readonly 
+<span class="no"> 66 </span>    def numpy_dtype(self): 
+<span class="no"> 67 </span>        &quot;&quot;&quot; Return an instance of our numpy dtype &quot;&quot;&quot; 
+<span class="no"> 68 </span>        return np.dtype(self.type) 
+<span class="no"> 69 </span> 
+<span class="no"> 70 </span>    @cache_readonly 
+<span class="no"> 71 </span>    def kind(self): 
+<span class="no"> 72 </span>        return self.numpy_dtype.kind 
+<span class="no"> 73 </span> 
+<span class="no"> 74 </span>    @cache_readonly 
+<span class="no"> 75 </span>    def itemsize(self): 
+<span class="no"> 76 </span>        &quot;&quot;&quot; Return the number of bytes in this dtype &quot;&quot;&quot; 
+<span class="no"> 77 </span>        return self.numpy_dtype.itemsize 
+<span class="no"> 78 </span> 
+<span class="no"> 79 </span>    @classmethod 
+<span class="no"> 80 </span>    def construct_array_type(cls): 
+<span class="no"> 81 </span>        &quot;&quot;&quot; 
+<span class="no"> 82 </span>        Return the array type associated with this dtype. 
+<span class="no"> 83 </span> 
+<span class="no"> 84 </span>        Returns 
+<span class="no"> 85 </span>        ------- 
+<span class="no"> 86 </span>        type 
+<span class="no"> 87 </span>        &quot;&quot;&quot; 
+<span class="no"> 88 </span>        return IntegerArray 
+<span class="no"> 89 </span> 
+<span class="no"> 90 </span>    def __from_arrow__(self, array): 
+<span class="no"> 91 </span>        &quot;&quot;&quot;Construct IntegerArray from passed pyarrow Array/ChunkedArray&quot;&quot;&quot; 
+<span class="no"> 92 </span>        import pyarrow 
+<span class="no"> 93 </span>        from pandas.core.arrays._arrow_utils import pyarrow_array_to_numpy_and_mask 
+<span class="no"> 94 </span> 
+<span class="no"> 95 </span>        if isinstance(array, pyarrow.Array): 
+<span class="no"> 96 </span>            chunks = [array] 
+<span class="no"> 97 </span>        else: 
+<span class="no"> 98 </span>            # pyarrow.ChunkedArray 
+<span class="no"> 99 </span>            chunks = array.chunks 
+<span class="no">100 </span> 
+<span class="no">101 </span>        results = [] 
+<span class="no">102 </span>        for arr in chunks: 
+<span class="no">103 </span>            data, mask = pyarrow_array_to_numpy_and_mask(arr, dtype=self.type) 
+<span class="no">104 </span>            int_arr = IntegerArray(data.copy(), ~mask, copy=False) 
+<span class="no">105 </span>            results.append(int_arr) 
+<span class="no">106 </span> 
+<span class="no">107 </span>        return IntegerArray._concat_same_type(results) 
+<span class="no">108 </span> 
+<span class="no">109 </span> 
+<span class="no">110 </span>def integer_array(values, dtype=None, copy=False): 
+<span class="no">111 </span>    &quot;&quot;&quot; 
+<span class="no">112 </span>    Infer and return an integer array of the values. 
+<span class="no">113 </span> 
+<span class="no">114 </span>    Parameters 
+<span class="no">115 </span>    ---------- 
+<span class="no">116 </span>    values : 1D list-like 
+<span class="no">117 </span>    dtype : dtype, optional 
+<span class="no">118 </span>        dtype to coerce 
+<span class="no">119 </span>    copy : bool, default False 
+<span class="no">120 </span> 
+<span class="no">121 </span>    Returns 
+<span class="no">122 </span>    ------- 
+<span class="no">123 </span>    IntegerArray 
+<span class="no">124 </span> 
+<span class="no">125 </span>    Raises 
+<span class="no">126 </span>    ------ 
+<span class="no">127 </span>    TypeError if incompatible types 
+<span class="no">128 </span>    &quot;&quot;&quot; 
+<span class="no">129 </span>    values, mask = coerce_to_array(values, dtype=dtype, copy=copy) 
+<span class="no">130 </span>    return IntegerArray(values, mask) 
+<span class="no">131 </span> 
+<span class="no">132 </span> 
+<span class="no">133 </span>def safe_cast(values, dtype, copy): 
+<span class="no">134 </span>    &quot;&quot;&quot; 
+<span class="no">135 </span>    Safely cast the values to the dtype if they 
+<span class="no">136 </span>    are equivalent, meaning floats must be equivalent to the 
+<span class="no">137 </span>    ints. 
+<span class="no">138 </span> 
+<span class="no">139 </span>    &quot;&quot;&quot; 
+<span class="no">140 </span> 
+<span class="no">141 </span>    try: 
+<span class="no">142 </span>        return values.astype(dtype, casting=&quot;safe&quot;, copy=copy) 
+<span class="no">143 </span>    except TypeError: 
+<span class="no">144 </span> 
+<span class="no">145 </span>        casted = values.astype(dtype, copy=copy) 
+<span class="no">146 </span>        if (casted == values).all(): 
+<span class="no">147 </span>            return casted 
+<span class="no">148 </span> 
+<span class="no">149 </span>        raise TypeError( 
+<span class="no">150 </span>            f&quot;cannot safely cast non-equivalent {values.dtype} to {np.dtype(dtype)}&quot; 
+<span class="no">151 </span>        ) 
+<span class="no">152 </span> 
+<span class="no">153 </span> 
+<span class="no">154 </span>def coerce_to_array(values, dtype, mask=None, copy=False): 
+<span class="no">155 </span>    &quot;&quot;&quot; 
+<span class="no">156 </span>    Coerce the input values array to numpy arrays with a mask 
+<span class="no">157 </span> 
+<span class="no">158 </span>    Parameters 
+<span class="no">159 </span>    ---------- 
+<span class="no">160 </span>    values : 1D list-like 
+<span class="no">161 </span>    dtype : integer dtype 
+<span class="no">162 </span>    mask : bool 1D array, optional 
+<span class="no">163 </span>    copy : bool, default False 
+<span class="no">164 </span>        if True, copy the input 
+<span class="no">165 </span> 
+<span class="no">166 </span>    Returns 
+<span class="no">167 </span>    ------- 
+<span class="no">168 </span>    tuple of (values, mask) 
+<span class="no">169 </span>    &quot;&quot;&quot; 
+<span class="no">170 </span>    # if values is integer numpy array, preserve it&apos;s dtype 
+<span class="no">171 </span>    if dtype is None and hasattr(values, &quot;dtype&quot;): 
+<span class="no">172 </span>        if is_integer_dtype(values.dtype): 
+<span class="no">173 </span>            dtype = values.dtype 
+<span class="no">174 </span> 
+<span class="no">175 </span>    if dtype is not None: 
+<span class="no">176 </span>        if isinstance(dtype, str) and ( 
+<span class="no">177 </span>            dtype.startswith(&quot;Int&quot;) or dtype.startswith(&quot;UInt&quot;) 
+<span class="no">178 </span>        ): 
+<span class="no">179 </span>            # Avoid DeprecationWarning from NumPy about np.dtype(&quot;Int64&quot;) 
+<span class="no">180 </span>            # https://github.com/numpy/numpy/pull/7476 
+<span class="no">181 </span>            dtype = dtype.lower() 
+<span class="no">182 </span> 
+<span class="no">183 </span>        if not issubclass(type(dtype), _IntegerDtype): 
+<span class="no">184 </span>            try: 
+<span class="no">185 </span>                dtype = _dtypes[str(np.dtype(dtype))] 
+<span class="no">186 </span>            except KeyError: 
+<span class="no">187 </span>                raise ValueError(f&quot;invalid dtype specified {dtype}&quot;) 
+<span class="no">188 </span> 
+<span class="no">189 </span>    if isinstance(values, IntegerArray): 
+<span class="no">190 </span>        values, mask = values._data, values._mask 
+<span class="no">191 </span>        if dtype is not None: 
+<span class="no">192 </span>            values = values.astype(dtype.numpy_dtype, copy=False) 
+<span class="no">193 </span> 
+<span class="no">194 </span>        if copy: 
+<span class="no">195 </span>            values = values.copy() 
+<span class="no">196 </span>            mask = mask.copy() 
+<span class="no">197 </span>        return values, mask 
+<span class="no">198 </span> 
+<span class="no">199 </span>    values = np.array(values, copy=copy) 
+<span class="no">200 </span>    if is_object_dtype(values): 
+<span class="no">201 </span>        inferred_type = lib.infer_dtype(values, skipna=True) 
+<span class="no">202 </span>        if inferred_type == &quot;empty&quot;: 
+<span class="no">203 </span>            values = np.empty(len(values)) 
+<span class="no">204 </span>            values.fill(np.nan) 
+<span class="no">205 </span>        elif inferred_type not in [ 
+<span class="no">206 </span>            &quot;floating&quot;, 
+<span class="no">207 </span>            &quot;integer&quot;, 
+<span class="no">208 </span>            &quot;mixed-integer&quot;, 
+<span class="no">209 </span>            &quot;integer-na&quot;, 
+<span class="no">210 </span>            &quot;mixed-integer-float&quot;, 
+<span class="no">211 </span>        ]: 
+<span class="no">212 </span>            raise TypeError(f&quot;{values.dtype} cannot be converted to an IntegerDtype&quot;) 
+<span class="no">213 </span> 
+<span class="no">214 </span>    elif is_bool_dtype(values) and is_integer_dtype(dtype): 
+<span class="no">215 </span>        values = np.array(values, dtype=int, copy=copy) 
+<span class="no">216 </span> 
+<span class="no">217 </span>    elif not (is_integer_dtype(values) or is_float_dtype(values)): 
+<span class="no">218 </span>        raise TypeError(f&quot;{values.dtype} cannot be converted to an IntegerDtype&quot;) 
+<span class="no">219 </span> 
+<span class="no">220 </span>    if mask is None: 
+<span class="no">221 </span>        mask = isna(values) 
+<span class="no">222 </span>    else: 
+<span class="no">223 </span>        assert len(mask) == len(values) 
+<span class="no">224 </span> 
+<span class="no">225 </span>    if not values.ndim == 1: 
+<span class="no">226 </span>        raise TypeError(&quot;values must be a 1D list-like&quot;) 
+<span class="no">227 </span>    if not mask.ndim == 1: 
+<span class="no">228 </span>        raise TypeError(&quot;mask must be a 1D list-like&quot;) 
+<span class="no">229 </span> 
+<span class="no">230 </span>    # infer dtype if needed 
+<span class="no">231 </span>    if dtype is None: 
+<span class="no">232 </span>        dtype = np.dtype(&quot;int64&quot;) 
+<span class="no">233 </span>    else: 
+<span class="no">234 </span>        dtype = dtype.type 
+<span class="no">235 </span> 
+<span class="no">236 </span>    # if we are float, let&apos;s make sure that we can 
+<span class="no">237 </span>    # safely cast 
+<span class="no">238 </span> 
+<span class="no">239 </span>    # we copy as need to coerce here 
+<span class="no">240 </span>    if mask.any(): 
+<span class="no">241 </span>        values = values.copy() 
+<span class="no">242 </span>        values[mask] = 1 
+<span class="no">243 </span>        values = safe_cast(values, dtype, copy=False) 
+<span class="no">244 </span>    else: 
+<span class="no">245 </span>        values = safe_cast(values, dtype, copy=False) 
+<span class="no">246 </span> 
+<span class="no">247 </span>    return values, mask 
+<span class="no">248 </span> 
+<span class="no">249 </span> 
+<span class="no">250 </span>class IntegerArray(BaseMaskedArray): 
+<span class="no">251 </span>    &quot;&quot;&quot; 
+<span class="no">252 </span>    Array of integer (optional missing) values. 
+<span class="no">253 </span> 
+<span class="no">254 </span>    .. versionadded:: 0.24.0 
+<span class="no">255 </span> 
+<span class="no">256 </span>    .. versionchanged:: 1.0.0 
+<span class="no">257 </span> 
+<span class="no">258 </span>       Now uses :attr:`pandas.NA` as the missing value rather 
+<span class="no">259 </span>       than :attr:`numpy.nan`. 
+<span class="no">260 </span> 
+<span class="no">261 </span>    .. warning:: 
+<span class="no">262 </span> 
+<span class="no">263 </span>       IntegerArray is currently experimental, and its API or internal 
+<span class="no">264 </span>       implementation may change without warning. 
+<span class="no">265 </span> 
+<span class="no">266 </span>    We represent an IntegerArray with 2 numpy arrays: 
+<span class="no">267 </span> 
+<span class="no">268 </span>    - data: contains a numpy integer array of the appropriate dtype 
+<span class="no">269 </span>    - mask: a boolean array holding a mask on the data, True is missing 
+<span class="no">270 </span> 
+<span class="no">271 </span>    To construct an IntegerArray from generic array-like input, use 
+<span class="no">272 </span>    :func:`pandas.array` with one of the integer dtypes (see examples). 
+<span class="no">273 </span> 
+<span class="no">274 </span>    See :ref:`integer_na` for more. 
+<span class="no">275 </span> 
+<span class="no">276 </span>    Parameters 
+<span class="no">277 </span>    ---------- 
+<span class="no">278 </span>    values : numpy.ndarray 
+<span class="no">279 </span>        A 1-d integer-dtype array. 
+<span class="no">280 </span>    mask : numpy.ndarray 
+<span class="no">281 </span>        A 1-d boolean-dtype array indicating missing values. 
+<span class="no">282 </span>    copy : bool, default False 
+<span class="no">283 </span>        Whether to copy the `values` and `mask`. 
+<span class="no">284 </span> 
+<span class="no">285 </span>    Attributes 
+<span class="no">286 </span>    ---------- 
+<span class="no">287 </span>    None 
+<span class="no">288 </span> 
+<span class="no">289 </span>    Methods 
+<span class="no">290 </span>    ------- 
+<span class="no">291 </span>    None 
+<span class="no">292 </span> 
+<span class="no">293 </span>    Returns 
+<span class="no">294 </span>    ------- 
+<span class="no">295 </span>    IntegerArray 
+<span class="no">296 </span> 
+<span class="no">297 </span>    Examples 
+<span class="no">298 </span>    -------- 
+<span class="no">299 </span>    Create an IntegerArray with :func:`pandas.array`. 
+<span class="no">300 </span> 
+<span class="no">301 </span>    &gt;&gt;&gt; int_array = pd.array([1, None, 3], dtype=pd.Int32Dtype()) 
+<span class="no">302 </span>    &gt;&gt;&gt; int_array 
+<span class="no">303 </span>    &lt;IntegerArray&gt; 
+<span class="no">304 </span>    [1, &lt;NA&gt;, 3] 
+<span class="no">305 </span>    Length: 3, dtype: Int32 
+<span class="no">306 </span> 
+<span class="no">307 </span>    String aliases for the dtypes are also available. They are capitalized. 
+<span class="no">308 </span> 
+<span class="no">309 </span>    &gt;&gt;&gt; pd.array([1, None, 3], dtype=&apos;Int32&apos;) 
+<span class="no">310 </span>    &lt;IntegerArray&gt; 
+<span class="no">311 </span>    [1, &lt;NA&gt;, 3] 
+<span class="no">312 </span>    Length: 3, dtype: Int32 
+<span class="no">313 </span> 
+<span class="no">314 </span>    &gt;&gt;&gt; pd.array([1, None, 3], dtype=&apos;UInt16&apos;) 
+<span class="no">315 </span>    &lt;IntegerArray&gt; 
+<span class="no">316 </span>    [1, &lt;NA&gt;, 3] 
+<span class="no">317 </span>    Length: 3, dtype: UInt16 
+<span class="no">318 </span>    &quot;&quot;&quot; 
+<span class="no">319 </span> 
+<span class="no">320 </span>    # The value used to fill &apos;_data&apos; to avoid upcasting 
+<span class="no">321 </span>    _internal_fill_value = 1 
+<span class="no">322 </span> 
+<span class="no">323 </span>    @cache_readonly 
+<span class="no">324 </span>    def dtype(self): 
+<span class="no">325 </span>        return _dtypes[str(self._data.dtype)] 
+<span class="no">326 </span> 
+<span class="no">327 </span>    def __init__(self, values, mask, copy=False): 
+<span class="no">328 </span>        if not (isinstance(values, np.ndarray) and is_integer_dtype(values.dtype)): 
+<span class="no">329 </span>            raise TypeError( 
+<span class="no">330 </span>                &quot;values should be integer numpy array. Use &quot; 
+<span class="no">331 </span>                &quot;the &apos;integer_array&apos; function instead&quot; 
+<span class="no">332 </span>            ) 
+<span class="no">333 </span>        if not (isinstance(mask, np.ndarray) and is_bool_dtype(mask.dtype)): 
+<span class="no">334 </span>            raise TypeError( 
+<span class="no">335 </span>                &quot;mask should be boolean numpy array. Use &quot; 
+<span class="no">336 </span>                &quot;the &apos;integer_array&apos; function instead&quot; 
+<span class="no">337 </span>            ) 
+<span class="no">338 </span> 
+<span class="no">339 </span>        if copy: 
+<span class="no">340 </span>            values = values.copy() 
+<span class="no">341 </span>            mask = mask.copy() 
+<span class="no">342 </span> 
+<span class="no">343 </span>        self._data = values 
+<span class="no">344 </span>        self._mask = mask 
+<span class="no">345 </span> 
+<span class="no">346 </span>    @classmethod 
+<span class="no">347 </span>    def _from_sequence(cls, scalars, dtype=None, copy=False): 
+<span class="no">348 </span>        return integer_array(scalars, dtype=dtype, copy=copy) 
+<span class="no">349 </span> 
+<span class="no">350 </span>    @classmethod 
+<span class="no">351 </span>    def _from_sequence_of_strings(cls, strings, dtype=None, copy=False): 
+<span class="no">352 </span>        scalars = to_numeric(strings, errors=&quot;raise&quot;) 
+<span class="no">353 </span>        return cls._from_sequence(scalars, dtype, copy) 
+<span class="no">354 </span> 
+<span class="no">355 </span>    @classmethod 
+<span class="no">356 </span>    def _from_factorized(cls, values, original): 
+<span class="no">357 </span>        return integer_array(values, dtype=original.dtype) 
+<span class="no">358 </span> 
+<span class="no">359 </span>    _HANDLED_TYPES = (np.ndarray, numbers.Number) 
+<span class="no">360 </span> 
+<span class="no">361 </span>    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs): 
+<span class="no">362 </span>        # For IntegerArray inputs, we apply the ufunc to ._data 
+<span class="no">363 </span>        # and mask the result. 
+<span class="no">364 </span>        if method == &quot;reduce&quot;: 
+<span class="no">365 </span>            # Not clear how to handle missing values in reductions. Raise. 
+<span class="no">366 </span>            raise NotImplementedError(&quot;The &apos;reduce&apos; method is not supported.&quot;) 
+<span class="no">367 </span>        out = kwargs.get(&quot;out&quot;, ()) 
+<span class="no">368 </span> 
+<span class="no">369 </span>        for x in inputs + out: 
+<span class="no">370 </span>            if not isinstance(x, self._HANDLED_TYPES + (IntegerArray,)): 
+<span class="no">371 </span>                return NotImplemented 
+<span class="no">372 </span> 
+<span class="no">373 </span>        # for binary ops, use our custom dunder methods 
+<span class="no">374 </span>        result = ops.maybe_dispatch_ufunc_to_dunder_op( 
+<span class="no">375 </span>            self, ufunc, method, *inputs, **kwargs 
+<span class="no">376 </span>        ) 
+<span class="no">377 </span>        if result is not NotImplemented: 
+<span class="no">378 </span>            return result 
+<span class="no">379 </span> 
+<span class="no">380 </span>        mask = np.zeros(len(self), dtype=bool) 
+<span class="no">381 </span>        inputs2 = [] 
+<span class="no">382 </span>        for x in inputs: 
+<span class="no">383 </span>            if isinstance(x, IntegerArray): 
+<span class="no">384 </span>                mask |= x._mask 
+<span class="no">385 </span>                inputs2.append(x._data) 
+<span class="no">386 </span>            else: 
+<span class="no">387 </span>                inputs2.append(x) 
+<span class="no">388 </span> 
+<span class="no">389 </span>        def reconstruct(x): 
+<span class="no">390 </span>            # we don&apos;t worry about scalar `x` here, since we 
+<span class="no">391 </span>            # raise for reduce up above. 
+<span class="no">392 </span> 
+<span class="no">393 </span>            if is_integer_dtype(x.dtype): 
+<span class="no">394 </span>                m = mask.copy() 
+<span class="no">395 </span>                return IntegerArray(x, m) 
+<span class="no">396 </span>            else: 
+<span class="no">397 </span>                x[mask] = np.nan 
+<span class="no">398 </span>            return x 
+<span class="no">399 </span> 
+<span class="no">400 </span>        result = getattr(ufunc, method)(*inputs2, **kwargs) 
+<span class="no">401 </span>        if isinstance(result, tuple): 
+<span class="no">402 </span>            tuple(reconstruct(x) for x in result) 
+<span class="no">403 </span>        else: 
+<span class="no">404 </span>            return reconstruct(result) 
+<span class="no">405 </span> 
+<span class="no">406 </span>    def __setitem__(self, key, value): 
+<span class="no">407 </span>        _is_scalar = is_scalar(value) 
+<span class="no">408 </span>        if _is_scalar: 
+<span class="no">409 </span>            value = [value] 
+<span class="no">410 </span>        value, mask = coerce_to_array(value, dtype=self.dtype) 
+<span class="no">411 </span> 
+<span class="no">412 </span>        if _is_scalar: 
+<span class="no">413 </span>            value = value[0] 
+<span class="no">414 </span>            mask = mask[0] 
+<span class="no">415 </span> 
+<span class="no">416 </span>        self._data[key] = value 
+<span class="no">417 </span>        self._mask[key] = mask 
+<span class="no">418 </span> 
+<span class="no">419 </span>    def astype(self, dtype, copy=True): 
+<span class="no">420 </span>        &quot;&quot;&quot; 
+<span class="no">421 </span>        Cast to a NumPy array or IntegerArray with &apos;dtype&apos;. 
+<span class="no">422 </span> 
+<span class="no">423 </span>        Parameters 
+<span class="no">424 </span>        ---------- 
+<span class="no">425 </span>        dtype : str or dtype 
+<span class="no">426 </span>            Typecode or data-type to which the array is cast. 
+<span class="no">427 </span>        copy : bool, default True 
+<span class="no">428 </span>            Whether to copy the data, even if not necessary. If False, 
+<span class="no">429 </span>            a copy is made only if the old dtype does not match the 
+<span class="no">430 </span>            new dtype. 
+<span class="no">431 </span> 
+<span class="no">432 </span>        Returns 
+<span class="no">433 </span>        ------- 
+<span class="no">434 </span>        array : ndarray or IntegerArray 
+<span class="no">435 </span>            NumPy ndarray or IntergerArray with &apos;dtype&apos; for its dtype. 
+<span class="no">436 </span> 
+<span class="no">437 </span>        Raises 
+<span class="no">438 </span>        ------ 
+<span class="no">439 </span>        TypeError 
+<span class="no">440 </span>            if incompatible type with an IntegerDtype, equivalent of same_kind 
+<span class="no">441 </span>            casting 
+<span class="no">442 </span>        &quot;&quot;&quot; 
+<span class="no">443 </span> 
+<span class="no">444 </span>        <span data-kind="ins" id="edit-10-old"></span><span data-kind="ins" id="edit-11-old"></span># if we are astyping to an existing IntegerDtype we can fastpath 
+<span class="no">445 </span>        if isinstance(dtype, _IntegerDtype): 
+<span class="no">446 </span>            result = self._data.astype(dtype.numpy_dtype, copy=False) 
+<span class="no">447 </span>            return type(self)(result, mask=self._mask, copy=False) 
+<span class="no">448 </span> 
+<span class="no">449 </span>        <span data-kind="ins" id="edit-12-old"></span># coerce 
+<span class="no">450 </span>        if is_float_dtype(dtype): 
+<span class="no">451 </span>            # In astype, we consider dtype=float to also mean na_value=np.nan 
+<span class="no">452 </span>            kwargs = dict(na_value=np.nan) 
+<span class="no">453 </span>        else: 
+<span class="no">454 </span>            kwargs = {} 
+<span class="no">455 </span> 
+<span class="no">456 </span>        data = self.to_numpy(dtype=dtype, **kwargs) 
+<span class="no">457 </span>        return astype_nansafe(data, dtype, copy=False) 
+<span class="no">458 </span> 
+<span class="no">459 </span>    @property 
+<span class="no">460 </span>    def _ndarray_values(self) -&gt; np.ndarray: 
+<span class="no">461 </span>        &quot;&quot;&quot;Internal pandas method for lossy conversion to a NumPy ndarray. 
+<span class="no">462 </span> 
+<span class="no">463 </span>        This method is not part of the pandas interface. 
+<span class="no">464 </span> 
+<span class="no">465 </span>        The expectation is that this is cheap to compute, and is primarily 
+<span class="no">466 </span>        used for interacting with our indexers. 
+<span class="no">467 </span>        &quot;&quot;&quot; 
+<span class="no">468 </span>        return self._data 
+<span class="no">469 </span> 
+<span class="no">470 </span>    def _values_for_factorize(self) -&gt; Tuple[np.ndarray, Any]: 
+<span class="no">471 </span>        # TODO: https://github.com/pandas-dev/pandas/issues/30037 
+<span class="no">472 </span>        # use masked algorithms, rather than object-dtype / np.nan. 
+<span class="no">473 </span>        return self.to_numpy(na_value=np.nan), np.nan 
+<span class="no">474 </span> 
+<span class="no">475 </span>    def _values_for_argsort(self) -&gt; np.ndarray: 
+<span class="no">476 </span>        &quot;&quot;&quot;Return values for sorting. 
+<span class="no">477 </span> 
+<span class="no">478 </span>        Returns 
+<span class="no">479 </span>        ------- 
+<span class="no">480 </span>        ndarray 
+<span class="no">481 </span>            The transformed values should maintain the ordering between values 
+<span class="no">482 </span>            within the array. 
+<span class="no">483 </span> 
+<span class="no">484 </span>        See Also 
+<span class="no">485 </span>        -------- 
+<span class="no">486 </span>        ExtensionArray.argsort 
+<span class="no">487 </span>        &quot;&quot;&quot; 
+<span class="no">488 </span>        data = self._data.copy() 
+<span class="no">489 </span>        data[self._mask] = data.min() - 1 
+<span class="no">490 </span>        return data 
+<span class="no">491 </span> 
+<span class="no">492 </span>    @classmethod 
+<span class="no">493 </span>    def _create_comparison_method(cls, op): 
+<span class="no">494 </span>        op_name = op.__name__ 
+<span class="no">495 </span> 
+<span class="no">496 </span>        @unpack_zerodim_and_defer(op.__name__) 
+<span class="no">497 </span>        def cmp_method(self, other): 
+<span class="no">498 </span>            from pandas.arrays import BooleanArray 
+<span class="no">499 </span> 
+<span class="no">500 </span>            mask = None 
+<span class="no">501 </span> 
+<span class="no">502 </span>            if isinstance(other, (BooleanArray, IntegerArray)): 
+<span class="no">503 </span>                other, mask = other._data, other._mask 
+<span class="no">504 </span> 
+<span class="no">505 </span>            elif is_list_like(other): 
+<span class="no">506 </span>                other = np.asarray(other) 
+<span class="no">507 </span>                if other.ndim &gt; 1: 
+<span class="no">508 </span>                    raise NotImplementedError( 
+<span class="no">509 </span>                        &quot;can only perform ops with 1-d structures&quot; 
+<span class="no">510 </span>                    ) 
+<span class="no">511 </span>                if len(self) != len(other): 
+<span class="no">512 </span>                    raise ValueError(&quot;Lengths must match to compare&quot;) 
+<span class="no">513 </span> 
+<span class="no">514 </span>            if other is libmissing.NA: 
+<span class="no">515 </span>                # numpy does not handle pd.NA well as &quot;other&quot; scalar (it returns 
+<span class="no">516 </span>                # a scalar False instead of an array) 
+<span class="no">517 </span>                # This may be fixed by NA.__array_ufunc__. Revisit this check 
+<span class="no">518 </span>                # once that&apos;s implemented. 
+<span class="no">519 </span>                result = np.zeros(self._data.shape, dtype=&quot;bool&quot;) 
+<span class="no">520 </span>                mask = np.ones(self._data.shape, dtype=&quot;bool&quot;) 
+<span class="no">521 </span>            else: 
+<span class="no">522 </span>                with warnings.catch_warnings(): 
+<span class="no">523 </span>                    # numpy may show a FutureWarning: 
+<span class="no">524 </span>                    #     elementwise comparison failed; returning scalar instead, 
+<span class="no">525 </span>                    #     but in the future will perform elementwise comparison 
+<span class="no">526 </span>                    # before returning NotImplemented. We fall back to the correct 
+<span class="no">527 </span>                    # behavior today, so that should be fine to ignore. 
+<span class="no">528 </span>                    warnings.filterwarnings(&quot;ignore&quot;, &quot;elementwise&quot;, FutureWarning) 
+<span class="no">529 </span>                    with np.errstate(all=&quot;ignore&quot;): 
+<span class="no">530 </span>                        method = getattr(self._data, f&quot;__{op_name}__&quot;) 
+<span class="no">531 </span>                        result = method(other) 
+<span class="no">532 </span> 
+<span class="no">533 </span>                    if result is NotImplemented: 
+<span class="no">534 </span>                        result = invalid_comparison(self._data, other, op) 
+<span class="no">535 </span> 
+<span class="no">536 </span>            # nans propagate 
+<span class="no">537 </span>            if mask is None: 
+<span class="no">538 </span>                mask = self._mask.copy() 
+<span class="no">539 </span>            else: 
+<span class="no">540 </span>                mask = self._mask | mask 
+<span class="no">541 </span> 
+<span class="no">542 </span>            return BooleanArray(result, mask) 
+<span class="no">543 </span> 
+<span class="no">544 </span>        name = f&quot;__{op.__name__}__&quot; 
+<span class="no">545 </span>        return set_function_name(cmp_method, name, cls) 
+<span class="no">546 </span> 
+<span class="no">547 </span>    def _reduce(self, name, skipna=True, **kwargs): 
+<span class="no">548 </span>        data = self._data 
+<span class="no">549 </span>        mask = self._mask 
+<span class="no">550 </span> 
+<span class="no">551 </span>        # coerce to a nan-aware float if needed 
+<span class="no">552 </span>        # (we explicitly use NaN within reductions) 
+<span class="no">553 </span>        if self._hasna: 
+<span class="no">554 </span>            data = self.to_numpy(&quot;float64&quot;, na_value=np.nan) 
+<span class="no">555 </span> 
+<span class="no">556 </span>        op = getattr(nanops, &quot;nan&quot; + name) 
+<span class="no">557 </span>        result = op(data, axis=0, skipna=skipna, mask=mask, **kwargs) 
+<span class="no">558 </span> 
+<span class="no">559 </span>        if np.isnan(result): 
+<span class="no">560 </span>            return libmissing.NA 
+<span class="no">561 </span> 
+<span class="no">562 </span>        # if we have a boolean op, don&apos;t coerce 
+<span class="no">563 </span>        if name in [&quot;any&quot;, &quot;all&quot;]: 
+<span class="no">564 </span>            pass 
+<span class="no">565 </span> 
+<span class="no">566 </span>        # if we have a preservable numeric op, 
+<span class="no">567 </span>        # provide coercion back to an integer type if possible 
+<span class="no">568 </span>        elif name in [&quot;sum&quot;, &quot;min&quot;, &quot;max&quot;, &quot;prod&quot;]: 
+<span class="no">569 </span>            int_result = int(result) 
+<span class="no">570 </span>            if int_result == result: 
+<span class="no">571 </span>                result = int_result 
+<span class="no">572 </span> 
+<span class="no">573 </span>        return result 
+<span class="no">574 </span> 
+<span class="no">575 </span>    def _maybe_mask_result(self, result, mask, other, op_name): 
+<span class="no">576 </span>        &quot;&quot;&quot; 
+<span class="no">577 </span>        Parameters 
+<span class="no">578 </span>        ---------- 
+<span class="no">579 </span>        result : array-like 
+<span class="no">580 </span>        mask : array-like bool 
+<span class="no">581 </span>        other : scalar or array-like 
+<span class="no">582 </span>        op_name : str 
+<span class="no">583 </span>        &quot;&quot;&quot; 
+<span class="no">584 </span> 
+<span class="no">585 </span>        # if we have a float operand we are by-definition 
+<span class="no">586 </span>        # a float result 
+<span class="no">587 </span>        # or our op is a divide 
+<span class="no">588 </span>        if (is_float_dtype(other) or is_float(other)) or ( 
+<span class="no">589 </span>            op_name in [&quot;rtruediv&quot;, &quot;truediv&quot;] 
+<span class="no">590 </span>        ): 
+<span class="no">591 </span>            result[mask] = np.nan 
+<span class="no">592 </span>            return result 
+<span class="no">593 </span> 
+<span class="no">594 </span>        return type(self)(result, mask, copy=False) 
+<span class="no">595 </span> 
+<span class="no">596 </span>    @classmethod 
+<span class="no">597 </span>    def _create_arithmetic_method(cls, op): 
+<span class="no">598 </span>        op_name = op.__name__ 
+<span class="no">599 </span> 
+<span class="no">600 </span>        @unpack_zerodim_and_defer(op.__name__) 
+<span class="no">601 </span>        def integer_arithmetic_method(self, other): 
+<span class="no">602 </span> 
+<span class="no">603 </span>            omask = None 
+<span class="no">604 </span> 
+<span class="no">605 </span>            if getattr(other, &quot;ndim&quot;, 0) &gt; 1: 
+<span class="no">606 </span>                raise NotImplementedError(&quot;can only perform ops with 1-d structures&quot;) 
+<span class="no">607 </span> 
+<span class="no">608 </span>            if isinstance(other, IntegerArray): 
+<span class="no">609 </span>                other, omask = other._data, other._mask 
+<span class="no">610 </span> 
+<span class="no">611 </span>            elif is_list_like(other): 
+<span class="no">612 </span>                other = np.asarray(other) 
+<span class="no">613 </span>                if other.ndim &gt; 1: 
+<span class="no">614 </span>                    raise NotImplementedError( 
+<span class="no">615 </span>                        &quot;can only perform ops with 1-d structures&quot; 
+<span class="no">616 </span>                    ) 
+<span class="no">617 </span>                if len(self) != len(other): 
+<span class="no">618 </span>                    raise ValueError(&quot;Lengths must match&quot;) 
+<span class="no">619 </span>                if not (is_float_dtype(other) or is_integer_dtype(other)): 
+<span class="no">620 </span>                    raise TypeError(&quot;can only perform ops with numeric values&quot;) 
+<span class="no">621 </span> 
+<span class="no">622 </span>            else: 
+<span class="no">623 </span>                if not (is_float(other) or is_integer(other) or other is libmissing.NA): 
+<span class="no">624 </span>                    raise TypeError(&quot;can only perform ops with numeric values&quot;) 
+<span class="no">625 </span> 
+<span class="no">626 </span>            if omask is None: 
+<span class="no">627 </span>                mask = self._mask.copy() 
+<span class="no">628 </span>                if other is libmissing.NA: 
+<span class="no">629 </span>                    mask |= True 
+<span class="no">630 </span>            else: 
+<span class="no">631 </span>                mask = self._mask | omask 
+<span class="no">632 </span> 
+<span class="no">633 </span>            if op_name == &quot;pow&quot;: 
+<span class="no">634 </span>                # 1 ** x is 1. 
+<span class="no">635 </span>                mask = np.where((self._data == 1) &amp; ~self._mask, False, mask) 
+<span class="no">636 </span>                # x ** 0 is 1. 
+<span class="no">637 </span>                if omask is not None: 
+<span class="no">638 </span>                    mask = np.where((other == 0) &amp; ~omask, False, mask) 
+<span class="no">639 </span>                elif other is not libmissing.NA: 
+<span class="no">640 </span>                    mask = np.where(other == 0, False, mask) 
+<span class="no">641 </span> 
+<span class="no">642 </span>            elif op_name == &quot;rpow&quot;: 
+<span class="no">643 </span>                # 1 ** x is 1. 
+<span class="no">644 </span>                if omask is not None: 
+<span class="no">645 </span>                    mask = np.where((other == 1) &amp; ~omask, False, mask) 
+<span class="no">646 </span>                elif other is not libmissing.NA: 
+<span class="no">647 </span>                    mask = np.where(other == 1, False, mask) 
+<span class="no">648 </span>                # x ** 0 is 1. 
+<span class="no">649 </span>                mask = np.where((self._data == 0) &amp; ~self._mask, False, mask) 
+<span class="no">650 </span> 
+<span class="no">651 </span>            if other is libmissing.NA: 
+<span class="no">652 </span>                result = np.ones_like(self._data) 
+<span class="no">653 </span>            else: 
+<span class="no">654 </span>                with np.errstate(all=&quot;ignore&quot;): 
+<span class="no">655 </span>                    result = op(self._data, other) 
+<span class="no">656 </span> 
+<span class="no">657 </span>            # divmod returns a tuple 
+<span class="no">658 </span>            if op_name == &quot;divmod&quot;: 
+<span class="no">659 </span>                div, mod = result 
+<span class="no">660 </span>                return ( 
+<span class="no">661 </span>                    self._maybe_mask_result(div, mask, other, &quot;floordiv&quot;), 
+<span class="no">662 </span>                    self._maybe_mask_result(mod, mask, other, &quot;mod&quot;), 
+<span class="no">663 </span>                ) 
+<span class="no">664 </span> 
+<span class="no">665 </span>            return self._maybe_mask_result(result, mask, other, op_name) 
+<span class="no">666 </span> 
+<span class="no">667 </span>        name = f&quot;__{op.__name__}__&quot; 
+<span class="no">668 </span>        return set_function_name(integer_arithmetic_method, name, cls) 
+<span class="no">669 </span> 
+<span class="no">670 </span> 
+<span class="no">671 </span>IntegerArray._add_arithmetic_ops() 
+<span class="no">672 </span>IntegerArray._add_comparison_ops() 
+<span class="no">673 </span> 
+<span class="no">674 </span> 
+<span class="no">675 </span>_dtype_docstring = &quot;&quot;&quot; 
+<span class="no">676 </span>An ExtensionDtype for {dtype} integer data. 
+<span class="no">677 </span> 
+<span class="no">678 </span>.. versionchanged:: 1.0.0 
+<span class="no">679 </span> 
+<span class="no">680 </span>   Now uses :attr:`pandas.NA` as its missing value, 
+<span class="no">681 </span>   rather than :attr:`numpy.nan`. 
+<span class="no">682 </span> 
+<span class="no">683 </span>Attributes 
+<span class="no">684 </span>---------- 
+<span class="no">685 </span>None 
+<span class="no">686 </span> 
+<span class="no">687 </span>Methods 
+<span class="no">688 </span>------- 
+<span class="no">689 </span>None 
+<span class="no">690 </span>&quot;&quot;&quot; 
+<span class="no">691 </span> 
+<span class="no">692 </span># create the Dtype 
+<span class="no">693 </span>Int8Dtype = register_extension_dtype( 
+<span class="no">694 </span>    type( 
+<span class="no">695 </span>        &quot;Int8Dtype&quot;, 
+<span class="no">696 </span>        (_IntegerDtype,), 
+<span class="no">697 </span>        { 
+<span class="no">698 </span>            &quot;type&quot;: np.int8, 
+<span class="no">699 </span>            &quot;name&quot;: &quot;Int8&quot;, 
+<span class="no">700 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int8&quot;), 
+<span class="no">701 </span>        }, 
+<span class="no">702 </span>    ) 
+<span class="no">703 </span>) 
+<span class="no">704 </span> 
+<span class="no">705 </span>Int16Dtype = register_extension_dtype( 
+<span class="no">706 </span>    type( 
+<span class="no">707 </span>        &quot;Int16Dtype&quot;, 
+<span class="no">708 </span>        (_IntegerDtype,), 
+<span class="no">709 </span>        { 
+<span class="no">710 </span>            &quot;type&quot;: np.int16, 
+<span class="no">711 </span>            &quot;name&quot;: &quot;Int16&quot;, 
+<span class="no">712 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int16&quot;), 
+<span class="no">713 </span>        }, 
+<span class="no">714 </span>    ) 
+<span class="no">715 </span>) 
+<span class="no">716 </span> 
+<span class="no">717 </span>Int32Dtype = register_extension_dtype( 
+<span class="no">718 </span>    type( 
+<span class="no">719 </span>        &quot;Int32Dtype&quot;, 
+<span class="no">720 </span>        (_IntegerDtype,), 
+<span class="no">721 </span>        { 
+<span class="no">722 </span>            &quot;type&quot;: np.int32, 
+<span class="no">723 </span>            &quot;name&quot;: &quot;Int32&quot;, 
+<span class="no">724 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int32&quot;), 
+<span class="no">725 </span>        }, 
+<span class="no">726 </span>    ) 
+<span class="no">727 </span>) 
+<span class="no">728 </span> 
+<span class="no">729 </span>Int64Dtype = register_extension_dtype( 
+<span class="no">730 </span>    type( 
+<span class="no">731 </span>        &quot;Int64Dtype&quot;, 
+<span class="no">732 </span>        (_IntegerDtype,), 
+<span class="no">733 </span>        { 
+<span class="no">734 </span>            &quot;type&quot;: np.int64, 
+<span class="no">735 </span>            &quot;name&quot;: &quot;Int64&quot;, 
+<span class="no">736 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int64&quot;), 
+<span class="no">737 </span>        }, 
+<span class="no">738 </span>    ) 
+<span class="no">739 </span>) 
+<span class="no">740 </span> 
+<span class="no">741 </span>UInt8Dtype = register_extension_dtype( 
+<span class="no">742 </span>    type( 
+<span class="no">743 </span>        &quot;UInt8Dtype&quot;, 
+<span class="no">744 </span>        (_IntegerDtype,), 
+<span class="no">745 </span>        { 
+<span class="no">746 </span>            &quot;type&quot;: np.uint8, 
+<span class="no">747 </span>            &quot;name&quot;: &quot;UInt8&quot;, 
+<span class="no">748 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint8&quot;), 
+<span class="no">749 </span>        }, 
+<span class="no">750 </span>    ) 
+<span class="no">751 </span>) 
+<span class="no">752 </span> 
+<span class="no">753 </span>UInt16Dtype = register_extension_dtype( 
+<span class="no">754 </span>    type( 
+<span class="no">755 </span>        &quot;UInt16Dtype&quot;, 
+<span class="no">756 </span>        (_IntegerDtype,), 
+<span class="no">757 </span>        { 
+<span class="no">758 </span>            &quot;type&quot;: np.uint16, 
+<span class="no">759 </span>            &quot;name&quot;: &quot;UInt16&quot;, 
+<span class="no">760 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint16&quot;), 
+<span class="no">761 </span>        }, 
+<span class="no">762 </span>    ) 
+<span class="no">763 </span>) 
+<span class="no">764 </span> 
+<span class="no">765 </span>UInt32Dtype = register_extension_dtype( 
+<span class="no">766 </span>    type( 
+<span class="no">767 </span>        &quot;UInt32Dtype&quot;, 
+<span class="no">768 </span>        (_IntegerDtype,), 
+<span class="no">769 </span>        { 
+<span class="no">770 </span>            &quot;type&quot;: np.uint32, 
+<span class="no">771 </span>            &quot;name&quot;: &quot;UInt32&quot;, 
+<span class="no">772 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint32&quot;), 
+<span class="no">773 </span>        }, 
+<span class="no">774 </span>    ) 
+<span class="no">775 </span>) 
+<span class="no">776 </span> 
+<span class="no">777 </span>UInt64Dtype = register_extension_dtype( 
+<span class="no">778 </span>    type( 
+<span class="no">779 </span>        &quot;UInt64Dtype&quot;, 
+<span class="no">780 </span>        (_IntegerDtype,), 
+<span class="no">781 </span>        { 
+<span class="no">782 </span>            &quot;type&quot;: np.uint64, 
+<span class="no">783 </span>            &quot;name&quot;: &quot;UInt64&quot;, 
+<span class="no">784 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint64&quot;), 
+<span class="no">785 </span>        }, 
+<span class="no">786 </span>    ) 
+<span class="no">787 </span>) 
+<span class="no">788 </span> 
+<span class="no">789 </span>_dtypes = { 
+<span class="no">790 </span>    &quot;int8&quot;: Int8Dtype(), 
+<span class="no">791 </span>    &quot;int16&quot;: Int16Dtype(), 
+<span class="no">792 </span>    &quot;int32&quot;: Int32Dtype(), 
+<span class="no">793 </span>    &quot;int64&quot;: Int64Dtype(), 
+<span class="no">794 </span>    &quot;uint8&quot;: UInt8Dtype(), 
+<span class="no">795 </span>    &quot;uint16&quot;: UInt16Dtype(), 
+<span class="no">796 </span>    &quot;uint32&quot;: UInt32Dtype(), 
+<span class="no">797 </span>    &quot;uint64&quot;: UInt64Dtype(), 
+<span class="no">798 </span>} 
+<span class="no">799 </span></code></pre></div>
+</div><div class="panel"><div class="panel-header">39_A (modified)</div>
+<div class="codebox"><pre><code><span class="no">  1 </span>import numbers 
+<span class="no">  2 </span>from typing import Any, Tuple, Type 
+<span class="no">  3 </span>import warnings 
+<span class="no">  4 </span> 
+<span class="no">  5 </span>import numpy as np 
+<span class="no">  6 </span> 
+<span class="no">  7 </span>from pandas._libs import lib, missing as libmissing 
+<span class="no">  8 </span>from pandas.compat import set_function_name 
+<span class="no">  9 </span>from pandas.util._decorators import cache_readonly 
+<span class="no"> 10 </span> 
+<span class="no"> 11 </span>from pandas.core.dtypes.base import ExtensionDtype 
+<span class="no"> 12 </span>from pandas.core.dtypes.cast import astype_nansafe 
+<span class="no"> 13 </span>from pandas.core.dtypes.common import ( 
+<span class="no"> 14 </span>    is_bool_dtype<span data-kind="ins" id="edit-1-new"><span class="hl ins" id="hl-1-396">,</span></span> 
+<span class="no"> 15 </span>    is_float<span data-kind="mov" id="edit-2-new"><span class="hl mov" id="hl-2-410">,</span></span> 
+<span class="no"> 16 </span>    is_float_dtype<span data-kind="mov" id="edit-3-new"><span class="hl mov" id="hl-3-430">,</span></span> 
+<span class="no"> 17 </span>    is_integer<span data-kind="mov" id="edit-4-new"><span class="hl mov" id="hl-4-446">,</span></span> 
+<span class="no"> 18 </span>    is_integer_dtype<span data-kind="mov" id="edit-5-new"><span class="hl mov" id="hl-5-468">,</span></span> 
+<span class="no"> 19 </span>    is_list_like<span data-kind="mov" id="edit-6-new"><span class="hl mov" id="hl-6-486">,</span></span> 
+<span class="no"> 20 </span>    is_object_dtype<span data-kind="mov" id="edit-7-new"><span class="hl mov" id="hl-7-507">,</span></span> 
+<span class="no"> 21 </span>    is_scalar<span data-kind="mov" id="edit-8-new"><span class="hl mov" id="hl-8-522">,</span></span> 
+<span class="no"> 22 </span>    <span data-kind="ins" id="edit-9-new"><span class="hl ins" id="hl-9-528">pandas_dtype</span></span>, 
+<span class="no"> 23 </span>) 
+<span class="no"> 24 </span>from pandas.core.dtypes.dtypes import register_extension_dtype 
+<span class="no"> 25 </span>from pandas.core.dtypes.missing import isna 
+<span class="no"> 26 </span> 
+<span class="no"> 27 </span>from pandas.core import nanops, ops 
+<span class="no"> 28 </span>from pandas.core.ops import invalid_comparison 
+<span class="no"> 29 </span>from pandas.core.ops.common import unpack_zerodim_and_defer 
+<span class="no"> 30 </span>from pandas.core.tools.numeric import to_numeric 
+<span class="no"> 31 </span> 
+<span class="no"> 32 </span>from .masked import BaseMaskedArray 
+<span class="no"> 33 </span> 
+<span class="no"> 34 </span> 
+<span class="no"> 35 </span>class _IntegerDtype(ExtensionDtype): 
+<span class="no"> 36 </span>    &quot;&quot;&quot; 
+<span class="no"> 37 </span>    An ExtensionDtype to hold a single size &amp; kind of integer dtype. 
+<span class="no"> 38 </span> 
+<span class="no"> 39 </span>    These specific implementations are subclasses of the non-public 
+<span class="no"> 40 </span>    _IntegerDtype. For example we have Int8Dtype to represent signed int 8s. 
+<span class="no"> 41 </span> 
+<span class="no"> 42 </span>    The attributes name &amp; type are set when these subclasses are created. 
+<span class="no"> 43 </span>    &quot;&quot;&quot; 
+<span class="no"> 44 </span> 
+<span class="no"> 45 </span>    name: str 
+<span class="no"> 46 </span>    base = None 
+<span class="no"> 47 </span>    type: Type 
+<span class="no"> 48 </span>    na_value = libmissing.NA 
+<span class="no"> 49 </span> 
+<span class="no"> 50 </span>    def __repr__(self) -&gt; str: 
+<span class="no"> 51 </span>        sign = &quot;U&quot; if self.is_unsigned_integer else &quot;&quot; 
+<span class="no"> 52 </span>        return f&quot;{sign}Int{8 * self.itemsize}Dtype()&quot; 
+<span class="no"> 53 </span> 
+<span class="no"> 54 </span>    @cache_readonly 
+<span class="no"> 55 </span>    def is_signed_integer(self): 
+<span class="no"> 56 </span>        return self.kind == &quot;i&quot; 
+<span class="no"> 57 </span> 
+<span class="no"> 58 </span>    @cache_readonly 
+<span class="no"> 59 </span>    def is_unsigned_integer(self): 
+<span class="no"> 60 </span>        return self.kind == &quot;u&quot; 
+<span class="no"> 61 </span> 
+<span class="no"> 62 </span>    @property 
+<span class="no"> 63 </span>    def _is_numeric(self): 
+<span class="no"> 64 </span>        return True 
+<span class="no"> 65 </span> 
+<span class="no"> 66 </span>    @cache_readonly 
+<span class="no"> 67 </span>    def numpy_dtype(self): 
+<span class="no"> 68 </span>        &quot;&quot;&quot; Return an instance of our numpy dtype &quot;&quot;&quot; 
+<span class="no"> 69 </span>        return np.dtype(self.type) 
+<span class="no"> 70 </span> 
+<span class="no"> 71 </span>    @cache_readonly 
+<span class="no"> 72 </span>    def kind(self): 
+<span class="no"> 73 </span>        return self.numpy_dtype.kind 
+<span class="no"> 74 </span> 
+<span class="no"> 75 </span>    @cache_readonly 
+<span class="no"> 76 </span>    def itemsize(self): 
+<span class="no"> 77 </span>        &quot;&quot;&quot; Return the number of bytes in this dtype &quot;&quot;&quot; 
+<span class="no"> 78 </span>        return self.numpy_dtype.itemsize 
+<span class="no"> 79 </span> 
+<span class="no"> 80 </span>    @classmethod 
+<span class="no"> 81 </span>    def construct_array_type(cls): 
+<span class="no"> 82 </span>        &quot;&quot;&quot; 
+<span class="no"> 83 </span>        Return the array type associated with this dtype. 
+<span class="no"> 84 </span> 
+<span class="no"> 85 </span>        Returns 
+<span class="no"> 86 </span>        ------- 
+<span class="no"> 87 </span>        type 
+<span class="no"> 88 </span>        &quot;&quot;&quot; 
+<span class="no"> 89 </span>        return IntegerArray 
+<span class="no"> 90 </span> 
+<span class="no"> 91 </span>    def __from_arrow__(self, array): 
+<span class="no"> 92 </span>        &quot;&quot;&quot;Construct IntegerArray from passed pyarrow Array/ChunkedArray&quot;&quot;&quot; 
+<span class="no"> 93 </span>        import pyarrow 
+<span class="no"> 94 </span>        from pandas.core.arrays._arrow_utils import pyarrow_array_to_numpy_and_mask 
+<span class="no"> 95 </span> 
+<span class="no"> 96 </span>        if isinstance(array, pyarrow.Array): 
+<span class="no"> 97 </span>            chunks = [array] 
+<span class="no"> 98 </span>        else: 
+<span class="no"> 99 </span>            # pyarrow.ChunkedArray 
+<span class="no">100 </span>            chunks = array.chunks 
+<span class="no">101 </span> 
+<span class="no">102 </span>        results = [] 
+<span class="no">103 </span>        for arr in chunks: 
+<span class="no">104 </span>            data, mask = pyarrow_array_to_numpy_and_mask(arr, dtype=self.type) 
+<span class="no">105 </span>            int_arr = IntegerArray(data.copy(), ~mask, copy=False) 
+<span class="no">106 </span>            results.append(int_arr) 
+<span class="no">107 </span> 
+<span class="no">108 </span>        return IntegerArray._concat_same_type(results) 
+<span class="no">109 </span> 
+<span class="no">110 </span> 
+<span class="no">111 </span>def integer_array(values, dtype=None, copy=False): 
+<span class="no">112 </span>    &quot;&quot;&quot; 
+<span class="no">113 </span>    Infer and return an integer array of the values. 
+<span class="no">114 </span> 
+<span class="no">115 </span>    Parameters 
+<span class="no">116 </span>    ---------- 
+<span class="no">117 </span>    values : 1D list-like 
+<span class="no">118 </span>    dtype : dtype, optional 
+<span class="no">119 </span>        dtype to coerce 
+<span class="no">120 </span>    copy : bool, default False 
+<span class="no">121 </span> 
+<span class="no">122 </span>    Returns 
+<span class="no">123 </span>    ------- 
+<span class="no">124 </span>    IntegerArray 
+<span class="no">125 </span> 
+<span class="no">126 </span>    Raises 
+<span class="no">127 </span>    ------ 
+<span class="no">128 </span>    TypeError if incompatible types 
+<span class="no">129 </span>    &quot;&quot;&quot; 
+<span class="no">130 </span>    values, mask = coerce_to_array(values, dtype=dtype, copy=copy) 
+<span class="no">131 </span>    return IntegerArray(values, mask) 
+<span class="no">132 </span> 
+<span class="no">133 </span> 
+<span class="no">134 </span>def safe_cast(values, dtype, copy): 
+<span class="no">135 </span>    &quot;&quot;&quot; 
+<span class="no">136 </span>    Safely cast the values to the dtype if they 
+<span class="no">137 </span>    are equivalent, meaning floats must be equivalent to the 
+<span class="no">138 </span>    ints. 
+<span class="no">139 </span> 
+<span class="no">140 </span>    &quot;&quot;&quot; 
+<span class="no">141 </span> 
+<span class="no">142 </span>    try: 
+<span class="no">143 </span>        return values.astype(dtype, casting=&quot;safe&quot;, copy=copy) 
+<span class="no">144 </span>    except TypeError: 
+<span class="no">145 </span> 
+<span class="no">146 </span>        casted = values.astype(dtype, copy=copy) 
+<span class="no">147 </span>        if (casted == values).all(): 
+<span class="no">148 </span>            return casted 
+<span class="no">149 </span> 
+<span class="no">150 </span>        raise TypeError( 
+<span class="no">151 </span>            f&quot;cannot safely cast non-equivalent {values.dtype} to {np.dtype(dtype)}&quot; 
+<span class="no">152 </span>        ) 
+<span class="no">153 </span> 
+<span class="no">154 </span> 
+<span class="no">155 </span>def coerce_to_array(values, dtype, mask=None, copy=False): 
+<span class="no">156 </span>    &quot;&quot;&quot; 
+<span class="no">157 </span>    Coerce the input values array to numpy arrays with a mask 
+<span class="no">158 </span> 
+<span class="no">159 </span>    Parameters 
+<span class="no">160 </span>    ---------- 
+<span class="no">161 </span>    values : 1D list-like 
+<span class="no">162 </span>    dtype : integer dtype 
+<span class="no">163 </span>    mask : bool 1D array, optional 
+<span class="no">164 </span>    copy : bool, default False 
+<span class="no">165 </span>        if True, copy the input 
+<span class="no">166 </span> 
+<span class="no">167 </span>    Returns 
+<span class="no">168 </span>    ------- 
+<span class="no">169 </span>    tuple of (values, mask) 
+<span class="no">170 </span>    &quot;&quot;&quot; 
+<span class="no">171 </span>    # if values is integer numpy array, preserve it&apos;s dtype 
+<span class="no">172 </span>    if dtype is None and hasattr(values, &quot;dtype&quot;): 
+<span class="no">173 </span>        if is_integer_dtype(values.dtype): 
+<span class="no">174 </span>            dtype = values.dtype 
+<span class="no">175 </span> 
+<span class="no">176 </span>    if dtype is not None: 
+<span class="no">177 </span>        if isinstance(dtype, str) and ( 
+<span class="no">178 </span>            dtype.startswith(&quot;Int&quot;) or dtype.startswith(&quot;UInt&quot;) 
+<span class="no">179 </span>        ): 
+<span class="no">180 </span>            # Avoid DeprecationWarning from NumPy about np.dtype(&quot;Int64&quot;) 
+<span class="no">181 </span>            # https://github.com/numpy/numpy/pull/7476 
+<span class="no">182 </span>            dtype = dtype.lower() 
+<span class="no">183 </span> 
+<span class="no">184 </span>        if not issubclass(type(dtype), _IntegerDtype): 
+<span class="no">185 </span>            try: 
+<span class="no">186 </span>                dtype = _dtypes[str(np.dtype(dtype))] 
+<span class="no">187 </span>            except KeyError: 
+<span class="no">188 </span>                raise ValueError(f&quot;invalid dtype specified {dtype}&quot;) 
+<span class="no">189 </span> 
+<span class="no">190 </span>    if isinstance(values, IntegerArray): 
+<span class="no">191 </span>        values, mask = values._data, values._mask 
+<span class="no">192 </span>        if dtype is not None: 
+<span class="no">193 </span>            values = values.astype(dtype.numpy_dtype, copy=False) 
+<span class="no">194 </span> 
+<span class="no">195 </span>        if copy: 
+<span class="no">196 </span>            values = values.copy() 
+<span class="no">197 </span>            mask = mask.copy() 
+<span class="no">198 </span>        return values, mask 
+<span class="no">199 </span> 
+<span class="no">200 </span>    values = np.array(values, copy=copy) 
+<span class="no">201 </span>    if is_object_dtype(values): 
+<span class="no">202 </span>        inferred_type = lib.infer_dtype(values, skipna=True) 
+<span class="no">203 </span>        if inferred_type == &quot;empty&quot;: 
+<span class="no">204 </span>            values = np.empty(len(values)) 
+<span class="no">205 </span>            values.fill(np.nan) 
+<span class="no">206 </span>        elif inferred_type not in [ 
+<span class="no">207 </span>            &quot;floating&quot;, 
+<span class="no">208 </span>            &quot;integer&quot;, 
+<span class="no">209 </span>            &quot;mixed-integer&quot;, 
+<span class="no">210 </span>            &quot;integer-na&quot;, 
+<span class="no">211 </span>            &quot;mixed-integer-float&quot;, 
+<span class="no">212 </span>        ]: 
+<span class="no">213 </span>            raise TypeError(f&quot;{values.dtype} cannot be converted to an IntegerDtype&quot;) 
+<span class="no">214 </span> 
+<span class="no">215 </span>    elif is_bool_dtype(values) and is_integer_dtype(dtype): 
+<span class="no">216 </span>        values = np.array(values, dtype=int, copy=copy) 
+<span class="no">217 </span> 
+<span class="no">218 </span>    elif not (is_integer_dtype(values) or is_float_dtype(values)): 
+<span class="no">219 </span>        raise TypeError(f&quot;{values.dtype} cannot be converted to an IntegerDtype&quot;) 
+<span class="no">220 </span> 
+<span class="no">221 </span>    if mask is None: 
+<span class="no">222 </span>        mask = isna(values) 
+<span class="no">223 </span>    else: 
+<span class="no">224 </span>        assert len(mask) == len(values) 
+<span class="no">225 </span> 
+<span class="no">226 </span>    if not values.ndim == 1: 
+<span class="no">227 </span>        raise TypeError(&quot;values must be a 1D list-like&quot;) 
+<span class="no">228 </span>    if not mask.ndim == 1: 
+<span class="no">229 </span>        raise TypeError(&quot;mask must be a 1D list-like&quot;) 
+<span class="no">230 </span> 
+<span class="no">231 </span>    # infer dtype if needed 
+<span class="no">232 </span>    if dtype is None: 
+<span class="no">233 </span>        dtype = np.dtype(&quot;int64&quot;) 
+<span class="no">234 </span>    else: 
+<span class="no">235 </span>        dtype = dtype.type 
+<span class="no">236 </span> 
+<span class="no">237 </span>    # if we are float, let&apos;s make sure that we can 
+<span class="no">238 </span>    # safely cast 
+<span class="no">239 </span> 
+<span class="no">240 </span>    # we copy as need to coerce here 
+<span class="no">241 </span>    if mask.any(): 
+<span class="no">242 </span>        values = values.copy() 
+<span class="no">243 </span>        values[mask] = 1 
+<span class="no">244 </span>        values = safe_cast(values, dtype, copy=False) 
+<span class="no">245 </span>    else: 
+<span class="no">246 </span>        values = safe_cast(values, dtype, copy=False) 
+<span class="no">247 </span> 
+<span class="no">248 </span>    return values, mask 
+<span class="no">249 </span> 
+<span class="no">250 </span> 
+<span class="no">251 </span>class IntegerArray(BaseMaskedArray): 
+<span class="no">252 </span>    &quot;&quot;&quot; 
+<span class="no">253 </span>    Array of integer (optional missing) values. 
+<span class="no">254 </span> 
+<span class="no">255 </span>    .. versionadded:: 0.24.0 
+<span class="no">256 </span> 
+<span class="no">257 </span>    .. versionchanged:: 1.0.0 
+<span class="no">258 </span> 
+<span class="no">259 </span>       Now uses :attr:`pandas.NA` as the missing value rather 
+<span class="no">260 </span>       than :attr:`numpy.nan`. 
+<span class="no">261 </span> 
+<span class="no">262 </span>    .. warning:: 
+<span class="no">263 </span> 
+<span class="no">264 </span>       IntegerArray is currently experimental, and its API or internal 
+<span class="no">265 </span>       implementation may change without warning. 
+<span class="no">266 </span> 
+<span class="no">267 </span>    We represent an IntegerArray with 2 numpy arrays: 
+<span class="no">268 </span> 
+<span class="no">269 </span>    - data: contains a numpy integer array of the appropriate dtype 
+<span class="no">270 </span>    - mask: a boolean array holding a mask on the data, True is missing 
+<span class="no">271 </span> 
+<span class="no">272 </span>    To construct an IntegerArray from generic array-like input, use 
+<span class="no">273 </span>    :func:`pandas.array` with one of the integer dtypes (see examples). 
+<span class="no">274 </span> 
+<span class="no">275 </span>    See :ref:`integer_na` for more. 
+<span class="no">276 </span> 
+<span class="no">277 </span>    Parameters 
+<span class="no">278 </span>    ---------- 
+<span class="no">279 </span>    values : numpy.ndarray 
+<span class="no">280 </span>        A 1-d integer-dtype array. 
+<span class="no">281 </span>    mask : numpy.ndarray 
+<span class="no">282 </span>        A 1-d boolean-dtype array indicating missing values. 
+<span class="no">283 </span>    copy : bool, default False 
+<span class="no">284 </span>        Whether to copy the `values` and `mask`. 
+<span class="no">285 </span> 
+<span class="no">286 </span>    Attributes 
+<span class="no">287 </span>    ---------- 
+<span class="no">288 </span>    None 
+<span class="no">289 </span> 
+<span class="no">290 </span>    Methods 
+<span class="no">291 </span>    ------- 
+<span class="no">292 </span>    None 
+<span class="no">293 </span> 
+<span class="no">294 </span>    Returns 
+<span class="no">295 </span>    ------- 
+<span class="no">296 </span>    IntegerArray 
+<span class="no">297 </span> 
+<span class="no">298 </span>    Examples 
+<span class="no">299 </span>    -------- 
+<span class="no">300 </span>    Create an IntegerArray with :func:`pandas.array`. 
+<span class="no">301 </span> 
+<span class="no">302 </span>    &gt;&gt;&gt; int_array = pd.array([1, None, 3], dtype=pd.Int32Dtype()) 
+<span class="no">303 </span>    &gt;&gt;&gt; int_array 
+<span class="no">304 </span>    &lt;IntegerArray&gt; 
+<span class="no">305 </span>    [1, &lt;NA&gt;, 3] 
+<span class="no">306 </span>    Length: 3, dtype: Int32 
+<span class="no">307 </span> 
+<span class="no">308 </span>    String aliases for the dtypes are also available. They are capitalized. 
+<span class="no">309 </span> 
+<span class="no">310 </span>    &gt;&gt;&gt; pd.array([1, None, 3], dtype=&apos;Int32&apos;) 
+<span class="no">311 </span>    &lt;IntegerArray&gt; 
+<span class="no">312 </span>    [1, &lt;NA&gt;, 3] 
+<span class="no">313 </span>    Length: 3, dtype: Int32 
+<span class="no">314 </span> 
+<span class="no">315 </span>    &gt;&gt;&gt; pd.array([1, None, 3], dtype=&apos;UInt16&apos;) 
+<span class="no">316 </span>    &lt;IntegerArray&gt; 
+<span class="no">317 </span>    [1, &lt;NA&gt;, 3] 
+<span class="no">318 </span>    Length: 3, dtype: UInt16 
+<span class="no">319 </span>    &quot;&quot;&quot; 
+<span class="no">320 </span> 
+<span class="no">321 </span>    # The value used to fill &apos;_data&apos; to avoid upcasting 
+<span class="no">322 </span>    _internal_fill_value = 1 
+<span class="no">323 </span> 
+<span class="no">324 </span>    @cache_readonly 
+<span class="no">325 </span>    def dtype(self): 
+<span class="no">326 </span>        return _dtypes[str(self._data.dtype)] 
+<span class="no">327 </span> 
+<span class="no">328 </span>    def __init__(self, values, mask, copy=False): 
+<span class="no">329 </span>        if not (isinstance(values, np.ndarray) and is_integer_dtype(values.dtype)): 
+<span class="no">330 </span>            raise TypeError( 
+<span class="no">331 </span>                &quot;values should be integer numpy array. Use &quot; 
+<span class="no">332 </span>                &quot;the &apos;integer_array&apos; function instead&quot; 
+<span class="no">333 </span>            ) 
+<span class="no">334 </span>        if not (isinstance(mask, np.ndarray) and is_bool_dtype(mask.dtype)): 
+<span class="no">335 </span>            raise TypeError( 
+<span class="no">336 </span>                &quot;mask should be boolean numpy array. Use &quot; 
+<span class="no">337 </span>                &quot;the &apos;integer_array&apos; function instead&quot; 
+<span class="no">338 </span>            ) 
+<span class="no">339 </span> 
+<span class="no">340 </span>        if copy: 
+<span class="no">341 </span>            values = values.copy() 
+<span class="no">342 </span>            mask = mask.copy() 
+<span class="no">343 </span> 
+<span class="no">344 </span>        self._data = values 
+<span class="no">345 </span>        self._mask = mask 
+<span class="no">346 </span> 
+<span class="no">347 </span>    @classmethod 
+<span class="no">348 </span>    def _from_sequence(cls, scalars, dtype=None, copy=False): 
+<span class="no">349 </span>        return integer_array(scalars, dtype=dtype, copy=copy) 
+<span class="no">350 </span> 
+<span class="no">351 </span>    @classmethod 
+<span class="no">352 </span>    def _from_sequence_of_strings(cls, strings, dtype=None, copy=False): 
+<span class="no">353 </span>        scalars = to_numeric(strings, errors=&quot;raise&quot;) 
+<span class="no">354 </span>        return cls._from_sequence(scalars, dtype, copy) 
+<span class="no">355 </span> 
+<span class="no">356 </span>    @classmethod 
+<span class="no">357 </span>    def _from_factorized(cls, values, original): 
+<span class="no">358 </span>        return integer_array(values, dtype=original.dtype) 
+<span class="no">359 </span> 
+<span class="no">360 </span>    _HANDLED_TYPES = (np.ndarray, numbers.Number) 
+<span class="no">361 </span> 
+<span class="no">362 </span>    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs): 
+<span class="no">363 </span>        # For IntegerArray inputs, we apply the ufunc to ._data 
+<span class="no">364 </span>        # and mask the result. 
+<span class="no">365 </span>        if method == &quot;reduce&quot;: 
+<span class="no">366 </span>            # Not clear how to handle missing values in reductions. Raise. 
+<span class="no">367 </span>            raise NotImplementedError(&quot;The &apos;reduce&apos; method is not supported.&quot;) 
+<span class="no">368 </span>        out = kwargs.get(&quot;out&quot;, ()) 
+<span class="no">369 </span> 
+<span class="no">370 </span>        for x in inputs + out: 
+<span class="no">371 </span>            if not isinstance(x, self._HANDLED_TYPES + (IntegerArray,)): 
+<span class="no">372 </span>                return NotImplemented 
+<span class="no">373 </span> 
+<span class="no">374 </span>        # for binary ops, use our custom dunder methods 
+<span class="no">375 </span>        result = ops.maybe_dispatch_ufunc_to_dunder_op( 
+<span class="no">376 </span>            self, ufunc, method, *inputs, **kwargs 
+<span class="no">377 </span>        ) 
+<span class="no">378 </span>        if result is not NotImplemented: 
+<span class="no">379 </span>            return result 
+<span class="no">380 </span> 
+<span class="no">381 </span>        mask = np.zeros(len(self), dtype=bool) 
+<span class="no">382 </span>        inputs2 = [] 
+<span class="no">383 </span>        for x in inputs: 
+<span class="no">384 </span>            if isinstance(x, IntegerArray): 
+<span class="no">385 </span>                mask |= x._mask 
+<span class="no">386 </span>                inputs2.append(x._data) 
+<span class="no">387 </span>            else: 
+<span class="no">388 </span>                inputs2.append(x) 
+<span class="no">389 </span> 
+<span class="no">390 </span>        def reconstruct(x): 
+<span class="no">391 </span>            # we don&apos;t worry about scalar `x` here, since we 
+<span class="no">392 </span>            # raise for reduce up above. 
+<span class="no">393 </span> 
+<span class="no">394 </span>            if is_integer_dtype(x.dtype): 
+<span class="no">395 </span>                m = mask.copy() 
+<span class="no">396 </span>                return IntegerArray(x, m) 
+<span class="no">397 </span>            else: 
+<span class="no">398 </span>                x[mask] = np.nan 
+<span class="no">399 </span>            return x 
+<span class="no">400 </span> 
+<span class="no">401 </span>        result = getattr(ufunc, method)(*inputs2, **kwargs) 
+<span class="no">402 </span>        if isinstance(result, tuple): 
+<span class="no">403 </span>            tuple(reconstruct(x) for x in result) 
+<span class="no">404 </span>        else: 
+<span class="no">405 </span>            return reconstruct(result) 
+<span class="no">406 </span> 
+<span class="no">407 </span>    def __setitem__(self, key, value): 
+<span class="no">408 </span>        _is_scalar = is_scalar(value) 
+<span class="no">409 </span>        if _is_scalar: 
+<span class="no">410 </span>            value = [value] 
+<span class="no">411 </span>        value, mask = coerce_to_array(value, dtype=self.dtype) 
+<span class="no">412 </span> 
+<span class="no">413 </span>        if _is_scalar: 
+<span class="no">414 </span>            value = value[0] 
+<span class="no">415 </span>            mask = mask[0] 
+<span class="no">416 </span> 
+<span class="no">417 </span>        self._data[key] = value 
+<span class="no">418 </span>        self._mask[key] = mask 
+<span class="no">419 </span> 
+<span class="no">420 </span>    def astype(self, dtype, copy=True): 
+<span class="no">421 </span>        &quot;&quot;&quot; 
+<span class="no">422 </span>        Cast to a NumPy array or IntegerArray with &apos;dtype&apos;. 
+<span class="no">423 </span> 
+<span class="no">424 </span>        Parameters 
+<span class="no">425 </span>        ---------- 
+<span class="no">426 </span>        dtype : str or dtype 
+<span class="no">427 </span>            Typecode or data-type to which the array is cast. 
+<span class="no">428 </span>        copy : bool, default True 
+<span class="no">429 </span>            Whether to copy the data, even if not necessary. If False, 
+<span class="no">430 </span>            a copy is made only if the old dtype does not match the 
+<span class="no">431 </span>            new dtype. 
+<span class="no">432 </span> 
+<span class="no">433 </span>        Returns 
+<span class="no">434 </span>        ------- 
+<span class="no">435 </span>        array : ndarray or IntegerArray 
+<span class="no">436 </span>            NumPy ndarray or IntergerArray with &apos;dtype&apos; for its dtype. 
+<span class="no">437 </span> 
+<span class="no">438 </span>        Raises 
+<span class="no">439 </span>        ------ 
+<span class="no">440 </span>        TypeError 
+<span class="no">441 </span>            if incompatible type with an IntegerDtype, equivalent of same_kind 
+<span class="no">442 </span>            casting 
+<span class="no">443 </span>        &quot;&quot;&quot; 
+<span class="no">444 </span>        <span data-kind="ins" id="edit-10-new"><span class="hl ins" id="hl-10-12449">from pandas.core.arrays.boolean import BooleanArray, BooleanDtype</span></span> 
+<span class="no">445 </span> 
+<span class="no">446 </span>        <span data-kind="ins" id="edit-11-new"><span class="hl ins" id="hl-11-12524">dtype = pandas_dtype(dtype)</span></span> 
+<span class="no">447 </span> 
+<span class="no">448 </span>        # if we are astyping to an existing IntegerDtype we can fastpath 
+<span class="no">449 </span>        if isinstance(dtype, _IntegerDtype): 
+<span class="no">450 </span>            result = self._data.astype(dtype.numpy_dtype, copy=False) 
+<span class="no">451 </span>            return type(self)(result, mask=self._mask, copy=False) 
+<span class="no">452 </span>        <span data-kind="ins" id="edit-12-new"><span class="hl ins" id="hl-12-12816">elif isinstance(dtype, BooleanDtype): 
+<span class="no">453 </span>            result = self._data.astype(&quot;bool&quot;, copy=False) 
+<span class="no">454 </span>            return BooleanArray(result, mask=self._mask, copy=False)</span></span> 
+<span class="no">455 </span> 
+<span class="no">456 </span>        # coerce 
+<span class="no">457 </span>        if is_float_dtype(dtype): 
+<span class="no">458 </span>            # In astype, we consider dtype=float to also mean na_value=np.nan 
+<span class="no">459 </span>            kwargs = dict(na_value=np.nan) 
+<span class="no">460 </span>        else: 
+<span class="no">461 </span>            kwargs = {} 
+<span class="no">462 </span> 
+<span class="no">463 </span>        data = self.to_numpy(dtype=dtype, **kwargs) 
+<span class="no">464 </span>        return astype_nansafe(data, dtype, copy=False) 
+<span class="no">465 </span> 
+<span class="no">466 </span>    @property 
+<span class="no">467 </span>    def _ndarray_values(self) -&gt; np.ndarray: 
+<span class="no">468 </span>        &quot;&quot;&quot;Internal pandas method for lossy conversion to a NumPy ndarray. 
+<span class="no">469 </span> 
+<span class="no">470 </span>        This method is not part of the pandas interface. 
+<span class="no">471 </span> 
+<span class="no">472 </span>        The expectation is that this is cheap to compute, and is primarily 
+<span class="no">473 </span>        used for interacting with our indexers. 
+<span class="no">474 </span>        &quot;&quot;&quot; 
+<span class="no">475 </span>        return self._data 
+<span class="no">476 </span> 
+<span class="no">477 </span>    def _values_for_factorize(self) -&gt; Tuple[np.ndarray, Any]: 
+<span class="no">478 </span>        # TODO: https://github.com/pandas-dev/pandas/issues/30037 
+<span class="no">479 </span>        # use masked algorithms, rather than object-dtype / np.nan. 
+<span class="no">480 </span>        return self.to_numpy(na_value=np.nan), np.nan 
+<span class="no">481 </span> 
+<span class="no">482 </span>    def _values_for_argsort(self) -&gt; np.ndarray: 
+<span class="no">483 </span>        &quot;&quot;&quot;Return values for sorting. 
+<span class="no">484 </span> 
+<span class="no">485 </span>        Returns 
+<span class="no">486 </span>        ------- 
+<span class="no">487 </span>        ndarray 
+<span class="no">488 </span>            The transformed values should maintain the ordering between values 
+<span class="no">489 </span>            within the array. 
+<span class="no">490 </span> 
+<span class="no">491 </span>        See Also 
+<span class="no">492 </span>        -------- 
+<span class="no">493 </span>        ExtensionArray.argsort 
+<span class="no">494 </span>        &quot;&quot;&quot; 
+<span class="no">495 </span>        data = self._data.copy() 
+<span class="no">496 </span>        data[self._mask] = data.min() - 1 
+<span class="no">497 </span>        return data 
+<span class="no">498 </span> 
+<span class="no">499 </span>    @classmethod 
+<span class="no">500 </span>    def _create_comparison_method(cls, op): 
+<span class="no">501 </span>        op_name = op.__name__ 
+<span class="no">502 </span> 
+<span class="no">503 </span>        @unpack_zerodim_and_defer(op.__name__) 
+<span class="no">504 </span>        def cmp_method(self, other): 
+<span class="no">505 </span>            from pandas.arrays import BooleanArray 
+<span class="no">506 </span> 
+<span class="no">507 </span>            mask = None 
+<span class="no">508 </span> 
+<span class="no">509 </span>            if isinstance(other, (BooleanArray, IntegerArray)): 
+<span class="no">510 </span>                other, mask = other._data, other._mask 
+<span class="no">511 </span> 
+<span class="no">512 </span>            elif is_list_like(other): 
+<span class="no">513 </span>                other = np.asarray(other) 
+<span class="no">514 </span>                if other.ndim &gt; 1: 
+<span class="no">515 </span>                    raise NotImplementedError( 
+<span class="no">516 </span>                        &quot;can only perform ops with 1-d structures&quot; 
+<span class="no">517 </span>                    ) 
+<span class="no">518 </span>                if len(self) != len(other): 
+<span class="no">519 </span>                    raise ValueError(&quot;Lengths must match to compare&quot;) 
+<span class="no">520 </span> 
+<span class="no">521 </span>            if other is libmissing.NA: 
+<span class="no">522 </span>                # numpy does not handle pd.NA well as &quot;other&quot; scalar (it returns 
+<span class="no">523 </span>                # a scalar False instead of an array) 
+<span class="no">524 </span>                # This may be fixed by NA.__array_ufunc__. Revisit this check 
+<span class="no">525 </span>                # once that&apos;s implemented. 
+<span class="no">526 </span>                result = np.zeros(self._data.shape, dtype=&quot;bool&quot;) 
+<span class="no">527 </span>                mask = np.ones(self._data.shape, dtype=&quot;bool&quot;) 
+<span class="no">528 </span>            else: 
+<span class="no">529 </span>                with warnings.catch_warnings(): 
+<span class="no">530 </span>                    # numpy may show a FutureWarning: 
+<span class="no">531 </span>                    #     elementwise comparison failed; returning scalar instead, 
+<span class="no">532 </span>                    #     but in the future will perform elementwise comparison 
+<span class="no">533 </span>                    # before returning NotImplemented. We fall back to the correct 
+<span class="no">534 </span>                    # behavior today, so that should be fine to ignore. 
+<span class="no">535 </span>                    warnings.filterwarnings(&quot;ignore&quot;, &quot;elementwise&quot;, FutureWarning) 
+<span class="no">536 </span>                    with np.errstate(all=&quot;ignore&quot;): 
+<span class="no">537 </span>                        method = getattr(self._data, f&quot;__{op_name}__&quot;) 
+<span class="no">538 </span>                        result = method(other) 
+<span class="no">539 </span> 
+<span class="no">540 </span>                    if result is NotImplemented: 
+<span class="no">541 </span>                        result = invalid_comparison(self._data, other, op) 
+<span class="no">542 </span> 
+<span class="no">543 </span>            # nans propagate 
+<span class="no">544 </span>            if mask is None: 
+<span class="no">545 </span>                mask = self._mask.copy() 
+<span class="no">546 </span>            else: 
+<span class="no">547 </span>                mask = self._mask | mask 
+<span class="no">548 </span> 
+<span class="no">549 </span>            return BooleanArray(result, mask) 
+<span class="no">550 </span> 
+<span class="no">551 </span>        name = f&quot;__{op.__name__}__&quot; 
+<span class="no">552 </span>        return set_function_name(cmp_method, name, cls) 
+<span class="no">553 </span> 
+<span class="no">554 </span>    def _reduce(self, name, skipna=True, **kwargs): 
+<span class="no">555 </span>        data = self._data 
+<span class="no">556 </span>        mask = self._mask 
+<span class="no">557 </span> 
+<span class="no">558 </span>        # coerce to a nan-aware float if needed 
+<span class="no">559 </span>        # (we explicitly use NaN within reductions) 
+<span class="no">560 </span>        if self._hasna: 
+<span class="no">561 </span>            data = self.to_numpy(&quot;float64&quot;, na_value=np.nan) 
+<span class="no">562 </span> 
+<span class="no">563 </span>        op = getattr(nanops, &quot;nan&quot; + name) 
+<span class="no">564 </span>        result = op(data, axis=0, skipna=skipna, mask=mask, **kwargs) 
+<span class="no">565 </span> 
+<span class="no">566 </span>        if np.isnan(result): 
+<span class="no">567 </span>            return libmissing.NA 
+<span class="no">568 </span> 
+<span class="no">569 </span>        # if we have a boolean op, don&apos;t coerce 
+<span class="no">570 </span>        if name in [&quot;any&quot;, &quot;all&quot;]: 
+<span class="no">571 </span>            pass 
+<span class="no">572 </span> 
+<span class="no">573 </span>        # if we have a preservable numeric op, 
+<span class="no">574 </span>        # provide coercion back to an integer type if possible 
+<span class="no">575 </span>        elif name in [&quot;sum&quot;, &quot;min&quot;, &quot;max&quot;, &quot;prod&quot;]: 
+<span class="no">576 </span>            int_result = int(result) 
+<span class="no">577 </span>            if int_result == result: 
+<span class="no">578 </span>                result = int_result 
+<span class="no">579 </span> 
+<span class="no">580 </span>        return result 
+<span class="no">581 </span> 
+<span class="no">582 </span>    def _maybe_mask_result(self, result, mask, other, op_name): 
+<span class="no">583 </span>        &quot;&quot;&quot; 
+<span class="no">584 </span>        Parameters 
+<span class="no">585 </span>        ---------- 
+<span class="no">586 </span>        result : array-like 
+<span class="no">587 </span>        mask : array-like bool 
+<span class="no">588 </span>        other : scalar or array-like 
+<span class="no">589 </span>        op_name : str 
+<span class="no">590 </span>        &quot;&quot;&quot; 
+<span class="no">591 </span> 
+<span class="no">592 </span>        # if we have a float operand we are by-definition 
+<span class="no">593 </span>        # a float result 
+<span class="no">594 </span>        # or our op is a divide 
+<span class="no">595 </span>        if (is_float_dtype(other) or is_float(other)) or ( 
+<span class="no">596 </span>            op_name in [&quot;rtruediv&quot;, &quot;truediv&quot;] 
+<span class="no">597 </span>        ): 
+<span class="no">598 </span>            result[mask] = np.nan 
+<span class="no">599 </span>            return result 
+<span class="no">600 </span> 
+<span class="no">601 </span>        return type(self)(result, mask, copy=False) 
+<span class="no">602 </span> 
+<span class="no">603 </span>    @classmethod 
+<span class="no">604 </span>    def _create_arithmetic_method(cls, op): 
+<span class="no">605 </span>        op_name = op.__name__ 
+<span class="no">606 </span> 
+<span class="no">607 </span>        @unpack_zerodim_and_defer(op.__name__) 
+<span class="no">608 </span>        def integer_arithmetic_method(self, other): 
+<span class="no">609 </span> 
+<span class="no">610 </span>            omask = None 
+<span class="no">611 </span> 
+<span class="no">612 </span>            if getattr(other, &quot;ndim&quot;, 0) &gt; 1: 
+<span class="no">613 </span>                raise NotImplementedError(&quot;can only perform ops with 1-d structures&quot;) 
+<span class="no">614 </span> 
+<span class="no">615 </span>            if isinstance(other, IntegerArray): 
+<span class="no">616 </span>                other, omask = other._data, other._mask 
+<span class="no">617 </span> 
+<span class="no">618 </span>            elif is_list_like(other): 
+<span class="no">619 </span>                other = np.asarray(other) 
+<span class="no">620 </span>                if other.ndim &gt; 1: 
+<span class="no">621 </span>                    raise NotImplementedError( 
+<span class="no">622 </span>                        &quot;can only perform ops with 1-d structures&quot; 
+<span class="no">623 </span>                    ) 
+<span class="no">624 </span>                if len(self) != len(other): 
+<span class="no">625 </span>                    raise ValueError(&quot;Lengths must match&quot;) 
+<span class="no">626 </span>                if not (is_float_dtype(other) or is_integer_dtype(other)): 
+<span class="no">627 </span>                    raise TypeError(&quot;can only perform ops with numeric values&quot;) 
+<span class="no">628 </span> 
+<span class="no">629 </span>            else: 
+<span class="no">630 </span>                if not (is_float(other) or is_integer(other) or other is libmissing.NA): 
+<span class="no">631 </span>                    raise TypeError(&quot;can only perform ops with numeric values&quot;) 
+<span class="no">632 </span> 
+<span class="no">633 </span>            if omask is None: 
+<span class="no">634 </span>                mask = self._mask.copy() 
+<span class="no">635 </span>                if other is libmissing.NA: 
+<span class="no">636 </span>                    mask |= True 
+<span class="no">637 </span>            else: 
+<span class="no">638 </span>                mask = self._mask | omask 
+<span class="no">639 </span> 
+<span class="no">640 </span>            if op_name == &quot;pow&quot;: 
+<span class="no">641 </span>                # 1 ** x is 1. 
+<span class="no">642 </span>                mask = np.where((self._data == 1) &amp; ~self._mask, False, mask) 
+<span class="no">643 </span>                # x ** 0 is 1. 
+<span class="no">644 </span>                if omask is not None: 
+<span class="no">645 </span>                    mask = np.where((other == 0) &amp; ~omask, False, mask) 
+<span class="no">646 </span>                elif other is not libmissing.NA: 
+<span class="no">647 </span>                    mask = np.where(other == 0, False, mask) 
+<span class="no">648 </span> 
+<span class="no">649 </span>            elif op_name == &quot;rpow&quot;: 
+<span class="no">650 </span>                # 1 ** x is 1. 
+<span class="no">651 </span>                if omask is not None: 
+<span class="no">652 </span>                    mask = np.where((other == 1) &amp; ~omask, False, mask) 
+<span class="no">653 </span>                elif other is not libmissing.NA: 
+<span class="no">654 </span>                    mask = np.where(other == 1, False, mask) 
+<span class="no">655 </span>                # x ** 0 is 1. 
+<span class="no">656 </span>                mask = np.where((self._data == 0) &amp; ~self._mask, False, mask) 
+<span class="no">657 </span> 
+<span class="no">658 </span>            if other is libmissing.NA: 
+<span class="no">659 </span>                result = np.ones_like(self._data) 
+<span class="no">660 </span>            else: 
+<span class="no">661 </span>                with np.errstate(all=&quot;ignore&quot;): 
+<span class="no">662 </span>                    result = op(self._data, other) 
+<span class="no">663 </span> 
+<span class="no">664 </span>            # divmod returns a tuple 
+<span class="no">665 </span>            if op_name == &quot;divmod&quot;: 
+<span class="no">666 </span>                div, mod = result 
+<span class="no">667 </span>                return ( 
+<span class="no">668 </span>                    self._maybe_mask_result(div, mask, other, &quot;floordiv&quot;), 
+<span class="no">669 </span>                    self._maybe_mask_result(mod, mask, other, &quot;mod&quot;), 
+<span class="no">670 </span>                ) 
+<span class="no">671 </span> 
+<span class="no">672 </span>            return self._maybe_mask_result(result, mask, other, op_name) 
+<span class="no">673 </span> 
+<span class="no">674 </span>        name = f&quot;__{op.__name__}__&quot; 
+<span class="no">675 </span>        return set_function_name(integer_arithmetic_method, name, cls) 
+<span class="no">676 </span> 
+<span class="no">677 </span> 
+<span class="no">678 </span>IntegerArray._add_arithmetic_ops() 
+<span class="no">679 </span>IntegerArray._add_comparison_ops() 
+<span class="no">680 </span> 
+<span class="no">681 </span> 
+<span class="no">682 </span>_dtype_docstring = &quot;&quot;&quot; 
+<span class="no">683 </span>An ExtensionDtype for {dtype} integer data. 
+<span class="no">684 </span> 
+<span class="no">685 </span>.. versionchanged:: 1.0.0 
+<span class="no">686 </span> 
+<span class="no">687 </span>   Now uses :attr:`pandas.NA` as its missing value, 
+<span class="no">688 </span>   rather than :attr:`numpy.nan`. 
+<span class="no">689 </span> 
+<span class="no">690 </span>Attributes 
+<span class="no">691 </span>---------- 
+<span class="no">692 </span>None 
+<span class="no">693 </span> 
+<span class="no">694 </span>Methods 
+<span class="no">695 </span>------- 
+<span class="no">696 </span>None 
+<span class="no">697 </span>&quot;&quot;&quot; 
+<span class="no">698 </span> 
+<span class="no">699 </span># create the Dtype 
+<span class="no">700 </span>Int8Dtype = register_extension_dtype( 
+<span class="no">701 </span>    type( 
+<span class="no">702 </span>        &quot;Int8Dtype&quot;, 
+<span class="no">703 </span>        (_IntegerDtype,), 
+<span class="no">704 </span>        { 
+<span class="no">705 </span>            &quot;type&quot;: np.int8, 
+<span class="no">706 </span>            &quot;name&quot;: &quot;Int8&quot;, 
+<span class="no">707 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int8&quot;), 
+<span class="no">708 </span>        }, 
+<span class="no">709 </span>    ) 
+<span class="no">710 </span>) 
+<span class="no">711 </span> 
+<span class="no">712 </span>Int16Dtype = register_extension_dtype( 
+<span class="no">713 </span>    type( 
+<span class="no">714 </span>        &quot;Int16Dtype&quot;, 
+<span class="no">715 </span>        (_IntegerDtype,), 
+<span class="no">716 </span>        { 
+<span class="no">717 </span>            &quot;type&quot;: np.int16, 
+<span class="no">718 </span>            &quot;name&quot;: &quot;Int16&quot;, 
+<span class="no">719 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int16&quot;), 
+<span class="no">720 </span>        }, 
+<span class="no">721 </span>    ) 
+<span class="no">722 </span>) 
+<span class="no">723 </span> 
+<span class="no">724 </span>Int32Dtype = register_extension_dtype( 
+<span class="no">725 </span>    type( 
+<span class="no">726 </span>        &quot;Int32Dtype&quot;, 
+<span class="no">727 </span>        (_IntegerDtype,), 
+<span class="no">728 </span>        { 
+<span class="no">729 </span>            &quot;type&quot;: np.int32, 
+<span class="no">730 </span>            &quot;name&quot;: &quot;Int32&quot;, 
+<span class="no">731 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int32&quot;), 
+<span class="no">732 </span>        }, 
+<span class="no">733 </span>    ) 
+<span class="no">734 </span>) 
+<span class="no">735 </span> 
+<span class="no">736 </span>Int64Dtype = register_extension_dtype( 
+<span class="no">737 </span>    type( 
+<span class="no">738 </span>        &quot;Int64Dtype&quot;, 
+<span class="no">739 </span>        (_IntegerDtype,), 
+<span class="no">740 </span>        { 
+<span class="no">741 </span>            &quot;type&quot;: np.int64, 
+<span class="no">742 </span>            &quot;name&quot;: &quot;Int64&quot;, 
+<span class="no">743 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;int64&quot;), 
+<span class="no">744 </span>        }, 
+<span class="no">745 </span>    ) 
+<span class="no">746 </span>) 
+<span class="no">747 </span> 
+<span class="no">748 </span>UInt8Dtype = register_extension_dtype( 
+<span class="no">749 </span>    type( 
+<span class="no">750 </span>        &quot;UInt8Dtype&quot;, 
+<span class="no">751 </span>        (_IntegerDtype,), 
+<span class="no">752 </span>        { 
+<span class="no">753 </span>            &quot;type&quot;: np.uint8, 
+<span class="no">754 </span>            &quot;name&quot;: &quot;UInt8&quot;, 
+<span class="no">755 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint8&quot;), 
+<span class="no">756 </span>        }, 
+<span class="no">757 </span>    ) 
+<span class="no">758 </span>) 
+<span class="no">759 </span> 
+<span class="no">760 </span>UInt16Dtype = register_extension_dtype( 
+<span class="no">761 </span>    type( 
+<span class="no">762 </span>        &quot;UInt16Dtype&quot;, 
+<span class="no">763 </span>        (_IntegerDtype,), 
+<span class="no">764 </span>        { 
+<span class="no">765 </span>            &quot;type&quot;: np.uint16, 
+<span class="no">766 </span>            &quot;name&quot;: &quot;UInt16&quot;, 
+<span class="no">767 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint16&quot;), 
+<span class="no">768 </span>        }, 
+<span class="no">769 </span>    ) 
+<span class="no">770 </span>) 
+<span class="no">771 </span> 
+<span class="no">772 </span>UInt32Dtype = register_extension_dtype( 
+<span class="no">773 </span>    type( 
+<span class="no">774 </span>        &quot;UInt32Dtype&quot;, 
+<span class="no">775 </span>        (_IntegerDtype,), 
+<span class="no">776 </span>        { 
+<span class="no">777 </span>            &quot;type&quot;: np.uint32, 
+<span class="no">778 </span>            &quot;name&quot;: &quot;UInt32&quot;, 
+<span class="no">779 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint32&quot;), 
+<span class="no">780 </span>        }, 
+<span class="no">781 </span>    ) 
+<span class="no">782 </span>) 
+<span class="no">783 </span> 
+<span class="no">784 </span>UInt64Dtype = register_extension_dtype( 
+<span class="no">785 </span>    type( 
+<span class="no">786 </span>        &quot;UInt64Dtype&quot;, 
+<span class="no">787 </span>        (_IntegerDtype,), 
+<span class="no">788 </span>        { 
+<span class="no">789 </span>            &quot;type&quot;: np.uint64, 
+<span class="no">790 </span>            &quot;name&quot;: &quot;UInt64&quot;, 
+<span class="no">791 </span>            &quot;__doc__&quot;: _dtype_docstring.format(dtype=&quot;uint64&quot;), 
+<span class="no">792 </span>        }, 
+<span class="no">793 </span>    ) 
+<span class="no">794 </span>) 
+<span class="no">795 </span> 
+<span class="no">796 </span>_dtypes = { 
+<span class="no">797 </span>    &quot;int8&quot;: Int8Dtype(), 
+<span class="no">798 </span>    &quot;int16&quot;: Int16Dtype(), 
+<span class="no">799 </span>    &quot;int32&quot;: Int32Dtype(), 
+<span class="no">800 </span>    &quot;int64&quot;: Int64Dtype(), 
+<span class="no">801 </span>    &quot;uint8&quot;: UInt8Dtype(), 
+<span class="no">802 </span>    &quot;uint16&quot;: UInt16Dtype(), 
+<span class="no">803 </span>    &quot;uint32&quot;: UInt32Dtype(), 
+<span class="no">804 </span>    &quot;uint64&quot;: UInt64Dtype(), 
+<span class="no">805 </span>} 
+<span class="no">806 </span></code></pre></div>
+</div></div></div>
+</body>
+</html>
