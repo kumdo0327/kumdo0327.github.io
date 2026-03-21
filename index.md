@@ -1,5 +1,5 @@
 ---
-title: Homepage of Kim Dong-Uk
+title: Homepage of Kim, Dong-uk
 ---
 
 ## Profile
