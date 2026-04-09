@@ -15,7 +15,7 @@ Integrated M.S. & Ph.D. Student,
 
 ## Education
 - Mar 2025 - present
-  - **Ph.D.Student** in Computer Science and Engineering, Korea University  
+  - **Ph.D. Student** in Computer Science and Engineering, Korea University  
     Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
 - Mar 2024 - Feb 2025
   - **M.S. Student** in Computer Science and Engineering, Korea University  
