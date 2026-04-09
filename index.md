@@ -1,5 +1,5 @@
 ---
-title: Homepage of Kim, Dong-uk
+title: Kim, Dong-uk
 ---
 
 ## Profile
@@ -32,10 +32,14 @@ Integrated M.S. & Ph.D. Student,
     [[artifact](https://doi.org/10.5281/zenodo.14920999)]
     [[repo](https://github.com/kupl/PAFL)]
 
+## Honors & Awards
+- Dean's List (Academic Excellence Award), Korea University, Fall 2022
+
+## Experiences
+- Teaching Assistant for Data Structure (COSE213), Korea University, Fall 2024
+- Teaching Assistant for Software Verification (COSE419), Korea University, Spring 2024
+- Undergraduate Intern in [Software Analysis Lab](https://prl.korea.ac.kr), Dec 2022 - Feb 2024
+
 ## Talks
 - "PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns"  
-  Paper presentation at [OOPSLA 2025](https://2025.splashcon.org/track/OOPSLA). Singapore. October 16 2025
-
-## Teaching experiences
-- Teaching Assistant, Data Structure (COSE213), Korea University, Fall 2024
-- Teaching Assistant, Software Verification (COSE419), Korea University, Spring 2024
+  Paper presentation at [OOPSLA 2025](https://2025.splashcon.org/track/OOPSLA). Singapore. October 16, 2025
