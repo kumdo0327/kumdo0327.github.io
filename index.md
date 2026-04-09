@@ -7,7 +7,9 @@ Integrated M.S. & Ph.D. Student,
   [Software Analysis Lab](https://prl.korea.ac.kr),
   [Korea University](https://www.korea.edu)
 - Email: donguk_kim@korea.ac.kr
-- [GitHub](https://github.com/kumdo0327), [ORCID](https://orcid.org/0009-0009-7531-3654)
+- [GitHub](https://github.com/kumdo0327),
+  [ORCID](https://orcid.org/0009-0009-7531-3654),
+  [Google Scholar](https://scholar.google.com/citations?user=d6XiM3IAAAAJ&hl=ko&oi=sra)
 
 ## Research Interests
 - Software Maintenance and Evolution
