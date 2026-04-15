@@ -16,14 +16,14 @@ Integrated M.S. & Ph.D. Student,
 - Program Comprehension
 
 ## Education
-- Mar 2025 - present
+- Mar 2025 -- present
   - **Ph.D. Student** in Computer Science and Engineering, Korea University  
     Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
-- Mar 2024 - Feb 2025
+- Mar 2024 -- Feb 2025
   - **M.S. Student** in Computer Science and Engineering, Korea University  
     (Transferred to Ph.D. program)  
     Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
-- Mar 2020 - Feb 2024
+- Mar 2020 -- Feb 2024
   - **B.S.** in Computer Science and Engineering, Korea University  
     GPA: 4.31/4.50
 
