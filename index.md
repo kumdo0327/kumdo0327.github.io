@@ -41,7 +41,7 @@ Integrated M.S. & Ph.D. Student,
 ## Experiences
 - Teaching Assistant for Data Structure (COSE213), Korea University, Fall 2024
 - Teaching Assistant for Software Verification (COSE419), Korea University, Spring 2024
-- Undergraduate Intern in [Software Analysis Lab](https://prl.korea.ac.kr), Dec 2022 - Feb 2024
+- Undergraduate Intern in [Software Analysis Lab](https://prl.korea.ac.kr), Dec 2022 -- Feb 2024
 
 ## Talks
 - "PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns"  
