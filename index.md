@@ -28,9 +28,9 @@ Integrated M.S. & Ph.D. Student,
     GPA: 4.31/4.50
 
 ## Publications
-- [OOPSLA'25]
+- [OOPSLA'25]  
   **PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns**  
-  <U>[Donguk Kim](https://kumdo0327.github.io)</U>, [Minseok Jeon](https://dgistpl.github.io/members/minseok.jeon/)<sup>†</sup>, Doha Hwang, [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)<sup>†</sup> (<sup>†</sup>corresponding authors).  
+  [<U>Donguk Kim</U>](https://kumdo0327.github.io), [Minseok Jeon](https://dgistpl.github.io/members/minseok.jeon/)<sup>†</sup>, Doha Hwang, [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)<sup>†</sup> (<sup>†</sup>corresponding authors).  
   [paper: [pdf](papers/OOPSLA'25_PAFL.pdf), [doi](https://doi.org/10.1145/3720526)]
   [[artifact](https://doi.org/10.5281/zenodo.14920999)]
   [[repo](https://github.com/kupl/PAFL)]
