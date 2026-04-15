@@ -24,8 +24,7 @@ Integrated M.S. & Ph.D. Student,
     (Transferred to Ph.D. program)  
     Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
 - Mar 2020 -- Feb 2024
-  - **B.S.** in Computer Science and Engineering, Korea University  
-    GPA: 4.31/4.50
+  - **B.S.** in Computer Science and Engineering, Korea University
 
 ## Publications
 - [OOPSLA'25]  
@@ -34,9 +33,6 @@ Integrated M.S. & Ph.D. Student,
   [paper: [pdf](papers/OOPSLA'25_PAFL.pdf), [doi](https://doi.org/10.1145/3720526)]
   [[artifact](https://doi.org/10.5281/zenodo.14920999)]
   [[repo](https://github.com/kupl/PAFL)]
-
-## Honors & Awards
-- Dean's List (Academic Excellence Award), Korea University, Fall 2022
 
 ## Experiences
 - Teaching Assistant for Data Structure (COSE213), Korea University, Fall 2024
