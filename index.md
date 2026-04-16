@@ -16,7 +16,6 @@ particularly developing algorithms to analyze software change history and debug 
 ## Education
 - Mar 2024 -- present
   - **Ph.D. Student** in Computer Science and Engineering, Korea University  
-    Advisor: Prof. [Hakjoo Oh](https://prl.korea.ac.kr/members/hakjoo-oh/)
 - Mar 2020 -- Feb 2024
   - **B.S.** in Computer Science and Engineering, Korea University
 
