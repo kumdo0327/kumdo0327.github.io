@@ -2,18 +2,16 @@
 title: Kim, Dong-uk
 ---
 
-## Profile
-Integrated M.S. & Ph.D. Student,
-  [Software Analysis Lab](https://prl.korea.ac.kr),
-  [Korea University](https://www.korea.edu)
-- Email: donguk_kim@korea.ac.kr
-- [GitHub](https://github.com/kumdo0327),
-  [ORCID](https://orcid.org/0009-0009-7531-3654),
-  [Google Scholar](https://scholar.google.com/citations?user=d6XiM3IAAAAJ)
+## 김동욱 (Donguk Kim)
+I am an integrated M.S./Ph.D. student, a member of [Software Analysis Lab](https://prl.korea.ac.kr).
+My research focuses on Software Maintenance and Evolution,
+particularly developing algorithms to analyze software change history and debug evolving software.
 
-## Research Interests
-- Software Maintenance and Evolution
-- Program Comprehension
+- Email: donguk_kim@korea.ac.kr
+- [CV](static/CV.pdf),
+  [ORCID](https://orcid.org/0009-0009-7531-3654),
+  [Google Scholar](https://scholar.google.com/citations?user=d6XiM3IAAAAJ),
+  [GitHub](https://github.com/kumdo0327)
 
 ## Education
 - Mar 2024 -- present
@@ -25,8 +23,8 @@ Integrated M.S. & Ph.D. Student,
 ## Publications
 - [OOPSLA'25]  
   **PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns**  
-  <U>Donguk Kim</U>, Minseok Jeon<sup>†</sup>, Doha Hwang, Hakjoo Oh<sup>†</sup> (<sup>†</sup>corresponding authors)  
-  [paper: [pdf](papers/OOPSLA'25_PAFL.pdf), [doi](https://doi.org/10.1145/3720526)]
+  <U>Donguk Kim</U>, Minseok Jeon<sup>†</sup>, Doha Hwang, Hakjoo Oh<sup>†</sup>
+  [paper: [pdf](static/papers/OOPSLA'25_PAFL.pdf), [doi](https://doi.org/10.1145/3720526)]
   [[artifact](https://doi.org/10.5281/zenodo.14920999)]
   [[repo](https://github.com/kupl/PAFL)]
 
