@@ -1,0 +1,23 @@
+---
+---
+
+@import "minimal-light";
+
+// Show the profile photo uncropped (landscape) instead of a circle
+.image.avatar,
+.image.avatar img {
+  border-radius: 8px;
+}
+
+.image.avatar img {
+  width: 100%;
+  max-width: 280px;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+@media screen and (max-width: 480px) {
+  .image.avatar img {
+    max-width: 200px;
+  }
+}
