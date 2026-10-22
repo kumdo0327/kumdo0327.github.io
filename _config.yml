@@ -1,1 +1,24 @@
-theme: jekyll-theme-cayman
+# Theme: https://github.com/yaoyao-liu/minimal-light (pinned to a commit)
+remote_theme: yaoyao-liu/minimal-light@dd114c3fef2d97adc1c6b6d46901e0d96ab83a7c
+
+# Sidebar
+title: 김동욱 (Donguk&nbsp;Kim)
+position: Ph.D. Student
+affiliation: Software Analysis Lab, Korea&nbsp;University
+affiliation_link: https://prl.korea.ac.kr
+email: donguk_kim@korea.ac.kr
+
+# Links (sidebar icons)
+google_scholar: https://scholar.google.com/citations?user=d6XiM3IAAAAJ
+cv_link: static/CV.pdf
+github_link: https://github.com/kumdo0327
+
+# SEO
+description: Donguk Kim, Ph.D. student in the Software Analysis Lab at Korea University.
+
+# Profile image
+avatar: static/profile.jpg
+
+# Appearance
+auto_dark_mode: true
+enable_footnote: true
