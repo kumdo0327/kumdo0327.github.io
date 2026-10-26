@@ -21,7 +21,7 @@ particularly developing algorithms to analyze software change history and debug 
 
 - [OOPSLA'25]  
   **PAFL: Enhancing Fault Localizers by Leveraging Project-Specific Fault Patterns**  
-  <U>Donguk Kim</U>, Minseok Jeon, Doha Hwang, Hakjoo Oh
+  **<U>Donguk Kim</U>**, Minseok Jeon, Doha Hwang, Hakjoo Oh  
   [paper: [pdf](static/papers/OOPSLA'25_PAFL.pdf), [doi](https://doi.org/10.1145/3720526)]
   [[artifact](https://doi.org/10.5281/zenodo.14920999)]
   [[repo](https://github.com/kupl/PAFL)]
