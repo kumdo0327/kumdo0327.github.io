@@ -9,15 +9,30 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         integrity="sha384-GIdEBaqGN9mNkDkMkzMHW8EKUqtpPIe/sLj1X7DIrnc9uPtLROJgmuDlh+3rBw0j" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
-  <!-- Pins the PDF.js build that js/app.js imports; update both together. -->
-  <script type="importmap">
+  <script>
+    // GitHub Pages lets browsers keep each file for 10 minutes, so right after a
+    // deploy this page could load next to scripts from the previous version. The
+    // module URLs carry the page's own Last-Modified date, which every deploy
+    // changes, so the page and its scripts always come from the same version.
     {
-      "integrity": {
-        "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.5.438/build/pdf.min.mjs": "sha384-6MTG6VynDVMfHzijur0VKc9BdrA6HaXHZd+pK6iGWh2acDj3CibR0CRwHizMoy1N"
+      const version = Date.parse(document.lastModified) || Date.now();
+      const imports = {};
+      for (const name of ['app', 'segment', 'llm', 'translate', 'store']) {
+        imports[`./js/${name}.js`] = `./js/${name}.js?v=${version}`;
       }
+      const map = document.createElement('script');
+      map.type = 'importmap';
+      map.textContent = JSON.stringify({
+        imports,
+        // Pins the PDF.js build that js/app.js imports; update both together.
+        integrity: {
+          'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.5.438/build/pdf.min.mjs': 'sha384-6MTG6VynDVMfHzijur0VKc9BdrA6HaXHZd+pK6iGWh2acDj3CibR0CRwHizMoy1N',
+        },
+      });
+      document.currentScript.after(map);
     }
   </script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module">import './js/app.js';</script>
 </head>
 <body>
   <header class="topbar">
@@ -37,6 +52,7 @@
     </div>
     <span id="status" class="status" aria-live="polite"></span>
     <button id="translate" class="btn primary" type="button" disabled>번역 시작</button>
+    <button id="glossary-btn" class="btn" type="button" aria-controls="glossary" aria-expanded="false" disabled>용어집</button>
     <button id="settings-btn" class="btn icon-btn" type="button" aria-label="설정" title="설정">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -65,11 +81,24 @@
     <div id="pages" class="pages"></div>
   </main>
 
+  <aside id="glossary" class="glossary" aria-labelledby="glossary-title" hidden>
+    <div class="glossary-head">
+      <h2 id="glossary-title">용어집</h2>
+      <span id="glossary-count" class="glossary-count"></span>
+      <span class="spacer"></span>
+      <button id="glossary-copy" class="btn small" type="button" hidden>복사</button>
+      <button id="glossary-make" class="btn small" type="button">용어집 만들기</button>
+      <button id="glossary-close" class="btn small icon-btn" type="button" aria-label="용어집 닫기">×</button>
+    </div>
+    <div id="glossary-body" class="glossary-body"></div>
+  </aside>
+
   <div id="tip" class="tip" role="tooltip" hidden>
     <div class="tip-head">
       <span id="tip-meta"></span>
       <span class="tip-hint">클릭하면 고정</span>
       <span class="tip-actions">
+        <button id="tip-redo" type="button">다시 번역</button>
         <button id="tip-copy" type="button">복사</button>
         <button id="tip-close" type="button" aria-label="닫기">닫기</button>
       </span>

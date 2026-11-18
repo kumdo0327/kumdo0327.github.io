@@ -29,6 +29,7 @@ const ui = {
   tip: $('tip'),
   tipMeta: $('tip-meta'),
   tipBody: $('tip-body'),
+  tipRedo: $('tip-redo'),
   toast: $('toast'),
   dropOverlay: $('drop-overlay'),
   dialog: $('settings'),
@@ -98,6 +99,9 @@ async function openFile(file) {
     keys: new Map(), // paragraph id -> cache key
     translations: new Map(),
     partial: new Map(), // translations still streaming in
+    glossary: null, // [{term, translation, note}] once built
+    glossaryKey: '',
+    glossaryBusy: false,
   };
   for (let i = 1; i <= pdf.numPages; i++) {
     const proxy = await pdf.getPage(i);
@@ -155,6 +159,7 @@ function closeDocument() {
   ui.empty.hidden = false;
   document.title = 'EasyPaper';
   updateProgress();
+  renderGlossary();
 }
 
 // ---------------------------------------------------------------- rendering
@@ -267,9 +272,9 @@ function drawBoxes() {
 }
 
 function paint(id) {
-  const state = doc.translations.has(id) ? 'done'
-    : translator?.working.has(id) ? 'working'
+  const state = translator?.working.has(id) ? 'working'
     : translator?.pending.has(id) ? 'queued'
+    : doc.translations.has(id) ? 'done'
     : '';
   for (const box of doc.boxes.get(id) || []) box.dataset.state = state;
 }
@@ -288,29 +293,64 @@ async function loadCachedTranslations() {
   const current = doc;
   const language = settings.language;
   const keys = await Promise.all(current.paragraphs.map(p => store.cacheKey(language, p.text)));
-  const cached = await store.getCached(keys);
+  // The glossary belongs to the whole paper, so its key covers every paragraph.
+  const glossaryKey = await store.cacheKey(language, `glossary\n${current.paragraphs.map(p => p.text).join('\n')}`);
+  const [glossary, ...cached] = await store.getCached([glossaryKey, ...keys]);
   if (doc !== current) return;
+  current.glossaryKey = glossaryKey;
+  current.glossary = glossary || null;
   current.paragraphs.forEach((p, i) => {
     current.keys.set(p.id, keys[i]);
     if (cached[i]) current.translations.set(p.id, cached[i]);
   });
   paintAll();
+  renderGlossary();
 }
 
-async function startTranslation() {
-  if (!doc || translator) return;
+/**
+ * Translates the paragraphs not done yet, building the glossary first if there
+ * is none. `only` translates just those paragraphs (again), with the glossary as
+ * it is; `glossaryOnly` (re)builds the glossary and translates nothing.
+ */
+async function startTranslation({ only = null, glossaryOnly = false } = {}) {
+  if (!doc) return;
   if (!isReady()) {
     openSettings();
     toast('먼저 API 키와 모델을 입력하세요.');
     return;
   }
+  if (translator) {
+    if (only) translator.add(only);
+    return;
+  }
   const current = doc;
-  const todo = current.paragraphs.filter(p => !current.translations.has(p.id));
-  if (!todo.length) return;
+  const todo = glossaryOnly ? [] : only ?? current.paragraphs.filter(p => !current.translations.has(p.id));
+  const needGlossary = glossaryOnly || (!only && !current.glossary);
+  if (!todo.length && !needGlossary) return;
 
-  const run = new Translator({ paragraphs: todo, title: current.title, settings });
+  const run = new Translator({
+    paragraphs: todo,
+    title: current.title,
+    settings,
+    glossary: needGlossary ? null : current.glossary,
+    glossarySource: needGlossary ? current.paragraphs : null,
+  });
   translator = run;
   run.focus(currentPage());
+  run.addEventListener('glossarystart', () => {
+    current.glossaryBusy = true;
+    renderGlossary();
+    updateProgress();
+  });
+  run.addEventListener('glossary', ({ detail }) => {
+    current.glossaryBusy = false;
+    if (detail) {
+      current.glossary = detail;
+      store.putCached(current.glossaryKey, detail);
+    }
+    renderGlossary();
+    updateProgress();
+  });
   run.addEventListener('partial', ({ detail }) => {
     current.partial.set(detail.id, detail.text);
     if (tipId === detail.id) fillTip();
@@ -335,10 +375,12 @@ async function startTranslation() {
 
   await run.run();
   if (translator === run) translator = null;
+  current.glossaryBusy = false;
   if (doc === current) {
     current.partial.clear();
     paintAll();
     updateProgress();
+    renderGlossary();
     if (tipId) fillTip();
   }
 }
@@ -349,10 +391,33 @@ function stopTranslation() {
   translator = null;
   if (doc) {
     doc.partial.clear();
+    doc.glossaryBusy = false;
     paintAll();
+    renderGlossary();
   }
   updateProgress();
 }
+
+/** Starts over: drops this paper's translations and glossary, then translates everything again. */
+async function retranslateAll() {
+  if (!doc || translator) return;
+  if (!isReady()) {
+    openSettings();
+    toast('먼저 API 키와 모델을 입력하세요.');
+    return;
+  }
+  if (!confirm('이 논문의 모든 문단과 용어집을 새로 번역합니다. API 비용이 다시 듭니다. 계속할까요?')) return;
+  const current = doc;
+  await store.deleteCached([current.glossaryKey, ...current.keys.values()]);
+  if (doc !== current) return;
+  current.translations.clear();
+  current.glossary = null;
+  paintAll();
+  renderGlossary();
+  startTranslation();
+}
+
+const allTranslated = () => Boolean(doc?.paragraphs.length) && doc.translations.size >= doc.paragraphs.length;
 
 function updateProgress() {
   const total = doc?.paragraphs.length || 0;
@@ -362,12 +427,14 @@ function updateProgress() {
   if (translator) {
     ui.translate.textContent = '중지';
     ui.translate.disabled = false;
-    setStatus(`번역 중 ${done}/${total}`);
+    setStatus(doc?.glossaryBusy ? '용어집 만드는 중…' : `번역 중 ${done}/${total}`);
   } else {
-    ui.translate.textContent = total && done >= total ? '번역 완료' : done ? '이어서 번역' : '번역 시작';
-    ui.translate.disabled = !total || done >= total;
+    ui.translate.textContent = allTranslated() ? '전체 다시 번역' : done ? '이어서 번역' : '번역 시작';
+    ui.translate.disabled = !total;
     setStatus(total ? `번역 ${done}/${total}` : '');
   }
+  $('glossary-btn').disabled = !doc;
+  $('glossary-make').disabled = Boolean(translator);
   ui.keyState.textContent = isReady()
     ? `${PROVIDERS[settings.provider].label} · ${settings.models[settings.provider]} 사용`
     : 'API 키를 아직 입력하지 않았습니다.';
@@ -414,11 +481,14 @@ function pin(box) {
 function fillTip() {
   const para = doc?.byId.get(tipId);
   if (!para) return;
-  const text = doc.translations.get(tipId) || doc.partial.get(tipId);
+  const text = doc.partial.get(tipId) || doc.translations.get(tipId);
+  const busy = Boolean(translator?.pending.has(tipId));
   ui.tipBody.textContent = text || tipStatus(tipId);
   ui.tipBody.classList.toggle('muted', !text);
-  ui.tip.classList.toggle('streaming', Boolean(text) && !doc.translations.has(tipId));
-  ui.tipMeta.textContent = `${para.page + 1}쪽`;
+  ui.tip.classList.toggle('streaming', doc.partial.has(tipId));
+  ui.tipMeta.textContent = `${para.page + 1}쪽${busy && doc.translations.has(tipId) ? ' · 다시 번역하는 중…' : ''}`;
+  ui.tipRedo.textContent = doc.translations.has(tipId) ? '다시 번역' : '번역하기';
+  ui.tipRedo.disabled = busy;
   placeTip();
 }
 
@@ -504,6 +574,11 @@ $('tip-copy').addEventListener('click', async () => {
 });
 
 $('tip-close').addEventListener('click', hideTip);
+
+ui.tipRedo.addEventListener('click', () => {
+  const para = doc?.byId.get(tipId);
+  if (para) startTranslation({ only: [para] });
+});
 
 // ---------------------------------------------------------------- settings
 
@@ -624,10 +699,12 @@ $('clear-cache').addEventListener('click', async () => {
   if (doc) {
     stopTranslation();
     doc.translations.clear();
+    doc.glossary = null;
     paintAll();
     updateProgress();
+    renderGlossary();
   }
-  toast('저장된 번역을 모두 지웠습니다.');
+  toast('저장된 번역과 용어집을 모두 지웠습니다.');
 });
 
 $('language').replaceChildren(...store.LANGUAGES.map(([value, label]) => new Option(label, value)));
@@ -639,6 +716,65 @@ $('provider').replaceChildren(...[['main', '주요 제공자'], ['compatible', '
   for (const [id, p] of Object.entries(PROVIDERS)) if (p.group === group) optgroup.append(new Option(p.label, id));
   return optgroup;
 }));
+
+// ---------------------------------------------------------------- glossary
+
+function renderGlossary() {
+  const entries = doc?.glossary;
+  const busy = Boolean(doc?.glossaryBusy);
+  $('glossary-count').textContent = entries?.length ? `${entries.length}개` : '';
+  $('glossary-copy').hidden = !entries?.length || busy;
+  $('glossary-make').hidden = !doc || busy;
+  $('glossary-make').textContent = entries ? '다시 만들기' : '용어집 만들기';
+  const body = $('glossary-body');
+  if (!doc) body.replaceChildren(glossaryMessage('PDF를 열면 그 논문의 용어집을 볼 수 있습니다.'));
+  else if (busy) body.replaceChildren(glossaryMessage('논문 전체에서 핵심 용어를 정리하는 중…'));
+  else if (!entries) {
+    body.replaceChildren(glossaryMessage('아직 용어집이 없습니다. ‘번역 시작’을 누르면 먼저 논문 전체에서 핵심 용어를 정리하고, 모든 문단을 이 용어에 맞춰 번역합니다.'));
+  } else if (!entries.length) body.replaceChildren(glossaryMessage('정리할 용어를 찾지 못했습니다.'));
+  else body.replaceChildren(...entries.map(glossaryItem));
+}
+
+const glossaryMessage = text => Object.assign(document.createElement('p'), { className: 'glossary-message', textContent: text });
+
+function glossaryItem({ term, translation, note }) {
+  const item = document.createElement('div');
+  item.className = 'term';
+  const head = document.createElement('div');
+  head.className = 'term-head';
+  head.append(
+    Object.assign(document.createElement('span'), { className: 'term-src', textContent: term }),
+    Object.assign(document.createElement('span'), { className: 'term-dst', textContent: translation }),
+  );
+  item.append(head);
+  if (note) item.append(Object.assign(document.createElement('p'), { className: 'term-note', textContent: note }));
+  return item;
+}
+
+function toggleGlossary(open) {
+  $('glossary').hidden = !open;
+  $('glossary-btn').setAttribute('aria-expanded', String(open));
+  // On wide screens the panel takes room from the pages instead of covering them.
+  document.body.classList.toggle('glossary-open', open);
+  if (open) renderGlossary();
+  if (doc && fitWidth) applyZoom(fitZoom());
+  else placeTip();
+}
+
+$('glossary-btn').addEventListener('click', () => toggleGlossary($('glossary').hidden));
+$('glossary-close').addEventListener('click', () => toggleGlossary(false));
+$('glossary-make').addEventListener('click', () => startTranslation({ glossaryOnly: true }));
+
+$('glossary-copy').addEventListener('click', async () => {
+  // Tab-separated, so it pastes into a spreadsheet as columns.
+  const text = (doc?.glossary || []).map(g => [g.term, g.translation, g.note].filter(Boolean).join('\t')).join('\n');
+  try {
+    await navigator.clipboard.writeText(text);
+    toast('용어집을 복사했습니다.');
+  } catch {
+    toast('복사하지 못했습니다.', { error: true });
+  }
+});
 
 // ---------------------------------------------------------------- misc UI
 
@@ -664,7 +800,11 @@ ui.fileInput.addEventListener('change', () => {
   ui.fileInput.value = '';
 });
 
-ui.translate.addEventListener('click', () => (translator ? stopTranslation() : startTranslation()));
+ui.translate.addEventListener('click', () => {
+  if (translator) stopTranslation();
+  else if (allTranslated()) retranslateAll();
+  else startTranslation();
+});
 
 $('zoom-in').addEventListener('click', () => {
   fitWidth = false;

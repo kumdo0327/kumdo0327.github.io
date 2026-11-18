@@ -1,12 +1,20 @@
-// Sends paragraphs to the model page by page and hands translations back as they stream in.
+// Sends paragraphs to the model page by page and hands translations back as
+// they stream in. A full run first asks for a glossary of the paper's key terms,
+// and every page is then translated with it, so a term reads the same throughout.
 
 import { streamCompletion } from './llm.js';
 
 const MAX_BATCH_CHARS = 6000;
 const CONCURRENCY = 3;
+const GLOSSARY_SOURCE_CHARS = 120_000; // paper text sent when building the glossary
 const MARKER = /\[\[\s*(p\d+)\s*\]\]/g;
 
-export function buildPrompt(paragraphs, { title, language, notes }) {
+const readerNotes = notes => (notes.trim() ? `\n\nInstructions from the reader, which take precedence:\n${notes.trim()}` : '');
+
+export function buildPrompt(paragraphs, { title, language, notes, glossary }) {
+  const terms = glossary?.length
+    ? `\n\nUse these translations of the paper's key terms throughout:\n${glossary.map(g => `- ${g.term}: ${g.translation}`).join('\n')}`
+    : '';
   const system = `You translate academic papers. Translate each paragraph you are given into ${language}.
 
 - Translate faithfully and completely in a natural academic register. Do not summarize, explain or add notes.
@@ -17,10 +25,49 @@ export function buildPrompt(paragraphs, { title, language, notes }) {
 [[p1]]
 (translation of p1)
 [[p2]]
-(translation of p2)${notes.trim() ? `\n\nInstructions from the reader, which take precedence:\n${notes.trim()}` : ''}`;
+(translation of p2)${terms}${readerNotes(notes)}`;
 
   const prompt = (title ? `Paper: ${title}\n\n` : '') + paragraphs.map(p => `[[${p.id}]]\n${p.text}`).join('\n\n');
   return { system, prompt };
+}
+
+/** Asks for the paper's key terms, each with its translation and a short note. */
+export async function makeGlossary({ paragraphs, title, settings, signal }) {
+  const { provider, keys, models, baseUrls, language, notes } = settings;
+  const system = `You build a glossary for readers of an academic paper.
+
+- Pick the paper's key technical terms, at most 30: concepts, methods, named models and datasets, metrics. Skip everyday words.
+- Give each the established ${language} translation used in the field. If the field usually keeps the English term, keep it.
+- Add a short note, under 20 words, on what the term means in this paper. Write the notes entirely in ${language}.
+- Reply with only a JSON array, in order of first appearance:
+[{"term": "...", "translation": "...", "note": "..."}]${readerNotes(notes)}`;
+  const text = paragraphs.map(p => p.text).join('\n\n').slice(0, GLOSSARY_SOURCE_CHARS);
+  const reply = await streamCompletion({
+    provider,
+    apiKey: keys[provider],
+    model: models[provider],
+    baseUrl: baseUrls[provider],
+    system,
+    prompt: (title ? `Paper: ${title}\n\n` : '') + text,
+    signal,
+    onText: () => {},
+  });
+  return parseGlossary(reply);
+}
+
+/** The entries of a glossary reply, allowing for code fences or words around the JSON. */
+export function parseGlossary(reply) {
+  let items;
+  try {
+    items = JSON.parse(reply.slice(reply.indexOf('['), reply.lastIndexOf(']') + 1));
+  } catch {
+    throw new Error('용어집 응답을 읽지 못했습니다.');
+  }
+  const seen = new Set();
+  return (Array.isArray(items) ? items : [])
+    .filter(g => typeof g?.term === 'string' && typeof g?.translation === 'string')
+    .map(g => ({ term: g.term.trim(), translation: g.translation.trim(), note: typeof g.note === 'string' ? g.note.trim() : '' }))
+    .filter(g => g.term && g.translation && !seen.has(g.term.toLowerCase()) && seen.add(g.term.toLowerCase()));
 }
 
 /** Splits a streamed reply into paragraphs by their [[pN]] markers. */
@@ -70,20 +117,27 @@ const clean = text => text.replace(/^```\w*$/gm, '').trim();
 
 /**
  * Translates paragraphs in batches of one page (or less, for dense pages),
- * a few at a time, starting near the page in focus.
+ * a few at a time, starting near the page in focus. Given the whole paper as
+ * `glossarySource` and no glossary, it builds the glossary first.
  *
- * Events: "partial" and "done" ({id, text}), "progress", "error" ({message, fatal}).
+ * Events: "partial" and "done" ({id, text}), "progress", "error" ({message, fatal}),
+ * "glossarystart", and "glossary" (the entries, or null if none could be built).
  */
 export class Translator extends EventTarget {
-  constructor({ paragraphs, title, settings }) {
+  constructor({ paragraphs, title, settings, glossary = null, glossarySource = null }) {
     super();
     this.title = title;
     this.settings = structuredClone(settings); // later edits in the settings dialog don't affect a run
+    this.glossary = glossary;
+    this.glossarySource = glossarySource;
     this.queue = makeBatches(paragraphs);
     this.pending = new Set(paragraphs.map(p => p.id));
     this.working = new Set();
     this.focusPage = 0;
     this.abort = new AbortController();
+    this.started = false;
+    this.workers = 0;
+    this.finished = new Promise(resolve => (this.finish = resolve));
   }
 
   focus(page) {
@@ -92,12 +146,35 @@ export class Translator extends EventTarget {
 
   /** Resolves when every paragraph is translated or given up on, or after stop(). */
   async run() {
-    await Promise.all(Array.from({ length: CONCURRENCY }, () => this.worker()));
+    if (this.glossarySource && !this.glossary) await this.buildGlossary();
+    this.started = true;
+    this.spawn();
+    return this.finished;
+  }
+
+  /** Queues more paragraphs while the run goes on, such as one to translate again. */
+  add(paragraphs) {
+    const fresh = paragraphs.filter(p => !this.pending.has(p.id));
+    for (const p of fresh) this.pending.add(p.id);
+    this.queue.push(...makeBatches(fresh));
+    if (this.started) this.spawn();
+    this.emit('progress');
   }
 
   stop() {
     this.abort.abort();
     this.queue = [];
+    this.finish();
+  }
+
+  spawn() {
+    while (!this.abort.signal.aborted && this.workers < CONCURRENCY && this.queue.length) {
+      this.workers++;
+      this.worker().finally(() => {
+        if (--this.workers === 0) this.finish();
+      });
+    }
+    if (this.workers === 0) this.finish();
   }
 
   async worker() {
@@ -106,6 +183,28 @@ export class Translator extends EventTarget {
       if (!batch) return;
       await this.translate(batch);
     }
+  }
+
+  async buildGlossary() {
+    this.emit('glossarystart');
+    try {
+      this.glossary = await makeGlossary({
+        paragraphs: this.glossarySource,
+        title: this.title,
+        settings: this.settings,
+        signal: this.abort.signal,
+      });
+    } catch (err) {
+      if (this.abort.signal.aborted) return;
+      if (err.fatal) {
+        this.stop();
+        this.emit('error', { message: err.message, fatal: true });
+      } else {
+        const rest = this.queue.length ? ' 용어집 없이 번역합니다.' : '';
+        this.emit('error', { message: `용어집을 만들지 못했습니다: ${err.message}${rest}`, fatal: false });
+      }
+    }
+    this.emit('glossary', this.glossary);
   }
 
   /** The waiting batch closest to the page being read, the next page before the previous one. */
@@ -119,7 +218,7 @@ export class Translator extends EventTarget {
 
   async translate(batch) {
     const { provider, keys, models, baseUrls, language, notes } = this.settings;
-    const { system, prompt } = buildPrompt(batch.paras, { title: this.title, language, notes });
+    const { system, prompt } = buildPrompt(batch.paras, { title: this.title, language, notes, glossary: this.glossary });
     const parser = new MarkerParser(batch.paras.map(p => p.id));
     for (const p of batch.paras) this.working.add(p.id);
     this.emit('progress');

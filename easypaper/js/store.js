@@ -119,6 +119,16 @@ export async function putCached(key, value) {
   conn?.transaction('translations', 'readwrite').objectStore('translations').put(value, key);
 }
 
+export async function deleteCached(keys) {
+  const conn = await db();
+  if (!conn || !keys.length) return;
+  await new Promise(resolve => {
+    const tx = conn.transaction('translations', 'readwrite');
+    for (const key of keys) tx.objectStore('translations').delete(key);
+    tx.oncomplete = tx.onerror = tx.onabort = resolve;
+  });
+}
+
 export async function clearCache() {
   const conn = await db();
   if (!conn) return;
