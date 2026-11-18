@@ -44,7 +44,13 @@ let loadCount = 0;
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const pct = (v, total) => `${(v / total) * 100}%`;
-const hasKey = () => Boolean(settings.keys[settings.provider]?.trim());
+const isCompatible = id => PROVIDERS[id].group === 'compatible';
+
+/** A key, a model and, for OpenAI-compatible APIs, an address are all filled in. */
+function isReady() {
+  const id = settings.provider;
+  return Boolean(settings.keys[id]?.trim() && settings.models[id]?.trim() && (!isCompatible(id) || settings.baseUrls[id]?.trim()));
+}
 
 // ---------------------------------------------------------------- document
 
@@ -293,9 +299,9 @@ async function loadCachedTranslations() {
 
 async function startTranslation() {
   if (!doc || translator) return;
-  if (!hasKey()) {
+  if (!isReady()) {
     openSettings();
-    toast('먼저 API 키를 입력하세요.');
+    toast('먼저 API 키와 모델을 입력하세요.');
     return;
   }
   const current = doc;
@@ -362,7 +368,7 @@ function updateProgress() {
     ui.translate.disabled = !total || done >= total;
     setStatus(total ? `번역 ${done}/${total}` : '');
   }
-  ui.keyState.textContent = hasKey()
+  ui.keyState.textContent = isReady()
     ? `${PROVIDERS[settings.provider].label} · ${settings.models[settings.provider]} 사용`
     : 'API 키를 아직 입력하지 않았습니다.';
 }
@@ -419,7 +425,7 @@ function fillTip() {
 function tipStatus(id) {
   if (translator?.working.has(id)) return '번역하는 중…';
   if (translator?.pending.has(id)) return '번역 대기 중…';
-  if (!hasKey()) return '오른쪽 위 설정에서 API 키를 입력한 뒤 ‘번역 시작’을 누르세요.';
+  if (!isReady()) return '오른쪽 위 설정에서 API 키와 모델을 입력한 뒤 ‘번역 시작’을 누르세요.';
   return '아직 번역하지 않은 문단입니다. ‘번역 시작’을 누르세요.';
 }
 
@@ -517,17 +523,25 @@ function openSettings() {
 }
 
 function fillProviderFields() {
-  const api = PROVIDERS[draft.provider];
-  $('api-key').value = draft.keys[draft.provider];
+  const id = draft.provider;
+  const api = PROVIDERS[id];
+  $('base-url-field').hidden = !isCompatible(id);
+  $('base-url').required = isCompatible(id);
+  $('base-url').value = draft.baseUrls[id] || '';
+  $('api-key').value = draft.keys[id];
   $('api-key').placeholder = api.keyPlaceholder;
-  $('key-link').href = api.keyUrl;
-  $('model').value = draft.models[draft.provider];
+  $('key-link').hidden = !api.keyUrl;
+  $('key-link').href = api.keyUrl || '#';
+  $('model').value = draft.models[id];
+  $('model').placeholder = api.models.length ? '' : '모델 이름 (‘목록 불러오기’로 찾기)';
   setModelOptions(api.models);
 }
 
 function readProviderFields() {
-  draft.keys[draft.provider] = $('api-key').value.trim();
-  draft.models[draft.provider] = $('model').value.trim() || PROVIDERS[draft.provider].models[0];
+  const id = draft.provider;
+  draft.keys[id] = $('api-key').value.trim();
+  draft.models[id] = $('model').value.trim();
+  if (isCompatible(id)) draft.baseUrls[id] = $('base-url').value.trim();
 }
 
 function setModelOptions(models) {
@@ -569,15 +583,17 @@ $('toggle-key').addEventListener('click', e => {
 
 $('load-models').addEventListener('click', async e => {
   const key = $('api-key').value.trim();
-  if (!key) {
-    toast('먼저 API 키를 입력하세요.');
+  const baseUrl = $('base-url').value.trim();
+  if (!key || (isCompatible(draft.provider) && !baseUrl)) {
+    toast(key ? '먼저 API 주소를 입력하세요.' : '먼저 API 키를 입력하세요.');
     return;
   }
   const button = e.currentTarget;
   button.disabled = true;
   try {
-    const models = await listModels(draft.provider, key);
+    const models = await listModels(draft.provider, key, baseUrl);
     setModelOptions(models.length ? models : PROVIDERS[draft.provider].models);
+    if (!$('model').value) $('model').focus();
     toast(`모델 ${models.length}개를 불러왔습니다. 모델 칸에서 고르세요.`);
   } catch (err) {
     toast(err.message, { error: true });
@@ -598,6 +614,14 @@ $('clear-cache').addEventListener('click', async () => {
 });
 
 $('language').replaceChildren(...store.LANGUAGES.map(([value, label]) => new Option(label, value)));
+
+// The three native APIs first, then the OpenAI-compatible ones.
+$('provider').replaceChildren(...[['main', '주요 제공자'], ['compatible', 'OpenAI 호환 API']].map(([group, label]) => {
+  const optgroup = document.createElement('optgroup');
+  optgroup.label = label;
+  for (const [id, p] of Object.entries(PROVIDERS)) if (p.group === group) optgroup.append(new Option(p.label, id));
+  return optgroup;
+}));
 
 // ---------------------------------------------------------------- misc UI
 

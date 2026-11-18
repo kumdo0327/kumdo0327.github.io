@@ -385,50 +385,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .settings form { display: grid; gap: 16px; padding: 22px 24px 20px; }
 .settings h2 { margin: 0; font-size: 18px; }
 
-.field { display: grid; gap: 6px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.field { display: grid; gap: 6px; min-width: 0; }
 
-.field legend, .field-label {
+.field-label {
   display: flex;
   justify-content: space-between;
-  padding: 0;
-  margin-bottom: 6px;
   font-size: 13px;
   font-weight: 600;
 }
 
-.field-label { margin-bottom: 0; }
 .field-label a { color: var(--accent); font-weight: 400; text-decoration: none; }
 .field-label a:hover { text-decoration: underline; }
 .optional { color: var(--muted); font-weight: 400; }
-
-.segmented {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  padding: 4px;
-  border-radius: 10px;
-  background: var(--surface-2);
-}
-
-.segmented label { position: relative; }
-.segmented input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-
-.segmented span {
-  display: block;
-  padding: 7px 0;
-  border-radius: 7px;
-  font-weight: 500;
-  text-align: center;
-}
-
-.segmented input:checked + span {
-  background: var(--surface);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.14);
-  color: var(--accent);
-  font-weight: 650;
-}
-
-.segmented input:focus-visible + span { outline: 2px solid var(--accent); }
+.field-hint { margin: 0; color: var(--muted); font-size: 12px; }
 
 .row { display: flex; gap: 6px; }
 .row input { flex: 1; min-width: 0; }

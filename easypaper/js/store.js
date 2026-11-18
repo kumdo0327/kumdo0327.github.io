@@ -21,26 +21,39 @@ export const LANGUAGES = [
 
 const DEFAULTS = {
   provider: 'anthropic',
-  models: Object.fromEntries(Object.entries(PROVIDERS).map(([id, p]) => [id, p.models[0]])),
+  models: Object.fromEntries(Object.entries(PROVIDERS).map(([id, p]) => [id, p.models[0] || ''])),
+  // API addresses of the OpenAI-compatible providers, editable in the settings.
+  baseUrls: Object.fromEntries(Object.entries(PROVIDERS).filter(([, p]) => p.group === 'compatible').map(([id, p]) => [id, p.baseUrl])),
   language: 'Korean',
   notes: '',
   rememberKeys: true,
 };
 
+const SETTINGS_VERSION = 2;
+// The defaults before version 2. Older saved settings hold them only because
+// they were the defaults, so they give way to today's lighter ones.
+const V1_DEFAULT_MODELS = { anthropic: 'claude-opus-5-5', openai: 'gpt-6.1-terra', gemini: 'gemini-3.8-flash' };
+
 export function loadSettings() {
   const saved = readJSON(localStorage, SETTINGS_KEY) || {};
   const keys = readJSON(localStorage, KEYS_KEY) || readJSON(sessionStorage, KEYS_KEY) || {};
+  const models = { ...saved.models };
+  if (!saved.version) {
+    for (const [id, model] of Object.entries(V1_DEFAULT_MODELS)) if (models[id] === model) delete models[id];
+  }
   return {
     ...DEFAULTS,
     ...saved,
-    models: { ...DEFAULTS.models, ...saved.models },
+    provider: PROVIDERS[saved.provider] ? saved.provider : DEFAULTS.provider,
+    models: { ...DEFAULTS.models, ...models },
+    baseUrls: { ...DEFAULTS.baseUrls, ...saved.baseUrls },
     keys: Object.fromEntries(Object.keys(PROVIDERS).map(id => [id, keys[id] || ''])),
   };
 }
 
 export function saveSettings(settings) {
   const { keys, ...rest } = settings;
-  writeJSON(localStorage, SETTINGS_KEY, rest);
+  writeJSON(localStorage, SETTINGS_KEY, { ...rest, version: SETTINGS_VERSION });
   // Unremembered keys go to sessionStorage, which the browser clears when the tab closes.
   writeJSON(settings.rememberKeys ? localStorage : sessionStorage, KEYS_KEY, keys);
   remove(settings.rememberKeys ? sessionStorage : localStorage, KEYS_KEY);

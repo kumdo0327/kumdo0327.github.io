@@ -118,7 +118,7 @@ export class Translator extends EventTarget {
   }
 
   async translate(batch) {
-    const { provider, keys, models, language, notes } = this.settings;
+    const { provider, keys, models, baseUrls, language, notes } = this.settings;
     const { system, prompt } = buildPrompt(batch.paras, { title: this.title, language, notes });
     const parser = new MarkerParser(batch.paras.map(p => p.id));
     for (const p of batch.paras) this.working.add(p.id);
@@ -137,6 +137,7 @@ export class Translator extends EventTarget {
         provider,
         apiKey: keys[provider],
         model: models[provider],
+        baseUrl: baseUrls[provider],
         system,
         prompt,
         signal: this.abort.signal,
