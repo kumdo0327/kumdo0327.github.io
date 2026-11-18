@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EasyPaper</title>
+  <meta name="description" content="논문 PDF를 열고 문단에 마우스를 올리면 그 문단의 번역이 보이는 뷰어. Claude, OpenAI, Gemini API를 브라우저에서 바로 호출합니다.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='5' y='2' width='22' height='28' rx='5' fill='%232f6fed'/%3E%3Crect x='10' y='9' width='12' height='2.6' rx='1.3' fill='%23fff'/%3E%3Crect x='10' y='14.7' width='12' height='2.6' rx='1.3' fill='%23fff' opacity='.65'/%3E%3Crect x='10' y='20.4' width='8' height='2.6' rx='1.3' fill='%23fff' opacity='.65'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        integrity="sha384-GIdEBaqGN9mNkDkMkzMHW8EKUqtpPIe/sLj1X7DIrnc9uPtLROJgmuDlh+3rBw0j" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <!-- Pins the PDF.js build that js/app.js imports; update both together. -->
+  <script type="importmap">
+    {
+      "integrity": {
+        "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.5.438/build/pdf.min.mjs": "sha384-6MTG6VynDVMfHzijur0VKc9BdrA6HaXHZd+pK6iGWh2acDj3CibR0CRwHizMoy1N"
+      }
+    }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="EasyPaper 처음으로">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="2" width="22" height="28" rx="5" fill="var(--accent)"/><rect x="10" y="9" width="12" height="2.6" rx="1.3" fill="#fff"/><rect x="10" y="14.7" width="12" height="2.6" rx="1.3" fill="#fff" opacity=".65"/><rect x="10" y="20.4" width="8" height="2.6" rx="1.3" fill="#fff" opacity=".65"/></svg>
+      <span>EasyPaper</span>
+    </a>
+    <button id="open" class="btn" type="button">PDF 열기</button>
+    <input id="file-input" type="file" accept="application/pdf,.pdf" hidden>
+    <span id="doc-name" class="doc-name"></span>
+    <span class="spacer"></span>
+    <span id="page-info" class="page-info"></span>
+    <div class="zoom" role="group" aria-label="확대와 축소">
+      <button id="zoom-out" type="button" aria-label="축소">−</button>
+      <button id="zoom-fit" type="button" class="zoom-fit" title="화면 폭에 맞추기">100%</button>
+      <button id="zoom-in" type="button" aria-label="확대">+</button>
+    </div>
+    <span id="status" class="status" aria-live="polite"></span>
+    <button id="translate" class="btn primary" type="button" disabled>번역 시작</button>
+    <button id="settings-btn" class="btn icon-btn" type="button" aria-label="설정" title="설정">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+  </header>
+
+  <main id="viewer" class="viewer">
+    <section id="empty" class="empty">
+      <div class="empty-card">
+        <svg width="56" height="56" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="2" width="22" height="28" rx="5" fill="var(--accent)"/><rect x="10" y="9" width="12" height="2.6" rx="1.3" fill="#fff"/><rect x="10" y="14.7" width="12" height="2.6" rx="1.3" fill="#fff" opacity=".65"/><rect x="10" y="20.4" width="8" height="2.6" rx="1.3" fill="#fff" opacity=".65"/></svg>
+        <h1>논문 PDF를 열어 보세요</h1>
+        <p>문단에 마우스를 올리면 그 문단의 번역이 나타납니다.<br>문단을 클릭하면 번역 창이 고정되어 글을 복사할 수 있습니다.</p>
+        <div class="actions">
+          <button id="empty-open" class="btn primary" type="button">PDF 열기</button>
+          <button id="empty-settings" class="btn" type="button">API 키 설정</button>
+        </div>
+        <div id="key-state" class="key-state"></div>
+        <ol class="steps">
+          <li>설정에서 Claude·OpenAI·Gemini 중 하나를 고르고 API 키를 입력합니다.</li>
+          <li>PDF를 열거나 이 창에 끌어다 놓습니다.</li>
+          <li>‘번역 시작’을 누르고 읽고 싶은 문단에 마우스를 올립니다.</li>
+        </ol>
+        <p class="privacy">PDF는 이 브라우저 안에서만 열리고, 추출한 문단 텍스트만 선택한 AI 제공자에게 전송됩니다. API 키와 번역 결과는 이 브라우저에만 저장되며, 한 번 번역한 문단은 다시 열어도 비용이 들지 않습니다.</p>
+      </div>
+    </section>
+    <div id="pages" class="pages"></div>
+  </main>
+
+  <div id="tip" class="tip" role="tooltip" hidden>
+    <div class="tip-head">
+      <span id="tip-meta"></span>
+      <span class="tip-hint">클릭하면 고정</span>
+      <span class="tip-actions">
+        <button id="tip-copy" type="button">복사</button>
+        <button id="tip-close" type="button" aria-label="닫기">닫기</button>
+      </span>
+    </div>
+    <div id="tip-body" class="tip-body"></div>
+  </div>
+
+  <div id="drop-overlay" class="drop-overlay" hidden><span>여기에 놓으면 PDF가 열립니다</span></div>
+
+  <div id="toast" class="toast" popover="manual" role="status">
+    <span class="toast-text"></span>
+    <button class="toast-close" type="button" aria-label="알림 닫기">×</button>
+  </div>
+
+  <dialog id="settings" class="settings" aria-labelledby="settings-title">
+    <form id="settings-form" method="dialog">
+      <h2 id="settings-title">설정</h2>
+
+      <fieldset class="field">
+        <legend>AI 제공자</legend>
+        <div class="segmented">
+          <label><input type="radio" name="provider" value="anthropic"><span>Claude</span></label>
+          <label><input type="radio" name="provider" value="openai"><span>OpenAI</span></label>
+          <label><input type="radio" name="provider" value="gemini"><span>Gemini</span></label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <div class="field-label"><label for="api-key">API 키</label><a id="key-link" target="_blank" rel="noopener noreferrer">키 발급받기 ↗</a></div>
+        <div class="row">
+          <input id="api-key" type="password" autocomplete="off" spellcheck="false">
+          <button id="toggle-key" class="btn" type="button">보기</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><label for="model">모델</label></div>
+        <div class="row">
+          <input id="model" list="model-options" autocomplete="off" spellcheck="false">
+          <button id="load-models" class="btn" type="button">목록 불러오기</button>
+        </div>
+        <datalist id="model-options"></datalist>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><label for="language">번역할 언어</label></div>
+        <select id="language"></select>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><label for="notes">번역 지침 <span class="optional">선택</span></label></div>
+        <textarea id="notes" rows="2" placeholder="예: 전문 용어는 처음 나올 때 영어를 괄호로 함께 적어 줘."></textarea>
+      </div>
+
+      <label class="check"><input id="remember" type="checkbox"> 이 브라우저에 API 키 저장</label>
+      <p class="hint">키는 번역을 요청할 때 선택한 제공자에게만 전송됩니다. 저장을 끄면 탭을 닫을 때 지워집니다.</p>
+
+      <div class="dialog-actions">
+        <button id="clear-cache" class="btn ghost" type="button">저장된 번역 지우기</button>
+        <span class="spacer"></span>
+        <button id="settings-cancel" class="btn" type="button">취소</button>
+        <button class="btn primary" value="save">저장</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
