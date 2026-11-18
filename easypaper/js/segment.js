@@ -3,7 +3,8 @@
 // Everything here works in PDF user space (points, origin at the bottom-left)
 // and touches no DOM, so the same code also runs under Node for testing.
 
-const TERMINAL = /[.!?:]["'”’)\]]*$/;
+// Sentence end, allowing for a closing quote or bracket and a footnote mark after it.
+const TERMINAL = /[.!?:]["'”’)\]]*(\^\{[^{}]*\})?$/;
 const LIGATURES = /[\uFB00-\uFB06]/g;
 const ONLY_DIGITS = /^\d{1,4}$/;
 // A caption numbers itself and then breaks off ("Fig. 3.", "Table 2:"); "Fig. 3 shows" is running text.
@@ -11,6 +12,7 @@ const CAPTION = /^(figure|fig\.|table|algorithm|listing)\s*(\d+|[IVX]+)\s*[.:]/i
 const CAPS_TABLE_CAPTION = /^TABLE\s+([IVX]+|\d+)\s+[A-Z]{2,}/; // IEEE style: "TABLE II" over a title in small caps
 const NUMBERED_HEADING = /^((\d+|[A-Z])(\.\d+)*\.?|[IVX]+\.)\s+\p{Lu}/u;
 const NAMED_HEADING = /^(abstract|introduction|background|related work|conclusions?|discussion|limitations|acknowledge?ments?|references|bibliography|appendix)\b/i;
+const LIST_ITEM = /^([•◦▪–*-]|\(?[a-z\d]{1,3}\))\s/i;
 const REFERENCES_HEADING = /^(\d+\.?\s*)?(references|bibliography|참고\s*문헌)$/i;
 const APPENDIX_HEADING = /^(appendix|appendices|supplementary)\b|^[A-Z](\.\d+)*\s+[A-Z][^,.]*$/i;
 // Words a paragraph cannot end on, so the text must go on in another column.
@@ -29,7 +31,7 @@ export function pageLines(textContent) {
     else lines.push(line = { runs: [run], x0: run.x0, x1: run.x1, base: run.base, fs: run.fs, text: run.str, mark: false });
   }
   // Bare numbers are page or line numbers; they would only split paragraphs.
-  return lines.map(finishLine).filter(l => l.text && !ONLY_DIGITS.test(l.text));
+  return lines.map(finishLine).filter(l => l.text && !ONLY_DIGITS.test(l.plain));
 }
 
 function toRun(item) {
@@ -59,10 +61,8 @@ function addRun(line, run) {
   // A large first letter (drop cap) belongs to the word after it ("S" + "TATIC").
   const dropCap = line.runs.length === 1 && prev.str.trim().length === 1 && prev.fs > run.fs * 1.8;
   const gap = run.x0 - line.x1;
-  if ((mark || gap > 0.12 * Math.min(line.fs, run.fs)) && !dropCap && !/\s$/.test(line.text) && !/^\s/.test(run.str)) {
-    line.text += ' ';
-  }
-  line.text += run.str;
+  run.space = (mark || gap > 0.12 * Math.min(line.fs, run.fs)) && !dropCap && !/\s$/.test(line.text) && !/^\s/.test(run.str);
+  line.text += (run.space ? ' ' : '') + run.str;
   line.runs.push(run);
   line.mark ||= mark;
   line.x0 = Math.min(line.x0, run.x0);
@@ -77,17 +77,43 @@ function finishLine(line) {
   // The size and font covering the most characters, so footnote marks,
   // big operators and the odd bold word don't count.
   const fs = dominant(line.runs.map(r => [r.fs, r.str.trim().length]));
+  const base = line.runs.find(r => r.fs === fs).base;
   return {
-    text: line.text.replace(/\s+/g, ' ').trim(),
+    text: scriptText(line.runs, fs, base),
+    plain: line.text.replace(/\s+/g, ' ').trim(),
     x0: line.x0,
     x1: line.x1,
-    base: line.runs.find(r => r.fs === fs).base,
+    base,
     fs,
     font: dominant(line.runs.map(r => [r.font, r.str.trim().length])),
     mark: line.mark,
     top: Math.max(...line.runs.map(r => r.base + 0.8 * r.fs)),
     bottom: Math.min(...line.runs.map(r => r.base - 0.25 * r.fs)),
   };
+}
+
+/**
+ * The line's text with sub- and superscripts marked the way LaTeX writes them
+ * ("d_{model}", "removed_{fix}", "left.^{4}"), so notation and footnote marks
+ * survive translation. A script is a smaller run raised or lowered off the baseline.
+ */
+function scriptText(runs, fs, base) {
+  let text = '';
+  let script = '';
+  for (const r of runs) {
+    const s = r.fs >= fs * 0.85 ? '' : r.base > base + 0.15 * fs ? '^' : r.base < base - 0.1 * fs ? '_' : '';
+    if (s !== script) {
+      if (script) text += '}';
+      if (r.space && !s) text += ' '; // a script hangs on the word before it
+      if (s) text += `${s}{`;
+      script = s;
+    } else if (r.space) {
+      text += ' ';
+    }
+    text += s ? r.str.trim() : r.str;
+  }
+  if (script) text += '}';
+  return text.replace(/\s+/g, ' ').trim();
 }
 
 /** The key with the largest total weight among [key, weight] pairs. */
@@ -175,6 +201,7 @@ function finishBlock(block, page, view) {
     page,
     view,
     text: joinText(block.lines.map(l => l.text)),
+    plain: joinText(block.lines.map(l => l.plain)), // without the script marks
     fs: dominant(block.lines.map(l => [l.fs, l.text.length])),
   };
 }
@@ -197,6 +224,7 @@ function joinText(parts) {
  * translatable: worth sending to the model.
  * regular: running text that may continue in, or be continued by, another block.
  * kind: body text and footnotes continue separately.
+ * role: heading, caption, list or body, which the translation should respect.
  */
 function classify(block, bodyFs) {
   const text = block.text;
@@ -208,10 +236,10 @@ function classify(block, bodyFs) {
   const lower = words.filter(w => /^\p{Ll}+$/u.test(w)).length;
   const fragment = single && words.length <= 4 && !TERMINAL.test(text);
   // Pseudo-code: most lines end like code ("do", "then", ";"), or a short line of operators.
-  const codeLines = block.lines.filter(l => /(;|\{|\}|\bdo|\bthen)$/.test(l.text)).length;
+  const codeLines = block.lines.filter(l => /(;|\{|\}|\bdo|\bthen)$/.test(l.plain)).length;
   const code = block.lines.length >= 3
     ? codeLines >= block.lines.length * 0.4
-    : codeLines === block.lines.length || (/[=;{}]|&&|\|\|/.test(text) && !TERMINAL.test(text));
+    : codeLines === block.lines.length || (/[=;{}]|&&|\|\|/.test(block.plain) && !TERMINAL.test(block.plain));
   const prose = !code && lower >= 3 && lower >= words.length * 0.4 && words.length >= block.lines.length * 3.5 && !fragment;
   const short = block.lines.length <= 3 && text.length <= 150; // a heading can wrap onto a second line
   const heading = short && !code && words.length > 0 && (NUMBERED_HEADING.test(text) || NAMED_HEADING.test(text));
@@ -223,12 +251,13 @@ function classify(block, bodyFs) {
     translatable: heading || caption || prose,
     regular: prose && !caption && !edge,
     kind: block.fs < bodyFs * 0.92 ? 'small' : 'body',
+    role: heading ? 'heading' : caption ? 'caption' : LIST_ITEM.test(text) ? 'list' : 'body',
   };
 }
 
 function continuesParagraph(para, block) {
   if (Math.abs(block.fs - para.fs) > 0.1 * para.fs) return false;
-  if (/^\p{Ll}/u.test(block.text)) return true;
+  if (/^\p{Ll}/u.test(block.plain)) return true;
   // A hyphenated word only goes on with a lowercase fragment, handled above.
   const lastWord = para.text.match(/([\p{L}-]+)\W*$/u)?.[1]?.toLowerCase();
   return /,$/.test(para.text) || FUNCTION_WORDS.has(lastWord);
@@ -243,7 +272,7 @@ function endsReferences(block, bodyFs) {
  * across columns or pages and leaving out the reference list.
  *
  * @param {{lines: object[], view: number[]}[]} pages - pageLines() output and page.view, per page
- * @returns {{title: string, paragraphs: {id: string, page: number, text: string,
+ * @returns {{title: string, paragraphs: {id: string, page: number, text: string, role: string,
  *   rects: {page: number, x0: number, y0: number, x1: number, y1: number}[]}[]}}
  */
 export function buildParagraphs(pages, { debug = false } = {}) {
@@ -270,10 +299,10 @@ export function buildParagraphs(pages, { debug = false } = {}) {
   let inReferences = false;
   for (const block of blocks) {
     if (inReferences && endsReferences(block, bodyFs)) inReferences = false;
-    const info = block === titleBlock ? { translatable: true, regular: false, kind: 'body' }
+    const info = block === titleBlock ? { translatable: true, regular: false, kind: 'body', role: 'title' }
       : boilerplate(block) ? { translatable: false, regular: false, kind: 'body' }
       : classify(block, bodyFs);
-    const { translatable, regular, kind } = info;
+    const { translatable, regular, kind, role } = info;
     if (debug) block.info = { ...info, inReferences };
     if (!inReferences && translatable) {
       const pending = regular && open[kind];
@@ -282,7 +311,7 @@ export function buildParagraphs(pages, { debug = false } = {}) {
         pending.text = joinText([pending.text, block.text]);
         if (TERMINAL.test(pending.text)) open[kind] = null;
       } else {
-        const para = { blocks: [block], text: block.text, fs: block.fs };
+        const para = { blocks: [block], text: block.text, fs: block.fs, role };
         paras.push(para);
         if (regular) open[kind] = TERMINAL.test(para.text) ? null : para;
       }
@@ -297,6 +326,7 @@ export function buildParagraphs(pages, { debug = false } = {}) {
       id: `p${i + 1}`,
       page: p.blocks[0].page,
       text: p.text,
+      role: p.role, // title, heading, caption, list or body
       rects: p.blocks.map(b => ({ page: b.page, x0: b.x0, y0: b.bottom, x1: b.x1, y1: b.top })),
     })),
   };

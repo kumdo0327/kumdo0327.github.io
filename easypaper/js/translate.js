@@ -1,6 +1,8 @@
 // Sends paragraphs to the model page by page and hands translations back as
 // they stream in. A full run first asks for a glossary of the paper's key terms,
 // and every page is then translated with it, so a term reads the same throughout.
+// Each request also carries some context (the abstract, the section, the paragraph
+// before), and a translation that slips into another script is asked for once more.
 
 import { streamCompletion } from './llm.js';
 
@@ -9,28 +11,79 @@ const CONCURRENCY = 3;
 const GLOSSARY_SOURCE_CHARS = 120_000; // paper text sent when building the glossary
 const GLOSSARY_MAX_TERMS = 40;
 const MARKER = /\[\[\s*(p\d+)\s*\]\]/g;
+const ROLE_NAMES = { title: 'title', heading: 'heading', caption: 'caption', list: 'list item' };
+
+// Scripts that don't belong in a translation into each language, unless the source has them too.
+const FOREIGN_SCRIPTS = {
+  Korean: /[\u3040-\u30FF\u4E00-\u9FFF]/g, // kana, CJK ideographs
+  Japanese: /[\uAC00-\uD7A3]/g, // hangul
+  'Simplified Chinese': /[\u3040-\u30FF\uAC00-\uD7A3]/g,
+  'Traditional Chinese': /[\u3040-\u30FF\uAC00-\uD7A3]/g,
+};
+const CJK_SCRIPTS = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7A3]/g; // for languages written in Latin script
 
 const readerNotes = notes => (notes.trim() ? `\n\nInstructions from the reader, which take precedence:\n${notes.trim()}` : '');
 
-export function buildPrompt(paragraphs, { title, language, notes, glossary }) {
+export function buildPrompt(paragraphs, { title, language, notes, glossary, context = {} }) {
   const terms = glossary?.length
     ? `\n\nUse these translations of the paper's key terms throughout:\n${glossary.map(g => `- ${g.term}: ${g.translation}`).join('\n')}`
     : '';
   const system = `You translate academic papers. Translate each paragraph you are given into ${language}.
 
 - Translate faithfully and completely in a natural academic register. Do not summarize, explain or add notes.
-- Keep formulas, symbols, variable names, citations such as [12] or (Smith et al., 2020), URLs and code exactly as they are.
+- Keep formulas, symbols, variable names, citations such as [12] or (Smith et al., 2020), URLs and code exactly as they are. Subscripts and superscripts are written _{…} and ^{…}; keep them as they are.
 - Use the established ${language} term for technical terms; if there is none, keep the English term.
 - Write in ${language} only. Apart from technical terms kept in English, do not switch to another language or script mid-sentence.
+- Translate a heading as a heading and keep its number; a caption with its label and number (Fig. 3, Table II) in the usual ${language} form; a list item as a list item.
 - The text was extracted from a PDF, so it can contain stray formula symbols or footnote marks. Translate what the author meant and leave such symbols as they are.
+- Context given for reference (the abstract, the current section, the paragraph just before) only helps you resolve references and keep the tone. Do not translate it.
 - Reply with the paragraphs in the given order. Start each one with its marker on a line of its own, exactly as given, and write nothing else:
 [[p1]]
 (translation of p1)
 [[p2]]
 (translation of p2)${terms}${readerNotes(notes)}`;
 
-  const prompt = (title ? `Paper: ${title}\n\n` : '') + paragraphs.map(p => `[[${p.id}]]\n${p.text}`).join('\n\n');
-  return { system, prompt };
+  const parts = title ? [`Paper: ${title}`] : [];
+  const reference = [
+    context.abstract && `Abstract: ${context.abstract}`,
+    context.section && `Current section: ${context.section}`,
+    context.previous && `Paragraph just before: ${context.previous}`,
+  ].filter(Boolean);
+  if (reference.length) parts.push(`For reference only:\n${reference.join('\n')}`);
+  const roles = paragraphs.filter(p => ROLE_NAMES[p.role]).map(p => `${p.id} ${ROLE_NAMES[p.role]}`);
+  if (roles.length) parts.push(`Not running text: ${roles.join('; ')}`);
+  parts.push(`Translate:\n\n${paragraphs.map(p => `[[${p.id}]]\n${p.text}`).join('\n\n')}`);
+  return { system, prompt: parts.join('\n\n') };
+}
+
+/** The abstract, if the paper has one: "Abstract—…", or the paragraph under an "Abstract" heading. */
+function findAbstract(doc) {
+  const i = doc.findIndex(p => /^abstract\b/i.test(p.text));
+  if (i < 0) return null;
+  return doc[i].text.length > 200 ? doc[i] : doc[i + 1] || null;
+}
+
+/** 1 for "3" or "III.", 2 for "3.2" or "B.", 0 for an unnumbered heading. */
+function headingLevel(text) {
+  const number = text.match(/^(\d+(?:\.\d+)*)\.?\s/);
+  if (number) return number[1].split('.').length;
+  if (/^[IVX]+\.\s/.test(text)) return 1;
+  if (/^[A-Z]\.\s/.test(text)) return 2;
+  return 0;
+}
+
+/** "III. Examining … > B. Crafting …": the heading a paragraph falls under, with its parent. */
+function sectionOf(doc, index) {
+  let i = index - 1;
+  while (i >= 0 && doc[i].role !== 'heading') i--;
+  if (i < 0) return '';
+  const level = headingLevel(doc[i].text);
+  let parent = null;
+  for (let j = i - 1; level > 1 && j >= 0 && !parent; j--) {
+    const l = doc[j].role === 'heading' ? headingLevel(doc[j].text) : 0;
+    if (l && l < level) parent = doc[j];
+  }
+  return [parent, doc[i]].filter(Boolean).map(p => p.text.slice(0, 100)).join(' > ');
 }
 
 /** Asks for the paper's key terms, each with its translation and a short note. */
@@ -127,9 +180,13 @@ const clean = text => text.replace(/^```\w*$/gm, '').trim();
  * "glossarystart", and "glossary" (the entries, or null if none could be built).
  */
 export class Translator extends EventTarget {
-  constructor({ paragraphs, title, settings, glossary = null, glossarySource = null }) {
+  /** `document` is every paragraph of the paper, which the context is drawn from. */
+  constructor({ paragraphs, title, settings, glossary = null, glossarySource = null, document = paragraphs }) {
     super();
     this.title = title;
+    this.document = document;
+    this.position = new Map(document.map((p, i) => [p.id, i]));
+    this.abstractParagraph = findAbstract(document);
     this.settings = structuredClone(settings); // later edits in the settings dialog don't affect a run
     this.glossary = glossary;
     this.glossarySource = glossarySource;
@@ -219,19 +276,57 @@ export class Translator extends EventTarget {
     return this.queue.splice(best, 1)[0];
   }
 
+  /** Context for a batch: the abstract, the section it starts in, and the end of the paragraph before it. */
+  contextFor(batch) {
+    const index = this.position.get(batch.paras[0].id) ?? -1;
+    const before = this.document[index - 1];
+    const abstract = this.abstractParagraph && !batch.paras.includes(this.abstractParagraph)
+      ? this.abstractParagraph.text.replace(/^abstract\W*/i, '').slice(0, 1500)
+      : '';
+    return {
+      abstract,
+      section: index > 0 ? sectionOf(this.document, index) : '',
+      previous: before && before.role !== 'heading' ? before.text.slice(-800) : '',
+    };
+  }
+
+  /** How wrong a translation looks: letters in a script foreign to it, or far too short for its source. */
+  flaws(source, translation) {
+    const foreign = FOREIGN_SCRIPTS[this.settings.language] ?? CJK_SCRIPTS;
+    const count = text => (text.match(foreign) || []).length;
+    const stray = count(source) ? 0 : count(translation);
+    const truncated = source.length >= 300 && translation.length < source.length * 0.15;
+    return stray + (truncated ? 1000 : 0);
+  }
+
   async translate(batch) {
     const { provider, keys, models, baseUrls, language, notes } = this.settings;
-    const { system, prompt } = buildPrompt(batch.paras, { title: this.title, language, notes, glossary: this.glossary });
+    const { system, prompt } = buildPrompt(batch.paras, {
+      title: this.title, language, notes, glossary: this.glossary, context: this.contextFor(batch),
+    });
     const parser = new MarkerParser(batch.paras.map(p => p.id));
     for (const p of batch.paras) this.working.add(p.id);
     this.emit('progress');
     const deliver = updates => {
       for (const u of updates) {
-        if (u.done) {
-          this.pending.delete(u.id);
-          this.working.delete(u.id);
+        if (!u.done) {
+          this.emit('partial', u);
+          continue;
         }
-        this.emit(u.done ? 'done' : 'partial', u);
+        const para = batch.paras.find(p => p.id === u.id);
+        let text = u.text;
+        this.working.delete(u.id);
+        if (batch.earlier) {
+          // The second attempt: keep whichever reads better.
+          if (this.flaws(para.text, batch.earlier) <= this.flaws(para.text, text)) text = batch.earlier;
+        } else if (this.flaws(para.text, text)) {
+          // Show it for now, and ask once more for this paragraph on its own.
+          this.queue.push({ page: batch.page, paras: [para], chars: para.text.length, attempt: 1, earlier: text });
+          this.emit('done', { id: u.id, text });
+          continue;
+        }
+        this.pending.delete(u.id);
+        this.emit('done', { id: u.id, text });
       }
     };
     try {
@@ -247,13 +342,17 @@ export class Translator extends EventTarget {
       });
       deliver(parser.end());
       const missing = batch.paras.filter(p => !parser.seen.has(p.id));
-      if (missing.length) this.retry({ ...batch, paras: missing }, '일부 문단의 번역이 빠졌습니다.');
+      // A failed second attempt leaves the first translation in place.
+      if (missing.length && batch.earlier) this.settle(missing);
+      else if (missing.length) this.retry({ ...batch, paras: missing }, '일부 문단의 번역이 빠졌습니다.');
     } catch (err) {
       if (this.abort.signal.aborted) return;
       const missing = batch.paras.filter(p => !parser.seen.has(p.id));
       if (err.fatal) {
         this.stop();
         this.emit('error', { message: err.message, fatal: true });
+      } else if (batch.earlier) {
+        this.settle(missing);
       } else if (err.content && missing.length > 1) {
         // One paragraph was declined; send the rest one by one so only that one is lost.
         for (const p of missing) this.queue.push({ page: batch.page, paras: [p], chars: p.text.length, attempt: 1 });
@@ -274,8 +373,12 @@ export class Translator extends EventTarget {
   }
 
   fail(paras, message) {
-    for (const p of paras) this.pending.delete(p.id);
+    this.settle(paras);
     this.emit('error', { message: `${paras.length}개 문단을 번역하지 못했습니다: ${message}`, fatal: false });
+  }
+
+  settle(paras) {
+    for (const p of paras) this.pending.delete(p.id);
   }
 
   emit(type, detail) {

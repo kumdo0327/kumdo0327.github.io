@@ -1,6 +1,6 @@
 // Settings live in localStorage. Finished translations are cached in IndexedDB,
-// keyed by a hash of the target language and the source paragraph, so opening a
-// paper again costs no API calls.
+// keyed by a hash of the paper, the target language and the source paragraph, so
+// opening a paper again costs no API calls.
 
 import { PROVIDERS } from './llm.js';
 

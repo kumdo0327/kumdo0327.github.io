@@ -264,6 +264,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 .tip-body.muted { color: var(--muted); font-size: 14px; }
+.tip-body sub, .tip-body sup, .term sub, .term sup { font-size: 0.72em; line-height: 0; }
 .tip.streaming .tip-body::after { content: "▍"; color: var(--accent); animation: pulse 1s infinite; }
 
 /* ------------------------------------------------------------ glossary */

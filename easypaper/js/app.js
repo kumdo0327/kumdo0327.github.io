@@ -283,6 +283,20 @@ function paintAll() {
   for (const para of doc?.paragraphs || []) paint(para.id);
 }
 
+/** Text with its _{…} and ^{…} marks shown as real sub- and superscripts. */
+function richText(text) {
+  const fragment = document.createDocumentFragment();
+  let last = 0;
+  for (const m of text.matchAll(/([_^])\{([^{}]*)\}/g)) {
+    const script = document.createElement(m[1] === '_' ? 'sub' : 'sup');
+    script.textContent = m[2];
+    fragment.append(text.slice(last, m.index), script);
+    last = m.index + m[0].length;
+  }
+  fragment.append(text.slice(last));
+  return fragment;
+}
+
 function highlight(id, on) {
   for (const box of doc?.boxes.get(id) || []) box.classList.toggle('active', on);
 }
@@ -292,9 +306,11 @@ function highlight(id, on) {
 async function loadCachedTranslations() {
   const current = doc;
   const language = settings.language;
-  const keys = await Promise.all(current.paragraphs.map(p => store.cacheKey(language, p.text)));
-  // The glossary belongs to the whole paper, so its key covers every paragraph.
-  const glossaryKey = await store.cacheKey(language, `glossary\n${current.paragraphs.map(p => p.text).join('\n')}`);
+  // Saved translations belong to one paper (its PDF fingerprint), so a heading such
+  // as "Abstract" translated in another paper doesn't count as done in this one.
+  const paper = current.pdf.fingerprints[0];
+  const keys = await Promise.all(current.paragraphs.map(p => store.cacheKey(language, `${paper}\n${p.text}`)));
+  const glossaryKey = await store.cacheKey(language, `${paper}\nglossary`);
   const [glossary, ...cached] = await store.getCached([glossaryKey, ...keys]);
   if (doc !== current) return;
   current.glossaryKey = glossaryKey;
@@ -334,6 +350,7 @@ async function startTranslation({ only = null, glossaryOnly = false } = {}) {
     settings,
     glossary: needGlossary ? null : current.glossary,
     glossarySource: needGlossary ? current.paragraphs : null,
+    document: current.paragraphs,
   });
   translator = run;
   run.focus(currentPage());
@@ -483,7 +500,7 @@ function fillTip() {
   if (!para) return;
   const text = doc.partial.get(tipId) || doc.translations.get(tipId);
   const busy = Boolean(translator?.pending.has(tipId));
-  ui.tipBody.textContent = text || tipStatus(tipId);
+  ui.tipBody.replaceChildren(text ? richText(text) : tipStatus(tipId));
   ui.tipBody.classList.toggle('muted', !text);
   ui.tip.classList.toggle('streaming', doc.partial.has(tipId));
   ui.tipMeta.textContent = `${para.page + 1}쪽${busy && doc.translations.has(tipId) ? ' · 다시 번역하는 중…' : ''}`;
@@ -742,10 +759,11 @@ function glossaryItem({ term, translation, note }) {
   item.className = 'term';
   const head = document.createElement('div');
   head.className = 'term-head';
-  head.append(
-    Object.assign(document.createElement('span'), { className: 'term-src', textContent: term }),
-    Object.assign(document.createElement('span'), { className: 'term-dst', textContent: translation }),
-  );
+  const src = Object.assign(document.createElement('span'), { className: 'term-src' });
+  const dst = Object.assign(document.createElement('span'), { className: 'term-dst' });
+  src.append(richText(term));
+  dst.append(richText(translation));
+  head.append(src, dst);
   item.append(head);
   if (note) item.append(Object.assign(document.createElement('p'), { className: 'term-note', textContent: note }));
   return item;
