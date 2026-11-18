@@ -11,6 +11,8 @@ const CLAUDE_EFFORT = /^claude-(opus-(4-[5-9]|[5-9])|sonnet-(4-[6-9]|[5-9])|haik
 const CLAUDE_FALLBACK = new Set(['claude-fable-5-1', 'claude-opus-5-5', 'claude-opus-5', 'claude-sonnet-5-5']);
 
 const trimSlash = url => url.replace(/\/+$/, '');
+// Newest first, for APIs that date their models; others keep the API's order.
+const newestFirst = (items, date) => items.slice().sort((a, b) => (date(b) || 0) - (date(a) || 0));
 
 /**
  * A provider that speaks the OpenAI Chat Completions format at `baseUrl`.
@@ -56,7 +58,7 @@ function compatible({ label, name = label, baseUrl = '', keyUrl = '', models = [
     },
 
     modelsRequest: (apiKey, baseUrl) => ({ url: `${trimSlash(baseUrl)}/models`, headers: { authorization: `Bearer ${apiKey}` } }),
-    parseModels: json => (json.data || []).map(m => m.id).filter(Boolean),
+    parseModels: json => newestFirst(json.data || [], m => m.created).map(m => m.id).filter(Boolean),
   };
 }
 
@@ -111,7 +113,7 @@ export const PROVIDERS = {
         headers: { 'x-api-key': apiKey, 'anthropic-version': CLAUDE_VERSION, 'anthropic-dangerous-direct-browser-access': 'true' },
       };
     },
-    parseModels: json => json.data.map(m => m.id),
+    parseModels: json => newestFirst(json.data, m => Date.parse(m.created_at)).map(m => m.id),
   },
 
   openai: {
@@ -152,7 +154,7 @@ export const PROVIDERS = {
     },
 
     modelsRequest: apiKey => ({ url: 'https://api.openai.com/v1/models', headers: { authorization: `Bearer ${apiKey}` } }),
-    parseModels: json => json.data.map(m => m.id)
+    parseModels: json => newestFirst(json.data, m => m.created).map(m => m.id)
       .filter(id => /^(gpt|o\d|chatgpt)/.test(id) && !/audio|realtime|tts|transcribe|image|search|embedding|instruct/.test(id)),
   },
 
@@ -445,5 +447,5 @@ export async function listModels(provider, apiKey, baseUrl) {
     throw connectError(api.name ?? api.label, err);
   }
   if (!res.ok) throw await toApiError(res, api);
-  return api.parseModels(await res.json()).sort();
+  return api.parseModels(await res.json());
 }

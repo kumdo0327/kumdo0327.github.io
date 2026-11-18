@@ -55,7 +55,7 @@
         </div>
         <div id="key-state" class="key-state"></div>
         <ol class="steps">
-          <li>설정에서 Claude·OpenAI·Gemini·MiniMax 등 쓸 AI를 고르고 API 키를 입력합니다.</li>
+          <li>설정에서 AI를 고르고 API 키를 입력합니다.</li>
           <li>PDF를 열거나 이 창에 끌어다 놓습니다.</li>
           <li>‘번역 시작’을 누르고 읽고 싶은 문단에 마우스를 올립니다.</li>
         </ol>
@@ -108,12 +108,12 @@
       </div>
 
       <div class="field">
-        <div class="field-label"><label for="model">모델</label></div>
+        <div class="field-label"><label for="model-select">모델</label></div>
         <div class="row">
-          <input id="model" list="model-options" autocomplete="off" spellcheck="false" required>
+          <select id="model-select"></select>
           <button id="load-models" class="btn" type="button">목록 불러오기</button>
         </div>
-        <datalist id="model-options"></datalist>
+        <input id="model" aria-label="모델 이름" autocomplete="off" spellcheck="false" required>
       </div>
 
       <div class="field">

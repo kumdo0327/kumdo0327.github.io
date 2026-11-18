@@ -532,9 +532,8 @@ function fillProviderFields() {
   $('api-key').placeholder = api.keyPlaceholder;
   $('key-link').hidden = !api.keyUrl;
   $('key-link').href = api.keyUrl || '#';
-  $('model').value = draft.models[id];
-  $('model').placeholder = api.models.length ? '' : '모델 이름 (‘목록 불러오기’로 찾기)';
-  setModelOptions(api.models);
+  $('model').placeholder = api.models.length ? '모델 이름' : '모델 이름 (‘목록 불러오기’로 찾기)';
+  setModelOptions(loadedModels.get(id) || api.models, draft.models[id]);
 }
 
 function readProviderFields() {
@@ -544,9 +543,26 @@ function readProviderFields() {
   if (isCompatible(id)) draft.baseUrls[id] = $('base-url').value.trim();
 }
 
-function setModelOptions(models) {
-  $('model-options').replaceChildren(...models.map(id => new Option(id, id)));
+// Model lists fetched with "목록 불러오기", per provider, for this visit.
+const loadedModels = new Map();
+const TYPE_MODEL = ''; // value of the menu's "직접 입력…" entry
+
+/** Fills the model menu. A model that isn't on it is typed into the box below. */
+function setModelOptions(models, current) {
+  current ||= models[0] || '';
+  const select = $('model-select');
+  select.replaceChildren(...models.map(id => new Option(id, id)), new Option('직접 입력…', TYPE_MODEL));
+  select.value = models.includes(current) ? current : TYPE_MODEL;
+  $('model').value = current;
+  $('model').hidden = select.value !== TYPE_MODEL;
 }
+
+$('model-select').addEventListener('change', e => {
+  const typed = e.target.value === TYPE_MODEL;
+  if (!typed) $('model').value = e.target.value;
+  $('model').hidden = !typed;
+  if (typed) $('model').focus();
+});
 
 ui.form.addEventListener('change', e => {
   if (e.target.name !== 'provider') return;
@@ -592,9 +608,10 @@ $('load-models').addEventListener('click', async e => {
   button.disabled = true;
   try {
     const models = await listModels(draft.provider, key, baseUrl);
-    setModelOptions(models.length ? models : PROVIDERS[draft.provider].models);
-    if (!$('model').value) $('model').focus();
-    toast(`모델 ${models.length}개를 불러왔습니다. 모델 칸에서 고르세요.`);
+    if (models.length) loadedModels.set(draft.provider, models);
+    setModelOptions(models.length ? models : PROVIDERS[draft.provider].models, $('model').value.trim());
+    $('model-select').focus();
+    toast(`모델 ${models.length}개를 불러왔습니다. 목록에서 고르세요.`);
   } catch (err) {
     toast(err.message, { error: true });
   } finally {

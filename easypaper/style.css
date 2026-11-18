@@ -400,7 +400,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .field-hint { margin: 0; color: var(--muted); font-size: 12px; }
 
 .row { display: flex; gap: 6px; }
-.row input { flex: 1; min-width: 0; }
+.row input, .row select { flex: 1; min-width: 0; }
 
 .settings input:not([type="checkbox"]):not([type="radio"]), .settings select, .settings textarea {
   height: 38px;
