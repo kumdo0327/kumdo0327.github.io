@@ -4,10 +4,12 @@
 // and touches no DOM, so the same code also runs under Node for testing.
 
 const TERMINAL = /[.!?:]["'”’)\]]*$/;
-const LIGATURES = /[ﬀ-ﬆ]/g;
+const LIGATURES = /[\uFB00-\uFB06]/g;
 const ONLY_DIGITS = /^\d{1,4}$/;
-const CAPTION = /^(figure|fig\.|table|algorithm|listing)\s*\d+/i;
-const NUMBERED_HEADING = /^((\d+|[A-Z])(\.\d+)*\.?|[IVX]+\.)\s+\S/;
+// A caption numbers itself and then breaks off ("Fig. 3.", "Table 2:"); "Fig. 3 shows" is running text.
+const CAPTION = /^(figure|fig\.|table|algorithm|listing)\s*(\d+|[IVX]+)\s*[.:]/i;
+const CAPS_TABLE_CAPTION = /^TABLE\s+([IVX]+|\d+)\s+[A-Z]{2,}/; // IEEE style: "TABLE II" over a title in small caps
+const NUMBERED_HEADING = /^((\d+|[A-Z])(\.\d+)*\.?|[IVX]+\.)\s+\p{Lu}/u;
 const NAMED_HEADING = /^(abstract|introduction|background|related work|conclusions?|discussion|limitations|acknowledge?ments?|references|bibliography|appendix)\b/i;
 const REFERENCES_HEADING = /^(\d+\.?\s*)?(references|bibliography|참고\s*문헌)$/i;
 const APPENDIX_HEADING = /^(appendix|appendices|supplementary)\b|^[A-Z](\.\d+)*\s+[A-Z][^,.]*$/i;
@@ -54,8 +56,10 @@ function addRun(line, run) {
   const prev = line.runs[line.runs.length - 1];
   // A raised, smaller first run is a footnote mark ("¹The GLUE data…").
   const mark = line.runs.length === 1 && prev.fs < run.fs * 0.85 && prev.base > run.base + 0.2 * run.fs;
+  // A large first letter (drop cap) belongs to the word after it ("S" + "TATIC").
+  const dropCap = line.runs.length === 1 && prev.str.trim().length === 1 && prev.fs > run.fs * 1.8;
   const gap = run.x0 - line.x1;
-  if ((mark || gap > 0.12 * Math.min(line.fs, run.fs)) && !/\s$/.test(line.text) && !/^\s/.test(run.str)) {
+  if ((mark || gap > 0.12 * Math.min(line.fs, run.fs)) && !dropCap && !/\s$/.test(line.text) && !/^\s/.test(run.str)) {
     line.text += ' ';
   }
   line.text += run.str;
@@ -135,8 +139,13 @@ function groupBlocks(lines, ratio) {
 function continuesBlock(block, line, ratio) {
   const prev = block.lines[block.lines.length - 1];
   const fs = Math.max(prev.fs, line.fs);
-  if (Math.abs(prev.fs - line.fs) > 0.12 * fs || line.mark) return false;
   const dy = prev.base - line.base;
+  // A centred line (the next line of a title, heading or caption) moves both ends
+  // by the same amount. Small caps can make its size differ, so it is checked first.
+  const centred = Math.abs(line.x0 - prev.x0) > Math.min(prev.fs, line.fs) &&
+    Math.abs(line.x0 - prev.x0 + line.x1 - prev.x1) < 0.5 * fs;
+  if (centred && Math.min(prev.fs, line.fs) > 0.75 * fs && dy > 0.5 * fs && dy < ratio * fs * 1.3) return true;
+  if (Math.abs(prev.fs - line.fs) > 0.12 * fs || line.mark) return false;
   if (Math.abs(dy) < 0.3 * fs) {
     // The same visual line, split at an unusually wide space.
     const gap = line.x0 - prev.x1;
@@ -192,14 +201,20 @@ function joinText(parts) {
 function classify(block, bodyFs) {
   const text = block.text;
   const single = block.lines.length === 1;
-  const caption = CAPTION.test(text);
+  const caption = CAPTION.test(text) || CAPS_TABLE_CAPTION.test(text);
   // Running text is mostly lowercase words and fills its lines. Tables, figure
   // labels, formulas and author lists don't, and neither do URLs and e-mail addresses.
   const words = (text.replace(/\S*(@|:\/\/)\S*/g, '').match(/\p{L}{2,}/gu) || []);
   const lower = words.filter(w => /^\p{Ll}+$/u.test(w)).length;
   const fragment = single && words.length <= 4 && !TERMINAL.test(text);
-  const prose = lower >= 3 && lower >= words.length * 0.4 && words.length >= block.lines.length * 3.5 && !fragment;
-  const heading = single && words.length > 0 && (NUMBERED_HEADING.test(text) || NAMED_HEADING.test(text));
+  // Pseudo-code: most lines end like code ("do", "then", ";"), or a short line of operators.
+  const codeLines = block.lines.filter(l => /(;|\{|\}|\bdo|\bthen)$/.test(l.text)).length;
+  const code = block.lines.length >= 3
+    ? codeLines >= block.lines.length * 0.4
+    : codeLines === block.lines.length || (/[=;{}]|&&|\|\|/.test(text) && !TERMINAL.test(text));
+  const prose = !code && lower >= 3 && lower >= words.length * 0.4 && words.length >= block.lines.length * 3.5 && !fragment;
+  const short = block.lines.length <= 3 && text.length <= 150; // a heading can wrap onto a second line
+  const heading = short && !code && words.length > 0 && (NUMBERED_HEADING.test(text) || NAMED_HEADING.test(text));
 
   const [, y0, , y1] = block.view;
   const margin = (y1 - y0) * 0.08;
@@ -240,13 +255,24 @@ export function buildParagraphs(pages, { debug = false } = {}) {
   const firstPage = blocks.filter(b => b.page === 0 && b.text.length > 10);
   const titleBlock = firstPage.length ? firstPage.reduce((a, b) => (b.fs > a.fs ? b : a)) : null;
 
+  // Text printed on three or more pages (download notices, running headers) is boilerplate.
+  const boilerplateKey = b => b.text.toLowerCase().replace(/\d+/g, '#').replace(/\s+/g, ' ');
+  const pagesWith = new Map();
+  for (const b of blocks) {
+    const key = boilerplateKey(b);
+    pagesWith.set(key, (pagesWith.get(key) || new Set()).add(b.page));
+  }
+  const boilerplate = b => pagesWith.get(boilerplateKey(b)).size >= 3;
+
   const paras = [];
   // Per kind, a paragraph that stopped mid-sentence and may go on in a later block.
   const open = { body: null, small: null };
   let inReferences = false;
   for (const block of blocks) {
     if (inReferences && endsReferences(block, bodyFs)) inReferences = false;
-    const info = block === titleBlock ? { translatable: true, regular: false, kind: 'body' } : classify(block, bodyFs);
+    const info = block === titleBlock ? { translatable: true, regular: false, kind: 'body' }
+      : boilerplate(block) ? { translatable: false, regular: false, kind: 'body' }
+      : classify(block, bodyFs);
     const { translatable, regular, kind } = info;
     if (debug) block.info = { ...info, inReferences };
     if (!inReferences && translatable) {

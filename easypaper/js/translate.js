@@ -7,6 +7,7 @@ import { streamCompletion } from './llm.js';
 const MAX_BATCH_CHARS = 6000;
 const CONCURRENCY = 3;
 const GLOSSARY_SOURCE_CHARS = 120_000; // paper text sent when building the glossary
+const GLOSSARY_MAX_TERMS = 40;
 const MARKER = /\[\[\s*(p\d+)\s*\]\]/g;
 
 const readerNotes = notes => (notes.trim() ? `\n\nInstructions from the reader, which take precedence:\n${notes.trim()}` : '');
@@ -20,6 +21,7 @@ export function buildPrompt(paragraphs, { title, language, notes, glossary }) {
 - Translate faithfully and completely in a natural academic register. Do not summarize, explain or add notes.
 - Keep formulas, symbols, variable names, citations such as [12] or (Smith et al., 2020), URLs and code exactly as they are.
 - Use the established ${language} term for technical terms; if there is none, keep the English term.
+- Write in ${language} only. Apart from technical terms kept in English, do not switch to another language or script mid-sentence.
 - The text was extracted from a PDF, so it can contain stray formula symbols or footnote marks. Translate what the author meant and leave such symbols as they are.
 - Reply with the paragraphs in the given order. Start each one with its marker on a line of its own, exactly as given, and write nothing else:
 [[p1]]
@@ -36,7 +38,7 @@ export async function makeGlossary({ paragraphs, title, settings, signal }) {
   const { provider, keys, models, baseUrls, language, notes } = settings;
   const system = `You build a glossary for readers of an academic paper.
 
-- Pick the paper's key technical terms, at most 30: concepts, methods, named models and datasets, metrics. Skip everyday words.
+- Pick the paper's key technical terms, at most ${GLOSSARY_MAX_TERMS}: concepts, methods, named models and datasets, metrics. Skip everyday words.
 - Give each the established ${language} translation used in the field. If the field usually keeps the English term, keep it.
 - Add a short note, under 20 words, on what the term means in this paper. Write the notes entirely in ${language}.
 - Reply with only a JSON array, in order of first appearance:
@@ -67,7 +69,8 @@ export function parseGlossary(reply) {
   return (Array.isArray(items) ? items : [])
     .filter(g => typeof g?.term === 'string' && typeof g?.translation === 'string')
     .map(g => ({ term: g.term.trim(), translation: g.translation.trim(), note: typeof g.note === 'string' ? g.note.trim() : '' }))
-    .filter(g => g.term && g.translation && !seen.has(g.term.toLowerCase()) && seen.add(g.term.toLowerCase()));
+    .filter(g => g.term && g.translation && !seen.has(g.term.toLowerCase()) && seen.add(g.term.toLowerCase()))
+    .slice(0, GLOSSARY_MAX_TERMS);
 }
 
 /** Splits a streamed reply into paragraphs by their [[pN]] markers. */
